@@ -1,7 +1,16 @@
 # ProfileCreator
-macOS Application to create configuration profiles.
+macOS application to create configuration profiles.
 
 ![ProfileCreator](https://github.com/erikberglund/ProfileCreator/blob/master/Resources/Screenshots/ProfileCreator-README01.png)
+
+# Important
+ProfileCreator is currently in Alpha and is being actively developed. 
+
+To see what is currently being worked on, check out the Issues and the label "[working on](https://github.com/erikberglund/ProfileCreator/labels/working%20on)".
+
+If you have a feature request, or find a bug, please create an Issue clearly describing steps to reproduce the bug or the feature you would like to see implemented.
+
+Download the latest version from the [releases page](https://github.com/erikberglund/ProfileCreator/releases).
 
 # System Requirements
 ProfileCreator requires Mac OS X 10.11 or newer.
