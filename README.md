@@ -1,10 +1,10 @@
-## Important - This application is currently in initial development.
-
 # ProfileCreator
-OS X Application to create configuration profiles.
+macOS Application to create configuration profiles.
+
+![ProfileCreator](https://github.com/erikberglund/ProfileCreator/blob/master/Resources/Screenshots/ProfileCreator-README01.png)
 
 # System Requirements
-ProfileCreator requires Mac OS X 10.10 or newer.
+ProfileCreator requires Mac OS X 10.11 or newer.
 
 # Acknowledgements
 
@@ -12,7 +12,6 @@ ProfileCreator makes use of the following open source components:
 
 * [CocoaLumberjack](https://github.com/CocoaLumberjack/CocoaLumberjack)
 * [RFOverlayScrollView](https://github.com/rheinfabrik/RFOverlayScrollView)
-* [NSView+NSLayoutConstraintFilter](https://github.com/iluuu1994/ITSearchField/blob/8c4350bf7422a4d9d6a1ee4de6dccfd8d41d52e4/Expanding%20Search/Expanding%20Search/NSView%2BNSLayoutConstraintFilter.h)
 
 UI Icons from the following sites:
 
