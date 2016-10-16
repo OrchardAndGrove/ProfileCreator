@@ -8,7 +8,9 @@ ProfileCreator is currently in Alpha and is being actively developed.
 
 To see what is currently being worked on, check out the Issues and the label "[working on](https://github.com/erikberglund/ProfileCreator/labels/working%20on)".
 
-If you have a feature request, or find a bug, please create an Issue clearly describing steps to reproduce the bug or the feature you would like to see implemented.
+If you find a bug, please create an Issue clearly describing steps to reproduce the bug.
+
+And the same if you want to add a feature request or a discussion on how something should work or what should be added.
 
 Download the latest version from the [releases page](https://github.com/erikberglund/ProfileCreator/releases).
 
