@@ -1,0 +1,1150 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		531A861F1D79BA2D0065CB9C /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 531A85FD1D79BA090065CB9C /* CocoaLumberjack.framework */; };
+		531A86211D79BA4D0065CB9C /* CocoaLumberjack.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 531A85FD1D79BA090065CB9C /* CocoaLumberjack.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		5322057F1DB34D07006C07C9 /* ProfilePayloads.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5322057E1DB34D07006C07C9 /* ProfilePayloads.framework */; };
+		532205801DB34D25006C07C9 /* ProfilePayloads.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 5322057E1DB34D07006C07C9 /* ProfilePayloads.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		533765071DA2336400C36428 /* PFCProfileEditorSettings.m in Sources */ = {isa = PBXBuildFile; fileRef = 533765061DA2336400C36428 /* PFCProfileEditorSettings.m */; };
+		5337651A1DA2364100C36428 /* PFCProfileEditorSettingsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 533765181DA2364100C36428 /* PFCProfileEditorSettingsView.m */; };
+		5337651B1DA2364100C36428 /* PFCProfileEditorSettingsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 533765191DA2364100C36428 /* PFCProfileEditorSettingsView.xib */; };
+		533FC6221D79BF8500B62DE5 /* PFCAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 533FC6211D79BF8500B62DE5 /* PFCAppDelegate.m */; };
+		53413B211D87CCD300C69938 /* PFCProfileEditorLibraryMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 53413B201D87CCD300C69938 /* PFCProfileEditorLibraryMenu.m */; };
+		53413B371D87D57E00C69938 /* PFCProfileEditorLibraryFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 53413B361D87D57E00C69938 /* PFCProfileEditorLibraryFilter.m */; };
+		53413B3A1D87DCAD00C69938 /* PFCProfileEditorFooter.m in Sources */ = {isa = PBXBuildFile; fileRef = 53413B391D87DCAD00C69938 /* PFCProfileEditorFooter.m */; };
+		534B27081D7AF2D900D6FD2D /* PFCMainWindowSplitView.m in Sources */ = {isa = PBXBuildFile; fileRef = 534B27071D7AF2D900D6FD2D /* PFCMainWindowSplitView.m */; };
+		5350C79C1D8EAC9C008205EF /* PFCProfileEditorLibraryPayloadsCellViewLibrary.m in Sources */ = {isa = PBXBuildFile; fileRef = 5350C79B1D8EAC9C008205EF /* PFCProfileEditorLibraryPayloadsCellViewLibrary.m */; };
+		5352A2211D8C7BAD003B7431 /* PFCProfileEditorLibraryPayloads.m in Sources */ = {isa = PBXBuildFile; fileRef = 5352A2201D8C7BAD003B7431 /* PFCProfileEditorLibraryPayloads.m */; };
+		5356A6C11DAB6DED00E8AF1F /* PFCError.m in Sources */ = {isa = PBXBuildFile; fileRef = 5356A6C01DAB6DED00E8AF1F /* PFCError.m */; };
+		5356A6E31DAB7AFC00E8AF1F /* PFCProfileEditorLibraryNoPayloads.m in Sources */ = {isa = PBXBuildFile; fileRef = 5356A6E21DAB7AFC00E8AF1F /* PFCProfileEditorLibraryNoPayloads.m */; };
+		5356A6E61DAB7B5200E8AF1F /* PFCViewWhite.m in Sources */ = {isa = PBXBuildFile; fileRef = 5356A6E51DAB7B5200E8AF1F /* PFCViewWhite.m */; };
+		535E4D711D89666000EBDCDB /* PFCProfileEditorSettingsPopOver.m in Sources */ = {isa = PBXBuildFile; fileRef = 535E4D6F1D89666000EBDCDB /* PFCProfileEditorSettingsPopOver.m */; };
+		535E4D721D89666000EBDCDB /* PFCProfileEditorSettingsPopOver.xib in Resources */ = {isa = PBXBuildFile; fileRef = 535E4D701D89666000EBDCDB /* PFCProfileEditorSettingsPopOver.xib */; };
+		5368824F1D7F500200B93632 /* PFCMainWindowTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5368824E1D7F500200B93632 /* PFCMainWindowTableView.m */; };
+		536B59881D81D19F004D83AE /* PFCProfileEditor.m in Sources */ = {isa = PBXBuildFile; fileRef = 536B59871D81D19F004D83AE /* PFCProfileEditor.m */; };
+		536B598E1D81F0CC004D83AE /* PFCMainWindowLibraryGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 536B598D1D81F0CC004D83AE /* PFCMainWindowLibraryGroup.m */; };
+		5372568E1D7E9A2300314E67 /* PFCPreferencesToolbarItemGeneral.m in Sources */ = {isa = PBXBuildFile; fileRef = 5372568C1D7E9A2300314E67 /* PFCPreferencesToolbarItemGeneral.m */; };
+		537BA0CF1D8895DB0082B614 /* Settings Filled-16.png in Resources */ = {isa = PBXBuildFile; fileRef = 537BA0C91D8895DB0082B614 /* Settings Filled-16.png */; };
+		537BA0D01D8895DB0082B614 /* Settings-16.png in Resources */ = {isa = PBXBuildFile; fileRef = 537BA0CA1D8895DB0082B614 /* Settings-16.png */; };
+		537BA0D11D8895DB0082B614 /* Approval Filled-18.png in Resources */ = {isa = PBXBuildFile; fileRef = 537BA0CB1D8895DB0082B614 /* Approval Filled-18.png */; };
+		537BA0D21D8895DB0082B614 /* Approval-18.png in Resources */ = {isa = PBXBuildFile; fileRef = 537BA0CC1D8895DB0082B614 /* Approval-18.png */; };
+		537BA0D31D8895DB0082B614 /* Home Filled-15.png in Resources */ = {isa = PBXBuildFile; fileRef = 537BA0CD1D8895DB0082B614 /* Home Filled-15.png */; };
+		537BA0D41D8895DB0082B614 /* Home-15.png in Resources */ = {isa = PBXBuildFile; fileRef = 537BA0CE1D8895DB0082B614 /* Home-15.png */; };
+		538176CB1D8728F600AF445E /* PFCProfileEditorSplitView.m in Sources */ = {isa = PBXBuildFile; fileRef = 538176CA1D8728F600AF445E /* PFCProfileEditorSplitView.m */; };
+		538176DF1D872B4C00AF445E /* PFCProfileEditorLibrarySplitView.m in Sources */ = {isa = PBXBuildFile; fileRef = 538176DE1D872B4C00AF445E /* PFCProfileEditorLibrarySplitView.m */; };
+		538176E91D873B5500AF445E /* PFCProfileEditorTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 538176E81D873B5500AF445E /* PFCProfileEditorTableViewController.m */; };
+		5381D4E51D7B28C300AFBD60 /* PFCMainWindowOutlineViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5381D4E41D7B28C300AFBD60 /* PFCMainWindowOutlineViewController.m */; };
+		5381D4FB1D7B530A00AFBD60 /* PFCMainWindowOutlineViewParentCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5381D4FA1D7B530A00AFBD60 /* PFCMainWindowOutlineViewParentCellView.m */; };
+		5381D5031D7C2A7900AFBD60 /* PFCMainWindowOutlineViewChildCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 5381D5021D7C2A7900AFBD60 /* PFCMainWindowOutlineViewChildCellView.m */; };
+		53A718AF1DAE2697001F8B15 /* PFCPreferencesToolbarItemProfileDefaults.m in Sources */ = {isa = PBXBuildFile; fileRef = 53A718AD1DAE2697001F8B15 /* PFCPreferencesToolbarItemProfileDefaults.m */; };
+		53A718B11DAE2D06001F8B15 /* PFCPreferencesToolbarItemProfileDefaults.xib in Resources */ = {isa = PBXBuildFile; fileRef = 53A718B31DAE2D06001F8B15 /* PFCPreferencesToolbarItemProfileDefaults.xib */; };
+		53AAB48B1D79B89F00724074 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 53AAB48A1D79B89F00724074 /* main.m */; };
+		53AAB48D1D79B89F00724074 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 53AAB48C1D79B89F00724074 /* Assets.xcassets */; };
+		53AAB4901D79B89F00724074 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 53AAB48E1D79B89F00724074 /* MainMenu.xib */; };
+		53AB78971D79C9DD00EB89B8 /* PFCMainWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 53AB78951D79C9DD00EB89B8 /* PFCMainWindow.m */; };
+		53B5C1D81D8488D6001014BB /* SidebarFolder.icns in Resources */ = {isa = PBXBuildFile; fileRef = 53B5C1D71D8488D6001014BB /* SidebarFolder.icns */; };
+		53B5C1EA1D855D66001014BB /* PFCMainWindowAllProfiles.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B5C1E91D855D66001014BB /* PFCMainWindowAllProfiles.m */; };
+		53B5C1ED1D855EC5001014BB /* PFCMainWindowAllProfilesGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B5C1EC1D855EC5001014BB /* PFCMainWindowAllProfilesGroup.m */; };
+		53B5C1F31D8565D3001014BB /* PFCProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B5C1F21D8565D3001014BB /* PFCProfile.m */; };
+		53B5C1F61D8565EC001014BB /* PFCProfileController.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B5C1F51D8565EC001014BB /* PFCProfileController.m */; };
+		53B778BB1D8801520025812D /* ButtonPopOverMenu.png in Resources */ = {isa = PBXBuildFile; fileRef = 53B778BA1D8801520025812D /* ButtonPopOverMenu.png */; };
+		53BDFF6D1D7EEA6D00EBBB58 /* PFCMainWindowTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BDFF6C1D7EEA6D00EBBB58 /* PFCMainWindowTableViewController.m */; };
+		53BDFF801D7EF1A400EBBB58 /* PFCMainWindowTableViewItemCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BDFF7F1D7EF1A400EBBB58 /* PFCMainWindowTableViewItemCellView.m */; };
+		53C2F06F1D815CF4003B9118 /* downarrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 53C2F06E1D815CF4003B9118 /* downarrow.png */; };
+		53C33CB71D83D87500CBB709 /* PFCPreferencesToolbarItemGeneral.xib in Resources */ = {isa = PBXBuildFile; fileRef = 53C33CB91D83D87500CBB709 /* PFCPreferencesToolbarItemGeneral.xib */; };
+		53CC12911D80072B00F02661 /* PFCMainWindowProfilePreviewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CC12901D80072B00F02661 /* PFCMainWindowProfilePreviewController.m */; };
+		53CC12951D800F1A00F02661 /* PFCMainWindowLibrary.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CC12941D800F1A00F02661 /* PFCMainWindowLibrary.m */; };
+		53CC12981D80130000F02661 /* PFCMainWindowProfilePreviewView.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CC12971D80130000F02661 /* PFCMainWindowProfilePreviewView.m */; };
+		53CC129C1D80146800F02661 /* PFCMainWindowProfilePreviewInfoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 53CC129A1D80146800F02661 /* PFCMainWindowProfilePreviewInfoView.m */; };
+		53D3F0661DA7AB8F00306273 /* PFCProfileEditorToolbarItemTitle.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D3F0651DA7AB8F00306273 /* PFCProfileEditorToolbarItemTitle.m */; };
+		53D74EB71DA6D38C00588059 /* PFCMainWindowTableViewWelcome.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D74EB61DA6D38C00588059 /* PFCMainWindowTableViewWelcome.m */; };
+		53D9F6731D8DC5F800D51B5A /* PFCProfileEditorLibraryPayloadsCellViewProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 53D9F6721D8DC5F800D51B5A /* PFCProfileEditorLibraryPayloadsCellViewProfile.m */; };
+		53E23D3D1D79BB2D00D527C3 /* PFCLog.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E23D3C1D79BB2D00D527C3 /* PFCLog.m */; };
+		53E23D401D79BB8F00D527C3 /* PFCLogFormatter.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E23D3F1D79BB8F00D527C3 /* PFCLogFormatter.m */; };
+		53E23D431D79BBCD00D527C3 /* PFCConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E23D421D79BBCD00D527C3 /* PFCConstants.m */; };
+		53E34FB11D7CAD9A0089C144 /* PFCMainWindowOutlineView.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E34FB01D7CAD9A0089C144 /* PFCMainWindowOutlineView.m */; };
+		53E34FC31D7CAFFF0089C144 /* PFCAlert.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E34FC21D7CAFFF0089C144 /* PFCAlert.m */; };
+		53E64A1E1DA142630015FB79 /* PFCMainWindowToolbarItemExport.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E64A1D1DA142630015FB79 /* PFCMainWindowToolbarItemExport.m */; };
+		53E986EC1D82E552007C77EF /* Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 53E986EB1D82E552007C77EF /* Defaults.plist */; };
+		53E987001D82E74F007C77EF /* PFCResources.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E986FF1D82E74F007C77EF /* PFCResources.m */; };
+		53E9B9B11D80A6E9007E2046 /* PFCMainWindowToolbarItemAdd.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E9B9B01D80A6E9007E2046 /* PFCMainWindowToolbarItemAdd.m */; };
+		53E9DF261D7DAA1700D42C21 /* PFCPreferences.m in Sources */ = {isa = PBXBuildFile; fileRef = 53E9DF251D7DAA1700D42C21 /* PFCPreferences.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		531A85FC1D79BA090065CB9C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 531A85E91D79BA090065CB9C /* Lumberjack.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DCB3185114EB418E001CFBEE;
+			remoteInfo = CocoaLumberjack;
+		};
+		531A85FE1D79BA090065CB9C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 531A85E91D79BA090065CB9C /* Lumberjack.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 18F3BF0F1A81D8B700692297;
+			remoteInfo = CocoaLumberjackSwift;
+		};
+		531A86001D79BA090065CB9C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 531A85E91D79BA090065CB9C /* Lumberjack.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 19FF46021B8B4CF400B43179;
+			remoteInfo = "CocoaLumberjack-iOS";
+		};
+		531A86021D79BA090065CB9C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 531A85E91D79BA090065CB9C /* Lumberjack.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 19FF460F1B8B4D1400B43179;
+			remoteInfo = "CocoaLumberjackSwift-iOS";
+		};
+		531A86041D79BA090065CB9C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 531A85E91D79BA090065CB9C /* Lumberjack.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 18F3BFD71A81E06E00692297;
+			remoteInfo = "CocoaLumberjack-iOS-Static";
+		};
+		531A86061D79BA090065CB9C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 531A85E91D79BA090065CB9C /* Lumberjack.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 19190EDE1B84D812008D059E;
+			remoteInfo = "CocoaLumberjack-watchOS";
+		};
+		531A86081D79BA090065CB9C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 531A85E91D79BA090065CB9C /* Lumberjack.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 19190EEB1B84D826008D059E;
+			remoteInfo = "CocoaLumberjackSwift-watchOS";
+		};
+		531A860A1D79BA090065CB9C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 531A85E91D79BA090065CB9C /* Lumberjack.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 19D90B261BBFA9DB00947169;
+			remoteInfo = "CocoaLumberjack-tvOS";
+		};
+		531A860C1D79BA090065CB9C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 531A85E91D79BA090065CB9C /* Lumberjack.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 19D90B351BBFAA7500947169;
+			remoteInfo = "CocoaLumberjackSwift-tvOS";
+		};
+		531A860E1D79BA090065CB9C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 531A85E91D79BA090065CB9C /* Lumberjack.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = DCB318CA14ED6C3B001CFBEE;
+			remoteInfo = FmwkTest;
+		};
+		531A86101D79BA090065CB9C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 531A85E91D79BA090065CB9C /* Lumberjack.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 55CCBEFF19BA679200957A39;
+			remoteInfo = SwiftTest;
+		};
+		531A86121D79BA090065CB9C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 531A85E91D79BA090065CB9C /* Lumberjack.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 18F3BF5F1A81DD2E00692297;
+			remoteInfo = iOSSwiftTest;
+		};
+		531A86141D79BA090065CB9C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 531A85E91D79BA090065CB9C /* Lumberjack.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 19EC14671B84D134000EC2E7;
+			remoteInfo = watchOSSwiftTest;
+		};
+		531A86161D79BA090065CB9C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 531A85E91D79BA090065CB9C /* Lumberjack.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 19EC14731B84D134000EC2E7;
+			remoteInfo = "watchOSSwiftTest Extension";
+		};
+		531A86181D79BA090065CB9C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 531A85E91D79BA090065CB9C /* Lumberjack.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 19406BE11BDBABFF001194DC;
+			remoteInfo = tvOSSwiftTest;
+		};
+		531A861A1D79BA090065CB9C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 531A85E91D79BA090065CB9C /* Lumberjack.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 18F3BFF21A81E0C700692297;
+			remoteInfo = iOSLibStaticTest;
+		};
+		531A861D1D79BA230065CB9C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 531A85E91D79BA090065CB9C /* Lumberjack.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = DCB3185014EB418E001CFBEE;
+			remoteInfo = CocoaLumberjack;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		531A86201D79BA3F0065CB9C /* Copy Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				532205801DB34D25006C07C9 /* ProfilePayloads.framework in Copy Frameworks */,
+				531A86211D79BA4D0065CB9C /* CocoaLumberjack.framework in Copy Frameworks */,
+			);
+			name = "Copy Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		531A85E91D79BA090065CB9C /* Lumberjack.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = Lumberjack.xcodeproj; path = ../../CocoaLumberjack/Lumberjack.xcodeproj; sourceTree = "<group>"; };
+		5322057E1DB34D07006C07C9 /* ProfilePayloads.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ProfilePayloads.framework; path = Frameworks/ProfilePayloads.framework; sourceTree = "<group>"; };
+		53358FD11D83591200C6F532 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		533765051DA2336400C36428 /* PFCProfileEditorSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCProfileEditorSettings.h; path = "Profile Editor/Settings/PFCProfileEditorSettings.h"; sourceTree = "<group>"; };
+		533765061DA2336400C36428 /* PFCProfileEditorSettings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCProfileEditorSettings.m; path = "Profile Editor/Settings/PFCProfileEditorSettings.m"; sourceTree = "<group>"; };
+		533765171DA2364100C36428 /* PFCProfileEditorSettingsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCProfileEditorSettingsView.h; path = "Profile Editor/Settings/PFCProfileEditorSettingsView.h"; sourceTree = "<group>"; };
+		533765181DA2364100C36428 /* PFCProfileEditorSettingsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCProfileEditorSettingsView.m; path = "Profile Editor/Settings/PFCProfileEditorSettingsView.m"; sourceTree = "<group>"; };
+		533765191DA2364100C36428 /* PFCProfileEditorSettingsView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PFCProfileEditorSettingsView.xib; path = "Profile Editor/Settings/PFCProfileEditorSettingsView.xib"; sourceTree = "<group>"; };
+		533FC6201D79BF8500B62DE5 /* PFCAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PFCAppDelegate.h; sourceTree = "<group>"; };
+		533FC6211D79BF8500B62DE5 /* PFCAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PFCAppDelegate.m; sourceTree = "<group>"; };
+		53413B1F1D87CCD300C69938 /* PFCProfileEditorLibraryMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCProfileEditorLibraryMenu.h; path = "Profile Editor/Library/PFCProfileEditorLibraryMenu.h"; sourceTree = "<group>"; };
+		53413B201D87CCD300C69938 /* PFCProfileEditorLibraryMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCProfileEditorLibraryMenu.m; path = "Profile Editor/Library/PFCProfileEditorLibraryMenu.m"; sourceTree = "<group>"; };
+		53413B351D87D57E00C69938 /* PFCProfileEditorLibraryFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCProfileEditorLibraryFilter.h; path = "Profile Editor/Library/PFCProfileEditorLibraryFilter.h"; sourceTree = "<group>"; };
+		53413B361D87D57E00C69938 /* PFCProfileEditorLibraryFilter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCProfileEditorLibraryFilter.m; path = "Profile Editor/Library/PFCProfileEditorLibraryFilter.m"; sourceTree = "<group>"; };
+		53413B381D87DCAD00C69938 /* PFCProfileEditorFooter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCProfileEditorFooter.h; path = "Profile Editor/Editor/PFCProfileEditorFooter.h"; sourceTree = "<group>"; };
+		53413B391D87DCAD00C69938 /* PFCProfileEditorFooter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCProfileEditorFooter.m; path = "Profile Editor/Editor/PFCProfileEditorFooter.m"; sourceTree = "<group>"; };
+		534B27061D7AF2D900D6FD2D /* PFCMainWindowSplitView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCMainWindowSplitView.h; path = "Main Window/PFCMainWindowSplitView.h"; sourceTree = "<group>"; };
+		534B27071D7AF2D900D6FD2D /* PFCMainWindowSplitView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCMainWindowSplitView.m; path = "Main Window/PFCMainWindowSplitView.m"; sourceTree = "<group>"; };
+		5350C79B1D8EAC9C008205EF /* PFCProfileEditorLibraryPayloadsCellViewLibrary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCProfileEditorLibraryPayloadsCellViewLibrary.m; path = "Profile Editor/Library/PFCProfileEditorLibraryPayloadsCellViewLibrary.m"; sourceTree = "<group>"; };
+		5350C7AC1D8EACAA008205EF /* PFCProfileEditorLibraryPayloadsCellViewLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCProfileEditorLibraryPayloadsCellViewLibrary.h; path = "Profile Editor/Library/PFCProfileEditorLibraryPayloadsCellViewLibrary.h"; sourceTree = "<group>"; };
+		5352A21F1D8C7BAD003B7431 /* PFCProfileEditorLibraryPayloads.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCProfileEditorLibraryPayloads.h; path = "Profile Editor/Library/PFCProfileEditorLibraryPayloads.h"; sourceTree = "<group>"; };
+		5352A2201D8C7BAD003B7431 /* PFCProfileEditorLibraryPayloads.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCProfileEditorLibraryPayloads.m; path = "Profile Editor/Library/PFCProfileEditorLibraryPayloads.m"; sourceTree = "<group>"; };
+		5356A6BF1DAB6DED00E8AF1F /* PFCError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCError.h; path = "Utility Classes/PFCError.h"; sourceTree = SOURCE_ROOT; };
+		5356A6C01DAB6DED00E8AF1F /* PFCError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCError.m; path = "Utility Classes/PFCError.m"; sourceTree = SOURCE_ROOT; };
+		5356A6E11DAB7AFC00E8AF1F /* PFCProfileEditorLibraryNoPayloads.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCProfileEditorLibraryNoPayloads.h; path = "Profile Editor/Library/PFCProfileEditorLibraryNoPayloads.h"; sourceTree = "<group>"; };
+		5356A6E21DAB7AFC00E8AF1F /* PFCProfileEditorLibraryNoPayloads.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCProfileEditorLibraryNoPayloads.m; path = "Profile Editor/Library/PFCProfileEditorLibraryNoPayloads.m"; sourceTree = "<group>"; };
+		5356A6E41DAB7B5200E8AF1F /* PFCViewWhite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCViewWhite.h; path = "Utility Classes/PFCViewWhite.h"; sourceTree = SOURCE_ROOT; };
+		5356A6E51DAB7B5200E8AF1F /* PFCViewWhite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCViewWhite.m; path = "Utility Classes/PFCViewWhite.m"; sourceTree = SOURCE_ROOT; };
+		535E4D6E1D89666000EBDCDB /* PFCProfileEditorSettingsPopOver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCProfileEditorSettingsPopOver.h; path = "Profile Editor/Settings/PFCProfileEditorSettingsPopOver.h"; sourceTree = "<group>"; };
+		535E4D6F1D89666000EBDCDB /* PFCProfileEditorSettingsPopOver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCProfileEditorSettingsPopOver.m; path = "Profile Editor/Settings/PFCProfileEditorSettingsPopOver.m"; sourceTree = "<group>"; };
+		535E4D701D89666000EBDCDB /* PFCProfileEditorSettingsPopOver.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = PFCProfileEditorSettingsPopOver.xib; path = "Profile Editor/Settings/PFCProfileEditorSettingsPopOver.xib"; sourceTree = "<group>"; };
+		5368824D1D7F500200B93632 /* PFCMainWindowTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCMainWindowTableView.h; path = "Main Window/Profile List/PFCMainWindowTableView.h"; sourceTree = "<group>"; };
+		5368824E1D7F500200B93632 /* PFCMainWindowTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCMainWindowTableView.m; path = "Main Window/Profile List/PFCMainWindowTableView.m"; sourceTree = "<group>"; };
+		536B59861D81D19F004D83AE /* PFCProfileEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCProfileEditor.h; path = "Profile Editor/PFCProfileEditor.h"; sourceTree = "<group>"; };
+		536B59871D81D19F004D83AE /* PFCProfileEditor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCProfileEditor.m; path = "Profile Editor/PFCProfileEditor.m"; sourceTree = "<group>"; };
+		536B598A1D81E3A1004D83AE /* PFCMainWindowOutlineViewParentProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PFCMainWindowOutlineViewParentProtocol.h; path = "Main Window/Sidebar/PFCMainWindowOutlineViewParentProtocol.h"; sourceTree = "<group>"; };
+		536B598B1D81EFA7004D83AE /* PFCMainWindowOutlineViewChildProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PFCMainWindowOutlineViewChildProtocol.h; path = "Main Window/Sidebar/PFCMainWindowOutlineViewChildProtocol.h"; sourceTree = "<group>"; };
+		536B598C1D81F0CC004D83AE /* PFCMainWindowLibraryGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCMainWindowLibraryGroup.h; path = "Main Window/Sidebar/PFCMainWindowLibraryGroup.h"; sourceTree = "<group>"; };
+		536B598D1D81F0CC004D83AE /* PFCMainWindowLibraryGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCMainWindowLibraryGroup.m; path = "Main Window/Sidebar/PFCMainWindowLibraryGroup.m"; sourceTree = "<group>"; };
+		5372568B1D7E9A2300314E67 /* PFCPreferencesToolbarItemGeneral.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCPreferencesToolbarItemGeneral.h; path = Preferences/Toolbar/PFCPreferencesToolbarItemGeneral.h; sourceTree = "<group>"; };
+		5372568C1D7E9A2300314E67 /* PFCPreferencesToolbarItemGeneral.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCPreferencesToolbarItemGeneral.m; path = Preferences/Toolbar/PFCPreferencesToolbarItemGeneral.m; sourceTree = "<group>"; };
+		537BA0C91D8895DB0082B614 /* Settings Filled-16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Settings Filled-16.png"; path = "Graphics/Icons/Settings Filled-16.png"; sourceTree = "<group>"; };
+		537BA0CA1D8895DB0082B614 /* Settings-16.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Settings-16.png"; path = "Graphics/Icons/Settings-16.png"; sourceTree = "<group>"; };
+		537BA0CB1D8895DB0082B614 /* Approval Filled-18.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Approval Filled-18.png"; path = "Graphics/Icons/Approval Filled-18.png"; sourceTree = "<group>"; };
+		537BA0CC1D8895DB0082B614 /* Approval-18.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Approval-18.png"; path = "Graphics/Icons/Approval-18.png"; sourceTree = "<group>"; };
+		537BA0CD1D8895DB0082B614 /* Home Filled-15.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Home Filled-15.png"; path = "Graphics/Icons/Home Filled-15.png"; sourceTree = "<group>"; };
+		537BA0CE1D8895DB0082B614 /* Home-15.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Home-15.png"; path = "Graphics/Icons/Home-15.png"; sourceTree = "<group>"; };
+		538176C91D8728F600AF445E /* PFCProfileEditorSplitView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCProfileEditorSplitView.h; path = "Profile Editor/PFCProfileEditorSplitView.h"; sourceTree = "<group>"; };
+		538176CA1D8728F600AF445E /* PFCProfileEditorSplitView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCProfileEditorSplitView.m; path = "Profile Editor/PFCProfileEditorSplitView.m"; sourceTree = "<group>"; };
+		538176DD1D872B4C00AF445E /* PFCProfileEditorLibrarySplitView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCProfileEditorLibrarySplitView.h; path = "Profile Editor/Library/PFCProfileEditorLibrarySplitView.h"; sourceTree = "<group>"; };
+		538176DE1D872B4C00AF445E /* PFCProfileEditorLibrarySplitView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCProfileEditorLibrarySplitView.m; path = "Profile Editor/Library/PFCProfileEditorLibrarySplitView.m"; sourceTree = "<group>"; };
+		538176E71D873B5500AF445E /* PFCProfileEditorTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCProfileEditorTableViewController.h; path = "Profile Editor/Editor/PFCProfileEditorTableViewController.h"; sourceTree = "<group>"; };
+		538176E81D873B5500AF445E /* PFCProfileEditorTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCProfileEditorTableViewController.m; path = "Profile Editor/Editor/PFCProfileEditorTableViewController.m"; sourceTree = "<group>"; };
+		5381D4E31D7B28C300AFBD60 /* PFCMainWindowOutlineViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCMainWindowOutlineViewController.h; path = "Main Window/Sidebar/PFCMainWindowOutlineViewController.h"; sourceTree = "<group>"; };
+		5381D4E41D7B28C300AFBD60 /* PFCMainWindowOutlineViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCMainWindowOutlineViewController.m; path = "Main Window/Sidebar/PFCMainWindowOutlineViewController.m"; sourceTree = "<group>"; };
+		5381D4F91D7B530A00AFBD60 /* PFCMainWindowOutlineViewParentCellView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCMainWindowOutlineViewParentCellView.h; path = "Main Window/Sidebar/PFCMainWindowOutlineViewParentCellView.h"; sourceTree = "<group>"; };
+		5381D4FA1D7B530A00AFBD60 /* PFCMainWindowOutlineViewParentCellView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCMainWindowOutlineViewParentCellView.m; path = "Main Window/Sidebar/PFCMainWindowOutlineViewParentCellView.m"; sourceTree = "<group>"; };
+		5381D5011D7C2A7900AFBD60 /* PFCMainWindowOutlineViewChildCellView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCMainWindowOutlineViewChildCellView.h; path = "Main Window/Sidebar/PFCMainWindowOutlineViewChildCellView.h"; sourceTree = "<group>"; };
+		5381D5021D7C2A7900AFBD60 /* PFCMainWindowOutlineViewChildCellView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCMainWindowOutlineViewChildCellView.m; path = "Main Window/Sidebar/PFCMainWindowOutlineViewChildCellView.m"; sourceTree = "<group>"; };
+		53A718AC1DAE2697001F8B15 /* PFCPreferencesToolbarItemProfileDefaults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCPreferencesToolbarItemProfileDefaults.h; path = Preferences/Toolbar/PFCPreferencesToolbarItemProfileDefaults.h; sourceTree = "<group>"; };
+		53A718AD1DAE2697001F8B15 /* PFCPreferencesToolbarItemProfileDefaults.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCPreferencesToolbarItemProfileDefaults.m; path = Preferences/Toolbar/PFCPreferencesToolbarItemProfileDefaults.m; sourceTree = "<group>"; };
+		53A718B41DAE2D0E001F8B15 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PFCPreferencesToolbarItemProfileDefaults.xib; sourceTree = "<group>"; };
+		53A718B51DAE2D24001F8B15 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/PFCPreferencesToolbarItemProfileDefaults.strings; sourceTree = "<group>"; };
+		53AAB4831D79B89F00724074 /* ProfileCreator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ProfileCreator.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		53AAB48A1D79B89F00724074 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		53AAB48C1D79B89F00724074 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		53AAB48F1D79B89F00724074 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		53AAB4911D79B89F00724074 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		53AB78941D79C9DD00EB89B8 /* PFCMainWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCMainWindow.h; path = "Main Window/PFCMainWindow.h"; sourceTree = "<group>"; };
+		53AB78951D79C9DD00EB89B8 /* PFCMainWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCMainWindow.m; path = "Main Window/PFCMainWindow.m"; sourceTree = "<group>"; };
+		53B5C1D71D8488D6001014BB /* SidebarFolder.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = SidebarFolder.icns; path = Graphics/Icons/SidebarFolder.icns; sourceTree = "<group>"; };
+		53B5C1E81D855D66001014BB /* PFCMainWindowAllProfiles.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCMainWindowAllProfiles.h; path = "Main Window/Sidebar/PFCMainWindowAllProfiles.h"; sourceTree = "<group>"; };
+		53B5C1E91D855D66001014BB /* PFCMainWindowAllProfiles.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCMainWindowAllProfiles.m; path = "Main Window/Sidebar/PFCMainWindowAllProfiles.m"; sourceTree = "<group>"; };
+		53B5C1EB1D855EC5001014BB /* PFCMainWindowAllProfilesGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCMainWindowAllProfilesGroup.h; path = "Main Window/Sidebar/PFCMainWindowAllProfilesGroup.h"; sourceTree = "<group>"; };
+		53B5C1EC1D855EC5001014BB /* PFCMainWindowAllProfilesGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCMainWindowAllProfilesGroup.m; path = "Main Window/Sidebar/PFCMainWindowAllProfilesGroup.m"; sourceTree = "<group>"; };
+		53B5C1F11D8565D3001014BB /* PFCProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCProfile.h; path = "Profile Classes/PFCProfile.h"; sourceTree = "<group>"; };
+		53B5C1F21D8565D3001014BB /* PFCProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCProfile.m; path = "Profile Classes/PFCProfile.m"; sourceTree = "<group>"; };
+		53B5C1F41D8565EC001014BB /* PFCProfileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCProfileController.h; path = "Profile Classes/PFCProfileController.h"; sourceTree = "<group>"; };
+		53B5C1F51D8565EC001014BB /* PFCProfileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCProfileController.m; path = "Profile Classes/PFCProfileController.m"; sourceTree = "<group>"; };
+		53B778BA1D8801520025812D /* ButtonPopOverMenu.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ButtonPopOverMenu.png; path = Graphics/Icons/ButtonPopOverMenu.png; sourceTree = "<group>"; };
+		53BDFF6B1D7EEA6D00EBBB58 /* PFCMainWindowTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCMainWindowTableViewController.h; path = "Main Window/Profile List/PFCMainWindowTableViewController.h"; sourceTree = "<group>"; };
+		53BDFF6C1D7EEA6D00EBBB58 /* PFCMainWindowTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCMainWindowTableViewController.m; path = "Main Window/Profile List/PFCMainWindowTableViewController.m"; sourceTree = "<group>"; };
+		53BDFF7E1D7EF1A400EBBB58 /* PFCMainWindowTableViewItemCellView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCMainWindowTableViewItemCellView.h; path = "Main Window/Profile List/PFCMainWindowTableViewItemCellView.h"; sourceTree = "<group>"; };
+		53BDFF7F1D7EF1A400EBBB58 /* PFCMainWindowTableViewItemCellView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCMainWindowTableViewItemCellView.m; path = "Main Window/Profile List/PFCMainWindowTableViewItemCellView.m"; sourceTree = "<group>"; };
+		53BDFF811D7EF86200EBBB58 /* PFCMainWindowOutlineViewProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PFCMainWindowOutlineViewProtocol.h; path = "Main Window/Sidebar/PFCMainWindowOutlineViewProtocol.h"; sourceTree = "<group>"; };
+		53C2F06E1D815CF4003B9118 /* downarrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = downarrow.png; path = Graphics/Icons/downarrow.png; sourceTree = "<group>"; };
+		53C33CB81D83D87500CBB709 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/PFCPreferencesToolbarItemGeneral.xib; sourceTree = "<group>"; };
+		53C33CCA1D83D87900CBB709 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/PFCPreferencesToolbarItemGeneral.strings; sourceTree = "<group>"; };
+		53CC128E1D80067500F02661 /* PFCMainWindowTableViewProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PFCMainWindowTableViewProtocol.h; path = "Main Window/Profile List/PFCMainWindowTableViewProtocol.h"; sourceTree = "<group>"; };
+		53CC128F1D80072B00F02661 /* PFCMainWindowProfilePreviewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCMainWindowProfilePreviewController.h; path = "Main Window/Profile Preview/PFCMainWindowProfilePreviewController.h"; sourceTree = "<group>"; };
+		53CC12901D80072B00F02661 /* PFCMainWindowProfilePreviewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCMainWindowProfilePreviewController.m; path = "Main Window/Profile Preview/PFCMainWindowProfilePreviewController.m"; sourceTree = "<group>"; };
+		53CC12931D800F1A00F02661 /* PFCMainWindowLibrary.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCMainWindowLibrary.h; path = "Main Window/Sidebar/PFCMainWindowLibrary.h"; sourceTree = "<group>"; };
+		53CC12941D800F1A00F02661 /* PFCMainWindowLibrary.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCMainWindowLibrary.m; path = "Main Window/Sidebar/PFCMainWindowLibrary.m"; sourceTree = "<group>"; };
+		53CC12961D80130000F02661 /* PFCMainWindowProfilePreviewView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCMainWindowProfilePreviewView.h; path = "Main Window/Profile Preview/PFCMainWindowProfilePreviewView.h"; sourceTree = "<group>"; };
+		53CC12971D80130000F02661 /* PFCMainWindowProfilePreviewView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCMainWindowProfilePreviewView.m; path = "Main Window/Profile Preview/PFCMainWindowProfilePreviewView.m"; sourceTree = "<group>"; };
+		53CC12991D80146800F02661 /* PFCMainWindowProfilePreviewInfoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCMainWindowProfilePreviewInfoView.h; path = "Main Window/Profile Preview/PFCMainWindowProfilePreviewInfoView.h"; sourceTree = "<group>"; };
+		53CC129A1D80146800F02661 /* PFCMainWindowProfilePreviewInfoView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCMainWindowProfilePreviewInfoView.m; path = "Main Window/Profile Preview/PFCMainWindowProfilePreviewInfoView.m"; sourceTree = "<group>"; };
+		53D3F0641DA7AB8F00306273 /* PFCProfileEditorToolbarItemTitle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCProfileEditorToolbarItemTitle.h; path = "Profile Editor/Toolbar/PFCProfileEditorToolbarItemTitle.h"; sourceTree = "<group>"; };
+		53D3F0651DA7AB8F00306273 /* PFCProfileEditorToolbarItemTitle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCProfileEditorToolbarItemTitle.m; path = "Profile Editor/Toolbar/PFCProfileEditorToolbarItemTitle.m"; sourceTree = "<group>"; };
+		53D74EB51DA6D38C00588059 /* PFCMainWindowTableViewWelcome.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCMainWindowTableViewWelcome.h; path = "Main Window/Profile List/PFCMainWindowTableViewWelcome.h"; sourceTree = "<group>"; };
+		53D74EB61DA6D38C00588059 /* PFCMainWindowTableViewWelcome.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCMainWindowTableViewWelcome.m; path = "Main Window/Profile List/PFCMainWindowTableViewWelcome.m"; sourceTree = "<group>"; };
+		53D9F6711D8DC5F800D51B5A /* PFCProfileEditorLibraryPayloadsCellViewProfile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCProfileEditorLibraryPayloadsCellViewProfile.h; path = "Profile Editor/Library/PFCProfileEditorLibraryPayloadsCellViewProfile.h"; sourceTree = "<group>"; };
+		53D9F6721D8DC5F800D51B5A /* PFCProfileEditorLibraryPayloadsCellViewProfile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCProfileEditorLibraryPayloadsCellViewProfile.m; path = "Profile Editor/Library/PFCProfileEditorLibraryPayloadsCellViewProfile.m"; sourceTree = "<group>"; };
+		53E23D3B1D79BB2D00D527C3 /* PFCLog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCLog.h; path = "Utility Classes/PFCLog.h"; sourceTree = SOURCE_ROOT; };
+		53E23D3C1D79BB2D00D527C3 /* PFCLog.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCLog.m; path = "Utility Classes/PFCLog.m"; sourceTree = SOURCE_ROOT; };
+		53E23D3E1D79BB8F00D527C3 /* PFCLogFormatter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCLogFormatter.h; path = "../Utility Classes/PFCLogFormatter.h"; sourceTree = "<group>"; };
+		53E23D3F1D79BB8F00D527C3 /* PFCLogFormatter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCLogFormatter.m; path = "../Utility Classes/PFCLogFormatter.m"; sourceTree = "<group>"; };
+		53E23D411D79BBCD00D527C3 /* PFCConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCConstants.h; path = "Utility Classes/PFCConstants.h"; sourceTree = SOURCE_ROOT; };
+		53E23D421D79BBCD00D527C3 /* PFCConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCConstants.m; path = "Utility Classes/PFCConstants.m"; sourceTree = SOURCE_ROOT; };
+		53E34FAF1D7CAD9A0089C144 /* PFCMainWindowOutlineView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCMainWindowOutlineView.h; path = "Main Window/Sidebar/PFCMainWindowOutlineView.h"; sourceTree = "<group>"; };
+		53E34FB01D7CAD9A0089C144 /* PFCMainWindowOutlineView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCMainWindowOutlineView.m; path = "Main Window/Sidebar/PFCMainWindowOutlineView.m"; sourceTree = "<group>"; };
+		53E34FC11D7CAFFF0089C144 /* PFCAlert.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCAlert.h; path = "Utility Classes/PFCAlert.h"; sourceTree = SOURCE_ROOT; };
+		53E34FC21D7CAFFF0089C144 /* PFCAlert.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCAlert.m; path = "Utility Classes/PFCAlert.m"; sourceTree = SOURCE_ROOT; };
+		53E64A0D1DA142400015FB79 /* PFCMainWindowToolbarItemExport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCMainWindowToolbarItemExport.h; path = "Main Window/Toolbar/PFCMainWindowToolbarItemExport.h"; sourceTree = "<group>"; };
+		53E64A1D1DA142630015FB79 /* PFCMainWindowToolbarItemExport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCMainWindowToolbarItemExport.m; path = "Main Window/Toolbar/PFCMainWindowToolbarItemExport.m"; sourceTree = "<group>"; };
+		53E986EB1D82E552007C77EF /* Defaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Defaults.plist; sourceTree = "<group>"; };
+		53E986FE1D82E74F007C77EF /* PFCResources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCResources.h; path = "Utility Classes/PFCResources.h"; sourceTree = SOURCE_ROOT; };
+		53E986FF1D82E74F007C77EF /* PFCResources.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCResources.m; path = "Utility Classes/PFCResources.m"; sourceTree = SOURCE_ROOT; };
+		53E9B9AF1D80A6E9007E2046 /* PFCMainWindowToolbarItemAdd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCMainWindowToolbarItemAdd.h; path = "Main Window/Toolbar/PFCMainWindowToolbarItemAdd.h"; sourceTree = "<group>"; };
+		53E9B9B01D80A6E9007E2046 /* PFCMainWindowToolbarItemAdd.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCMainWindowToolbarItemAdd.m; path = "Main Window/Toolbar/PFCMainWindowToolbarItemAdd.m"; sourceTree = "<group>"; };
+		53E9DF241D7DAA1700D42C21 /* PFCPreferences.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCPreferences.h; path = Preferences/PFCPreferences.h; sourceTree = "<group>"; };
+		53E9DF251D7DAA1700D42C21 /* PFCPreferences.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCPreferences.m; path = Preferences/PFCPreferences.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		53AAB4801D79B89F00724074 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				531A861F1D79BA2D0065CB9C /* CocoaLumberjack.framework in Frameworks */,
+				5322057F1DB34D07006C07C9 /* ProfilePayloads.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		531A85EA1D79BA090065CB9C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				531A85FD1D79BA090065CB9C /* CocoaLumberjack.framework */,
+				531A85FF1D79BA090065CB9C /* CocoaLumberjackSwift.framework */,
+				531A86011D79BA090065CB9C /* CocoaLumberjack.framework */,
+				531A86031D79BA090065CB9C /* CocoaLumberjackSwift.framework */,
+				531A86051D79BA090065CB9C /* libCocoaLumberjack.a */,
+				531A86071D79BA090065CB9C /* CocoaLumberjack.framework */,
+				531A86091D79BA090065CB9C /* CocoaLumberjackSwift.framework */,
+				531A860B1D79BA090065CB9C /* CocoaLumberjack.framework */,
+				531A860D1D79BA090065CB9C /* CocoaLumberjackSwift.framework */,
+				531A860F1D79BA090065CB9C /* FmwkTest.app */,
+				531A86111D79BA090065CB9C /* SwiftTest.app */,
+				531A86131D79BA090065CB9C /* iOSSwiftTest.app */,
+				531A86151D79BA090065CB9C /* watchOSSwiftTest.app */,
+				531A86171D79BA090065CB9C /* watchOSSwiftTest Extension.appex */,
+				531A86191D79BA090065CB9C /* tvOSSwiftTest.app */,
+				531A861B1D79BA090065CB9C /* iOSLibStaticTest.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		5322057D1DB34CE8006C07C9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5322057E1DB34D07006C07C9 /* ProfilePayloads.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		533BB9391D79B9C800ECF23A /* Submodules */ = {
+			isa = PBXGroup;
+			children = (
+				531A85E91D79BA090065CB9C /* Lumberjack.xcodeproj */,
+			);
+			name = Submodules;
+			path = ProfileCreator;
+			sourceTree = "<group>";
+		};
+		5357508D1D7D6AEF00A976F3 /* Profile List */ = {
+			isa = PBXGroup;
+			children = (
+				5368824D1D7F500200B93632 /* PFCMainWindowTableView.h */,
+				5368824E1D7F500200B93632 /* PFCMainWindowTableView.m */,
+				53CC128E1D80067500F02661 /* PFCMainWindowTableViewProtocol.h */,
+				53BDFF6B1D7EEA6D00EBBB58 /* PFCMainWindowTableViewController.h */,
+				53BDFF6C1D7EEA6D00EBBB58 /* PFCMainWindowTableViewController.m */,
+				53BDFF7E1D7EF1A400EBBB58 /* PFCMainWindowTableViewItemCellView.h */,
+				53BDFF7F1D7EF1A400EBBB58 /* PFCMainWindowTableViewItemCellView.m */,
+				53D74EB51DA6D38C00588059 /* PFCMainWindowTableViewWelcome.h */,
+				53D74EB61DA6D38C00588059 /* PFCMainWindowTableViewWelcome.m */,
+			);
+			name = "Profile List";
+			sourceTree = "<group>";
+		};
+		5357508E1D7D6AFE00A976F3 /* Profile Preview */ = {
+			isa = PBXGroup;
+			children = (
+				53CC128F1D80072B00F02661 /* PFCMainWindowProfilePreviewController.h */,
+				53CC12901D80072B00F02661 /* PFCMainWindowProfilePreviewController.m */,
+				53CC12961D80130000F02661 /* PFCMainWindowProfilePreviewView.h */,
+				53CC12971D80130000F02661 /* PFCMainWindowProfilePreviewView.m */,
+				53CC12991D80146800F02661 /* PFCMainWindowProfilePreviewInfoView.h */,
+				53CC129A1D80146800F02661 /* PFCMainWindowProfilePreviewInfoView.m */,
+			);
+			name = "Profile Preview";
+			sourceTree = "<group>";
+		};
+		535E4D6C1D895EB100EBDCDB /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				533765051DA2336400C36428 /* PFCProfileEditorSettings.h */,
+				533765061DA2336400C36428 /* PFCProfileEditorSettings.m */,
+				533765171DA2364100C36428 /* PFCProfileEditorSettingsView.h */,
+				533765181DA2364100C36428 /* PFCProfileEditorSettingsView.m */,
+				533765191DA2364100C36428 /* PFCProfileEditorSettingsView.xib */,
+				535E4D6E1D89666000EBDCDB /* PFCProfileEditorSettingsPopOver.h */,
+				535E4D6F1D89666000EBDCDB /* PFCProfileEditorSettingsPopOver.m */,
+				535E4D701D89666000EBDCDB /* PFCProfileEditorSettingsPopOver.xib */,
+			);
+			name = Settings;
+			sourceTree = "<group>";
+		};
+		536B59761D81D179004D83AE /* Profile Editor */ = {
+			isa = PBXGroup;
+			children = (
+				536B59861D81D19F004D83AE /* PFCProfileEditor.h */,
+				536B59871D81D19F004D83AE /* PFCProfileEditor.m */,
+				538176C91D8728F600AF445E /* PFCProfileEditorSplitView.h */,
+				538176CA1D8728F600AF445E /* PFCProfileEditorSplitView.m */,
+				53D3F0541DA7AB6600306273 /* Toolbar */,
+				535E4D6C1D895EB100EBDCDB /* Settings */,
+				538176DC1D872B1C00AF445E /* Library */,
+				538176E01D872B5500AF445E /* Editor */,
+			);
+			name = "Profile Editor";
+			sourceTree = "<group>";
+		};
+		538176DC1D872B1C00AF445E /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				538176DD1D872B4C00AF445E /* PFCProfileEditorLibrarySplitView.h */,
+				538176DE1D872B4C00AF445E /* PFCProfileEditorLibrarySplitView.m */,
+				5352A21F1D8C7BAD003B7431 /* PFCProfileEditorLibraryPayloads.h */,
+				5352A2201D8C7BAD003B7431 /* PFCProfileEditorLibraryPayloads.m */,
+				53D9F6711D8DC5F800D51B5A /* PFCProfileEditorLibraryPayloadsCellViewProfile.h */,
+				53D9F6721D8DC5F800D51B5A /* PFCProfileEditorLibraryPayloadsCellViewProfile.m */,
+				5350C7AC1D8EACAA008205EF /* PFCProfileEditorLibraryPayloadsCellViewLibrary.h */,
+				5350C79B1D8EAC9C008205EF /* PFCProfileEditorLibraryPayloadsCellViewLibrary.m */,
+				53413B1F1D87CCD300C69938 /* PFCProfileEditorLibraryMenu.h */,
+				53413B201D87CCD300C69938 /* PFCProfileEditorLibraryMenu.m */,
+				53413B351D87D57E00C69938 /* PFCProfileEditorLibraryFilter.h */,
+				53413B361D87D57E00C69938 /* PFCProfileEditorLibraryFilter.m */,
+				5356A6E11DAB7AFC00E8AF1F /* PFCProfileEditorLibraryNoPayloads.h */,
+				5356A6E21DAB7AFC00E8AF1F /* PFCProfileEditorLibraryNoPayloads.m */,
+			);
+			name = Library;
+			sourceTree = "<group>";
+		};
+		538176E01D872B5500AF445E /* Editor */ = {
+			isa = PBXGroup;
+			children = (
+				538176E71D873B5500AF445E /* PFCProfileEditorTableViewController.h */,
+				538176E81D873B5500AF445E /* PFCProfileEditorTableViewController.m */,
+				53413B381D87DCAD00C69938 /* PFCProfileEditorFooter.h */,
+				53413B391D87DCAD00C69938 /* PFCProfileEditorFooter.m */,
+			);
+			name = Editor;
+			sourceTree = "<group>";
+		};
+		5381D4FC1D7B531500AFBD60 /* Sidebar */ = {
+			isa = PBXGroup;
+			children = (
+				53B5C1E81D855D66001014BB /* PFCMainWindowAllProfiles.h */,
+				53B5C1E91D855D66001014BB /* PFCMainWindowAllProfiles.m */,
+				53B5C1EB1D855EC5001014BB /* PFCMainWindowAllProfilesGroup.h */,
+				53B5C1EC1D855EC5001014BB /* PFCMainWindowAllProfilesGroup.m */,
+				53CC12931D800F1A00F02661 /* PFCMainWindowLibrary.h */,
+				53CC12941D800F1A00F02661 /* PFCMainWindowLibrary.m */,
+				536B598C1D81F0CC004D83AE /* PFCMainWindowLibraryGroup.h */,
+				536B598D1D81F0CC004D83AE /* PFCMainWindowLibraryGroup.m */,
+				53E34FAF1D7CAD9A0089C144 /* PFCMainWindowOutlineView.h */,
+				53E34FB01D7CAD9A0089C144 /* PFCMainWindowOutlineView.m */,
+				53BDFF811D7EF86200EBBB58 /* PFCMainWindowOutlineViewProtocol.h */,
+				5381D4E31D7B28C300AFBD60 /* PFCMainWindowOutlineViewController.h */,
+				5381D4E41D7B28C300AFBD60 /* PFCMainWindowOutlineViewController.m */,
+				536B598A1D81E3A1004D83AE /* PFCMainWindowOutlineViewParentProtocol.h */,
+				5381D4F91D7B530A00AFBD60 /* PFCMainWindowOutlineViewParentCellView.h */,
+				5381D4FA1D7B530A00AFBD60 /* PFCMainWindowOutlineViewParentCellView.m */,
+				536B598B1D81EFA7004D83AE /* PFCMainWindowOutlineViewChildProtocol.h */,
+				5381D5011D7C2A7900AFBD60 /* PFCMainWindowOutlineViewChildCellView.h */,
+				5381D5021D7C2A7900AFBD60 /* PFCMainWindowOutlineViewChildCellView.m */,
+			);
+			name = Sidebar;
+			sourceTree = "<group>";
+		};
+		5381D4FD1D7B532800AFBD60 /* Toolbar */ = {
+			isa = PBXGroup;
+			children = (
+				53E9B9AF1D80A6E9007E2046 /* PFCMainWindowToolbarItemAdd.h */,
+				53E9B9B01D80A6E9007E2046 /* PFCMainWindowToolbarItemAdd.m */,
+				53E64A0D1DA142400015FB79 /* PFCMainWindowToolbarItemExport.h */,
+				53E64A1D1DA142630015FB79 /* PFCMainWindowToolbarItemExport.m */,
+			);
+			name = Toolbar;
+			sourceTree = "<group>";
+		};
+		53AAB47A1D79B89F00724074 = {
+			isa = PBXGroup;
+			children = (
+				53AAB4851D79B89F00724074 /* ProfileCreator */,
+				53E23D2B1D79BB0600D527C3 /* Utility Classes */,
+				53B5C1F01D8565B1001014BB /* Profile Classes */,
+				53AB78831D79C98600EB89B8 /* Window Controllers */,
+				533BB9391D79B9C800ECF23A /* Submodules */,
+				5322057D1DB34CE8006C07C9 /* Frameworks */,
+				53C2F0581D815339003B9118 /* Graphics */,
+				53AAB4841D79B89F00724074 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		53AAB4841D79B89F00724074 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				53AAB4831D79B89F00724074 /* ProfileCreator.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		53AAB4851D79B89F00724074 /* ProfileCreator */ = {
+			isa = PBXGroup;
+			children = (
+				533FC6201D79BF8500B62DE5 /* PFCAppDelegate.h */,
+				533FC6211D79BF8500B62DE5 /* PFCAppDelegate.m */,
+				53AAB48C1D79B89F00724074 /* Assets.xcassets */,
+				53AAB48E1D79B89F00724074 /* MainMenu.xib */,
+				53AAB4911D79B89F00724074 /* Info.plist */,
+				53E986EB1D82E552007C77EF /* Defaults.plist */,
+				53AAB4891D79B89F00724074 /* Supporting Files */,
+			);
+			path = ProfileCreator;
+			sourceTree = "<group>";
+		};
+		53AAB4891D79B89F00724074 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				53AAB48A1D79B89F00724074 /* main.m */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		53AB78831D79C98600EB89B8 /* Window Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				53E9DF141D7DA9FD00D42C21 /* Preferences */,
+				53AB78931D79C9A200EB89B8 /* MainWindow */,
+				536B59761D81D179004D83AE /* Profile Editor */,
+			);
+			path = "Window Controllers";
+			sourceTree = "<group>";
+		};
+		53AB78931D79C9A200EB89B8 /* MainWindow */ = {
+			isa = PBXGroup;
+			children = (
+				53AB78941D79C9DD00EB89B8 /* PFCMainWindow.h */,
+				53AB78951D79C9DD00EB89B8 /* PFCMainWindow.m */,
+				534B27061D7AF2D900D6FD2D /* PFCMainWindowSplitView.h */,
+				534B27071D7AF2D900D6FD2D /* PFCMainWindowSplitView.m */,
+				5381D4FD1D7B532800AFBD60 /* Toolbar */,
+				5381D4FC1D7B531500AFBD60 /* Sidebar */,
+				5357508D1D7D6AEF00A976F3 /* Profile List */,
+				5357508E1D7D6AFE00A976F3 /* Profile Preview */,
+			);
+			name = MainWindow;
+			sourceTree = "<group>";
+		};
+		53B5C1F01D8565B1001014BB /* Profile Classes */ = {
+			isa = PBXGroup;
+			children = (
+				53B5C1F11D8565D3001014BB /* PFCProfile.h */,
+				53B5C1F21D8565D3001014BB /* PFCProfile.m */,
+				53B5C1F41D8565EC001014BB /* PFCProfileController.h */,
+				53B5C1F51D8565EC001014BB /* PFCProfileController.m */,
+			);
+			name = "Profile Classes";
+			sourceTree = "<group>";
+		};
+		53C2F0581D815339003B9118 /* Graphics */ = {
+			isa = PBXGroup;
+			children = (
+				53C2F0681D815343003B9118 /* Icons */,
+			);
+			name = Graphics;
+			sourceTree = "<group>";
+		};
+		53C2F0681D815343003B9118 /* Icons */ = {
+			isa = PBXGroup;
+			children = (
+				53B5C1D71D8488D6001014BB /* SidebarFolder.icns */,
+				53B778BA1D8801520025812D /* ButtonPopOverMenu.png */,
+				537BA0C91D8895DB0082B614 /* Settings Filled-16.png */,
+				537BA0CA1D8895DB0082B614 /* Settings-16.png */,
+				537BA0CB1D8895DB0082B614 /* Approval Filled-18.png */,
+				537BA0CC1D8895DB0082B614 /* Approval-18.png */,
+				537BA0CD1D8895DB0082B614 /* Home Filled-15.png */,
+				537BA0CE1D8895DB0082B614 /* Home-15.png */,
+				53C2F06E1D815CF4003B9118 /* downarrow.png */,
+			);
+			name = Icons;
+			sourceTree = "<group>";
+		};
+		53D3F0541DA7AB6600306273 /* Toolbar */ = {
+			isa = PBXGroup;
+			children = (
+				53D3F0641DA7AB8F00306273 /* PFCProfileEditorToolbarItemTitle.h */,
+				53D3F0651DA7AB8F00306273 /* PFCProfileEditorToolbarItemTitle.m */,
+			);
+			name = Toolbar;
+			sourceTree = "<group>";
+		};
+		53E23D2B1D79BB0600D527C3 /* Utility Classes */ = {
+			isa = PBXGroup;
+			children = (
+				53E23D411D79BBCD00D527C3 /* PFCConstants.h */,
+				53E23D421D79BBCD00D527C3 /* PFCConstants.m */,
+				53E34FC11D7CAFFF0089C144 /* PFCAlert.h */,
+				53E34FC21D7CAFFF0089C144 /* PFCAlert.m */,
+				5356A6BF1DAB6DED00E8AF1F /* PFCError.h */,
+				5356A6C01DAB6DED00E8AF1F /* PFCError.m */,
+				53E23D3B1D79BB2D00D527C3 /* PFCLog.h */,
+				53E23D3C1D79BB2D00D527C3 /* PFCLog.m */,
+				53E23D3E1D79BB8F00D527C3 /* PFCLogFormatter.h */,
+				53E23D3F1D79BB8F00D527C3 /* PFCLogFormatter.m */,
+				53E986FE1D82E74F007C77EF /* PFCResources.h */,
+				53E986FF1D82E74F007C77EF /* PFCResources.m */,
+				5356A6E41DAB7B5200E8AF1F /* PFCViewWhite.h */,
+				5356A6E51DAB7B5200E8AF1F /* PFCViewWhite.m */,
+			);
+			name = "Utility Classes";
+			path = ProfileCreator;
+			sourceTree = "<group>";
+		};
+		53E9DF141D7DA9FD00D42C21 /* Preferences */ = {
+			isa = PBXGroup;
+			children = (
+				53E9DF241D7DAA1700D42C21 /* PFCPreferences.h */,
+				53E9DF251D7DAA1700D42C21 /* PFCPreferences.m */,
+				53E9DF271D7DAAD100D42C21 /* Toolbar */,
+			);
+			name = Preferences;
+			sourceTree = "<group>";
+		};
+		53E9DF271D7DAAD100D42C21 /* Toolbar */ = {
+			isa = PBXGroup;
+			children = (
+				5372568B1D7E9A2300314E67 /* PFCPreferencesToolbarItemGeneral.h */,
+				5372568C1D7E9A2300314E67 /* PFCPreferencesToolbarItemGeneral.m */,
+				53C33CB91D83D87500CBB709 /* PFCPreferencesToolbarItemGeneral.xib */,
+				53A718AC1DAE2697001F8B15 /* PFCPreferencesToolbarItemProfileDefaults.h */,
+				53A718AD1DAE2697001F8B15 /* PFCPreferencesToolbarItemProfileDefaults.m */,
+				53A718B31DAE2D06001F8B15 /* PFCPreferencesToolbarItemProfileDefaults.xib */,
+			);
+			name = Toolbar;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		53AAB4821D79B89F00724074 /* ProfileCreator */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 53AAB4941D79B89F00724074 /* Build configuration list for PBXNativeTarget "ProfileCreator" */;
+			buildPhases = (
+				53AAB47F1D79B89F00724074 /* Sources */,
+				53AAB4801D79B89F00724074 /* Frameworks */,
+				53AAB4811D79B89F00724074 /* Resources */,
+				531A86201D79BA3F0065CB9C /* Copy Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				531A861E1D79BA230065CB9C /* PBXTargetDependency */,
+			);
+			name = ProfileCreator;
+			productName = ProfileCreator;
+			productReference = 53AAB4831D79B89F00724074 /* ProfileCreator.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		53AAB47B1D79B89F00724074 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				CLASSPREFIX = PFC;
+				LastUpgradeCheck = 0730;
+				ORGANIZATIONNAME = ProfileCreator;
+				TargetAttributes = {
+					53AAB4821D79B89F00724074 = {
+						CreatedOnToolsVersion = 7.3;
+						DevelopmentTeam = Y7QFC8672N;
+					};
+				};
+			};
+			buildConfigurationList = 53AAB47E1D79B89F00724074 /* Build configuration list for PBXProject "ProfileCreator" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 53AAB47A1D79B89F00724074;
+			productRefGroup = 53AAB4841D79B89F00724074 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 531A85EA1D79BA090065CB9C /* Products */;
+					ProjectRef = 531A85E91D79BA090065CB9C /* Lumberjack.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				53AAB4821D79B89F00724074 /* ProfileCreator */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		531A85FD1D79BA090065CB9C /* CocoaLumberjack.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = CocoaLumberjack.framework;
+			remoteRef = 531A85FC1D79BA090065CB9C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		531A85FF1D79BA090065CB9C /* CocoaLumberjackSwift.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = CocoaLumberjackSwift.framework;
+			remoteRef = 531A85FE1D79BA090065CB9C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		531A86011D79BA090065CB9C /* CocoaLumberjack.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = CocoaLumberjack.framework;
+			remoteRef = 531A86001D79BA090065CB9C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		531A86031D79BA090065CB9C /* CocoaLumberjackSwift.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = CocoaLumberjackSwift.framework;
+			remoteRef = 531A86021D79BA090065CB9C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		531A86051D79BA090065CB9C /* libCocoaLumberjack.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libCocoaLumberjack.a;
+			remoteRef = 531A86041D79BA090065CB9C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		531A86071D79BA090065CB9C /* CocoaLumberjack.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = CocoaLumberjack.framework;
+			remoteRef = 531A86061D79BA090065CB9C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		531A86091D79BA090065CB9C /* CocoaLumberjackSwift.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = CocoaLumberjackSwift.framework;
+			remoteRef = 531A86081D79BA090065CB9C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		531A860B1D79BA090065CB9C /* CocoaLumberjack.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = CocoaLumberjack.framework;
+			remoteRef = 531A860A1D79BA090065CB9C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		531A860D1D79BA090065CB9C /* CocoaLumberjackSwift.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = CocoaLumberjackSwift.framework;
+			remoteRef = 531A860C1D79BA090065CB9C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		531A860F1D79BA090065CB9C /* FmwkTest.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = FmwkTest.app;
+			remoteRef = 531A860E1D79BA090065CB9C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		531A86111D79BA090065CB9C /* SwiftTest.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = SwiftTest.app;
+			remoteRef = 531A86101D79BA090065CB9C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		531A86131D79BA090065CB9C /* iOSSwiftTest.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = iOSSwiftTest.app;
+			remoteRef = 531A86121D79BA090065CB9C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		531A86151D79BA090065CB9C /* watchOSSwiftTest.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = watchOSSwiftTest.app;
+			remoteRef = 531A86141D79BA090065CB9C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		531A86171D79BA090065CB9C /* watchOSSwiftTest Extension.appex */ = {
+			isa = PBXReferenceProxy;
+			fileType = "wrapper.app-extension";
+			path = "watchOSSwiftTest Extension.appex";
+			remoteRef = 531A86161D79BA090065CB9C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		531A86191D79BA090065CB9C /* tvOSSwiftTest.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = tvOSSwiftTest.app;
+			remoteRef = 531A86181D79BA090065CB9C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		531A861B1D79BA090065CB9C /* iOSLibStaticTest.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = iOSLibStaticTest.app;
+			remoteRef = 531A861A1D79BA090065CB9C /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXResourcesBuildPhase section */
+		53AAB4811D79B89F00724074 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				53B778BB1D8801520025812D /* ButtonPopOverMenu.png in Resources */,
+				537BA0CF1D8895DB0082B614 /* Settings Filled-16.png in Resources */,
+				53A718B11DAE2D06001F8B15 /* PFCPreferencesToolbarItemProfileDefaults.xib in Resources */,
+				53AAB48D1D79B89F00724074 /* Assets.xcassets in Resources */,
+				53B5C1D81D8488D6001014BB /* SidebarFolder.icns in Resources */,
+				53AAB4901D79B89F00724074 /* MainMenu.xib in Resources */,
+				537BA0D11D8895DB0082B614 /* Approval Filled-18.png in Resources */,
+				537BA0D01D8895DB0082B614 /* Settings-16.png in Resources */,
+				535E4D721D89666000EBDCDB /* PFCProfileEditorSettingsPopOver.xib in Resources */,
+				53E986EC1D82E552007C77EF /* Defaults.plist in Resources */,
+				537BA0D41D8895DB0082B614 /* Home-15.png in Resources */,
+				537BA0D31D8895DB0082B614 /* Home Filled-15.png in Resources */,
+				5337651B1DA2364100C36428 /* PFCProfileEditorSettingsView.xib in Resources */,
+				537BA0D21D8895DB0082B614 /* Approval-18.png in Resources */,
+				53C2F06F1D815CF4003B9118 /* downarrow.png in Resources */,
+				53C33CB71D83D87500CBB709 /* PFCPreferencesToolbarItemGeneral.xib in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		53AAB47F1D79B89F00724074 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5356A6E31DAB7AFC00E8AF1F /* PFCProfileEditorLibraryNoPayloads.m in Sources */,
+				5372568E1D7E9A2300314E67 /* PFCPreferencesToolbarItemGeneral.m in Sources */,
+				5381D5031D7C2A7900AFBD60 /* PFCMainWindowOutlineViewChildCellView.m in Sources */,
+				53BDFF801D7EF1A400EBBB58 /* PFCMainWindowTableViewItemCellView.m in Sources */,
+				53D74EB71DA6D38C00588059 /* PFCMainWindowTableViewWelcome.m in Sources */,
+				53BDFF6D1D7EEA6D00EBBB58 /* PFCMainWindowTableViewController.m in Sources */,
+				538176E91D873B5500AF445E /* PFCProfileEditorTableViewController.m in Sources */,
+				53CC12951D800F1A00F02661 /* PFCMainWindowLibrary.m in Sources */,
+				53AB78971D79C9DD00EB89B8 /* PFCMainWindow.m in Sources */,
+				53E9DF261D7DAA1700D42C21 /* PFCPreferences.m in Sources */,
+				53D3F0661DA7AB8F00306273 /* PFCProfileEditorToolbarItemTitle.m in Sources */,
+				53E9B9B11D80A6E9007E2046 /* PFCMainWindowToolbarItemAdd.m in Sources */,
+				533FC6221D79BF8500B62DE5 /* PFCAppDelegate.m in Sources */,
+				5356A6C11DAB6DED00E8AF1F /* PFCError.m in Sources */,
+				53413B371D87D57E00C69938 /* PFCProfileEditorLibraryFilter.m in Sources */,
+				53B5C1F61D8565EC001014BB /* PFCProfileController.m in Sources */,
+				5381D4FB1D7B530A00AFBD60 /* PFCMainWindowOutlineViewParentCellView.m in Sources */,
+				5381D4E51D7B28C300AFBD60 /* PFCMainWindowOutlineViewController.m in Sources */,
+				53E34FB11D7CAD9A0089C144 /* PFCMainWindowOutlineView.m in Sources */,
+				53E23D431D79BBCD00D527C3 /* PFCConstants.m in Sources */,
+				538176CB1D8728F600AF445E /* PFCProfileEditorSplitView.m in Sources */,
+				53E34FC31D7CAFFF0089C144 /* PFCAlert.m in Sources */,
+				53CC129C1D80146800F02661 /* PFCMainWindowProfilePreviewInfoView.m in Sources */,
+				53B5C1F31D8565D3001014BB /* PFCProfile.m in Sources */,
+				53CC12911D80072B00F02661 /* PFCMainWindowProfilePreviewController.m in Sources */,
+				53D9F6731D8DC5F800D51B5A /* PFCProfileEditorLibraryPayloadsCellViewProfile.m in Sources */,
+				535E4D711D89666000EBDCDB /* PFCProfileEditorSettingsPopOver.m in Sources */,
+				538176DF1D872B4C00AF445E /* PFCProfileEditorLibrarySplitView.m in Sources */,
+				53E23D3D1D79BB2D00D527C3 /* PFCLog.m in Sources */,
+				53B5C1ED1D855EC5001014BB /* PFCMainWindowAllProfilesGroup.m in Sources */,
+				5356A6E61DAB7B5200E8AF1F /* PFCViewWhite.m in Sources */,
+				53AAB48B1D79B89F00724074 /* main.m in Sources */,
+				533765071DA2336400C36428 /* PFCProfileEditorSettings.m in Sources */,
+				534B27081D7AF2D900D6FD2D /* PFCMainWindowSplitView.m in Sources */,
+				53B5C1EA1D855D66001014BB /* PFCMainWindowAllProfiles.m in Sources */,
+				536B598E1D81F0CC004D83AE /* PFCMainWindowLibraryGroup.m in Sources */,
+				5352A2211D8C7BAD003B7431 /* PFCProfileEditorLibraryPayloads.m in Sources */,
+				5337651A1DA2364100C36428 /* PFCProfileEditorSettingsView.m in Sources */,
+				53E987001D82E74F007C77EF /* PFCResources.m in Sources */,
+				5350C79C1D8EAC9C008205EF /* PFCProfileEditorLibraryPayloadsCellViewLibrary.m in Sources */,
+				53A718AF1DAE2697001F8B15 /* PFCPreferencesToolbarItemProfileDefaults.m in Sources */,
+				536B59881D81D19F004D83AE /* PFCProfileEditor.m in Sources */,
+				53413B211D87CCD300C69938 /* PFCProfileEditorLibraryMenu.m in Sources */,
+				53CC12981D80130000F02661 /* PFCMainWindowProfilePreviewView.m in Sources */,
+				5368824F1D7F500200B93632 /* PFCMainWindowTableView.m in Sources */,
+				53E23D401D79BB8F00D527C3 /* PFCLogFormatter.m in Sources */,
+				53413B3A1D87DCAD00C69938 /* PFCProfileEditorFooter.m in Sources */,
+				53E64A1E1DA142630015FB79 /* PFCMainWindowToolbarItemExport.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		531A861E1D79BA230065CB9C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = CocoaLumberjack;
+			targetProxy = 531A861D1D79BA230065CB9C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		53A718B31DAE2D06001F8B15 /* PFCPreferencesToolbarItemProfileDefaults.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				53A718B41DAE2D0E001F8B15 /* Base */,
+				53A718B51DAE2D24001F8B15 /* en */,
+			);
+			name = PFCPreferencesToolbarItemProfileDefaults.xib;
+			path = Preferences/Toolbar;
+			sourceTree = "<group>";
+		};
+		53AAB48E1D79B89F00724074 /* MainMenu.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				53AAB48F1D79B89F00724074 /* Base */,
+				53358FD11D83591200C6F532 /* en */,
+			);
+			name = MainMenu.xib;
+			sourceTree = "<group>";
+		};
+		53C33CB91D83D87500CBB709 /* PFCPreferencesToolbarItemGeneral.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				53C33CB81D83D87500CBB709 /* Base */,
+				53C33CCA1D83D87900CBB709 /* en */,
+			);
+			name = PFCPreferencesToolbarItemGeneral.xib;
+			path = Preferences/Toolbar;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		53AAB4921D79B89F00724074 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		53AAB4931D79B89F00724074 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		53AAB4951D79B89F00724074 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Frameworks",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Frameworks/**";
+				INFOPLIST_FILE = ProfileCreator/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				OTHER_CFLAGS = (
+					"-Wall",
+					"-Wdeprecated-implementations",
+					"-Wfloat-equal",
+					"-Wimplicit-retain-self",
+					"-Wnewline-eof",
+					"-Wsign-compare",
+					"-Wundef",
+					"-Wshadow",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.github.ProfileCreator;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		53AAB4961D79B89F00724074 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Developer ID Application";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Frameworks",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = NDEBUG;
+				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/Frameworks/**";
+				INFOPLIST_FILE = ProfileCreator/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				OTHER_CFLAGS = (
+					"-Wall",
+					"-Wdeprecated-implementations",
+					"-Wfloat-equal",
+					"-Wimplicit-retain-self",
+					"-Wnewline-eof",
+					"-Wsign-compare",
+					"-Wundef",
+					"-Wshadow",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.github.ProfileCreator;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		53AAB47E1D79B89F00724074 /* Build configuration list for PBXProject "ProfileCreator" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				53AAB4921D79B89F00724074 /* Debug */,
+				53AAB4931D79B89F00724074 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		53AAB4941D79B89F00724074 /* Build configuration list for PBXNativeTarget "ProfileCreator" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				53AAB4951D79B89F00724074 /* Debug */,
+				53AAB4961D79B89F00724074 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 53AAB47B1D79B89F00724074 /* Project object */;
+}
