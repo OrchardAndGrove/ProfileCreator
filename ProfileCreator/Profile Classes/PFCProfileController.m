@@ -171,7 +171,7 @@
             NSError *error;
 
             // FIXME - The check if the profile has been saved to disk is weak, should probably check the url and where it points aswell?
-            if (profile.url) {
+            if (!profile.url) {
                 NSString *identifier = profile.identifier;
                 if ([self removeProfileWithIdentifier:identifier error:&error]) {
                     [[NSNotificationCenter defaultCenter] postNotificationName:PFCDidRemoveProfileNotification object:self userInfo:@{ PFCNotificationUserInfoProfileIdentifiers : @[ identifier ] }];
