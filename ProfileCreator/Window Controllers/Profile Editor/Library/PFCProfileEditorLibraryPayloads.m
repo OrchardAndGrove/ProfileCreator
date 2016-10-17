@@ -86,8 +86,7 @@ NSString *const PFCProfileEditorLibraryTableColumnIdentifierPayloads = @"TableCo
         // ---------------------------------------------------------------------
         //  Instantiate the Profile Payloads Collections to use in this editor instance
         // ---------------------------------------------------------------------
-        PFPProfilePayloads *profilePayloads = [PFPProfilePayloads sharedInstance];
-        _payloadCollections = [profilePayloads payloadCollectionsWithViewModel:kPFPViewModelTableView delegate:_profile];
+        _payloadCollections = [[PFPPayloadCollections alloc] initWithViewModel:kPFPViewModelTableView delegate:_profile];
 
         // ---------------------------------------------------------------------
         //  Set a reference to this instance of the Profile Payloads Collection to the profile instance
