@@ -229,6 +229,7 @@
     //  Cleanup when the editor window is closed
     // -------------------------------------------------------------------------
     [self setEditor:nil];
+    [self setPayloadCollections:nil];
     [self setPayloadSettings:[self.savedPayloadSettings mutableCopy]];
     [self setTitle:[self.savedTitle copy]];
 } // removeEditor
