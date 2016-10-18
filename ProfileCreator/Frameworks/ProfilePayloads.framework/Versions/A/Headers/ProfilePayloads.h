@@ -32,7 +32,6 @@ FOUNDATION_EXPORT const unsigned char ProfilePayloadsVersionString[];
 #import "PFPPayloadCollectionSet.h"
 #import "PFPPayloadCollections.h"
 #import "PFPPayloadExporter.h"
-#import "PFPPayloadKey.h"
 #import "PFPPayloadParser.h"
 #import "PFPPayloadType.h"
 #import "PFPPayloadTypeKey.h"

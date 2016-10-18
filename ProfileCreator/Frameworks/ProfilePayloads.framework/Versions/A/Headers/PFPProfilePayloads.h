@@ -24,22 +24,48 @@
 @class PFPPayloadCollections;
 
 @interface PFPProfilePayloads : NSObject
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark Properties
+#pragma mark -
+////////////////////////////////////////////////////////////////////////////////
+
 @property (nonatomic) NSInteger viewWidth;
 @property (nonatomic, strong, readonly, nullable) PFPPayloadTypes *payloadTypes;
 
-// -----------------------------------------------------------------------------
-//  Class Methods
-// -----------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark Class Methods
+#pragma mark -
+////////////////////////////////////////////////////////////////////////////////
+
 + (nonnull instancetype)sharedInstance;
 
-- (PFPPayloadCollections *_Nullable)payloadCollectionsWithViewModel:(PFPViewModel)viewModel delegate:(id<PFPViewTypeDelegate> _Nullable)delegate;
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark Instance Methods
+#pragma mark -
+////////////////////////////////////////////////////////////////////////////////
 
-- (NSDictionary *_Nullable)profileContentFromPayloadSettings:(NSDictionary *_Nonnull)payloadSettings
-                                              baseIdentifier:(NSString *_Nonnull)baseIdentifier
-                                                       scope:(PFPScope)scope
-                                                distribution:(PFPDistribution)distribution
-                                                  supervised:(BOOL)supervised
-                                                   viewModel:(PFPViewModel)viewModel
-                                                       error:(NSError *_Nullable *_Nullable)error;
+/*!
+ @brief Returns a generated profile using passed parameters.
+ @discussion FIXME
+ @param  payloadSettings
+ @param  baseIdentifier
+ @param  scope
+ @param  distribution
+ @param  supervised
+ @param  viewModel
+ @param  error
+ @return NSDictionary
+ */
+- (NSDictionary *_Nullable)profileWithSettings:(NSDictionary *_Nonnull)payloadSettings
+                                baseIdentifier:(NSString *_Nonnull)baseIdentifier
+                                         scope:(PFPScope)scope
+                                  distribution:(PFPDistribution)distribution
+                                    supervised:(BOOL)supervised
+                                     viewModel:(PFPViewModel)viewModel
+                                         error:(NSError *_Nullable *_Nullable)error;
 
 @end

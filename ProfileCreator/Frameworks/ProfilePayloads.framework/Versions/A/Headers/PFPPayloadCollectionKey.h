@@ -2,9 +2,20 @@
 //  PFPPayloadCollectionKey.h
 //  ProfilePayloads
 //
-//  Created by Erik Berglund on 2016-09-23.
-//  Copyright © 2016 ProfileCreator. All rights reserved.
+//  Created by Erik Berglund.
+//  Copyright (c) 2016 ProfileCreator. All rights reserved.
 //
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
 
 #import "PFPConstants.h"
 #import "PFPPayloadCollection.h"
@@ -13,6 +24,12 @@
 #import <Cocoa/Cocoa.h>
 
 @interface PFPPayloadCollectionKey : NSObject
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark Properties
+#pragma mark -
+////////////////////////////////////////////////////////////////////////////////
 
 // Collection Properties
 @property (nonatomic, readonly) PFPViewType viewType;
@@ -82,15 +99,30 @@
 @property (nonatomic, readonly, strong, nullable) NSDate *date;  // Default Value: now, Used by: DatePicker
 @property (nonatomic, readonly, strong, nullable) id payloadValue;
 
-// Methods
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark Init
+#pragma mark -
+////////////////////////////////////////////////////////////////////////////////
+
+- (nonnull instancetype)init NS_UNAVAILABLE;
 - (nonnull instancetype)initWithKeyDict:(NSDictionary *_Nonnull)keyDict
                       payloadCollection:(id<PFPPayloadCollection> _Nonnull)payloadCollection
                               viewModel:(PFPViewModel)viewModel
                                delegate:(id<PFPViewTypeDelegate> _Nonnull)delegate;
 
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark Instance Methods
+#pragma mark -
+////////////////////////////////////////////////////////////////////////////////
+
 - (nullable id)viewWithSettings:(NSDictionary *_Nullable)settingsDict;
 - (PFPPayloadTypeKey *_Nullable)payloadTypeKeyForPayloadKeyPath:(NSString *_Nonnull)payloadKeyPath;
-
 - (BOOL)isRequired;
+
+// Should add these to make the conditions check internal
+// - (BOOL)isOptional;
+// - (BOOL)isExcluded;
 
 @end

@@ -2,9 +2,20 @@
 //  PFPConstants.h
 //  ProfilePayloads
 //
-//  Created by Erik Berglund on 2016-09-14.
-//  Copyright © 2016 ProfileCreator. All rights reserved.
+//  Created by Erik Berglund.
+//  Copyright (c) 2016 ProfileCreator. All rights reserved.
 //
+//  Licensed under the Apache License, Version 2.0 (the "License");
+//  you may not use this file except in compliance with the License.
+//  You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the License is distributed on an "AS IS" BASIS,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the License for the specific language governing permissions and
+//  limitations under the License.
 
 #import <Foundation/Foundation.h>
 
@@ -31,7 +42,7 @@ typedef NS_ENUM(NSUInteger, PFPViewType) { kPFPViewTypeNone = 0, kPFPViewTypeUnk
 typedef NS_ENUM(NSUInteger, PFPFontWeight) { kPFPFontWeightRegular = 0, kPFPFontWeightBold };
 
 // PFPCollection
-typedef NS_ENUM(NSUInteger, PFPCollectionSet) { kPFPCollectionSetProfileManager = 0 };
+typedef NS_ENUM(NSUInteger, PFPCollectionSet) { kPFPCollectionSetApple = 0 };
 
 // PFPOrientationAttribute
 typedef NS_ENUM(NSUInteger, PFPOrientationAttribute) { kPFPOrientationAttributeAbove = 0, kPFPOrientationAttributeLeading, kPFPOrientationAttributeTrailing, kPFPOrientationAttributeBelow };
@@ -58,7 +69,6 @@ typedef NS_OPTIONS(NSUInteger, PFPOSPlatform) {
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark Other
 ////////////////////////////////////////////////////////////////////////////////
-
 extern NSString *_Nonnull const PFPPayloadKeyPathDelimiter;
 extern NSString *_Nonnull const PFPPayloadCollectionSetKeyCollections;
 
@@ -73,7 +83,6 @@ extern NSString *_Nonnull const PFPPlaceholderKeyTitle;
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark Platform
 ////////////////////////////////////////////////////////////////////////////////
-
 extern NSString *_Nonnull const PFPPlatformiOS;           // String representing platform iOS.
 extern NSString *_Nonnull const PFPPlatformmacOS;         // String representing platform macOS.
 extern NSString *_Nonnull const PFPPlatformVersionLatest; // String representing whatever the latest version is.
@@ -85,7 +94,6 @@ extern NSString *_Nonnull const PFPPlatformVersionMinmacOS; // String representi
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark Manifest Keys
 ////////////////////////////////////////////////////////////////////////////////
-
 // Unsorted
 extern NSString *_Nonnull const PFPManifestKeyDescription;
 extern NSString *_Nonnull const PFPManifestKeyDomain;
@@ -146,6 +154,7 @@ extern NSString *_Nonnull const PFPManifestKeyTargetContainsAny;
 extern NSString *_Nonnull const PFPManifestKeyTargetValue;
 
 // Value
+extern NSString *_Nonnull const PFPManifestKeyValue;
 extern NSString *_Nonnull const PFPManifestKeyValueDefault;
 extern NSString *_Nonnull const PFPManifestKeyValueDefaultKeyPath;
 extern NSString *_Nonnull const PFPManifestKeyValueList;
@@ -158,13 +167,18 @@ extern NSString *_Nonnull const PFPManifestKeyValueMinOffsetMinutes;
 extern NSString *_Nonnull const PFPManifestKeyValueType;
 extern NSString *_Nonnull const PFPManifestKeyValueSubkeys;
 
+// Conditions
+extern NSString *_Nonnull const PFPManifestKeyConditions;
+extern NSString *_Nonnull const PFPManifestKeyValueKeyPath;
+extern NSString *_Nonnull const PFPManifestKeyValueContains;
+extern NSString *_Nonnull const PFPManifestKeyValueContainsAny;
+
 // ViewType
 extern NSString *_Nonnull const PFPManifestKeyViewType;
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark PayloadValueTypes
 ////////////////////////////////////////////////////////////////////////////////
-
 extern NSString *_Nonnull const PFPValueTypeArray;
 extern NSString *_Nonnull const PFPValueTypeBoolean;
 extern NSString *_Nonnull const PFPValueTypeData;
@@ -199,21 +213,48 @@ extern NSString *_Nonnull const PFPFileDescriptionKeyDescriptionBottomLabel;
 #pragma mark Settings Keys
 ////////////////////////////////////////////////////////////////////////////////
 extern NSString *_Nonnull const PFPSettingsKeyEnabled;
+extern NSString *_Nonnull const PFPSettingsKeyPayloadUUID;
+extern NSString *_Nonnull const PFPSettingsKeyPayloadType;
+extern NSString *_Nonnull const PFPSettingsKeyPayloadVersion;
 extern NSString *_Nonnull const PFPSettingsKeyValue;
 extern NSString *_Nonnull const PFPSettingsKeyValueDatePicker;
 extern NSString *_Nonnull const PFPSettingsKeyValueFile;
 extern NSString *_Nonnull const PFPSettingsKeyValueFileInfo;
 extern NSString *_Nonnull const PFPSettingsKeyValueKey;
-extern NSString *_Nonnull const PFPSettingsKeyValuePopUpButton;
+extern NSString *_Nonnull const PFPSettingsKeyValueSelection;
 extern NSString *_Nonnull const PFPSettingsKeyValueTextField;
 extern NSString *_Nonnull const PFPSettingsKeyValueTextView;
 
 ////////////////////////////////////////////////////////////////////////////////
-#pragma mark ViewTypes
+#pragma mark Payload Types
 ////////////////////////////////////////////////////////////////////////////////
+extern NSString *_Nonnull const PFPPayloadTypeConfiguration;
 
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark Profile Keys
+////////////////////////////////////////////////////////////////////////////////
+extern NSString *_Nonnull const PFPProfileKeyPayloadContent;
+extern NSString *_Nonnull const PFPProfileKeyPayloadEnabled;
+extern NSString *_Nonnull const PFPProfileKeyPayloadIdentifier;
+extern NSString *_Nonnull const PFPProfileKeyPayloadScope;
+extern NSString *_Nonnull const PFPProfileKeyPayloadType;
+extern NSString *_Nonnull const PFPProfileKeyPayloadUUID;
+extern NSString *_Nonnull const PFPProfileKeyPayloadVersion;
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark ViewType TableView
+////////////////////////////////////////////////////////////////////////////////
 extern NSString *_Nonnull const PFPViewTypeDatePicker;
 extern NSString *_Nonnull const PFPViewTypeFile;
 extern NSString *_Nonnull const PFPViewTypePopUpButton;
 extern NSString *_Nonnull const PFPViewTypeTextField;
 extern NSString *_Nonnull const PFPViewTypeTextView;
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark UserChange Keys
+////////////////////////////////////////////////////////////////////////////////
+extern NSString *_Nonnull const PFPUserChangeKeyCollectionIdentifier;
+extern NSString *_Nonnull const PFPUserChangeKeyCollectionKeyIdentifier;
+extern NSString *_Nonnull const PFPUserChangeKeyNotificationEvent;
+extern NSString *_Nonnull const PFPUserChangeKeyValue;
+extern NSString *_Nonnull const PFPUserChangeKeyValueKey;
