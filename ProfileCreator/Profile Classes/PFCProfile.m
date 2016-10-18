@@ -258,17 +258,17 @@
     // -------------------------------------------------------------------------
     //  Depending on what view was updated, reload table view or leave as is
     // -------------------------------------------------------------------------
-    NSString *notificationEvent = changeDict[@"NotificationEvent"];
+    NSString *notificationEvent = changeDict[PFPUserChangeKeyNotificationEvent];
     if ([notificationEvent hasPrefix:@"controlText"]) {
 
         // ---------------------------------------------------------------------
         //  If view DisplayName in General settings was updated, also update profile title
         // ---------------------------------------------------------------------
-        if ([changeDict[@"Identifier"] isEqualToString:@"4402B07D-78EA-482F-B4FD-C8352085CE55"]) {
-            [self updateTitle:[changeDict[@"Value"] copy]];
+        if ([changeDict[PFPUserChangeKeyCollectionKeyIdentifier] isEqualToString:@"4402B07D-78EA-482F-B4FD-C8352085CE55"]) {
+            [self updateTitle:[changeDict[PFPUserChangeKeyValue] copy]];
         }
     } else if (![notificationEvent hasPrefix:@"textDid"]) {
-        [self.modifiedIdentifiers addObject:changeDict[@"Identifier"]];
+        [self.modifiedIdentifiers addObject:changeDict[PFPUserChangeKeyCollectionKeyIdentifier]];
         if (self.viewDelegate && [self.viewDelegate respondsToSelector:@selector(reloadDataWithForcedReload:)]) {
             [self.viewDelegate reloadDataWithForcedReload:NO];
         }
