@@ -531,13 +531,13 @@
     //      PayloadSettings
     //      ViewModel
     // -------------------------------------------------------------------------
-    NSDictionary *profileDict = [[PFPProfilePayloads sharedInstance] profileContentFromPayloadSettings:payloadSettings
-                                                                                        baseIdentifier:PFCBundleIdentifier
-                                                                                                 scope:profile.scope
-                                                                                          distribution:profile.distribution
-                                                                                            supervised:profile.showSupervised
-                                                                                             viewModel:kPFPViewModelTableView
-                                                                                                 error:&error];
+    NSDictionary *profileDict = [[PFPProfilePayloads sharedInstance] profileWithSettings:payloadSettings
+                                                                          baseIdentifier:PFCBundleIdentifier
+                                                                                   scope:profile.scope
+                                                                            distribution:profile.distribution
+                                                                              supervised:profile.showSupervised
+                                                                               viewModel:kPFPViewModelTableView
+                                                                                   error:&error];
 
     // -------------------------------------------------------------------------
     //  Sign Profile

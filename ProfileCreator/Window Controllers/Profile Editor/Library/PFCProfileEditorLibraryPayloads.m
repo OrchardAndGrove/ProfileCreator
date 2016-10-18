@@ -42,7 +42,7 @@ NSString *const PFCProfileEditorLibraryTableColumnIdentifierPayloads = @"TableCo
 @property (nonatomic, weak, nullable) PFCProfileEditor *profileEditor;
 @property (nonatomic, weak, nullable) PFCProfileEditorLibrarySplitView *profileEditorLibrarySplitView;
 @property (nonatomic, strong, nonnull) PFPPayloadCollections *payloadCollections;
-@property (nonatomic, strong, nullable) id<PFPPayloadCollectionSet> collectionProfileManager;
+@property (nonatomic, strong, nullable) id<PFPPayloadCollectionSet> collectionApple;
 
 @property (nonatomic, strong, nonnull) NSMutableArray *libraryPayloads;
 @property (nonatomic, strong, nonnull) NSMutableArray *profilePayloads;
@@ -139,12 +139,12 @@ NSString *const PFCProfileEditorLibraryTableColumnIdentifierPayloads = @"TableCo
     // -------------------------------------------------------------------------
     //  Instantiate and set Payload Collection for Profile Manager
     // -------------------------------------------------------------------------
-    _collectionProfileManager = [_payloadCollections setForCollection:kPFPCollectionSetProfileManager];
+    _collectionApple = [_payloadCollections setForCollection:kPFPCollectionSetApple];
 
     // -------------------------------------------------------------------------
     //  Add enabled profiles to the Profile Payloads library, all others to the Library Payloads library
     // -------------------------------------------------------------------------
-    for (NSDictionary *placeholder in _collectionProfileManager.placeholders) {
+    for (NSDictionary *placeholder in _collectionApple.placeholders) {
         if ([placeholder[PFPPlaceholderKeyIdentifier] isEqualToString:@"com.apple.general.pcmanifest"] ||
             [self.profile.enabledPayloadIdentifiers containsObject:placeholder[PFPPlaceholderKeyIdentifier]]) {
             [_profilePayloads addObject:placeholder];
@@ -491,8 +491,8 @@ NSString *const PFCProfileEditorLibraryTableColumnIdentifierPayloads = @"TableCo
 - (id<PFPPayloadCollection>)collectionForPlaceholder:(NSDictionary *_Nonnull)placeholder {
     PFPCollectionSet collectionSet = [placeholder[PFPPlaceholderKeyCollectionSet] integerValue];
     switch (collectionSet) {
-    case kPFPCollectionSetProfileManager:
-        return [_collectionProfileManager collectionWithIdentifier:placeholder[PFPPlaceholderKeyIdentifier]];
+    case kPFPCollectionSetApple:
+        return [_collectionApple collectionWithIdentifier:placeholder[PFPPlaceholderKeyIdentifier]];
         break;
     }
 } // collectionForPlaceholder
