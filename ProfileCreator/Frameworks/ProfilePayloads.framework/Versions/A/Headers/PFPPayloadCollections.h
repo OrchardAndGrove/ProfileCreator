@@ -32,7 +32,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 - (nonnull instancetype)init NS_UNAVAILABLE;
-- (nonnull instancetype)initWithViewModel:(PFPViewModel)viewModel delegate:(id<PFPViewTypeDelegate> _Nullable)delegate;
+- (nonnull instancetype)initWithViewModel:(PFPViewModel)viewModel viewTypeDelegate:(id<PFPViewTypeDelegate> _Nullable)viewTypeDelegate;
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -40,9 +40,7 @@
 #pragma mark -
 ////////////////////////////////////////////////////////////////////////////////
 
-- (id<PFPPayloadCollectionSet> _Nullable)setForCollection:(PFPCollectionSet)collectionSet;
+- (id<PFPPayloadCollectionSet> _Nullable)collectionSet:(PFPCollectionSet)collectionSet;
 - (id<PFPPayloadCollection> _Nullable)collectionWithIdentifier:(NSString *_Nonnull)collectionIdentifier;
-- (void)updatePayloadSettings:(NSMutableDictionary *_Nullable)payloadSettings
-           withUserChangeDict:(NSDictionary *_Nonnull)userChangeDict
-         payloadCollectionKey:(PFPPayloadCollectionKey *_Nullable)payloadCollectionKey;
+
 @end

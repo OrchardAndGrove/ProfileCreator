@@ -41,7 +41,7 @@ typedef NS_ENUM(NSUInteger, PFPViewType) { kPFPViewTypeNone = 0, kPFPViewTypeUnk
 // PFPFontWeight
 typedef NS_ENUM(NSUInteger, PFPFontWeight) { kPFPFontWeightRegular = 0, kPFPFontWeightBold };
 
-// PFPCollection
+// PFPCollectionSet
 typedef NS_ENUM(NSUInteger, PFPCollectionSet) { kPFPCollectionSetApple = 0 };
 
 // PFPOrientationAttribute

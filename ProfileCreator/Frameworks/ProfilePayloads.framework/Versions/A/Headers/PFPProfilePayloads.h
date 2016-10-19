@@ -18,9 +18,11 @@
 //  limitations under the License.
 
 #import "PFPPayloadCollection.h"
-#import "PFPViewTypeDelegate.h"
+#import "PFPPayloadCollectionSet.h"
+#import "PFPPayloadSettingsDelegate.h"
 #import <Foundation/Foundation.h>
 @class PFPPayloadTypes;
+@class PFPPayloadCollection;
 @class PFPPayloadCollections;
 
 @interface PFPProfilePayloads : NSObject
@@ -31,22 +33,31 @@
 #pragma mark -
 ////////////////////////////////////////////////////////////////////////////////
 
-@property (nonatomic) NSInteger viewWidth;
-@property (nonatomic, strong, readonly, nullable) PFPPayloadTypes *payloadTypes;
+@property (nonatomic, readonly, nullable) NSDictionary *settings;
+@property (nonatomic, readonly) PFPViewModel viewModel;
+@property (nonatomic) NSInteger tableViewWidth;
+@property (nonatomic, readonly, strong, nullable) NSArray *enabledCollectionIdentifiers;
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
-#pragma mark Class Methods
+#pragma mark Init
 #pragma mark -
 ////////////////////////////////////////////////////////////////////////////////
 
-+ (nonnull instancetype)sharedInstance;
+- (nonnull instancetype)init NS_UNAVAILABLE;
+- (nullable instancetype)initWithSettings:(NSDictionary *_Nullable)settings viewModel:(PFPViewModel)viewModel settingsDelegate:(id<PFPPayloadSettingsDelegate> _Nullable)settingsDelegate;
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
 #pragma mark Instance Methods
 #pragma mark -
 ////////////////////////////////////////////////////////////////////////////////
+
+- (id<PFPPayloadCollectionSet> _Nullable)collectionSet:(PFPCollectionSet)collectionSet;
+- (id<PFPPayloadCollection> _Nullable)collectionWithIdentifier:(NSString *_Nonnull)collectionIdentifier;
+
+- (void)enablePayloadCollection:(BOOL)enable withIdentifier:(NSString *_Nonnull)identifier;
+- (void)updateSettingForCollectionIdentifier:(NSString *_Nonnull)collectionIdentifier keyIdentifier:(NSString *_Nonnull)keyIdentifier valueKey:(NSString *_Nonnull)valueKey value:(id _Nullable)value;
 
 /*!
  @brief Returns a generated profile using passed parameters.
@@ -65,7 +76,6 @@
                                          scope:(PFPScope)scope
                                   distribution:(PFPDistribution)distribution
                                     supervised:(BOOL)supervised
-                                     viewModel:(PFPViewModel)viewModel
                                          error:(NSError *_Nullable *_Nullable)error;
 
 @end

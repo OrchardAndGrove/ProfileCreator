@@ -26,10 +26,19 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
+#pragma mark Properties
+#pragma mark -
+////////////////////////////////////////////////////////////////////////////////
+@property (nonatomic) NSInteger tableViewWidth;
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
 #pragma mark Instance Methods
 #pragma mark -
 ////////////////////////////////////////////////////////////////////////////////
 
-- (NSTableCellView *_Nullable)viewForViewType:(PFPViewType)viewType payloadCollectionKey:(PFPPayloadCollectionKey *_Nonnull)payloadCollectionKey delegate:(id<PFPViewTypeDelegate> _Nonnull)delegate;
+- (NSTableCellView *_Nullable)viewForViewType:(PFPViewType)viewType
+                         payloadCollectionKey:(PFPPayloadCollectionKey *_Nonnull)payloadCollectionKey
+                             viewTypeDelegate:(id<PFPViewTypeDelegate> _Nonnull)viewTypeDelegate;
 
 @end

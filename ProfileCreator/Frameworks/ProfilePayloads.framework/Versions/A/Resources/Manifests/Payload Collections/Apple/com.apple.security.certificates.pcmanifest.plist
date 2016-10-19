@@ -15,17 +15,6 @@
 	<string>pfm_IconCertificates</string>
 	<key>Identifier</key>
 	<string>com.apple.security.certificates.pcmanifest</string>
-	<key>Platforms</key>
-	<array>
-		<dict>
-			<key>Platform</key>
-			<string>iOS</string>
-		</dict>
-		<dict>
-			<key>Platform</key>
-			<string>macOS</string>
-		</dict>
-	</array>
 	<key>PayloadTypeDefault</key>
 	<string>com.apple.security.pkcs1</string>
 	<key>PayloadType</key>
@@ -68,6 +57,17 @@
 		<key>com.apple.security.pkcs12</key>
 		<string>Certificates</string>
 	</dict>
+	<key>Platforms</key>
+	<array>
+		<dict>
+			<key>Platform</key>
+			<string>iOS</string>
+		</dict>
+		<dict>
+			<key>Platform</key>
+			<string>macOS</string>
+		</dict>
+	</array>
 	<key>Scope</key>
 	<array>
 		<string>System</string>

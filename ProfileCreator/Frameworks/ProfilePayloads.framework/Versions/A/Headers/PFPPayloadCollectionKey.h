@@ -109,7 +109,7 @@
 - (nonnull instancetype)initWithKeyDict:(NSDictionary *_Nonnull)keyDict
                       payloadCollection:(id<PFPPayloadCollection> _Nonnull)payloadCollection
                               viewModel:(PFPViewModel)viewModel
-                               delegate:(id<PFPViewTypeDelegate> _Nonnull)delegate;
+                       viewTypeDelegate:(id<PFPViewTypeDelegate> _Nonnull)viewTypeDelegate;
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -

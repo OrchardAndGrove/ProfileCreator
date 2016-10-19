@@ -14,7 +14,7 @@
 		</data>
 		<key>Resources/Manifests/Payload Collections/Apple/com.apple.security.certificates.pcmanifest.plist</key>
 		<data>
-		8+LNVKVA3xDDHmysOCigLUq/9LY=
+		Hu1Rq7BaEwqr88tZfrwhc3tt8eY=
 		</data>
 		<key>Resources/Manifests/Payload Types/com.apple.configuration.plist</key>
 		<data>
@@ -55,11 +55,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			sRHHScORCyfaPmVru+RTBVNPTfU=
+			oJH1sCRLzeGxG6mVal9M/DyX+7g=
 			</data>
 			<key>hash2</key>
 			<data>
-			NA5mLxX7Ib1pq/cS13VoZiuq7CbN9RLljACzFTT19Mg=
+			uSEAloZMur2NDH0ESHTZmh92VjqjA8Oh4p0jp7W9rio=
 			</data>
 		</dict>
 		<key>Headers/PFPPayloadCollection.h</key>
@@ -77,33 +77,33 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			akjho6t2L6+Vt1XT717VKcy36+4=
+			bA7xVJ2ClJpWSMNefHcqOYRJZoo=
 			</data>
 			<key>hash2</key>
 			<data>
-			omm7QPzUpep4XJNxMqKnnMfRYKPu/ehV8XLfQAVprak=
+			uW9cLOWWZ0/nIaa1bY2+/cYuAY93PmoQ0omuYmy7WkE=
 			</data>
 		</dict>
 		<key>Headers/PFPPayloadCollectionSet.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			nMsDkGFmtFI52yfAD0mhRGZ8l88=
+			ZBDE5IT+Ooa9kkHPxleId6AUvGE=
 			</data>
 			<key>hash2</key>
 			<data>
-			/J4ptrnGYRS1QkmDq9TY5HofcGrEoHP7GW6mzcWH5/0=
+			GdcY5GMX6YgQKnCZExWaE1FalQG2LWYh6C7oeUaaWhg=
 			</data>
 		</dict>
 		<key>Headers/PFPPayloadCollections.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			j6VIGcELPxW/18pfMg9OL4KddXc=
+			94uqmz5hft7i53lgul8fPBvigU4=
 			</data>
 			<key>hash2</key>
 			<data>
-			FMbkhEiQJ3l9v2R0k0phuPucptvJwmnZXf2Yelwbg7k=
+			XKnHOltFUXIxWc15xDUs+8ZeORVaJ1e/wkQp+F1WQJQ=
 			</data>
 		</dict>
 		<key>Headers/PFPPayloadExporter.h</key>
@@ -126,6 +126,17 @@
 			<key>hash2</key>
 			<data>
 			Wvoo5RO4sAsxz5v8iPVaNj/4rFGym6yf8w7A+DKhrlE=
+			</data>
+		</dict>
+		<key>Headers/PFPPayloadSettingsDelegate.h</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			Hj2/kvS3zr6w8HMHaIEMblRZhSs=
+			</data>
+			<key>hash2</key>
+			<data>
+			AKqGyzUL2+yw/lJT2W2wjfsG7DR4xZcix547sgZ5W78=
 			</data>
 		</dict>
 		<key>Headers/PFPPayloadType.h</key>
@@ -154,11 +165,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			jl2vXG1TVvq6euFWkVskDyRZ2lg=
+			mdunY8TicKSHk1uEKSNL5CdkYXQ=
 			</data>
 			<key>hash2</key>
 			<data>
-			2qaw5TXNeBhRuoaV8R2TyaSNvbuuwgpis8fM6S55oEQ=
+			k2xgviFD9466U3YZBxgI3mCTERqAaA+G4PIe1pzbTrc=
 			</data>
 		</dict>
 		<key>Headers/PFPPlatform.h</key>
@@ -176,11 +187,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			3f4f4L/85qa2hPWUgFRBufwZJNs=
+			uFK+BJi7veBSviB00MNEJIrzFMs=
 			</data>
 			<key>hash2</key>
 			<data>
-			x6OjySrIpuBaWbA5OgWRZQcAAqAbG+qUPm15ZQvJIx4=
+			ZyNXHBIYBJKMc+Fq1A4fMB7G1zaogVcIXUA0JpywHsM=
 			</data>
 		</dict>
 		<key>Headers/PFPUtility.h</key>
@@ -198,11 +209,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			HAi+i4rLhkR3lvW0bOxPy0K5hsg=
+			Y9AW8PcnIkgB7QX01tH6YoVSkq0=
 			</data>
 			<key>hash2</key>
 			<data>
-			iefPMnm50kfsYByFfQoJ2yo73OdotTEmGezvExz2UMk=
+			417tz7i/jQk2NxQI0Ba43U8cVVjbYIJKVw0DeWTSE00=
 			</data>
 		</dict>
 		<key>Headers/PFPViewTypeDelegate.h</key>
@@ -220,11 +231,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			EiiwUAvPB4ZzDaQG7XSE4eOmGm8=
+			9GcpsEPBgwonHQwg2MKmuOJT6uU=
 			</data>
 			<key>hash2</key>
 			<data>
-			UQuElvMz8ZrY8rGeJ0S9OIrpQNWgyLRa+sPX0zsYD2Q=
+			8GH+hm6Bjgo9+HCGF/kotg55MHXwZ9+XN3yVgaxPWVU=
 			</data>
 		</dict>
 		<key>Headers/PFPViewTypeTableViewPadding.h</key>
@@ -253,11 +264,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			5wY+8O927giE0mKxy0YBz2c7VO0=
+			I1gqQTEhi04GCKG1/CV2XKhVnO0=
 			</data>
 			<key>hash2</key>
 			<data>
-			OI6NMiAj9WDSonTprw0hIv/DuODxyym03PrDBoZRU8w=
+			tUTr1QFG3CVgoggrtgbWpFnToj3c0bAidOlsqHT35LY=
 			</data>
 		</dict>
 		<key>Headers/RFOverlayScrollView.h</key>
@@ -319,11 +330,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			8+LNVKVA3xDDHmysOCigLUq/9LY=
+			Hu1Rq7BaEwqr88tZfrwhc3tt8eY=
 			</data>
 			<key>hash2</key>
 			<data>
-			oBWrWzDY9E96Jp7L+OsOBMDgz+7y4w4q9+x9FfKmKeU=
+			4Sono6F9saLO/cglt9Z6kvEz55ofs33EaoYlkTAZFPo=
 			</data>
 		</dict>
 		<key>Resources/Manifests/Payload Types/com.apple.configuration.plist</key>

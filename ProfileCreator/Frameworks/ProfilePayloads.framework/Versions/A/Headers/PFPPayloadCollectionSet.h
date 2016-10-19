@@ -42,7 +42,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 - (nonnull instancetype)init NS_UNAVAILABLE;
-- (nonnull instancetype)initWithViewModel:(PFPViewModel)viewModel delegate:(id<PFPViewTypeDelegate> _Nonnull)delegate;
+- (nonnull instancetype)initWithViewModel:(PFPViewModel)viewModel viewTypeDelegate:(id<PFPViewTypeDelegate> _Nonnull)viewTypeDelegate;
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -

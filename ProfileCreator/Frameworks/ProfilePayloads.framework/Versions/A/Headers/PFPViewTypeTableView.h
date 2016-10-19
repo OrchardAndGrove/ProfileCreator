@@ -20,6 +20,7 @@
 #pragma once
 
 #import "PFPPayloadCollectionKey.h"
+#import "PFPViewModelTableView.h"
 #import "PFPViewTypeDelegate.h"
 #import <Cocoa/Cocoa.h>
 
@@ -48,7 +49,10 @@
 #pragma mark -
 ////////////////////////////////////////////////////////////////////////////////
 
-- (nonnull instancetype)initWithPayloadCollectionKey:(PFPPayloadCollectionKey *_Nonnull)payloadCollectionKey delegate:(id<PFPViewTypeDelegate> _Nullable)delegate;
+- (nonnull instancetype)initWithPayloadCollectionKey:(PFPPayloadCollectionKey *_Nonnull)payloadCollectionKey
+                                           viewModel:(PFPViewModelTableView *_Nonnull)viewModel
+                                    viewTypeDelegate:(id<PFPViewTypeDelegate> _Nullable)viewTypeDelegate;
+
 - (void)updateSettings:(NSDictionary *_Nullable)settingsDict sender:(id _Nonnull)sender;
 
 @optional
