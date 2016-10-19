@@ -23,7 +23,7 @@
 @class PFCProfileEditor;
 @class PFCProfileSettings;
 
-@interface PFCProfile : NSObject <PFPViewTypeDelegate>
+@interface PFCProfile : NSObject <PFPPayloadSettingsDelegate>
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -37,13 +37,12 @@
 @property (nonatomic, copy, nonnull) NSString *title;
 @property (nonatomic, strong, nullable) NSURL *url;
 @property (nonatomic, strong, nullable) PFCProfileEditor *editor;
-@property (nonatomic, weak, nullable) PFPPayloadCollections *payloadCollections;
+@property (nonatomic, strong, nullable) PFPProfilePayloads *profilePayloads;
 
 // -----------------------------------------------------------------------------
 //  Payload Settings
 // -----------------------------------------------------------------------------
 @property (nonatomic, readonly, strong, nonnull) NSString *identifier;
-@property (nonatomic, readonly, strong, nonnull) NSMutableDictionary *payloadSettings;
 @property (nonatomic, readonly, strong, nonnull) NSDictionary *savedPayloadSettings;
 @property (nonatomic, readonly, strong, nonnull) NSMutableArray *modifiedIdentifiers;
 @property (nonatomic, strong, nonnull) NSMutableArray *enabledPayloadIdentifiers;
@@ -79,7 +78,6 @@
 - (BOOL)save;
 - (BOOL)isSaved;
 
-- (void)enablePayloadCollection:(BOOL)enable withIdentifier:(NSString *_Nonnull)identifier;
 - (NSDictionary *_Nullable)payloadSettingsForExport:(NSError *_Nullable *_Nullable)error;
 - (void)removeEditor;
 - (void)updateTitle:(NSString *_Nullable)title;

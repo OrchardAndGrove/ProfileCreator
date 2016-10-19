@@ -28,7 +28,6 @@
 @property (nonatomic, strong, readwrite, nonnull) NSString *identifier;
 @property (nonatomic, strong, readwrite, nonnull) NSString *savedTitle;
 @property (nonatomic, strong, readwrite, nonnull) NSDictionary *savedPayloadSettings;
-@property (nonatomic, strong, readwrite, nonnull) NSMutableDictionary *payloadSettings;
 @property (nonatomic, strong, readwrite, nonnull) NSDictionary *savedViewSettings;
 @property (nonatomic, strong, readwrite, nonnull) NSMutableArray *modifiedIdentifiers;
 @end
@@ -53,7 +52,6 @@
         //  Initialize General Settings
         // ---------------------------------------------------------------------
         _modifiedIdentifiers = [[NSMutableArray alloc] init];
-        _enabledPayloadIdentifiers = [[NSMutableArray alloc] init];
         _url = url;
         _title = title;
         _savedTitle = title;
@@ -66,15 +64,7 @@
         // ---------------------------------------------------------------------
         //  Initialize Payload Settings
         // ---------------------------------------------------------------------
-        _payloadSettings = [payloadSettings mutableCopy] ?: [[self.class defaultPayloadSettings] mutableCopy];
-        _savedPayloadSettings = _payloadSettings;
-        if (_savedPayloadSettings.count != 0) {
-            for (NSString *payloadIdentifier in _savedPayloadSettings.allKeys) {
-                if ([_savedPayloadSettings[payloadIdentifier][PFPSettingsKeyEnabled] boolValue] && ![payloadIdentifier isEqualToString:@"com.apple.general.pcmanifest"]) {
-                    [_enabledPayloadIdentifiers addObject:payloadIdentifier];
-                }
-            }
-        }
+        _savedPayloadSettings = [payloadSettings mutableCopy] ?: [[self.class defaultPayloadSettings] mutableCopy];
 
         // ---------------------------------------------------------------------
         //  Initialize View Settings
@@ -102,7 +92,7 @@
         return NO;
     } else {
         [self setSavedTitle:[self.title copy]];
-        [self setSavedPayloadSettings:[self.payloadSettings copy]];
+        [self setSavedPayloadSettings:[self.profilePayloads.settings copy]];
         [self setSavedViewSettings:[self.viewSettings copy]];
         [[NSNotificationCenter defaultCenter] postNotificationName:PFCDidSaveProfileNotification object:self userInfo:@{ PFCNotificationUserInfoProfileIdentifiers : @[ self.identifier ] }];
         return YES;
@@ -110,12 +100,48 @@
 } // save
 
 - (BOOL)isSaved {
-    DDLogDebug(@"IsSaved PayloadSettings: %@", ([self.savedPayloadSettings isEqualToDictionary:self.payloadSettings]) ? @"YES" : @"NO");
-    DDLogDebug(@"IsSaved ViewSettings: %@", ([self.savedViewSettings isEqualToDictionary:self.viewSettings]) ? @"YES" : @"NO");
-    DDLogDebug(@"IsSaved Title: %@", ([self.savedTitle isEqualToString:self.title]) ? @"YES" : @"NO");
-    DDLogDebug(@"IsSaved Title is Default: %@", ([self.title isEqualToString:PFCProfileDefaultName]) ? @"YES" : @"NO");
-    return ([self.savedPayloadSettings isEqualToDictionary:self.payloadSettings] && [self.savedViewSettings isEqualToDictionary:self.viewSettings] && [self.savedTitle isEqualToString:self.title] &&
-            ![self.title isEqualToString:PFCProfileDefaultName]);
+
+    // -------------------------------------------------------------------------
+    //  If no editor is open, just use saved settings, else check if there any unsaved settings
+    // -------------------------------------------------------------------------
+    if (!self.editor) {
+        return YES;
+
+    } else {
+        // ---------------------------------------------------------------------
+        //  PayloadSettings
+        // ---------------------------------------------------------------------
+        DDLogDebug(@"IsSaved PayloadSettings: %@", ([self.savedPayloadSettings isEqualToDictionary:self.profilePayloads.settings]) ? @"YES" : @"NO");
+        if (![self.savedPayloadSettings isEqualToDictionary:self.profilePayloads.settings]) {
+            return NO;
+        }
+
+        // ---------------------------------------------------------------------
+        //  ViewSettings
+        // ---------------------------------------------------------------------
+        DDLogDebug(@"IsSaved ViewSettings: %@", ([self.savedViewSettings isEqualToDictionary:self.viewSettings]) ? @"YES" : @"NO");
+        if (![self.savedViewSettings isEqualToDictionary:self.viewSettings]) {
+            return NO;
+        }
+
+        // ---------------------------------------------------------------------
+        //  Title
+        // ---------------------------------------------------------------------
+        DDLogDebug(@"IsSaved Title: %@", ([self.savedTitle isEqualToString:self.title]) ? @"YES" : @"NO");
+        if (![self.savedTitle isEqualToString:self.title]) {
+            return NO;
+        }
+
+        // ---------------------------------------------------------------------
+        //  Title == PFCProfileDefaultName
+        // ---------------------------------------------------------------------
+        DDLogDebug(@"IsSaved Title is Default: %@", ([self.title isEqualToString:PFCProfileDefaultName]) ? @"YES" : @"NO");
+        if ([self.title isEqualToString:PFCProfileDefaultName]) {
+            return NO;
+        }
+    }
+
+    return YES;
 } // isSaved
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -199,29 +225,12 @@
     // -------------------------------------------------------------------------
     //  Convenience method to update both the profile title and DisplayName payload setting
     // -------------------------------------------------------------------------
-    NSMutableDictionary *generalSettings = [self.payloadSettings[@"com.apple.general.pcmanifest"] mutableCopy] ?: [[NSMutableDictionary alloc] init];
-    NSMutableDictionary *payloadDisplayName = [generalSettings[@"4402B07D-78EA-482F-B4FD-C8352085CE55"] mutableCopy] ?: [[NSMutableDictionary alloc] init];
-    payloadDisplayName[PFPSettingsKeyValueTextField] = [title copy];
-    generalSettings[@"4402B07D-78EA-482F-B4FD-C8352085CE55"] = [payloadDisplayName mutableCopy];
-    self.payloadSettings[@"com.apple.general.pcmanifest"] = [generalSettings mutableCopy];
+    [self.profilePayloads updateSettingForCollectionIdentifier:@"com.apple.general.pcmanifest"
+                                                 keyIdentifier:@"4402B07D-78EA-482F-B4FD-C8352085CE55"
+                                                      valueKey:PFPSettingsKeyValueTextField
+                                                         value:[title copy]];
     [self setTitle:title];
 } // updateTitle
-
-- (void)enablePayloadCollection:(BOOL)enable withIdentifier:(NSString *_Nonnull)identifier {
-
-    // -------------------------------------------------------------------------
-    //  Enables/Disables payload with identifier for export
-    // -------------------------------------------------------------------------
-    NSMutableDictionary *payloadCollectionSettings = [self.payloadSettings[identifier] mutableCopy] ?: [[NSMutableDictionary alloc] init];
-    payloadCollectionSettings[PFPSettingsKeyEnabled] = @(enable);
-    self.payloadSettings[identifier] = [payloadCollectionSettings copy];
-
-    if (enable) {
-        [self.enabledPayloadIdentifiers addObject:identifier];
-    } else {
-        [self.enabledPayloadIdentifiers removeObject:identifier];
-    }
-} // enablePayloadCollection:withIdentifier
 
 - (void)removeEditor {
 
@@ -229,8 +238,7 @@
     //  Cleanup when the editor window is closed
     // -------------------------------------------------------------------------
     [self setEditor:nil];
-    [self setPayloadCollections:nil];
-    [self setPayloadSettings:[self.savedPayloadSettings mutableCopy]];
+    [self setProfilePayloads:nil];
     [self setTitle:[self.savedTitle copy]];
 } // removeEditor
 
@@ -243,7 +251,7 @@
 // -----------------------------------------------------------------------------
 //  Delegate method from view type that user has changed a setting
 // -----------------------------------------------------------------------------
-- (void)userSettingsChanged:(NSDictionary *_Nonnull)changeDict payloadCollectionKey:(PFPPayloadCollectionKey *_Nullable)payloadCollectionKey sender:(id _Nonnull)sender {
+- (void)userSettingsChanged:(NSNotification *_Nonnull)notification {
 
     // -------------------------------------------------------------------------
     //  Clear current modified identifiers to not update settings that haven't changed
@@ -251,24 +259,20 @@
     [self.modifiedIdentifiers removeAllObjects];
 
     // -------------------------------------------------------------------------
-    //  Ask framework to update saved settings with user changes
-    // -------------------------------------------------------------------------
-    [self.payloadCollections updatePayloadSettings:self.payloadSettings withUserChangeDict:changeDict payloadCollectionKey:payloadCollectionKey];
-
-    // -------------------------------------------------------------------------
     //  Depending on what view was updated, reload table view or leave as is
     // -------------------------------------------------------------------------
-    NSString *notificationEvent = changeDict[PFPUserChangeKeyNotificationEvent];
+    NSDictionary *userInfo = notification.userInfo;
+    NSString *notificationEvent = userInfo[PFPUserChangeKeyNotificationEvent];
     if ([notificationEvent hasPrefix:@"controlText"]) {
 
         // ---------------------------------------------------------------------
         //  If view DisplayName in General settings was updated, also update profile title
         // ---------------------------------------------------------------------
-        if ([changeDict[PFPUserChangeKeyCollectionKeyIdentifier] isEqualToString:@"4402B07D-78EA-482F-B4FD-C8352085CE55"]) {
-            [self updateTitle:[changeDict[PFPUserChangeKeyValue] copy]];
+        if ([userInfo[PFPUserChangeKeyCollectionKeyIdentifier] isEqualToString:@"4402B07D-78EA-482F-B4FD-C8352085CE55"]) {
+            [self updateTitle:[userInfo[PFPUserChangeKeyValue] copy]];
         }
     } else if (![notificationEvent hasPrefix:@"textDid"]) {
-        [self.modifiedIdentifiers addObject:changeDict[PFPUserChangeKeyCollectionKeyIdentifier]];
+        [self.modifiedIdentifiers addObject:userInfo[PFPUserChangeKeyCollectionKeyIdentifier]];
         if (self.viewDelegate && [self.viewDelegate respondsToSelector:@selector(reloadDataWithForcedReload:)]) {
             [self.viewDelegate reloadDataWithForcedReload:NO];
         }

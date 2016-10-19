@@ -84,14 +84,11 @@ NSString *const PFCProfileEditorLibraryTableColumnIdentifierPayloads = @"TableCo
         _libraryProfileManager = [[NSMutableArray alloc] init];
 
         // ---------------------------------------------------------------------
-        //  Instantiate the Profile Payloads Collections to use in this editor instance
+        //  Instantiate Profile Payloads if not already instantiated in profile
         // ---------------------------------------------------------------------
-        _payloadCollections = [[PFPPayloadCollections alloc] initWithViewModel:kPFPViewModelTableView delegate:_profile];
-
-        // ---------------------------------------------------------------------
-        //  Set a reference to this instance of the Profile Payloads Collection to the profile instance
-        // ---------------------------------------------------------------------
-        [_profile setPayloadCollections:_payloadCollections];
+        if (!_profile.profilePayloads) {
+            [_profile setProfilePayloads:[[PFPProfilePayloads alloc] initWithSettings:_profile.savedPayloadSettings viewModel:kPFPViewModelTableView settingsDelegate:_profile]];
+        }
 
         // ---------------------------------------------------------------------
         //  Instantiate and setup all Payload Collections to use in the editor
@@ -139,14 +136,14 @@ NSString *const PFCProfileEditorLibraryTableColumnIdentifierPayloads = @"TableCo
     // -------------------------------------------------------------------------
     //  Instantiate and set Payload Collection for Profile Manager
     // -------------------------------------------------------------------------
-    _collectionApple = [_payloadCollections setForCollection:kPFPCollectionSetApple];
+    _collectionApple = [_profile.profilePayloads collectionSet:kPFPCollectionSetApple];
 
     // -------------------------------------------------------------------------
     //  Add enabled profiles to the Profile Payloads library, all others to the Library Payloads library
     // -------------------------------------------------------------------------
     for (NSDictionary *placeholder in _collectionApple.placeholders) {
         if ([placeholder[PFPPlaceholderKeyIdentifier] isEqualToString:@"com.apple.general.pcmanifest"] ||
-            [self.profile.enabledPayloadIdentifiers containsObject:placeholder[PFPPlaceholderKeyIdentifier]]) {
+            [self.profile.profilePayloads.enabledCollectionIdentifiers containsObject:placeholder[PFPPlaceholderKeyIdentifier]]) {
             [_profilePayloads addObject:placeholder];
         } else {
             [_libraryProfileManager addObject:placeholder];
@@ -533,7 +530,7 @@ NSString *const PFCProfileEditorLibraryTableColumnIdentifierPayloads = @"TableCo
         NSDictionary *profilePlaceholder = fromArray[placeholderIndex];
         [fromArray removeObject:profilePlaceholder];
         [toArray addObject:profilePlaceholder];
-        [self.profile enablePayloadCollection:enablePayloads withIdentifier:profilePlaceholder[PFPPlaceholderKeyIdentifier]];
+        [self.profile.profilePayloads enablePayloadCollection:enablePayloads withIdentifier:profilePlaceholder[PFPPlaceholderKeyIdentifier]];
     }
 
     // -------------------------------------------------------------------------

@@ -350,7 +350,7 @@
     NSMutableDictionary *profileDict = [[NSMutableDictionary alloc] init];
     profileDict[PFCProfileKeyTitle] = profile.title;
     profileDict[PFCProfileKeyIdentifier] = profile.identifier;
-    profileDict[PFCProfileKeyPayloadSettings] = [profile.payloadSettings copy];
+    profileDict[PFCProfileKeyPayloadSettings] = [profile.profilePayloads.settings copy];
     profileDict[PFCProfileKeyViewSettings] = [profile.viewSettings copy];
 
     // -------------------------------------------------------------------------
@@ -531,13 +531,9 @@
     //      PayloadSettings
     //      ViewModel
     // -------------------------------------------------------------------------
-    NSDictionary *profileDict = [[PFPProfilePayloads sharedInstance] profileWithSettings:payloadSettings
-                                                                          baseIdentifier:PFCBundleIdentifier
-                                                                                   scope:profile.scope
-                                                                            distribution:profile.distribution
-                                                                              supervised:profile.showSupervised
-                                                                               viewModel:kPFPViewModelTableView
-                                                                                   error:&error];
+    PFPProfilePayloads *profilePayloads = profile.profilePayloads ?: [[PFPProfilePayloads alloc] initWithSettings:payloadSettings viewModel:kPFPViewModelTableView settingsDelegate:nil];
+    NSDictionary *profileDict =
+        [profilePayloads profileWithSettings:payloadSettings baseIdentifier:PFCBundleIdentifier scope:profile.scope distribution:profile.distribution supervised:profile.showSupervised error:&error];
 
     // -------------------------------------------------------------------------
     //  Sign Profile
