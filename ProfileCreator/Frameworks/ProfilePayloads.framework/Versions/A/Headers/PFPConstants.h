@@ -72,6 +72,12 @@ typedef NS_OPTIONS(NSUInteger, PFPOSPlatform) {
 extern NSString *_Nonnull const PFPPayloadKeyPathDelimiter;
 extern NSString *_Nonnull const PFPPayloadCollectionSetKeyCollections;
 
+extern NSString *_Nonnull const PFPStringScopeUser;
+extern NSString *_Nonnull const PFPStringScopeSystem;
+
+extern NSString *_Nonnull const PFPStringDistributionManual;
+extern NSString *_Nonnull const PFPStringDistributionPush;
+
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark Placeholder Keys
 ////////////////////////////////////////////////////////////////////////////////

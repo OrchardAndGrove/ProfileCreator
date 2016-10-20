@@ -31,6 +31,7 @@
 + (PFPDistribution)distributionFromArray:(NSArray<NSString *> *_Nonnull)distributionArray payloadType:(PFPPayloadType *_Nullable)payloadType;
 + (PFPDistribution)distributionFromInteger:(NSUInteger)distributionInteger;
 + (NSString *_Nonnull)stringForDistribution:(PFPDistribution)distribution;
++ (void)addDistributionMenuItemsToMenu:(NSMenu *_Nonnull)menu controlSize:(NSControlSize)controlSize;
 
 // -----------------------------------------------------------------------------
 //  Scope Methods
@@ -38,6 +39,7 @@
 + (PFPScope)scopeFromArray:(NSArray<NSString *> *_Nonnull)scopeArray payloadType:(PFPPayloadType *_Nullable)payloadType;
 + (PFPScope)scopeFromInteger:(NSUInteger)scopeInteger;
 + (NSString *_Nonnull)stringForScope:(PFPScope)scope;
++ (void)addScopeMenuItemsToMenu:(NSMenu *_Nonnull)menu controlSize:(NSControlSize)controlSize;
 
 // -----------------------------------------------------------------------------
 //  ValueType Methods
