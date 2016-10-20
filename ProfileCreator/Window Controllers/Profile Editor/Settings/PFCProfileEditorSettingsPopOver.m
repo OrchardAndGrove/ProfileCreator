@@ -87,6 +87,7 @@
     [_checkboxShowSupervised unbind:NSValueBinding];
     [_checkboxShowDisabled unbind:NSValueBinding];
     [_popUpButtonScope unbind:NSSelectedTagBinding];
+    [_popUpButtonDistribution unbind:NSSelectedTagBinding];
 }
 
 - (void)setupBindings {
@@ -103,6 +104,7 @@
     [_checkboxShowSupervised bind:NSValueBinding toObject:_profile withKeyPath:NSStringFromSelector(@selector(showSupervised)) options:nil];
     [_checkboxShowDisabled bind:NSValueBinding toObject:_profile withKeyPath:NSStringFromSelector(@selector(showDisabled)) options:nil];
     [_popUpButtonScope bind:NSSelectedTagBinding toObject:_profile withKeyPath:NSStringFromSelector(@selector(scope)) options:nil];
+    [_popUpButtonDistribution bind:NSSelectedTagBinding toObject:_profile withKeyPath:NSStringFromSelector(@selector(distribution)) options:nil];
 }
 
 @end
