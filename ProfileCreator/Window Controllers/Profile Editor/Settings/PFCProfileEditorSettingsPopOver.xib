@@ -203,10 +203,10 @@
                                 <menuItem title="Automatic" state="on" tag="3" id="h4k-sN-8mE">
                                     <modifierMask key="keyEquivalentModifierMask"/>
                                 </menuItem>
-                                <menuItem title="Manual" tag="2" id="Y3D-Oy-Ok5">
+                                <menuItem title="Manual" tag="1" id="Y3D-Oy-Ok5">
                                     <modifierMask key="keyEquivalentModifierMask"/>
                                 </menuItem>
-                                <menuItem title="Push" tag="1" id="Sfd-KY-nao">
+                                <menuItem title="Push" tag="2" id="Sfd-KY-nao">
                                     <modifierMask key="keyEquivalentModifierMask"/>
                                 </menuItem>
                             </items>
