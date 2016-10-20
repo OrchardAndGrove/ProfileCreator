@@ -23,6 +23,7 @@
 #import "PFCProfile.h"
 #import "PFCProfileController.h"
 #import "PFCProfileEditor.h"
+#import "PFCProfileExportAccessoryView.h"
 #import "PFCResources.h"
 #import <ProfilePayloads/ProfilePayloads.h>
 
@@ -421,7 +422,7 @@
     // -------------------------------------------------------------------------
     NSDictionary *payloadSettings = [profile payloadSettingsForExport:&error];
 
-    // FIXME - Thish check is weak, should probably loop and verify.
+    // FIXME - This check is weak, should probably loop and verify.
     // Now just assumes that 2 == PayloadTypes and General
     if (payloadSettings.count <= 2) {
         if (error.code == -59) {
@@ -440,10 +441,15 @@
     }
 
     // -------------------------------------------------------------------------
+    //  Setup the accessory view to the save panel
+    // -------------------------------------------------------------------------
+    PFCProfileExportAccessoryView *accessoryView = [[PFCProfileExportAccessoryView alloc] initWithProfile:profile];
+
+    // -------------------------------------------------------------------------
     //  Setup a save panel and present it to the user in the main window
     // -------------------------------------------------------------------------
-    NSSavePanel *panel = [NSSavePanel savePanel];
-    //[panel setAccessoryView:_viewExportPanel]; // Activate later for custom exports
+    NSSavePanel *panel = [[NSSavePanel alloc] init];
+    [panel setAccessoryView:accessoryView];
     [panel setAllowedFileTypes:@[ @"com.apple.mobileconfig" ]];
     [panel setCanCreateDirectories:YES];
     [panel setTitle:NSLocalizedString(@"Export Profile", @"")];

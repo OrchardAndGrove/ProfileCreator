@@ -54,6 +54,7 @@
 		53B5C1F31D8565D3001014BB /* PFCProfile.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B5C1F21D8565D3001014BB /* PFCProfile.m */; };
 		53B5C1F61D8565EC001014BB /* PFCProfileController.m in Sources */ = {isa = PBXBuildFile; fileRef = 53B5C1F51D8565EC001014BB /* PFCProfileController.m */; };
 		53B778BB1D8801520025812D /* ButtonPopOverMenu.png in Resources */ = {isa = PBXBuildFile; fileRef = 53B778BA1D8801520025812D /* ButtonPopOverMenu.png */; };
+		53BB2E811DB7A73400E0330F /* PFCProfileExportAccessoryView.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BB2E801DB7A73400E0330F /* PFCProfileExportAccessoryView.m */; };
 		53BDFF6D1D7EEA6D00EBBB58 /* PFCMainWindowTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BDFF6C1D7EEA6D00EBBB58 /* PFCMainWindowTableViewController.m */; };
 		53BDFF801D7EF1A400EBBB58 /* PFCMainWindowTableViewItemCellView.m in Sources */ = {isa = PBXBuildFile; fileRef = 53BDFF7F1D7EF1A400EBBB58 /* PFCMainWindowTableViewItemCellView.m */; };
 		53C2F06F1D815CF4003B9118 /* downarrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 53C2F06E1D815CF4003B9118 /* downarrow.png */; };
@@ -295,6 +296,8 @@
 		53B5C1F41D8565EC001014BB /* PFCProfileController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCProfileController.h; path = "Profile Classes/PFCProfileController.h"; sourceTree = "<group>"; };
 		53B5C1F51D8565EC001014BB /* PFCProfileController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCProfileController.m; path = "Profile Classes/PFCProfileController.m"; sourceTree = "<group>"; };
 		53B778BA1D8801520025812D /* ButtonPopOverMenu.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ButtonPopOverMenu.png; path = Graphics/Icons/ButtonPopOverMenu.png; sourceTree = "<group>"; };
+		53BB2E7F1DB7A73400E0330F /* PFCProfileExportAccessoryView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCProfileExportAccessoryView.h; path = "Utility Classes/PFCProfileExportAccessoryView.h"; sourceTree = SOURCE_ROOT; };
+		53BB2E801DB7A73400E0330F /* PFCProfileExportAccessoryView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCProfileExportAccessoryView.m; path = "Utility Classes/PFCProfileExportAccessoryView.m"; sourceTree = SOURCE_ROOT; };
 		53BDFF6B1D7EEA6D00EBBB58 /* PFCMainWindowTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCMainWindowTableViewController.h; path = "Main Window/Profile List/PFCMainWindowTableViewController.h"; sourceTree = "<group>"; };
 		53BDFF6C1D7EEA6D00EBBB58 /* PFCMainWindowTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PFCMainWindowTableViewController.m; path = "Main Window/Profile List/PFCMainWindowTableViewController.m"; sourceTree = "<group>"; };
 		53BDFF7E1D7EF1A400EBBB58 /* PFCMainWindowTableViewItemCellView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PFCMainWindowTableViewItemCellView.h; path = "Main Window/Profile List/PFCMainWindowTableViewItemCellView.h"; sourceTree = "<group>"; };
@@ -650,6 +653,8 @@
 				53E986FF1D82E74F007C77EF /* PFCResources.m */,
 				5356A6E41DAB7B5200E8AF1F /* PFCViewWhite.h */,
 				5356A6E51DAB7B5200E8AF1F /* PFCViewWhite.m */,
+				53BB2E7F1DB7A73400E0330F /* PFCProfileExportAccessoryView.h */,
+				53BB2E801DB7A73400E0330F /* PFCProfileExportAccessoryView.m */,
 			);
 			name = "Utility Classes";
 			path = ProfileCreator;
@@ -897,6 +902,7 @@
 				53AB78971D79C9DD00EB89B8 /* PFCMainWindow.m in Sources */,
 				53E9DF261D7DAA1700D42C21 /* PFCPreferences.m in Sources */,
 				53D3F0661DA7AB8F00306273 /* PFCProfileEditorToolbarItemTitle.m in Sources */,
+				53BB2E811DB7A73400E0330F /* PFCProfileExportAccessoryView.m in Sources */,
 				53E9B9B11D80A6E9007E2046 /* PFCMainWindowToolbarItemAdd.m in Sources */,
 				533FC6221D79BF8500B62DE5 /* PFCAppDelegate.m in Sources */,
 				5356A6C11DAB6DED00E8AF1F /* PFCError.m in Sources */,
