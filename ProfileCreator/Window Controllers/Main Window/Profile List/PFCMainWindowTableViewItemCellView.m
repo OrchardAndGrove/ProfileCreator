@@ -30,7 +30,7 @@
 #pragma mark -
 ////////////////////////////////////////////////////////////////////////////////
 
-+ (NSTableCellView *_Nonnull)cellViewWithTitle:(NSString *_Nonnull)title {
++ (NSTableCellView *_Nonnull)cellViewWithTitle:(NSString *_Nonnull)title payloadCount:(NSInteger)payloadCount errorCount:(NSInteger)errorCount {
 
     // -------------------------------------------------------------------------
     //  Create new CellView instance
@@ -38,7 +38,7 @@
     NSTableCellView *cellView = [[NSTableCellView alloc] init];
 
     // -------------------------------------------------------------------------
-    //  Create and setup TextField
+    //  Create and add TextField Title
     // -------------------------------------------------------------------------
     NSTextField *textFieldTitle = [[NSTextField alloc] init];
     [textFieldTitle setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -59,14 +59,14 @@
     // -------------------------------------------------------------------------
     NSMutableArray *constraints = [[NSMutableArray alloc] init];
 
-    // Center Vertically
+    // Top
     [constraints addObject:[NSLayoutConstraint constraintWithItem:textFieldTitle
-                                                        attribute:NSLayoutAttributeCenterY
+                                                        attribute:NSLayoutAttributeTop
                                                         relatedBy:NSLayoutRelationEqual
                                                            toItem:cellView
-                                                        attribute:NSLayoutAttributeCenterY
+                                                        attribute:NSLayoutAttributeTop
                                                        multiplier:1.0
-                                                         constant:0]];
+                                                         constant:3]];
 
     // Leading
     [constraints addObject:[NSLayoutConstraint constraintWithItem:textFieldTitle
@@ -85,6 +85,56 @@
                                                         attribute:NSLayoutAttributeTrailing
                                                        multiplier:1.0
                                                          constant:6]];
+
+    // -------------------------------------------------------------------------
+    //  Create and add TextField Description
+    // -------------------------------------------------------------------------
+    NSTextField *textFieldDescription = [[NSTextField alloc] init];
+    [textFieldDescription setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [textFieldDescription setLineBreakMode:NSLineBreakByWordWrapping];
+    [textFieldDescription setBordered:NO];
+    [textFieldDescription setBezeled:NO];
+    [textFieldDescription setDrawsBackground:NO];
+    [textFieldDescription setEditable:NO];
+    [textFieldDescription setFont:[NSFont systemFontOfSize:10]];
+    [textFieldDescription setTextColor:[NSColor controlShadowColor]];
+    [textFieldDescription setAlignment:NSLeftTextAlignment];
+    NSString *descriptionString;
+    if (payloadCount == 1) {
+        descriptionString = NSLocalizedString(([NSString stringWithFormat:@"%ld Payload", (long)payloadCount]), @"");
+    } else {
+        descriptionString = NSLocalizedString(([NSString stringWithFormat:@"%ld Payloads", (long)payloadCount]), @"");
+    }
+    [textFieldDescription setStringValue:descriptionString];
+    [textFieldDescription setLineBreakMode:NSLineBreakByTruncatingTail];
+    [cellView addSubview:textFieldDescription];
+
+    // Top
+    [constraints addObject:[NSLayoutConstraint constraintWithItem:textFieldDescription
+                                                        attribute:NSLayoutAttributeTop
+                                                        relatedBy:NSLayoutRelationEqual
+                                                           toItem:textFieldTitle
+                                                        attribute:NSLayoutAttributeBottom
+                                                       multiplier:1.0
+                                                         constant:1]];
+
+    // Leading
+    [constraints addObject:[NSLayoutConstraint constraintWithItem:textFieldDescription
+                                                        attribute:NSLayoutAttributeLeading
+                                                        relatedBy:NSLayoutRelationEqual
+                                                           toItem:textFieldTitle
+                                                        attribute:NSLayoutAttributeLeading
+                                                       multiplier:1.0
+                                                         constant:0]];
+
+    // Trailing
+    [constraints addObject:[NSLayoutConstraint constraintWithItem:textFieldDescription
+                                                        attribute:NSLayoutAttributeTrailing
+                                                        relatedBy:NSLayoutRelationEqual
+                                                           toItem:textFieldTitle
+                                                        attribute:NSLayoutAttributeTrailing
+                                                       multiplier:1.0
+                                                         constant:0]];
 
     // -------------------------------------------------------------------------
     //  Activate Layout Constraints

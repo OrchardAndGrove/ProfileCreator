@@ -27,6 +27,7 @@
 #import "PFCMainWindowTableView.h"
 #import "PFCMainWindowTableViewController.h"
 #import "PFCMainWindowTableViewItemCellView.h"
+#import "PFCProfile.h"
 #import "PFCProfileController.h"
 
 NSString *const PFCMainWindowTableViewTableColumnIdentifier = @"TableViewTableColumnIdentifier";
@@ -265,13 +266,16 @@ NSString *const PFCMainWindowTableViewTableColumnIdentifier = @"TableViewTableCo
 ////////////////////////////////////////////////////////////////////////////////
 
 - (CGFloat)tableView:(NSTableView *)tableView heightOfRow:(NSInteger)row {
-    return 23;
+    return 38;
 } // tableView:heightOfRow
 
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {
     if (self.child != nil) {
         NSString *identifier = self.child.profileIdentifiers[row];
-        return [PFCMainWindowTableViewItemCellView cellViewWithTitle:[[PFCProfileController sharedController] titleForProfileWithIdentifier:identifier]];
+        PFCProfile *profile = [[PFCProfileController sharedController] profileWithIdentifier:identifier];
+        NSDictionary *payloadSettings = [profile payloadSettingsForExport:nil];
+        NSInteger payloadCount = (payloadSettings.count <= 2) ? 0 : (payloadSettings.count - 2);
+        return [PFCMainWindowTableViewItemCellView cellViewWithTitle:(0 < profile.title.length) ? profile.title : PFCProfileDefaultName payloadCount:payloadCount errorCount:0];
     }
     return nil;
 } // tableView:viewForTableColumn:row

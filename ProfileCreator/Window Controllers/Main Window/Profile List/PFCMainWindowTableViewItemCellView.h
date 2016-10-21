@@ -27,6 +27,6 @@
 #pragma mark -
 ////////////////////////////////////////////////////////////////////////////////
 
-+ (NSTableCellView *_Nonnull)cellViewWithTitle:(NSString *_Nonnull)title;
++ (NSTableCellView *_Nonnull)cellViewWithTitle:(NSString *_Nonnull)title payloadCount:(NSInteger)payloadCount errorCount:(NSInteger)errorCount;
 
 @end
