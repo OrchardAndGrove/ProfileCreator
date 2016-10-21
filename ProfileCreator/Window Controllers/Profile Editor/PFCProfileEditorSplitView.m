@@ -476,7 +476,7 @@ NSInteger const PFCTitleViewHeight = 39;
 ////////////////////////////////////////////////////////////////////////////////
 
 - (void)showSettingsView:(NSNotification *_Nullable)notification {
-    if (notification.object == self.profileEditor) {
+    if (notification.object == self.profileEditor && ![self.editorView.subviews containsObject:self.settingsView.view]) {
         [self.tableViewController.scrollView removeFromSuperview];
         [self.editorView addSubview:self.settingsView.view];
 
