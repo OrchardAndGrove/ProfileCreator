@@ -37,6 +37,7 @@ typedef NS_ENUM(NSUInteger, PFCLibraryTableView) { kPFCLibraryTableViewProfile, 
 @property (nonatomic, strong, readonly, nonnull) NSScrollView *scrollViewLibraryPayloads;
 @property (nonatomic, strong, readonly, nonnull) NSScrollView *scrollViewProfilePayloads;
 @property (nonatomic, strong, readonly, nonnull) NSTableView *tableViewProfilePayloads;
+@property (nonatomic, strong, readonly, nonnull) NSMutableArray *libraryPayloads;
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -

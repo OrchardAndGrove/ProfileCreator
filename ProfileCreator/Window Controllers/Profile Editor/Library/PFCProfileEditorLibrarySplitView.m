@@ -93,6 +93,13 @@
         //  Activate layout constraints
         // ---------------------------------------------------------------------
         [NSLayoutConstraint activateConstraints:constraints];
+
+        // ---------------------------------------------------------------------
+        //  If library payloads is empty, need to show "No Profiles" view
+        // ---------------------------------------------------------------------
+        if (self.libraryPayloads.libraryPayloads.count == 0) {
+            [self showLibraryNoProfiles:YES];
+        }
     }
     return self;
 }
