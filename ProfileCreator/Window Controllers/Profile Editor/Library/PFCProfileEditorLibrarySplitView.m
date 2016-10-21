@@ -384,39 +384,39 @@
 - (void)showLibraryNoProfiles:(BOOL)show {
     if (show) {
 
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         //  Update internal bool to easier query what view is currently shown
         //  FIXME - A check like that seems weak, and should probably check directly what view is currently in splitview
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         [self setSplitViewLibraryNoPayloads:YES];
 
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         //  Remove old view and add new view
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         [self.libraryPayloads.scrollViewLibraryPayloads removeFromSuperview];
         [self.middleView addSubview:self.libraryNoPayloads.view];
 
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         //  Activate new view saved Layout Constraints
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         [NSLayoutConstraint activateConstraints:self.constraintsLibraryNoPayloads];
     } else {
 
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         //  Update internal bool to easier query what view is currently shown
         //  FIXME - A check like that seems weak, and should probably check directly what view is currently in splitview
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         [self setSplitViewLibraryNoPayloads:NO];
 
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         //  Remove old view and add new view
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         [self.libraryNoPayloads.view removeFromSuperview];
         [self.middleView addSubview:self.libraryPayloads.scrollViewLibraryPayloads];
 
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         //  Activate new view saved Layout Constraints
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         [NSLayoutConstraint activateConstraints:self.constraintsLibraryPayloads];
     }
 }
@@ -434,44 +434,44 @@
 - (void)showLibrarySearch:(BOOL)show {
     if (show) {
 
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         //  Update internal bool to easier query what view is currently shown
         //  FIXME - A check like that seems weak, and should probably check directly what view is currently in splitview
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         [self setSplitViewLibraryCollapsed:NO];
 
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         //  Tell editor split view to remove Library Menu
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         [self.profileEditorSplitView showLibraryMenu:self.libraryMenu.stackView inSearchView:NO];
 
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         //  Insert Library Meny and activate saved Constraints
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         [self.middleView addSubview:self.libraryMenu.stackView];
         [NSLayoutConstraint activateConstraints:self.constraintsLibraryMenu];
 
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         //  Calculate the height and programmatically set the Library Profiles height when uncollapsing
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         NSInteger libraryViewHeight = (self.libraryPayloads.scrollViewProfilePayloads.contentSize.height - 108);
         [self setPosition:libraryViewHeight ofDividerAtIndex:0];
     } else {
 
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         //  Update internal bool to easier query what view is currently shown
         //  FIXME - A check like that seems weak, and should probably check directly what view is currently in splitview
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         [self setSplitViewLibraryCollapsed:YES];
 
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         //  Remove Library Meny
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         [self.libraryMenu.stackView removeFromSuperview];
 
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         //  Tell editor split view to add Library Menu in place of the Filter View
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         [self.profileEditorSplitView showLibraryMenu:self.libraryMenu.stackView inSearchView:YES];
     }
 }
