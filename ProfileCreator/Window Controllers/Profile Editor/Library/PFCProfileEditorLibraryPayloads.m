@@ -298,7 +298,7 @@ NSString *const PFCProfileEditorLibraryTableColumnIdentifierPayloads = @"TableCo
 } // tableView:viewForTableColumn:row
 
 - (BOOL)selectionShouldChangeInTableView:(NSTableView *)tableView {
-    if (0 <= tableView.clickedRow) {
+    if (0 <= tableView.clickedRow || self.allowEmptySelection) {
         return YES;
     } else {
         if (tableView.tag == kPFCLibraryTableViewProfile) {
@@ -371,6 +371,7 @@ NSString *const PFCProfileEditorLibraryTableColumnIdentifierPayloads = @"TableCo
         [self.tableViewProfilePayloads deselectAll:self];
         [self setSelectedPlaceholder:@{}];
         [self.profileEditor.toolbarItemTitle setSelectionTitle:@"Settings"];
+        [self setAllowEmptySelection:NO];
     }
 }
 
