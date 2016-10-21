@@ -17,16 +17,21 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+#import "PFCConstants.h"
 #import "PFCProfile.h"
+#import "PFCProfileEditor.h"
 #import "PFCProfileEditorFooter.h"
 #import "PFCProfileEditorSettingsPopOver.h"
+#import "PFCProfileEditorSplitView.h"
 
 @interface PFCProfileEditorFooter ()
 @property (nonatomic, weak, nullable) PFCProfile *profile;
 @property (nonatomic, readwrite, nonnull) NSView *view;
 @property (nonatomic, strong, nonnull) NSButton *buttonSave;
+@property (nonatomic, strong, nonnull) NSButton *buttonSettings;
 @property (nonatomic, strong, nonnull) NSButton *buttonPopOver;
 @property (nonatomic, strong, nonnull) PFCProfileEditorSettingsPopOver *settingsPopOver;
+@property (nonatomic, weak, nullable) PFCProfileEditor *profileEditor;
 @end
 
 @implementation PFCProfileEditorFooter
@@ -37,14 +42,15 @@
 #pragma mark -
 ////////////////////////////////////////////////////////////////////////////////
 
-- (nonnull instancetype)initWithProfile:(PFCProfile *_Nonnull)profile {
+- (nonnull instancetype)initWithProfileEditor:(PFCProfileEditor *_Nonnull)profileEditor {
     self = [super init];
     if (self != nil) {
 
         // ---------------------------------------------------------------------
         //  Setup Properties
         // ---------------------------------------------------------------------
-        _profile = profile;
+        _profileEditor = profileEditor;
+        _profile = profileEditor.profile;
         _settingsPopOver = [[PFCProfileEditorSettingsPopOver alloc] initWithProfile:_profile];
 
         // ---------------------------------------------------------------------
@@ -58,6 +64,7 @@
         NSMutableArray *constraints = [[NSMutableArray alloc] init];
 
         [self addButtonSave:constraints];
+        [self addButtonSettings:constraints];
         [self addButtonPopOver:constraints];
 
         [NSLayoutConstraint activateConstraints:constraints];
@@ -80,7 +87,7 @@
     [_buttonSave setTarget:self];
     [_buttonSave setFont:[NSFont systemFontOfSize:[NSFont smallSystemFontSize]]];
     [_buttonSave setAction:@selector(saveProfile:)];
-    [_buttonSave setTitle:@"Save"];
+    [_buttonSave setTitle:NSLocalizedString(@"Save", @"")];
     [_buttonSave sizeToFit];
     [_buttonSave setContentHuggingPriority:NSLayoutPriorityDefaultHigh forOrientation:NSLayoutConstraintOrientationHorizontal];
     [_view addSubview:_buttonSave];
@@ -105,6 +112,48 @@
                                                         attribute:NSLayoutAttributeTrailing
                                                        multiplier:1.0
                                                          constant:10]];
+}
+
+- (void)addButtonSettings:(NSMutableArray *_Nonnull)constraints {
+
+    // -------------------------------------------------------------------------
+    //  Create and add Button Settings
+    // -------------------------------------------------------------------------
+    _buttonSettings = [[NSButton alloc] init];
+    [_buttonSettings setTranslatesAutoresizingMaskIntoConstraints:NO];
+    [_buttonSettings setBezelStyle:NSRoundedBezelStyle];
+    [_buttonSettings setButtonType:NSMomentaryPushInButton];
+    [_buttonSettings setBordered:YES];
+    [_buttonSettings setControlSize:NSSmallControlSize];
+    [_buttonSettings setTransparent:NO];
+    [_buttonSettings setTarget:self];
+    [_buttonSettings setFont:[NSFont systemFontOfSize:[NSFont smallSystemFontSize]]];
+    [_buttonSettings setAction:@selector(showSettings:)];
+    [_buttonSettings setTitle:NSLocalizedString(@"Settings", @"")];
+    [_buttonSettings sizeToFit];
+    [_buttonSettings setContentHuggingPriority:NSLayoutPriorityDefaultHigh forOrientation:NSLayoutConstraintOrientationHorizontal];
+    [_view addSubview:_buttonSettings];
+
+    // -------------------------------------------------------------------------
+    //  Setup constraints for button save
+    // -------------------------------------------------------------------------
+    // Center Vertically
+    [constraints addObject:[NSLayoutConstraint constraintWithItem:_buttonSettings
+                                                        attribute:NSLayoutAttributeCenterY
+                                                        relatedBy:NSLayoutRelationEqual
+                                                           toItem:_view
+                                                        attribute:NSLayoutAttributeCenterY
+                                                       multiplier:1.0
+                                                         constant:0]];
+
+    // Trailing
+    [constraints addObject:[NSLayoutConstraint constraintWithItem:_buttonSave
+                                                        attribute:NSLayoutAttributeLeading
+                                                        relatedBy:NSLayoutRelationEqual
+                                                           toItem:_buttonSettings
+                                                        attribute:NSLayoutAttributeTrailing
+                                                       multiplier:1.0
+                                                         constant:6]];
 }
 
 - (void)addButtonPopOver:(NSMutableArray *_Nonnull)constraints {
@@ -159,6 +208,10 @@
     if (self.profile) {
         [self.profile save];
     }
+}
+
+- (void)showSettings:(id)sender {
+    [[NSNotificationCenter defaultCenter] postNotificationName:PFCSelectProfileSettingsNotification object:self.profileEditor userInfo:nil];
 }
 
 - (void)showPopOver:(id)sender {

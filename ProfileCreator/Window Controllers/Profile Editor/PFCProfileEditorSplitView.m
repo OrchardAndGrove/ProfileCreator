@@ -68,7 +68,7 @@ NSInteger const PFCTitleViewHeight = 39;
         // ---------------------------------------------------------------------
         _profileEditor = profileEditor;
         _settingsView = _profileEditor.settings.settingsView;
-        _editorFooter = [[PFCProfileEditorFooter alloc] initWithProfile:_profileEditor.profile];
+        _editorFooter = [[PFCProfileEditorFooter alloc] initWithProfileEditor:profileEditor];
         _tableViewController = [[PFCProfileEditorTableViewController alloc] initWithProfile:_profileEditor.profile];
         _librarySplitView = [[PFCProfileEditorLibrarySplitView alloc] initWithProfileEditor:_profileEditor profileEditorSplitView:self selectionDelegate:_tableViewController];
         _libraryFilter = [[PFCProfileEditorLibraryFilter alloc] init];
@@ -80,11 +80,16 @@ NSInteger const PFCTitleViewHeight = 39;
         [self setDividerStyle:NSSplitViewDividerStyleThin];
         [self setVertical:YES];
 
-        NSMutableArray *constraints = [[NSMutableArray alloc] init];
+        // ---------------------------------------------------------------------
+        //  Register for notifications
+        // ---------------------------------------------------------------------
+        NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+        [nc addObserver:self selector:@selector(showSettingsView:) name:PFCSelectProfileSettingsNotification object:nil];
 
         // ---------------------------------------------------------------------
         //  Setup views in splitview
         // ---------------------------------------------------------------------
+        NSMutableArray *constraints = [[NSMutableArray alloc] init];
         [self setupSplitViewEditor:constraints];
         [self setupSplitViewLibrary:constraints];
 
@@ -466,6 +471,24 @@ NSInteger const PFCTitleViewHeight = 39;
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
+#pragma mark Notification Methods
+#pragma mark -
+////////////////////////////////////////////////////////////////////////////////
+
+- (void)showSettingsView:(NSNotification *_Nullable)notification {
+    if (notification.object == self.profileEditor) {
+        [self.tableViewController.scrollView removeFromSuperview];
+        [self.editorView addSubview:self.settingsView.view];
+
+        // ---------------------------------------------------------------------
+        //  Activate layout constraints
+        // ---------------------------------------------------------------------
+        [NSLayoutConstraint activateConstraints:self.constraintsSettingsView];
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
 #pragma mark Instance Methods
 #pragma mark -
 ////////////////////////////////////////////////////////////////////////////////
@@ -478,16 +501,6 @@ NSInteger const PFCTitleViewHeight = 39;
     //  Activate layout constraints
     // ---------------------------------------------------------------------
     [NSLayoutConstraint activateConstraints:self.constraintsTableViewController];
-}
-
-- (void)showSettingsView {
-    [self.tableViewController.scrollView removeFromSuperview];
-    [self.editorView addSubview:self.settingsView.view];
-
-    // ---------------------------------------------------------------------
-    //  Activate layout constraints
-    // ---------------------------------------------------------------------
-    [NSLayoutConstraint activateConstraints:self.constraintsSettingsView];
 }
 
 - (void)showLibraryMenu:(NSView *_Nullable)view inSearchView:(BOOL)show {

@@ -42,7 +42,7 @@
 
 - (nonnull instancetype)initWithProfileEditor:(PFCProfileEditor *_Nonnull)profileEditor;
 - (void)showEditorViewWithCollection:(id<PFPPayloadCollection> _Nullable)collection;
-- (void)showSettingsView;
+- (void)showSettingsView:(NSNotification *_Nullable)notification;
 - (void)showLibraryMenu:(NSView *_Nullable)view inSearchView:(BOOL)show;
 
 @end

@@ -104,6 +104,7 @@ extern NSString *const PFCGroupDidRemoveProfileNotification;
 extern NSString *const PFCExportProfileNotification;
 extern NSString *const PFCProfileSelectionDidChangeNotification;
 extern NSString *const PFCNoProfileConfiguredNotification;
+extern NSString *const PFCSelectProfileSettingsNotification;
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark Notification User Info

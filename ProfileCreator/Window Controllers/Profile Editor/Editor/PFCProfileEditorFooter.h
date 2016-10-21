@@ -36,6 +36,6 @@
 #pragma mark -
 ////////////////////////////////////////////////////////////////////////////////
 
-- (nonnull instancetype)initWithProfile:(PFCProfile *_Nonnull)profile;
+- (nonnull instancetype)initWithProfileEditor:(PFCProfileEditor *_Nonnull)profileEditor;
 
 @end

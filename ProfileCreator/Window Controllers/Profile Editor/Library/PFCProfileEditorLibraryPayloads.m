@@ -37,6 +37,8 @@ NSString *const PFCProfileEditorLibraryTableColumnIdentifierPayloads = @"TableCo
 @property (nonatomic, readwrite) PFCPayloadLibrary selectedLibrary;
 @property (nonatomic, strong, readwrite, nonnull) NSDictionary *selectedPlaceholder;
 
+@property (nonatomic) BOOL allowEmptySelection; // Used when showing settings view;
+
 @property (nonatomic, weak, nullable) id selectionDelegate;
 @property (nonatomic, weak, nullable) PFCProfile *profile;
 @property (nonatomic, weak, nullable) PFCProfileEditor *profileEditor;
@@ -44,7 +46,7 @@ NSString *const PFCProfileEditorLibraryTableColumnIdentifierPayloads = @"TableCo
 @property (nonatomic, strong, nonnull) PFPPayloadCollections *payloadCollections;
 @property (nonatomic, strong, nullable) id<PFPPayloadCollectionSet> collectionApple;
 
-@property (nonatomic, strong, nonnull) NSMutableArray *libraryPayloads;
+@property (nonatomic, readwrite, strong, nonnull) NSMutableArray *libraryPayloads;
 @property (nonatomic, strong, nonnull) NSMutableArray *profilePayloads;
 
 @property (nonatomic, strong, nonnull) NSMutableArray *libraryProfileManager;
@@ -91,6 +93,12 @@ NSString *const PFCProfileEditorLibraryTableColumnIdentifierPayloads = @"TableCo
         }
 
         // ---------------------------------------------------------------------
+        //  Register for notifications
+        // ---------------------------------------------------------------------
+        NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+        [nc addObserver:self selector:@selector(showSettingsView:) name:PFCSelectProfileSettingsNotification object:nil];
+
+        // ---------------------------------------------------------------------
         //  Instantiate and setup all Payload Collections to use in the editor
         // ---------------------------------------------------------------------
         // Currently only ProfileManager, add more here when available
@@ -101,17 +109,6 @@ NSString *const PFCProfileEditorLibraryTableColumnIdentifierPayloads = @"TableCo
         // ---------------------------------------------------------------------
         [self initializeTableViewProfilePayloads];
         [self initializeTableViewLibraryPayloads];
-
-        // ---------------------------------------------------------------------
-        //  FIXME - If library payloads is empty, need to show "No Profiles" view
-        // ---------------------------------------------------------------------
-        /*
-        if (self.libraryPayloads.count == 0 && !self.profileEditorLibrarySplitView.splitViewLibraryNoPayloads) {
-            [self.profileEditorLibrarySplitView showLibraryNoProfiles:YES];
-        } else if (self.libraryPayloads.count != 0 && self.profileEditorLibrarySplitView.splitViewLibraryNoPayloads) {
-            [self.profileEditorLibrarySplitView showLibraryNoProfiles:NO];
-        }
-         */
     }
     return self;
 }
@@ -344,6 +341,7 @@ NSString *const PFCProfileEditorLibraryTableColumnIdentifierPayloads = @"TableCo
 ////////////////////////////////////////////////////////////////////////////////
 
 - (NSDragOperation)draggingEntered:(id<NSDraggingInfo>)sender {
+    // FIXME - Here forcing a focus ring would fit, haven't looked into how to yet.
     // NSView *noPayloadsView = self.profileEditorLibrarySplitView.libraryNoPayloads.view;
     //[[noPayloadsView window] makeFirstResponder:noPayloadsView];
     return NSDragOperationCopy;
@@ -359,6 +357,22 @@ NSString *const PFCProfileEditorLibraryTableColumnIdentifierPayloads = @"TableCo
     [self movePlaceholders:placeholders fromTableViewArray:self.profilePayloads toTableViewArray:self.libraryPayloads];
     return YES;
 } // performDragOperation
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark Notification Methods
+#pragma mark -
+////////////////////////////////////////////////////////////////////////////////
+
+- (void)showSettingsView:(NSNotification *_Nullable)notification {
+    if (notification.object == self.profileEditor) {
+        [self setAllowEmptySelection:YES];
+        [self.tableViewLibraryPayloads deselectAll:self];
+        [self.tableViewProfilePayloads deselectAll:self];
+        [self setSelectedPlaceholder:@{}];
+        [self.profileEditor.toolbarItemTitle setSelectionTitle:@"Settings"];
+    }
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -

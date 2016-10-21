@@ -82,6 +82,7 @@ NSString *const PFCGroupDidRemoveProfileNotification = @"GroupDidRemoveProfileNo
 NSString *const PFCExportProfileNotification = @"ExportProfileNotification";
 NSString *const PFCProfileSelectionDidChangeNotification = @"ProfileSelectionDidChangeNotification";
 NSString *const PFCNoProfileConfiguredNotification = @"NoProfileConfiguredNotification";
+NSString *const PFCSelectProfileSettingsNotification = @"SelectProfileSettingsNotification";
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark Notification User Info
