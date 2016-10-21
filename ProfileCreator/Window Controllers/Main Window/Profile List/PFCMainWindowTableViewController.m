@@ -266,7 +266,7 @@ NSString *const PFCMainWindowTableViewTableColumnIdentifier = @"TableViewTableCo
 ////////////////////////////////////////////////////////////////////////////////
 
 - (CGFloat)tableView:(NSTableView *)tableView heightOfRow:(NSInteger)row {
-    return 38;
+    return 36;
 } // tableView:heightOfRow
 
 - (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row {

@@ -66,7 +66,7 @@
                                                            toItem:cellView
                                                         attribute:NSLayoutAttributeTop
                                                        multiplier:1.0
-                                                         constant:3]];
+                                                         constant:2]];
 
     // Leading
     [constraints addObject:[NSLayoutConstraint constraintWithItem:textFieldTitle
