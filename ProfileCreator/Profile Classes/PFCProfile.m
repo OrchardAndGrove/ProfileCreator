@@ -170,11 +170,13 @@
     //  Verify the profile is saved to avoid mismatch in UI and exported profile
     // -------------------------------------------------------------------------
     if (![self isSaved]) {
-        NSDictionary *userInfo = @{
-            NSLocalizedDescriptionKey : NSLocalizedString(@"Profile has unsaved settings.", nil),
-            NSLocalizedFailureReasonErrorKey : NSLocalizedString(@"To export a profile you need to save all unsaved settings.", nil)
-        };
-        *error = [NSError errorWithDomain:PFCErrorDomain code:-59 userInfo:userInfo];
+        if (error) {
+            NSDictionary *userInfo = @{
+                NSLocalizedDescriptionKey : NSLocalizedString(@"Profile has unsaved settings.", nil),
+                NSLocalizedFailureReasonErrorKey : NSLocalizedString(@"To export a profile you need to save all unsaved settings.", nil)
+            };
+            *error = [NSError errorWithDomain:PFCErrorDomain code:-59 userInfo:userInfo];
+        }
         return nil;
     }
 
