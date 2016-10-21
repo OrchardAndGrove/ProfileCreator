@@ -67,6 +67,7 @@
                       styleMask:NSFullSizeContentViewWindowMask | NSTitledWindowMask | NSUnifiedTitleAndToolbarWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask
                         backing:NSBackingStoreBuffered
                           defer:NO];
+
         [profileEditorWindow setTitleVisibility:NSWindowTitleHidden];
         [profileEditorWindow setReleasedWhenClosed:NO];
         [profileEditorWindow setRestorable:YES];

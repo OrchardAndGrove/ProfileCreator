@@ -15,7 +15,7 @@
 @property (nonatomic, strong, nonnull) NSTextField *textFieldLabelUpdatePayloadVersions;
 @property (nonatomic, strong, nonnull) NSButton *checkboxUpdatePayloadVersions;
 
-@property (nonatomic, strong, nonnull) NSTextField *textFieldLabelScope; // Top
+@property (nonatomic, strong, nonnull) NSTextField *textFieldLabelScope;
 @property (nonatomic, strong, nonnull) NSPopUpButton *popUpButtonScope;
 
 @property (nonatomic, strong, nonnull) NSTextField *textFieldLabelDistribution;
@@ -112,9 +112,9 @@
 
 - (void)addSettingScope:(NSMutableArray *_Nonnull)constraints enabled:(BOOL)enabled labelAbove:(NSTextField *_Nullable)labelAbove {
 
-    // ---------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     //  Create and add TextField Label Scope
-    // ---------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     _textFieldLabelScope = [self textFieldLabelWithTitle:NSLocalizedString(@"Scope:", @"") labelAbove:labelAbove constraints:constraints enabled:enabled];
 
     if (enabled) {
@@ -133,9 +133,9 @@
 
         _height = (_height + _popUpButtonScope.intrinsicContentSize.height);
 
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         //  Setup layout constraints
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         // PopUpButton - Leading
         [constraints addObject:[NSLayoutConstraint constraintWithItem:_popUpButtonScope
                                                             attribute:NSLayoutAttributeLeading
@@ -277,9 +277,9 @@
     [textFieldLabel setStringValue:title ?: @""];
     [self addSubview:textFieldLabel];
 
-    // ---------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     //  Setup constraints for TextField Label
-    // ---------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     // TextField Label - Leading
     [constraints addObject:[NSLayoutConstraint constraintWithItem:textFieldLabel
                                                         attribute:NSLayoutAttributeLeading
@@ -289,6 +289,7 @@
                                                        multiplier:1.0
                                                          constant:6]];
 
+    // TextField Label - Trailing
     [constraints addObject:[NSLayoutConstraint constraintWithItem:self
                                                         attribute:NSLayoutAttributeCenterX
                                                         relatedBy:NSLayoutRelationEqual
@@ -333,9 +334,9 @@
 
     _height = (_height + textFieldValue.intrinsicContentSize.height);
 
-    // ---------------------------------------------------------------------
-    //  Setup constraints for TextField Label
-    // ---------------------------------------------------------------------
+    // -------------------------------------------------------------------------
+    //  Setup constraints for TextField Value
+    // -------------------------------------------------------------------------
     // TextField Value - Leading
     [constraints addObject:[NSLayoutConstraint constraintWithItem:textFieldValue
                                                         attribute:NSLayoutAttributeLeading
