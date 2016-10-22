@@ -120,6 +120,7 @@ extern NSString *const PFCNotificationUserInfoProfileIdentifiers;
 extern NSString *const PFCButtonTitleCancel;
 extern NSString *const PFCButtonTitleClose;
 extern NSString *const PFCButtonTitleDelete;
+extern NSString *const PFCButtonTitleSave;
 extern NSString *const PFCButtonTitleSaveAndClose;
 extern NSString *const PFCButtonTitleOK;
 

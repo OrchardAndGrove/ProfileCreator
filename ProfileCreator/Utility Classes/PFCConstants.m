@@ -97,6 +97,7 @@ NSString *const PFCNotificationUserInfoProfileIdentifiers = @"ProfileIdentifiers
 ////////////////////////////////////////////////////////////////////////////////
 NSString *const PFCButtonTitleCancel = @"Cancel";
 NSString *const PFCButtonTitleClose = @"Close";
+NSString *const PFCButtonTitleSave = @"Save";
 NSString *const PFCButtonTitleSaveAndClose = @"Save & Close";
 NSString *const PFCButtonTitleDelete = @"Delete";
 NSString *const PFCButtonTitleOK = @"OK";

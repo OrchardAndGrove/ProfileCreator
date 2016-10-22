@@ -17,12 +17,14 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+#import "PFCAlert.h"
 #import "PFCConstants.h"
 #import "PFCProfile.h"
 #import "PFCProfileEditor.h"
 #import "PFCProfileEditorFooter.h"
 #import "PFCProfileEditorSettingsPopOver.h"
 #import "PFCProfileEditorSplitView.h"
+#import "PFCProfileEditorTableViewController.h"
 
 @interface PFCProfileEditorFooter ()
 @property (nonatomic, weak, nullable) PFCProfile *profile;
@@ -32,6 +34,7 @@
 @property (nonatomic, strong, nonnull) NSButton *buttonPopOver;
 @property (nonatomic, strong, nonnull) PFCProfileEditorSettingsPopOver *settingsPopOver;
 @property (nonatomic, weak, nullable) PFCProfileEditor *profileEditor;
+@property (nonatomic, strong, nullable) PFCAlert *alert;
 @end
 
 @implementation PFCProfileEditorFooter
@@ -205,8 +208,84 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 - (void)saveProfile:(id)sender {
-    if (self.profile) {
+
+    if (self.profile.title.length == 0) {
+
+        // ---------------------------------------------------------------------
+        //  Setup return block
+        // ---------------------------------------------------------------------
+        void (^returnValue)(NSString *_Nullable, NSInteger) = ^void(NSString *inputText, NSInteger returnCode) {
+
+          // -------------------------------------------------------------------
+          //  User selected: Save & Close
+          // -------------------------------------------------------------------
+          if (returnCode == NSAlertFirstButtonReturn) {
+              [self.profile updateTitle:inputText];
+              if (![self.profile save]) {
+                  // FIXME - Show alert that save failed!
+              }
+
+              // ---------------------------------------------------------------
+              //  Reload settings view to show the new title
+              // ---------------------------------------------------------------
+              [self.profile.editor.splitView.tableViewController reloadDataWithForcedReload:YES];
+          }
+        };
+
+        // ---------------------------------------------------------------------
+        //  Setup Alert
+        // ---------------------------------------------------------------------
+        PFCAlert *alert = [[PFCAlert alloc] init];
+        [self setAlert:alert];
+
+        // ---------------------------------------------------------------------
+        //  Show Alert to User
+        // ---------------------------------------------------------------------
+        [alert showAlertTextInputWithMessage:[NSString stringWithFormat:NSLocalizedString(@"Please enter a name for the profile:",
+                                                                                          @"Alert message when closing editor window when there are unsaved changes")]
+                             informativeText:nil
+                                      window:self.profileEditor.window
+                               defaultString:@""
+                           placeholderString:NSLocalizedString(@"Profile Name", @"")
+                            firstButtonTitle:PFCButtonTitleSave
+                           secondButtonTitle:PFCButtonTitleCancel
+                            thirdButtonTitle:nil
+                     firstButtonInitialState:NO
+                                      sender:self
+                                 returnValue:returnValue];
+
+        // ---------------------------------------------------------------------
+        //  Select all text in the profile name text field
+        // ---------------------------------------------------------------------
+        [alert.textFieldInput selectText:self];
+    } else {
         [self.profile save];
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark NSTextFieldDelegate Methods
+#pragma mark -
+////////////////////////////////////////////////////////////////////////////////
+
+// -----------------------------------------------------------------------------
+//  Used when selecting a new profile name to not allow invalid or empty name
+// -----------------------------------------------------------------------------
+- (void)controlTextDidChange:(NSNotification *)notification {
+
+    // -------------------------------------------------------------------------
+    //  Get current text in the text field
+    // -------------------------------------------------------------------------
+    NSString *inputText = [[notification.userInfo valueForKey:@"NSFieldEditor"] string];
+
+    // -------------------------------------------------------------------------
+    //  If name is invalid or empty, disable save button, else enable it
+    // -------------------------------------------------------------------------
+    if (self.alert.firstButton.enabled && (inputText.length == 0 || [inputText isEqualToString:PFCProfileDefaultName])) {
+        [self.alert.firstButton setEnabled:NO];
+    } else {
+        [self.alert.firstButton setEnabled:YES];
     }
 }
 

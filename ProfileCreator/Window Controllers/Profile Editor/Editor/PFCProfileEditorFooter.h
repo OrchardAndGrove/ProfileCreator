@@ -20,7 +20,7 @@
 #import <Cocoa/Cocoa.h>
 @class PFPProfile;
 
-@interface PFCProfileEditorFooter : NSObject
+@interface PFCProfileEditorFooter : NSObject <NSTextFieldDelegate>
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
