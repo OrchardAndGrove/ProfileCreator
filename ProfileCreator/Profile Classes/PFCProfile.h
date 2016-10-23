@@ -52,6 +52,7 @@
 // -----------------------------------------------------------------------------
 @property (nonatomic) PFPScope scope;
 @property (nonatomic) PFPDistribution distribution;
+@property (nonatomic) BOOL sign;
 @property (nonatomic) BOOL showHidden;
 @property (nonatomic) BOOL showSupervised;
 @property (nonatomic) BOOL showDisabled;

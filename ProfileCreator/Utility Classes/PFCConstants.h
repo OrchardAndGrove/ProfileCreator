@@ -145,3 +145,4 @@ extern NSString *const PFCViewSettingsKeyDistribution;
 extern NSString *const PFCViewSettingsKeyShowDisabled;
 extern NSString *const PFCViewSettingsKeyShowHidden;
 extern NSString *const PFCViewSettingsKeyShowSupervised;
+extern NSString *const PFCViewSettingsKeySignProfile;

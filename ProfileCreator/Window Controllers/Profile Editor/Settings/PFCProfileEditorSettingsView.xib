@@ -8,8 +8,10 @@
         <customObject id="-2" userLabel="File's Owner" customClass="PFCProfileEditorSettingsView">
             <connections>
                 <outlet property="checkboxShowSupervised" destination="hdf-aw-L7k" id="3vK-F1-Rqw"/>
+                <outlet property="checkboxSignProfile" destination="Ask-rm-wRI" id="BCQ-aw-mdC"/>
                 <outlet property="popUpButtonDistribution" destination="emV-eT-Slf" id="CBU-Jc-JiN"/>
                 <outlet property="popUpButtonScope" destination="JqJ-nB-iHu" id="jlC-s2-cSQ"/>
+                <outlet property="popUpButtonSigningCertificates" destination="AHH-xZ-tFB" id="71z-56-4ig"/>
                 <outlet property="view" destination="HDe-fa-beo" id="Nct-nl-c32"/>
             </connections>
         </customObject>

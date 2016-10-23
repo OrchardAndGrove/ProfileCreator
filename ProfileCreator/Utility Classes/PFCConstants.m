@@ -123,3 +123,4 @@ NSString *const PFCViewSettingsKeyDistribution = @"Distribution";
 NSString *const PFCViewSettingsKeyShowDisabled = @"ShowDisabled";
 NSString *const PFCViewSettingsKeyShowHidden = @"ShowHidden";
 NSString *const PFCViewSettingsKeyShowSupervised = @"ShowSupervised";
+NSString *const PFCViewSettingsKeySignProfile = @"SignProfile";

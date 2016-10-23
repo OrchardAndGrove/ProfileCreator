@@ -23,6 +23,8 @@
 @interface PFCProfileEditorSettingsView ()
 @property (nonatomic, weak) PFCProfile *profile;
 @property (nonatomic, weak) IBOutlet NSButton *checkboxShowSupervised;
+@property (nonatomic, weak) IBOutlet NSButton *checkboxSignProfile;
+@property (nonatomic, weak) IBOutlet NSPopUpButton *popUpButtonSigningCertificates;
 @property (nonatomic, weak) IBOutlet NSPopUpButton *popUpButtonScope;
 @property (nonatomic, weak) IBOutlet NSPopUpButton *popUpButtonDistribution;
 
@@ -59,6 +61,7 @@
     //  Unbind
     // -------------------------------------------------------------------------
     [_checkboxShowSupervised unbind:NSValueBinding];
+    [_checkboxSignProfile unbind:NSValueBinding];
     [_popUpButtonScope unbind:NSSelectedTagBinding];
     [_popUpButtonDistribution unbind:NSSelectedTagBinding];
 }
@@ -74,6 +77,7 @@
     //  Setup Value Bindings
     // -------------------------------------------------------------------------
     [_checkboxShowSupervised bind:NSValueBinding toObject:_profile withKeyPath:NSStringFromSelector(@selector(showSupervised)) options:@{ NSContinuouslyUpdatesValueBindingOption : @YES }];
+    [_checkboxSignProfile bind:NSValueBinding toObject:_profile withKeyPath:NSStringFromSelector(@selector(sign)) options:@{ NSContinuouslyUpdatesValueBindingOption : @YES }];
     [_popUpButtonScope bind:NSSelectedTagBinding toObject:_profile withKeyPath:NSStringFromSelector(@selector(scope)) options:nil];
     [_popUpButtonDistribution bind:NSSelectedTagBinding toObject:_profile withKeyPath:NSStringFromSelector(@selector(distribution)) options:nil];
 }

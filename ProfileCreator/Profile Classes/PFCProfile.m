@@ -18,6 +18,7 @@
 //  limitations under the License.
 
 #import "PFCConstants.h"
+#import "PFCError.h"
 #import "PFCLog.h"
 #import "PFCProfile.h"
 #import "PFCProfileController.h"
@@ -71,6 +72,7 @@
         // ---------------------------------------------------------------------
         _scope = [PFPUtility scopeFromInteger:[viewSettings[PFCViewSettingsKeyScope] integerValue] ?: 3];
         _distribution = [PFPUtility distributionFromInteger:[viewSettings[PFCViewSettingsKeyDistribution] integerValue] ?: 3];
+        _sign = [viewSettings[PFCViewSettingsKeySignProfile] boolValue];
         _showHidden = [viewSettings[PFCViewSettingsKeyShowHidden] boolValue];
         _showSupervised = [viewSettings[PFCViewSettingsKeyShowSupervised] boolValue];
         _showDisabled = [viewSettings[PFCViewSettingsKeyShowDisabled] boolValue];
@@ -156,6 +158,7 @@
     //  Return Current View Settings
     // -------------------------------------------------------------------------
     return @{
+        PFCViewSettingsKeySignProfile : @(self.sign),
         PFCViewSettingsKeyShowHidden : @(self.showHidden),
         PFCViewSettingsKeyShowSupervised : @(self.showSupervised),
         PFCViewSettingsKeyShowDisabled : @(self.showDisabled),
@@ -171,11 +174,9 @@
     // -------------------------------------------------------------------------
     if (![self isSaved]) {
         if (error) {
-            NSDictionary *userInfo = @{
-                NSLocalizedDescriptionKey : NSLocalizedString(@"Profile has unsaved settings.", nil),
-                NSLocalizedFailureReasonErrorKey : NSLocalizedString(@"To export a profile you need to save all unsaved settings.", nil)
-            };
-            *error = [NSError errorWithDomain:PFCErrorDomain code:-59 userInfo:userInfo];
+            *error = [PFCError errorWithDescription:NSLocalizedString(@"Profile has unsaved settings.", nil)
+                                      failureReason:NSLocalizedString(@"To export a profile you need to save all unsaved settings.", nil)
+                                               code:-59];
         }
         return nil;
     }
@@ -201,7 +202,6 @@
 
 + (NSDictionary *_Nullable)defaultPayloadSettings {
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-
     NSMutableDictionary *defaultSettings = [[NSMutableDictionary alloc] init];
     NSMutableDictionary *settingsGeneral = [[NSMutableDictionary alloc] init];
 
