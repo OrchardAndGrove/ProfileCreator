@@ -17,8 +17,17 @@
 //  See the License for the specific language governing permissions and
 //  limitations under the License.
 
+#import "PFCConstants.h"
 #import "PFCError.h"
 
 @implementation PFCError
+
++ (NSError *_Nonnull)errorWithDescription:(NSString *_Nonnull)description failureReason:(NSString *_Nullable)failureReason code:(NSInteger)code {
+    NSDictionary *userInfo = @{
+        NSLocalizedDescriptionKey : description,
+        NSLocalizedFailureReasonErrorKey : failureReason,
+    };
+    return [NSError errorWithDomain:PFCErrorDomain code:code userInfo:userInfo];
+}
 
 @end

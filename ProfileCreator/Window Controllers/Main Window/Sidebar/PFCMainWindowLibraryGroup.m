@@ -19,6 +19,7 @@
 
 #import "PFCAlert.h"
 #import "PFCConstants.h"
+#import "PFCError.h"
 #import "PFCLog.h"
 #import "PFCMainWindowLibraryGroup.h"
 #import "PFCMainWindowOutlineViewChildCellView.h"
@@ -272,14 +273,11 @@
         // -------------------------------------------------------------------------
 
         // FIXME - This is just a placeholder error, should probably do a real check if the path has wrong permissions etc.
-        NSDictionary *userInfo = @{
-            NSLocalizedDescriptionKey : NSLocalizedString(([NSString stringWithFormat:@"You don’t have permission to save the file \"%@\" in the folder \"%@\"", groupURL.lastPathComponent,
-                                                                                      [[groupURL URLByDeletingLastPathComponent] lastPathComponent]]),
-                                                          nil),
-            NSLocalizedFailureReasonErrorKey : NSLocalizedString(@"Permission denied", nil),
-            NSLocalizedRecoverySuggestionErrorKey : NSLocalizedString(@"To view or change permissions, select the item in the Finder and choose File > Get Info.", nil)
-        };
-        *error = [NSError errorWithDomain:PFCErrorDomain code:-57 userInfo:userInfo];
+        *error = [PFCError errorWithDescription:NSLocalizedString(([NSString stringWithFormat:@"You don’t have permission to save the file \"%@\" in the folder \"%@\"", groupURL.lastPathComponent,
+                                                                                              [[groupURL URLByDeletingLastPathComponent] lastPathComponent]]),
+                                                                  @"")
+                                  failureReason:NSLocalizedString(@"Permission denied", nil)
+                                           code:-57];
 
         DDLogError(@"%@", [*error localizedDescription]);
 

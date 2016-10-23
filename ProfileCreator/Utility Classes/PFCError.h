@@ -21,4 +21,6 @@
 
 @interface PFCError : NSObject
 
++ (NSError *_Nonnull)errorWithDescription:(NSString *_Nonnull)description failureReason:(NSString *_Nullable)failureReason code:(NSInteger)code;
+
 @end
