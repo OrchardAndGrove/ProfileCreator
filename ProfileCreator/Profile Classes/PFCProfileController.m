@@ -19,6 +19,7 @@
 
 #import "PFCAlert.h"
 #import "PFCConstants.h"
+#import "PFCError.h"
 #import "PFCLog.h"
 #import "PFCProfile.h"
 #import "PFCProfileController.h"
@@ -429,11 +430,9 @@
             // FIXME - Should specify the error codes in constants, this is just a test
             // Not Saved
         } else {
-            NSDictionary *userInfo = @{
-                NSLocalizedDescriptionKey : NSLocalizedString(@"No payload in profile.", @""),
-                NSLocalizedFailureReasonErrorKey : NSLocalizedString(@"To export a profile you need to include at least one payload.", @"")
-            };
-            error = [NSError errorWithDomain:PFCErrorDomain code:-60 userInfo:userInfo];
+            error = [PFCError errorWithDescription:NSLocalizedString(@"No payload in profile.", @"")
+                                     failureReason:NSLocalizedString(@"To export a profile you need to include at least one payload.", @"")
+                                              code:-60];
         }
         [self setAlert:[[PFCAlert alloc] init]];
         [self.alert showAlertErrorWithError:error window:[[NSApplication sharedApplication] mainWindow]];
@@ -549,7 +548,6 @@
     // -------------------------------------------------------------------------
     //  Verify a vaild profile was returned
     // -------------------------------------------------------------------------
-
     // FIXME - This check just cheks if a dict with content was returned or not
     //         This should be expanded
     if (profileDict.count == 0) {
@@ -561,12 +559,28 @@
     // -------------------------------------------------------------------------
     //  Write the finished profile to disk
     // -------------------------------------------------------------------------
-
     DDLogDebug(@"Writing profile to disk: %@", profileDict);
     if (![profileDict writeToURL:url atomically:YES]) {
         // FIXME - Writing the profile to disk failed, this should be notified to the user
         DDLogError(@"Writing profile to disk failed!");
+        return;
     }
+
+    // -------------------------------------------------------------------------
+    //  If export updated profile payloads dict, save changes to disk
+    // -------------------------------------------------------------------------
+    if (![payloadSettings isEqualToDictionary:profilePayloads.settings]) {
+        if (!profile.profilePayloads) {
+            [profile setProfilePayloads:profilePayloads];
+        }
+
+        if (![profile save]) {
+            // FIXME - Show error that save failed!
+        }
+
+        [profile setProfilePayloads:nil];
+    }
+
 } // exportProfile:payloadSettings:url
 
 // -----------------------------------------------------------------------------

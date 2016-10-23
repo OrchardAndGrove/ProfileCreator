@@ -19,6 +19,7 @@
 
 #import <Cocoa/Cocoa.h>
 @class PFPPayloadCollections;
+@class PFPPayloadSettings;
 
 @interface PFPPayloadExporter : NSObject
 
@@ -30,6 +31,7 @@
 
 - (nonnull instancetype)init NS_UNAVAILABLE;
 - (nonnull instancetype)initWithPayloadCollections:(PFPPayloadCollections *_Nonnull)payloadCollections
+                                   payloadSettings:(PFPPayloadSettings *_Nonnull)payloadSettings
                                     baseIdentifier:(NSString *_Nonnull)baseIdentifier
                                              scope:(PFPScope)scope
                                       distribution:(PFPDistribution)distribution

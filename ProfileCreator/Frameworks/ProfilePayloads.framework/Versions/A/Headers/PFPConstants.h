@@ -79,6 +79,11 @@ extern NSString *_Nonnull const PFPStringDistributionManual;
 extern NSString *_Nonnull const PFPStringDistributionPush;
 
 ////////////////////////////////////////////////////////////////////////////////
+#pragma mark Error
+///////////////////////////////////////////////////////////////////////////////
+extern NSString *_Nonnull const PFPErrorDomain;
+
+////////////////////////////////////////////////////////////////////////////////
 #pragma mark Placeholder Keys
 ////////////////////////////////////////////////////////////////////////////////
 extern NSString *_Nonnull const PFPPlaceholderKeyCollectionSet;
@@ -219,6 +224,7 @@ extern NSString *_Nonnull const PFPFileDescriptionKeyDescriptionBottomLabel;
 #pragma mark Settings Keys
 ////////////////////////////////////////////////////////////////////////////////
 extern NSString *_Nonnull const PFPSettingsKeyEnabled;
+extern NSString *_Nonnull const PFPSettingsKeyPayloadHash;
 extern NSString *_Nonnull const PFPSettingsKeyPayloadUUID;
 extern NSString *_Nonnull const PFPSettingsKeyPayloadType;
 extern NSString *_Nonnull const PFPSettingsKeyPayloadVersion;
