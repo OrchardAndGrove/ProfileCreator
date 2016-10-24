@@ -21,7 +21,7 @@
             <rect key="frame" x="0.0" y="0.0" width="500" height="284"/>
             <subviews>
                 <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="J86-BY-SKJ">
-                    <rect key="frame" x="180" y="203" width="34" height="22"/>
+                    <rect key="frame" x="193" y="203" width="34" height="22"/>
                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" enabled="NO" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="5ld-Fk-aae">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="smallSystem"/>
@@ -29,8 +29,8 @@
                     </popUpButtonCell>
                 </popUpButton>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="bnB-yZ-8cb">
-                    <rect key="frame" x="124" y="206" width="53" height="18"/>
-                    <buttonCell key="cell" type="check" title="OS X" bezelStyle="regularSquare" imagePosition="left" enabled="NO" state="on" inset="2" id="P7w-WD-yRm">
+                    <rect key="frame" x="124" y="206" width="66" height="18"/>
+                    <buttonCell key="cell" type="check" title="macOS" bezelStyle="regularSquare" imagePosition="left" enabled="NO" state="on" inset="2" id="P7w-WD-yRm">
                         <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
                         <font key="font" metaFont="system"/>
                     </buttonCell>
@@ -43,7 +43,7 @@
                     </buttonCell>
                 </button>
                 <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="QVm-mP-riT">
-                    <rect key="frame" x="231" y="203" width="34" height="22"/>
+                    <rect key="frame" x="244" y="203" width="34" height="22"/>
                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" enabled="NO" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="8cE-Mq-Ozr">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="smallSystem"/>
@@ -51,7 +51,7 @@
                     </popUpButtonCell>
                 </popUpButton>
                 <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="7IH-fM-OeX">
-                    <rect key="frame" x="231" y="179" width="34" height="22"/>
+                    <rect key="frame" x="244" y="179" width="34" height="22"/>
                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" enabled="NO" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="cyc-9H-6LE">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="smallSystem"/>
@@ -59,7 +59,7 @@
                     </popUpButtonCell>
                 </popUpButton>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="SqO-Yq-3uf">
-                    <rect key="frame" x="217" y="207" width="11" height="17"/>
+                    <rect key="frame" x="230" y="207" width="11" height="17"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="-" id="ZTM-U6-g0L">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -67,7 +67,7 @@
                     </textFieldCell>
                 </textField>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="sfA-mP-8xY">
-                    <rect key="frame" x="217" y="183" width="11" height="17"/>
+                    <rect key="frame" x="230" y="183" width="11" height="17"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" enabled="NO" sendsActionOnEndEditing="YES" title="-" id="FE3-XU-c3b">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -119,7 +119,7 @@
                     </textFieldCell>
                 </textField>
                 <popUpButton verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Zh2-TS-Dwk">
-                    <rect key="frame" x="180" y="179" width="34" height="22"/>
+                    <rect key="frame" x="193" y="179" width="34" height="22"/>
                     <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" enabled="NO" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="1tB-In-9QE">
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                         <font key="font" metaFont="smallSystem"/>
