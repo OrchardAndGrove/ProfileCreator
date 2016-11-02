@@ -430,8 +430,8 @@
             // FIXME - Should specify the error codes in constants, this is just a test
             // Not Saved
         } else {
-            error = [PFCError errorWithDescription:NSLocalizedString(@"No payload in profile.", @"")
-                                     failureReason:NSLocalizedString(@"To export a profile you need to include at least one payload.", @"")
+            error = [PFCError errorWithDescription:NSLocalizedString(@"No payload selected in profile.", @"")
+                                     failureReason:NSLocalizedString(@"At least one payload must be included to export a profile.\n\nMove a payload from the library to the profile payloads list in the editor to include it in the profile.", @"")
                                               code:-60];
         }
         [self setAlert:[[PFCAlert alloc] init]];
