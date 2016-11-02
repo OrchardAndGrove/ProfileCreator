@@ -43,5 +43,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 - (nonnull instancetype)initWithProfile:(PFCProfile *_Nonnull)profile;
+- (void)saveProfile;
 
 @end

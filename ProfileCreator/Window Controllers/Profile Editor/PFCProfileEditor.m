@@ -323,4 +323,67 @@
     }
 }
 
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark Instance Methods
+#pragma mark -
+////////////////////////////////////////////////////////////////////////////////
+
+- (void)saveProfile {
+    
+    if (self.profile.title.length == 0) {
+        
+        // ---------------------------------------------------------------------
+        //  Setup return block
+        // ---------------------------------------------------------------------
+        void (^returnValue)(NSString *_Nullable, NSInteger) = ^void(NSString *inputText, NSInteger returnCode) {
+            
+            // -------------------------------------------------------------------
+            //  User selected: Save & Close
+            // -------------------------------------------------------------------
+            if (returnCode == NSAlertFirstButtonReturn) {
+                [self.profile updateTitle:inputText];
+                if (![self.profile save]) {
+                    // FIXME - Show alert that save failed!
+                }
+                
+                // ---------------------------------------------------------------
+                //  Reload settings view to show the new title
+                // ---------------------------------------------------------------
+                [self.profile.editor.splitView.tableViewController reloadDataWithForcedReload:YES];
+            }
+        };
+        
+        // ---------------------------------------------------------------------
+        //  Setup Alert
+        // ---------------------------------------------------------------------
+        PFCAlert *alert = [[PFCAlert alloc] init];
+        [self setAlert:alert];
+        
+        // ---------------------------------------------------------------------
+        //  Show Alert to User
+        // ---------------------------------------------------------------------
+        [alert showAlertTextInputWithMessage:[NSString stringWithFormat:NSLocalizedString(@"Please enter a name for the profile:",
+                                                                                          @"Alert message when closing editor window when there are unsaved changes")]
+                             informativeText:nil
+                                      window:self.window
+                               defaultString:@""
+                           placeholderString:NSLocalizedString(@"Profile Name", @"")
+                            firstButtonTitle:PFCButtonTitleSave
+                           secondButtonTitle:PFCButtonTitleCancel
+                            thirdButtonTitle:nil
+                     firstButtonInitialState:NO
+                                      sender:self
+                                 returnValue:returnValue];
+        
+        // ---------------------------------------------------------------------
+        //  Select all text in the profile name text field
+        // ---------------------------------------------------------------------
+        [alert.textFieldInput selectText:self];
+    } else {
+        [self.profile save];
+    }
+    
+}
+
 @end
