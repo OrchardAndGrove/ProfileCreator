@@ -22,6 +22,8 @@
 #import "PFCLog.h"
 #import "PFCMainWindow.h"
 #import "PFCPreferences.h"
+#import "PFCProfileEditor.h"
+#import "PFCProfile.h"
 
 @interface PFCAppDelegate ()
 @property (nonatomic, strong, nonnull) PFCMainWindow *mainWindowController;
@@ -76,7 +78,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
-#pragma mark MenuItem Methods
+#pragma mark MenuItem Setup
 #pragma mark -
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -103,6 +105,21 @@
     }
 
     // -------------------------------------------------------------------------
+    //  Get file menu item submenu
+    // -------------------------------------------------------------------------
+    NSMenu *fileMenu = [[mainMenu itemAtIndex:1] submenu];
+    
+    // -------------------------------------------------------------------------
+    //  Set action for menu item "Preferences…"
+    // -------------------------------------------------------------------------
+    NSString *saveTitle = [NSString stringWithFormat:@"Save%C", (unichar)0x2026];
+    NSMenuItem *saveMenuItem = [fileMenu itemWithTitle:saveTitle];
+    if (saveMenuItem) {
+        [saveMenuItem setTarget:self];
+        [saveMenuItem setAction:@selector(menuItemSave:)];
+    }
+    
+    // -------------------------------------------------------------------------
     //  Get window menu item submenu
     // -------------------------------------------------------------------------
     NSMenu *windowMenu = [[mainMenu itemAtIndex:5] submenu];
@@ -118,6 +135,18 @@
 
 } // setMenuItemActions
 
+////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+#pragma mark MenuItem Actions
+#pragma mark -
+////////////////////////////////////////////////////////////////////////////////
+
+- (void)menuItemMainWindow:(id)sender {
+    if (self.mainWindowController) {
+        [self.mainWindowController.window makeKeyAndOrderFront:self];
+    }
+} // menuItemMainWindow
+
 - (void)menuItemPreferences:(id)sender {
     if (!self.preferences) {
         [self setPreferences:[[PFCPreferences alloc] init]];
@@ -126,10 +155,24 @@
     [self.preferences.window makeKeyAndOrderFront:self];
 } // menuItemPreferences
 
-- (void)menuItemMainWindow:(id)sender {
-    if (self.mainWindowController) {
-        [self.mainWindowController.window makeKeyAndOrderFront:self];
+- (void)menuItemSave:(id)sender {
+    NSWindow *frontWindow = [[NSApplication sharedApplication] keyWindow];
+    if (![frontWindow.windowController.class isSubclassOfClass:[PFCProfileEditor class]]) {
+        // Can't "save" unless the frontmost window is a profile editor window
+        // Need to show this error to the user
     }
-} // menuItemMainWindow
+    
+    [(PFCProfileEditor *)frontWindow.windowController saveProfile];
+} // menuItemSave
+
+- (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item {
+    SEL theAction = item.action;
+    if (theAction == @selector(menuItemSave:)) {
+        NSWindow *frontWindow = [[NSApplication sharedApplication] keyWindow];
+        return ([frontWindow.windowController.class isSubclassOfClass:[PFCProfileEditor class]]);
+    }
+    
+    return YES;
+}
 
 @end
