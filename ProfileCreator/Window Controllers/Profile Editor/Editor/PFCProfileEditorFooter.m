@@ -66,7 +66,7 @@
 
         NSMutableArray *constraints = [[NSMutableArray alloc] init];
 
-        [self addButtonSave:constraints];
+        //[self addButtonSave:constraints];
         [self addButtonSettings:constraints];
         [self addButtonPopOver:constraints];
 
@@ -150,6 +150,16 @@
                                                          constant:0]];
 
     // Trailing
+    [constraints addObject:[NSLayoutConstraint constraintWithItem:_view
+                                                        attribute:NSLayoutAttributeTrailing
+                                                        relatedBy:NSLayoutRelationEqual
+                                                           toItem:_buttonSettings
+                                                        attribute:NSLayoutAttributeTrailing
+                                                       multiplier:1.0
+                                                         constant:10]];
+
+    /*
+    // Trailing
     [constraints addObject:[NSLayoutConstraint constraintWithItem:_buttonSave
                                                         attribute:NSLayoutAttributeLeading
                                                         relatedBy:NSLayoutRelationEqual
@@ -157,6 +167,7 @@
                                                         attribute:NSLayoutAttributeTrailing
                                                        multiplier:1.0
                                                          constant:6]];
+     */
 }
 
 - (void)addButtonPopOver:(NSMutableArray *_Nonnull)constraints {
