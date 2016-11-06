@@ -53,6 +53,12 @@ typedef NS_OPTIONS(NSUInteger, PFPScope) {
     kPFPScopeUser = (1 << 1)    // => 00000010
 };
 
+// PFPNoticeIcon
+typedef NS_OPTIONS(NSUInteger, PFPNoticeIcon) {
+    kPFPNoticeIconError = (1 << 0),  // => 00000001
+    kPFPNoticeIconWarning = (1 << 1) // => 00000010
+};
+
 // PFPDistribution
 typedef NS_OPTIONS(NSUInteger, PFPDistribution) {
     kPFPDistributionManual = (1 << 0), // => 00000001
@@ -177,6 +183,7 @@ extern NSString *_Nonnull const PFPManifestKeyValueMinOffsetHours;
 extern NSString *_Nonnull const PFPManifestKeyValueMinOffsetMinutes;
 extern NSString *_Nonnull const PFPManifestKeyValueType;
 extern NSString *_Nonnull const PFPManifestKeyValueSubkeys;
+extern NSString *_Nonnull const PFPManifestKeyValueIsSensitive;
 
 // Conditions
 extern NSString *_Nonnull const PFPManifestKeyConditions;

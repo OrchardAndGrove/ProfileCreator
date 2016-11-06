@@ -68,6 +68,8 @@
 			<string>Password</string>
 			<key>ValueType</key>
 			<string>String</string>
+			<key>ValueIsSensitive</key>
+			<true/>
 		</dict>
 	</array>
 	<key>Title</key>

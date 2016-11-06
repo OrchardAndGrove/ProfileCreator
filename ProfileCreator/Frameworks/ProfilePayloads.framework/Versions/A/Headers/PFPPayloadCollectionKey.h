@@ -89,6 +89,7 @@
 @property (nonatomic, readonly, nullable) NSArray *valueList;         // List of selectable values
 @property (nonatomic, readonly, nullable) NSDictionary *valueSubkeys; // Dict containing subkeys for values in valueList
 @property (nonatomic, readonly, nullable) id valuePlaceholder;
+@property (nonatomic, readonly) BOOL valueIsSensitive;
 
 @property (nonatomic, readonly) NSInteger valueMinOffsetDays;    // Default Value: 0, Used by: DatePicker
 @property (nonatomic, readonly) NSInteger valueMinOffsetHours;   // Default Value: 0, Used by: DatePicker

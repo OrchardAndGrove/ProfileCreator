@@ -6,7 +6,7 @@
 	<dict>
 		<key>Resources/Info.plist</key>
 		<data>
-		kz/lTt18g8JJXn/gBYkLhG1iTZ0=
+		21gU3JJ60K/NQ18s0xG3gjRUSf4=
 		</data>
 		<key>Resources/Manifests/Payload Collections/Apple/com.apple.general.pcmanifest.plist</key>
 		<data>
@@ -22,23 +22,23 @@
 		</data>
 		<key>Resources/Manifests/Payload Types/com.apple.profileRemovalPassword.ptmanifest.plist</key>
 		<data>
-		HQbEz/jzFVdklcQ8XCw0zyarR/8=
+		jL3adMu+o/Cb6o77D1sNxmxtfHA=
 		</data>
 		<key>Resources/Manifests/Payload Types/com.apple.security.pem.ptmanifest.plist</key>
 		<data>
-		HuYBT3HfGwm7qQvKeJk6zMHkHvc=
+		5KWj5BYiT7+a8IK/6lCzXJW3XXo=
 		</data>
 		<key>Resources/Manifests/Payload Types/com.apple.security.pkcs1.ptmanifest.plist</key>
 		<data>
-		1ct/aKdork8YkvePgLE3E8HpSgo=
+		Xe/7sO5e+5Kozw5NYmos/0JYLHk=
 		</data>
 		<key>Resources/Manifests/Payload Types/com.apple.security.pkcs12.ptmanifest.plist</key>
 		<data>
-		yMkOe83I84HtoIVbVq3vbzfSA9I=
+		lhffne5LgRiurdvzEUQxLD91BRg=
 		</data>
 		<key>Resources/Manifests/Payload Types/com.apple.security.root.ptmanifest.plist</key>
 		<data>
-		aGlHWxCeds2cey4rft+59dhNXqY=
+		KyYuEa8PqtchrM5nNXOBb3A9fVU=
 		</data>
 		<key>Resources/pfm_IconCertificates.png</key>
 		<data>
@@ -48,6 +48,10 @@
 		<data>
 		vhPccCjMRgsDjJX05euRgjaiJOc=
 		</data>
+		<key>Resources/ui_iconWarning.png</key>
+		<data>
+		ifz0y4Csh5xJT933G0f7LZhrrzI=
+		</data>
 	</dict>
 	<key>files2</key>
 	<dict>
@@ -55,11 +59,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			oBhob6+1flmh63Bex4iTYIafEQ4=
+			YAa8dLLkbIpxCaV2Eb3zBNba5C8=
 			</data>
 			<key>hash2</key>
 			<data>
-			fom6hAyY3z6pw2W2P+CfgBGd2xiKCsok7mavTxhPM/s=
+			UDyliXTKmUYzyoKc8XY0LdOvyXMFJxP//Wg8zFarVvw=
 			</data>
 		</dict>
 		<key>Headers/PFPPayloadCollection.h</key>
@@ -77,11 +81,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			bA7xVJ2ClJpWSMNefHcqOYRJZoo=
+			vkJuKsFxUDCh4Bk2/57zHeNtZ2c=
 			</data>
 			<key>hash2</key>
 			<data>
-			uW9cLOWWZ0/nIaa1bY2+/cYuAY93PmoQ0omuYmy7WkE=
+			VjHNxTPoMFlNWjn+G2ZF/obRS2dfu0eagvuHuOuimgQ=
 			</data>
 		</dict>
 		<key>Headers/PFPPayloadCollectionSet.h</key>
@@ -154,11 +158,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			EJFGenXyYAwxPBkVu077X4O5nLc=
+			zS2+zgdq62q6cCoY3wAZ4Vw2uug=
 			</data>
 			<key>hash2</key>
 			<data>
-			Qphx73FidDXpufEMWlr9n3WeNg82ZOKp73CduGrMDqo=
+			7FfjF4IN3MAoO1g65Uv9uoi3/k1t/KIsqnYSk2RCXXw=
 			</data>
 		</dict>
 		<key>Headers/PFPPayloadTypes.h</key>
@@ -308,11 +312,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			kz/lTt18g8JJXn/gBYkLhG1iTZ0=
+			21gU3JJ60K/NQ18s0xG3gjRUSf4=
 			</data>
 			<key>hash2</key>
 			<data>
-			o1UHKMd63FmjwvpF+VqMLJ1SEkcAJtb9kygXbv7iRTs=
+			A64pDEA7nZ1VuXWn5s7PzyFRqGAHWGNNo3qk8LRRbi4=
 			</data>
 		</dict>
 		<key>Resources/Manifests/Payload Collections/Apple/com.apple.general.pcmanifest.plist</key>
@@ -352,55 +356,55 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			HQbEz/jzFVdklcQ8XCw0zyarR/8=
+			jL3adMu+o/Cb6o77D1sNxmxtfHA=
 			</data>
 			<key>hash2</key>
 			<data>
-			Jv1tZr84Wlim+5hAvENZTwXWdMZzjWw3HQJQqiaUdlE=
+			d12t3vVjPiRDdGyuJZnTsY0fXJLDmc6a4LNRQh02iyo=
 			</data>
 		</dict>
 		<key>Resources/Manifests/Payload Types/com.apple.security.pem.ptmanifest.plist</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			HuYBT3HfGwm7qQvKeJk6zMHkHvc=
+			5KWj5BYiT7+a8IK/6lCzXJW3XXo=
 			</data>
 			<key>hash2</key>
 			<data>
-			Bn2Gb0onRMTYfyNFgXoRieuZd+VpnLGF0CI9hrkOLB0=
+			P8qvuya9uiyokzyRcsd5uGBYfm3fFV3PhuTOHUP274s=
 			</data>
 		</dict>
 		<key>Resources/Manifests/Payload Types/com.apple.security.pkcs1.ptmanifest.plist</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			1ct/aKdork8YkvePgLE3E8HpSgo=
+			Xe/7sO5e+5Kozw5NYmos/0JYLHk=
 			</data>
 			<key>hash2</key>
 			<data>
-			87R5vQJ1J/RvRGv8fxbr0Beq4WuqbLBFOm/pI+hgDsA=
+			TgY1QpPbl2N5sDMeAfB43Fih1jddJAk1fo/5IZvY91g=
 			</data>
 		</dict>
 		<key>Resources/Manifests/Payload Types/com.apple.security.pkcs12.ptmanifest.plist</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			yMkOe83I84HtoIVbVq3vbzfSA9I=
+			lhffne5LgRiurdvzEUQxLD91BRg=
 			</data>
 			<key>hash2</key>
 			<data>
-			zyn3A/TKrz3VhFky8jSVrhMzPNOSiRW1bntW3oGlWpc=
+			E+vYJUZ8ciaTG8ce+4EEvMWtT+/6EPM8vEAgr8fGZJo=
 			</data>
 		</dict>
 		<key>Resources/Manifests/Payload Types/com.apple.security.root.ptmanifest.plist</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			aGlHWxCeds2cey4rft+59dhNXqY=
+			KyYuEa8PqtchrM5nNXOBb3A9fVU=
 			</data>
 			<key>hash2</key>
 			<data>
-			9UVpJ0ROaI2rDyAidInuDnZRxku2THj1FUNtAd549bk=
+			jtebRcG3Tc2qxojNP1/9VEyi1N33wcPT8nD+VrKHkDs=
 			</data>
 		</dict>
 		<key>Resources/pfm_IconCertificates.png</key>
@@ -425,6 +429,17 @@
 			BeqV585SqhbAXnvE4n51gvkB1g22K2KRWzDrO+Ct0Qw=
 			</data>
 		</dict>
+		<key>Resources/ui_iconWarning.png</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			ifz0y4Csh5xJT933G0f7LZhrrzI=
+			</data>
+			<key>hash2</key>
+			<data>
+			v79NqsjpSoPn/Dba4CbJyLt/Zsky4JsqieCJvFHNol0=
+			</data>
+		</dict>
 	</dict>
 	<key>rules</key>
 	<dict>
@@ -443,6 +458,11 @@
 			<true/>
 			<key>weight</key>
 			<real>1100</real>
+		</dict>
+		<key>^Resources/Base\.lproj/</key>
+		<dict>
+			<key>weight</key>
+			<real>1010</real>
 		</dict>
 		<key>^version.plist$</key>
 		<true/>
@@ -502,6 +522,11 @@
 			<true/>
 			<key>weight</key>
 			<real>1100</real>
+		</dict>
+		<key>^Resources/Base\.lproj/</key>
+		<dict>
+			<key>weight</key>
+			<real>1010</real>
 		</dict>
 		<key>^[^/]+$</key>
 		<dict>

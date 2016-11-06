@@ -58,6 +58,7 @@
 @property (nonatomic, readonly, nullable) NSString *valueFormat; // Regex string the value need to conform to (Only used for String types)
 @property (nonatomic, readonly, nullable) NSArray *valueList;    // List of selectable values
 @property (nonatomic, readonly) BOOL valueInvert;                // (Only used for Boolean types)
+@property (nonatomic, readonly) BOOL valueIsSensitive;           // Denotes the user input value as sensitive
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
