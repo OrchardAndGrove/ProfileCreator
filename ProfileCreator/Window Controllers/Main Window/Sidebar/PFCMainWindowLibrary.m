@@ -166,6 +166,11 @@
                           firstButtonInitialState:YES
                                            sender:self
                                       returnValue:returnValue];
+        
+        // ---------------------------------------------------------------------
+        //  Select all the group name text field
+        // ---------------------------------------------------------------------
+        [self.alert.textFieldInput selectText:self];
     }
 }
 
