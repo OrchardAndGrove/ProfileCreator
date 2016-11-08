@@ -24,6 +24,7 @@
 #import "PFCMainWindowTableViewController.h"
 #import "PFCMainWindowTableViewWelcome.h"
 #import "PFCProfileController.h"
+#import "NSSplitView+RestoreAutoSave.h"
 
 @interface PFCMainWindowSplitView ()
 @property (nonatomic, strong, nonnull) PFCMainWindowOutlineViewController *outlineViewController;
@@ -47,11 +48,13 @@
         // ---------------------------------------------------------------------
         //  Setup Self
         // ---------------------------------------------------------------------
+        [self setAutosaveName:@"MainWindowSplitView-AS"];
+        [self setIdentifier:@"MainWindowSplitView-ID"];
         [self setTranslatesAutoresizingMaskIntoConstraints:NO];
         [self setDividerStyle:NSSplitViewDividerStyleThin];
         [self setVertical:YES];
         [self setDelegate:self];
-
+        
         // ---------------------------------------------------------------------
         //  Setup Notification Observers
         // ---------------------------------------------------------------------
@@ -97,6 +100,11 @@
         if ([[[PFCProfileController sharedController] profileIdentifiers] count] == 0) {
             [self noProfileConfigured:nil];
         }
+        
+        // ---------------------------------------------------------------------
+        //  Restore AutoSaved positions, as this isn't done automatically
+        // ---------------------------------------------------------------------
+        [self pfc_restoreAutosavedPositions];
     }
     return self;
 }
