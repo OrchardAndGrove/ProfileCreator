@@ -74,7 +74,7 @@ NSUInteger const PFCPreferencesWindowWidth = 450;
         [toolbar setVisible:YES];
         [toolbar setShowsBaselineSeparator:YES];
         [toolbar setAllowsUserCustomization:NO];
-        [toolbar setAutosavesConfiguration:YES];
+        [toolbar setAutosavesConfiguration:NO];
         [toolbar setSizeMode:NSToolbarSizeModeRegular];
         [toolbar setDisplayMode:NSToolbarDisplayModeIconAndLabel];
         [toolbar setDelegate:self];

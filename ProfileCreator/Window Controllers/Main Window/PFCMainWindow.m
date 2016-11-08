@@ -57,8 +57,8 @@
         [mainWindow setTitleVisibility:NSWindowTitleHidden];
         [mainWindow setReleasedWhenClosed:NO];
         [mainWindow setRestorable:YES];
-        [mainWindow setIdentifier:@"ProfileCreatorMainWindow"];
-        [mainWindow setFrameAutosaveName:@"ProfileCreatorMainWindow"];
+        [mainWindow setIdentifier:@"ProfileCreatorMainWindow-ID"];
+        [mainWindow setFrameAutosaveName:@"ProfileCreatorMainWindow-AS"];
         [mainWindow setContentMinSize:NSMakeSize(600, 400)];
         [mainWindow center];
 
@@ -79,7 +79,7 @@
         [toolbar setVisible:YES];
         [toolbar setShowsBaselineSeparator:YES];
         [toolbar setAllowsUserCustomization:NO];
-        [toolbar setAutosavesConfiguration:YES];
+        [toolbar setAutosavesConfiguration:NO];
         [toolbar setSizeMode:NSToolbarSizeModeRegular];
         [toolbar setDisplayMode:NSToolbarDisplayModeIconOnly];
         [toolbar setDelegate:self];

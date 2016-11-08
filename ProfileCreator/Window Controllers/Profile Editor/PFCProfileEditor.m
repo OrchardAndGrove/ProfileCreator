@@ -96,7 +96,7 @@
         [_toolbar setVisible:YES];
         [_toolbar setShowsBaselineSeparator:YES];
         [_toolbar setAllowsUserCustomization:NO];
-        [_toolbar setAutosavesConfiguration:YES];
+        [_toolbar setAutosavesConfiguration:NO];
         [_toolbar setSizeMode:NSToolbarSizeModeRegular];
         [_toolbar setDisplayMode:NSToolbarDisplayModeIconOnly];
         [_toolbar setDelegate:self];
