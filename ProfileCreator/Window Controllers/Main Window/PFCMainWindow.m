@@ -58,6 +58,7 @@
         [mainWindow setReleasedWhenClosed:NO];
         [mainWindow setRestorable:YES];
         [mainWindow setIdentifier:@"ProfileCreatorMainWindow"];
+        [mainWindow setFrameAutosaveName:@"ProfileCreatorMainWindow"];
         [mainWindow setContentMinSize:NSMakeSize(600, 400)];
         [mainWindow center];
 
