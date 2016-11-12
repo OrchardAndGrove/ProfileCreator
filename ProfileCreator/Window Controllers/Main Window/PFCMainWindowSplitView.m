@@ -56,7 +56,7 @@
         [self setDelegate:self];
         
         // ---------------------------------------------------------------------
-        //  Setup Notification Observers
+        //  Register for notifications
         // ---------------------------------------------------------------------
         NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
         [nc addObserver:self selector:@selector(noProfileConfigured:) name:PFCNoProfileConfiguredNotification object:nil];
