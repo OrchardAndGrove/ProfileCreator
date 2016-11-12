@@ -64,6 +64,20 @@ NSInteger const PFCTitleViewHeight = 39;
     if (self != nil) {
 
         // ---------------------------------------------------------------------
+        //  Setup Self (SplitView)
+        // ---------------------------------------------------------------------
+        [self setIdentifier:@"ProfileEditorSplitView-ID"];
+        [self setTranslatesAutoresizingMaskIntoConstraints:NO];
+        [self setDividerStyle:NSSplitViewDividerStyleThin];
+        [self setVertical:YES];
+        
+        // ---------------------------------------------------------------------
+        //  Register for notifications
+        // ---------------------------------------------------------------------
+        NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
+        [nc addObserver:self selector:@selector(showSettingsView:) name:PFCSelectProfileSettingsNotification object:nil];
+        
+        // ---------------------------------------------------------------------
         //  Setup Properties
         // ---------------------------------------------------------------------
         _profileEditor = profileEditor;
@@ -72,19 +86,6 @@ NSInteger const PFCTitleViewHeight = 39;
         _tableViewController = [[PFCProfileEditorTableViewController alloc] initWithProfile:_profileEditor.profile];
         _librarySplitView = [[PFCProfileEditorLibrarySplitView alloc] initWithProfileEditor:_profileEditor profileEditorSplitView:self selectionDelegate:_tableViewController];
         _libraryFilter = [[PFCProfileEditorLibraryFilter alloc] init];
-
-        // ---------------------------------------------------------------------
-        //  Setup Self (SplitView)
-        // ---------------------------------------------------------------------
-        [self setTranslatesAutoresizingMaskIntoConstraints:NO];
-        [self setDividerStyle:NSSplitViewDividerStyleThin];
-        [self setVertical:YES];
-
-        // ---------------------------------------------------------------------
-        //  Register for notifications
-        // ---------------------------------------------------------------------
-        NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-        [nc addObserver:self selector:@selector(showSettingsView:) name:PFCSelectProfileSettingsNotification object:nil];
 
         // ---------------------------------------------------------------------
         //  Setup views in splitview
