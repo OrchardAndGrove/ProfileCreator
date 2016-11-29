@@ -32,24 +32,17 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 // Collection Properties
+@property (nonatomic, readonly) PFPValueType valueType;
 @property (nonatomic, readonly) PFPViewType viewType;
 @property (nonatomic, readonly, strong, nullable) id viewRepresentation;
 @property (nonatomic, readonly) PFPFontWeight fontWeightTitle; // Default Value: kPFPFontWeightBold
 @property (nonatomic, readonly, weak, nullable) id<PFPPayloadCollection> payloadCollection;
+@property (nonatomic, readonly, strong, nonnull) NSDictionary *keyDict;
 @property (nonatomic, readonly, strong, nonnull) NSDictionary *payloadKeyDictCollection;
 @property (nonatomic, readonly) BOOL enabled; // Default Value: YES
 
-@property (nonatomic, readonly) BOOL hidden; // Default Value: NO
-@property (nonatomic, readonly, nullable) NSArray *hiddenConditionals;
-
-@property (nonatomic, readonly) BOOL exclude; // Default Value: NO
-@property (nonatomic, readonly, nullable) NSArray *excludeConditionals;
-
-@property (nonatomic, readonly) BOOL optional;
-@property (nonatomic, readonly, nullable) NSArray *optionalConditionals;
-
 @property (nonatomic, readonly) BOOL supervised;
-@property (nonatomic, readonly, nullable) NSArray *supervisedConditionals;
+@property (nonatomic, readonly, nullable) NSArray *supervisedConditions;
 
 @property (nonatomic, readonly, strong, nullable) NSString *payloadTypeString;
 @property (nonatomic, readonly, strong, nullable) NSArray *payloadTypeConditions;
@@ -86,6 +79,7 @@
 @property (nonatomic, readonly, nullable) id valueMax;                // (Only used for Integer/Float and Date types)
 @property (nonatomic, readonly, nullable) id valueMin;                // (Only used for Integer/Float and Date types)
 @property (nonatomic, readonly, nullable) NSString *valueFormat;      // Regex string the value need to conform to (Only used for String types)
+@property (nonatomic, readonly, nullable) NSDictionary *valueTitles;
 @property (nonatomic, readonly, nullable) NSArray *valueList;         // List of selectable values
 @property (nonatomic, readonly, nullable) NSDictionary *valueSubkeys; // Dict containing subkeys for values in valueList
 @property (nonatomic, readonly, nullable) id valuePlaceholder;
@@ -99,6 +93,10 @@
 @property (nonatomic, readonly) BOOL showDateInterval;           // Default Value: YES, Used by: DatePicker
 @property (nonatomic, readonly, strong, nullable) NSDate *date;  // Default Value: now, Used by: DatePicker
 @property (nonatomic, readonly, strong, nullable) id payloadValue;
+@property (nonatomic, readonly) PFPViewStyle viewStyle;
+
+@property (nonatomic, readonly) NSInteger inputWidth;
+@property (nonatomic, readonly) BOOL showStepper;
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -124,6 +122,8 @@
 
 // Should add these to make the conditions check internal
 // - (BOOL)isOptional;
-// - (BOOL)isExcluded;
+- (BOOL)isHiddenWithSettings:(NSDictionary *_Nullable)settings;
+- (BOOL)isOptionalWithSettings:(NSDictionary *_Nullable)settings;
+- (BOOL)isExcludedWithSettings:(NSDictionary *_Nullable)settings;
 
 @end

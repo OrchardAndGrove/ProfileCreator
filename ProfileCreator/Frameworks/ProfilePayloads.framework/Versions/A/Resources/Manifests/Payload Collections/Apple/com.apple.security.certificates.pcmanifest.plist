@@ -17,7 +17,7 @@
 	<string>com.apple.security.certificates.pcmanifest</string>
 	<key>PayloadTypeDefault</key>
 	<string>com.apple.security.pkcs1</string>
-	<key>PayloadType</key>
+	<key>PayloadTypeConditions</key>
 	<array>
 		<dict>
 			<key>Conditions</key>
@@ -119,15 +119,20 @@
 			<string>com.apple.security.pkcs1@Password</string>
 			<key>ViewType</key>
 			<string>TextField</string>
-			<key>Exclude</key>
+			<key>ExcludeConditions</key>
 			<array>
 				<dict>
-					<key>ValueContainsAnyNot</key>
+					<key>Conditions</key>
 					<array>
-						<string>PKCS12</string>
+						<dict>
+							<key>ValueContainsAnyNot</key>
+							<array>
+								<string>PKCS12</string>
+							</array>
+							<key>ValueKeyPath</key>
+							<string>370B5A5C-134F-4560-9C9D-9ECB8E2A6BED.ValueFileInfo.Type</string>
+						</dict>
 					</array>
-					<key>ValueKeyPath</key>
-					<string>370B5A5C-134F-4560-9C9D-9ECB8E2A6BED.ValueFileInfo.Type</string>
 				</dict>
 			</array>
 		</dict>

@@ -44,9 +44,11 @@
 // -----------------------------------------------------------------------------
 //  ValueType Methods
 // -----------------------------------------------------------------------------
++ (PFPValueType)valueTypeForValue:(id _Nonnull)value;
 + (PFPValueType)valueTypeForString:(NSString *_Nonnull)valueType;
 + (NSString *_Nonnull)stringForValueType:(PFPValueType)valueType;
 + (BOOL)verifyValue:(id _Nullable)value valueType:(PFPValueType)valueType;
++ (id _Nullable)convertValue:(id _Nonnull)value valueType:(PFPValueType)valueType;
 
 // -----------------------------------------------------------------------------
 //  ViewType Methods
@@ -58,6 +60,12 @@
                                            valueKey:(NSString *_Nonnull)valueKey
                                   notificationEvent:(NSString *_Nullable)notificationEvent
                                              sender:(id<PFPViewTypeTableView> _Nonnull)sender;
+
+// -----------------------------------------------------------------------------
+//  ViewStyle Methods
+// -----------------------------------------------------------------------------
++ (PFPViewStyle)viewStyleForString:(NSString *_Nonnull)viewStyle;
++ (NSString *_Nonnull)stringForViewStyle:(PFPViewStyle)viewStyle;
 
 // -----------------------------------------------------------------------------
 //  Other Methods

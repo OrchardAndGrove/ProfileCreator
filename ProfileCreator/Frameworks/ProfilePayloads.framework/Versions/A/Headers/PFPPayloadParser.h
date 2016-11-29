@@ -35,8 +35,8 @@
 #pragma mark -
 ////////////////////////////////////////////////////////////////////////////////
 
-- (NSArray *_Nonnull)viewArrayFromPayloadCollectionSubkeys:(NSArray *_Nonnull)subkeys settings:(NSDictionary *_Nonnull)settings modifiedIdentifiers:(NSArray *_Nullable)modifiedIdentifiers;
-- (id _Nullable)selectionForPayloadCollectionKey:(PFPPayloadCollectionKey *_Nonnull)payloadCollectionKey viewType:(PFPViewType)viewType settings:(NSDictionary *_Nullable)settings;
+- (NSArray *_Nonnull)viewArrayFromPayloadCollectionSubkeys:(NSArray *_Nonnull)subkeys settings:(NSDictionary *_Nonnull)settings viewSettings:(NSDictionary *_Nullable)viewSettings modifiedIdentifiers:(NSArray *_Nullable)modifiedIdentifiers forceReload:(BOOL)forceReload;
+- (id _Nullable)selectionForPayloadCollectionKey:(PFPPayloadCollectionKey *_Nonnull)payloadCollectionKey payloadTypeKey:(PFPPayloadTypeKey *_Nullable)payloadTypeKey viewType:(PFPViewType)viewType settings:(NSDictionary *_Nullable)settings;
 - (BOOL)shouldExportPayloadCollectionKey:(PFPPayloadCollectionKey *_Nonnull)payloadCollectionKey payloadSettings:(NSDictionary *_Nullable)payloadSettings;
 
 @end

@@ -36,7 +36,10 @@ typedef NS_ENUM(NSUInteger, PFPValueType) {
 typedef NS_ENUM(NSUInteger, PFPViewModel) { kPFPViewModelNone = 0, kPFPViewModelTableView };
 
 // PFPViewType
-typedef NS_ENUM(NSUInteger, PFPViewType) { kPFPViewTypeNone = 0, kPFPViewTypeUnknown, kPFPViewTypeDatePicker, kPFPViewTypeFile, kPFPViewTypePopUpButton, kPFPViewTypeTextField, kPFPViewTypeTextView };
+typedef NS_ENUM(NSUInteger, PFPViewType) { kPFPViewTypeNone = 0, kPFPViewTypeUnknown, kPFPViewTypeDatePicker, kPFPViewTypeFile, kPFPViewTypePopUpButton, kPFPViewTypeTextField, kPFPViewTypeTextView, kPFPViewTypeCheckbox };
+
+// PFPViewStyle
+typedef NS_ENUM(NSUInteger, PFPViewStyle) { kPFPViewStyleDefault = 0, kPFPViewStyleList, kPFPViewStyleListCentered };
 
 // PFPFontWeight
 typedef NS_ENUM(NSUInteger, PFPFontWeight) { kPFPFontWeightRegular = 0, kPFPFontWeightBold };
@@ -146,6 +149,7 @@ extern NSString *_Nonnull const PFPManifestKeyDistributionPush;
 // Payload
 extern NSString *_Nonnull const PFPManifestKeyPayloadKey;
 extern NSString *_Nonnull const PFPManifestKeyPayloadKeyPath;
+extern NSString *_Nonnull const PFPManifestKeyPayloadKeyPathCheckbox;
 extern NSString *_Nonnull const PFPManifestKeyPayloadKeyPathDatePicker;
 extern NSString *_Nonnull const PFPManifestKeyPayloadKeyPathFile;
 extern NSString *_Nonnull const PFPManifestKeyPayloadKeyPathPopUpButton;
@@ -182,10 +186,16 @@ extern NSString *_Nonnull const PFPManifestKeyValueMinOffsetDays;
 extern NSString *_Nonnull const PFPManifestKeyValueMinOffsetHours;
 extern NSString *_Nonnull const PFPManifestKeyValueMinOffsetMinutes;
 extern NSString *_Nonnull const PFPManifestKeyValueType;
+extern NSString *_Nonnull const PFPManifestKeyValueTitles;
 extern NSString *_Nonnull const PFPManifestKeyValueSubkeys;
 extern NSString *_Nonnull const PFPManifestKeyValueIsSensitive;
 
 // Conditions
+extern NSString *_Nonnull const PFPManifestKeyPayloadTypeConditions;
+extern NSString *_Nonnull const PFPManifestKeyExcludeConditions;
+extern NSString *_Nonnull const PFPManifestKeyHiddenConditions;
+extern NSString *_Nonnull const PFPManifestKeyOptionalConditions;
+extern NSString *_Nonnull const PFPManifestKeySupervisedConditions;
 extern NSString *_Nonnull const PFPManifestKeyConditions;
 extern NSString *_Nonnull const PFPManifestKeyValueKeyPath;
 extern NSString *_Nonnull const PFPManifestKeyValueContains;
@@ -193,6 +203,14 @@ extern NSString *_Nonnull const PFPManifestKeyValueContainsAny;
 
 // ViewType
 extern NSString *_Nonnull const PFPManifestKeyViewType;
+
+// ViewStyle
+extern NSString *_Nonnull const PFPManifestKeyViewStyle;
+extern NSString *_Nonnull const PFPViewStyleList;
+extern NSString *_Nonnull const PFPViewStyleListCentered;
+
+extern NSString *_Nonnull const PFPManifestKeyInputWidth;
+extern NSString *_Nonnull const PFPManifestKeyShowStepper;
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark PayloadValueTypes
@@ -236,6 +254,7 @@ extern NSString *_Nonnull const PFPSettingsKeyPayloadUUID;
 extern NSString *_Nonnull const PFPSettingsKeyPayloadType;
 extern NSString *_Nonnull const PFPSettingsKeyPayloadVersion;
 extern NSString *_Nonnull const PFPSettingsKeyValue;
+extern NSString *_Nonnull const PFPSettingsKeyValueCheckbox;
 extern NSString *_Nonnull const PFPSettingsKeyValueDatePicker;
 extern NSString *_Nonnull const PFPSettingsKeyValueFile;
 extern NSString *_Nonnull const PFPSettingsKeyValueFileInfo;
@@ -263,6 +282,7 @@ extern NSString *_Nonnull const PFPProfileKeyPayloadVersion;
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark ViewType TableView
 ////////////////////////////////////////////////////////////////////////////////
+extern NSString *_Nonnull const PFPViewTypeCheckbox;
 extern NSString *_Nonnull const PFPViewTypeDatePicker;
 extern NSString *_Nonnull const PFPViewTypeFile;
 extern NSString *_Nonnull const PFPViewTypePopUpButton;

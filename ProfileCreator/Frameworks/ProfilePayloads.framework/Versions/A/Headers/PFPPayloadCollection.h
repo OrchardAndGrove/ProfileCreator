@@ -23,10 +23,12 @@
 #import <Foundation/Foundation.h>
 @class PFPPlatform;
 @class PFPPayloadCollectionKey;
+@class PFPPayloadCollections;
 
 @protocol PFPPayloadCollection <NSObject>
 
 @required
+@property (nonatomic, readonly, weak, nullable) PFPPayloadCollections *payloadCollections;
 @property (nonatomic, readonly) PFPViewModel viewModel;
 @property (nonatomic, readonly) PFPCollectionSet collectionSet;
 @property (nonatomic, readonly) PFPScope scope;

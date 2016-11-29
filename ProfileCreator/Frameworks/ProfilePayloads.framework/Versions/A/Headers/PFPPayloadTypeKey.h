@@ -49,7 +49,10 @@
 @property (nonatomic, readonly, nullable) NSString *extendedDescription;
 @property (nonatomic, readonly, nullable) NSDictionary *excludeDict;
 @property (nonatomic, readonly, nullable) NSArray *requiredArray;
+@property (nonatomic, readonly) BOOL exclude;
+@property (nonatomic, readonly, nullable) NSArray *excludeConditions;
 @property (nonatomic, readonly) BOOL optional;
+@property (nonatomic, readonly, nullable) NSArray *optionalConditions;
 @property (nonatomic, readonly) BOOL supervised;
 
 @property (nonatomic, readonly, nullable) id valueDefault;
@@ -69,5 +72,4 @@
 - (nonnull instancetype)init NS_UNAVAILABLE;
 - (nullable instancetype)initWithKeyDict:(NSDictionary *_Nonnull)keyDict payloadType:(PFPPayloadType *_Nonnull)payloadType parentPayloadKey:(PFPPayloadTypeKey *_Nullable)parentPayloadKey;
 - (BOOL)isRequired;
-
 @end
