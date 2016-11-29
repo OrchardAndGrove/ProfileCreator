@@ -166,7 +166,9 @@ NSString *const PFCProfileEditorTableColumnPayloadIdentifier = @"PFCProfileEdito
     // -------------------------------------------------------------------------
     NSMutableArray *payloadKeys = [[[PFPPayloadParser sharedParser] viewArrayFromPayloadCollectionSubkeys:self.payloadCollection.subkeys
                                                                                                  settings:self.profile.profilePayloads.settings
-                                                                                      modifiedIdentifiers:(forceReload) ? @[ @"UpdateAll" ] : self.profile.modifiedIdentifiers] mutableCopy];
+                                                                                             viewSettings:nil
+                                                                                      modifiedIdentifiers:self.profile.modifiedIdentifiers
+                                                                                              forceReload:forceReload] mutableCopy];
 
     // -------------------------------------------------------------------------
     //  Add padding above and below if any payload keys were returned
