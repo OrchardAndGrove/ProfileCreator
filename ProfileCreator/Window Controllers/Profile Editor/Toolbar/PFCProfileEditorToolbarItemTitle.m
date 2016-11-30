@@ -174,9 +174,9 @@ NSString *_Nonnull const PFCProfileEditorToolbarItemIdentifierTitle = @"Title";
     // -------------------------------------------------------------------------
     //  Update the toolbar item view with the current size of the text field
     // -------------------------------------------------------------------------
-    [self setFrame:NSMakeRect(0.0, 0.0, self.textFieldTitle.intrinsicContentSize.width, 38.0)];
     [self.toolbarItem setMinSize:NSMakeSize(self.textFieldTitle.intrinsicContentSize.width, 38.0)];
     [self.toolbarItem setMaxSize:NSMakeSize(self.textFieldTitle.intrinsicContentSize.width, 38.0)];
+    [self setFrame:NSMakeRect(0.0, 0.0, self.textFieldTitle.intrinsicContentSize.width, 38.0)];
 }
 
 @end
