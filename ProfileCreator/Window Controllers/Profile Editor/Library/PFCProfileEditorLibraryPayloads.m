@@ -452,6 +452,25 @@ NSString *const PFCProfileEditorLibraryTableColumnIdentifierPayloads = @"TableCo
 - (void)reloadData {
 
     // -------------------------------------------------------------------------
+    //  Sort both library and profile arrays alphabetically
+    // -------------------------------------------------------------------------
+    NSSortDescriptor *sortDescriptorTitle = [NSSortDescriptor sortDescriptorWithKey:@"Title" ascending:YES];
+    [self.libraryPayloads sortUsingDescriptors:@[ sortDescriptorTitle ]];
+    [self.profilePayloads sortUsingDescriptors:@[ sortDescriptorTitle ]];
+    
+    // -------------------------------------------------------------------------
+    //  Verify "General" settings always are at the top of the profile payloads
+    // -------------------------------------------------------------------------
+    NSUInteger indexPayloadGeneral = [self.profilePayloads indexOfObjectPassingTest:^BOOL(NSDictionary *_Nonnull dict, NSUInteger idx, BOOL * _Nonnull stop) {
+        return [dict[PFPPlaceholderKeyIdentifier] isEqualToString:@"com.apple.general.pcmanifest"];
+    }];
+    if ( 0 != indexPayloadGeneral ) {
+        NSDictionary *payloadGeneral = self.profilePayloads[indexPayloadGeneral];
+        [self.profilePayloads removeObject:payloadGeneral];
+        [self.profilePayloads insertObject:payloadGeneral atIndex:0];
+    }
+    
+    // -------------------------------------------------------------------------
     //  Reload both table views
     // -------------------------------------------------------------------------
     [self.tableViewLibraryPayloads reloadData];
