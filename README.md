@@ -4,27 +4,18 @@ macOS application to create configuration profiles.
 ![ProfileCreator](https://github.com/erikberglund/ProfileCreator/blob/master/Resources/Screenshots/ProfileCreator-README01.png)
 
 # Important
-ProfileCreator is currently in Alpha and is being actively developed. 
+Development of this project stopped a few months ago because of personal reasons.
 
-To see what is currently being worked on, check out the Issues and the label "[working on](https://github.com/erikberglund/ProfileCreator/labels/working%20on)".
+Now I'm back and will rewrite the project in Swift for better community support and futureproofing.
 
-If you find a bug, please create an Issue clearly describing steps to reproduce the bug.
-
-And the same if you want to add a feature request or a discussion on how something should work or what should be added.
-
-Download the latest version from the [releases page](https://github.com/erikberglund/ProfileCreator/releases).
+I will create a new branch, called Swift, and will also open up the previously closed framework (which will also be rewritten in Swift) to allow for some more shared work.
 
 # System Requirements
 ProfileCreator requires Mac OS X 10.11 or newer.
 
 # Acknowledgements
 
-ProfileCreator makes use of the following open source components:
-
-* [CocoaLumberjack](https://github.com/CocoaLumberjack/CocoaLumberjack)
-* [RFOverlayScrollView](https://github.com/rheinfabrik/RFOverlayScrollView)
-
-UI Icons from the following sites:
+UI Icons have been taken from the following sites:
 
 * [icons8.com](https://icons8.com)
 
