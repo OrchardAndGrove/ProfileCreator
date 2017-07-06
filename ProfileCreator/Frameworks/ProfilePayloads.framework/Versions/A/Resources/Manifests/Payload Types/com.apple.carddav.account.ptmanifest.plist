@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Description</key>
+	<string>Use this section to define settings for configuration access to CardDAV servers.</string>
+	<key>Distribution</key>
+	<array>
+		<string>Manual</string>
+	</array>
+	<key>Domain</key>
+	<string>com.apple.carddav.account</string>
+	<key>Platforms</key>
+	<array>
+		<dict>
+			<key>Platform</key>
+			<string>iOS</string>
+		</dict>
+		<dict>
+			<key>Platform</key>
+			<string>macOS</string>
+		</dict>
+	</array>
+	<key>Scope</key>
+	<array>
+		<string>System</string>
+		<string>User</string>
+	</array>
+	<key>Subkeys</key>
+	<array>
+		<dict>
+			<key>Description</key>
+			<string>The display name of the account (e.g. &quot;Company CardDAV Account&quot;)</string>
+			<key>Identifier</key>
+			<string>9A04E7DB-E652-4099-9382-8370BE4A2BB8</string>
+			<key>PayloadKey</key>
+			<string>CardDAVAccountDescription</string>
+			<key>Title</key>
+			<string>Account Description</string>
+			<key>ValueDefault</key>
+			<string>My CardDAV Account</string>
+			<key>ValueType</key>
+			<string>String</string>
+			<key>Optional</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>Description</key>
+			<string>The port number to connect to the CardDAV server</string>
+			<key>Identifier</key>
+			<string>9D9CBD45-A2CB-47B6-8C2D-7AA050708814</string>
+			<key>PayloadKey</key>
+			<string>CardDAVPort</string>
+			<key>Title</key>
+			<string>Port Number</string>
+			<key>ValueDefault</key>
+			<integer>443</integer>
+			<key>ValueMax</key>
+			<integer>65535</integer>
+			<key>ValueMin</key>
+			<integer>0</integer>
+			<key>ValueType</key>
+			<string>Integer</string>
+		</dict>
+		<dict>
+			<key>Description</key>
+			<string>The CardDAV server hostname or IP address</string>
+			<key>Identifier</key>
+			<string>5BF77089-C91A-4199-9292-B12DD2836556</string>
+			<key>PayloadKey</key>
+			<string>CardDAVHostName</string>
+			<key>RequiredConditions</key>
+			<array>
+				<dict>
+					<key>Required</key>
+					<true/>
+				</dict>
+			</array>
+			<key>Title</key>
+			<string>Account Hostname</string>
+			<key>ValueType</key>
+			<string>String</string>
+		</dict>
+		<dict>
+			<key>Description</key>
+			<string>Enable Secure Socket Layer communication with CardDAV server</string>
+			<key>Identifier</key>
+			<string>7EEF309F-D3C8-478D-BFA5-6C928E94048A</string>
+			<key>PayloadKey</key>
+			<string>CardDAVUseSSL</string>
+			<key>RequiredConditions</key>
+			<array>
+				<dict>
+					<key>Required</key>
+					<true/>
+				</dict>
+			</array>
+			<key>Title</key>
+			<string>Use SSL</string>
+			<key>ValueDefault</key>
+			<true/>
+			<key>ValueType</key>
+			<string>Boolean</string>
+		</dict>
+		<dict>
+			<key>Description</key>
+			<string>The Principal URL for the CardDAV account</string>
+			<key>Identifier</key>
+			<string>B0B499A7-3303-4BDB-AE80-4B9F3A0F529A</string>
+			<key>PayloadKey</key>
+			<string>CardDAVPrincipalURL</string>
+			<key>Title</key>
+			<string>Principal URL</string>
+			<key>ValueType</key>
+			<string>String</string>
+			<key>Optional</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>Description</key>
+			<string>The CardDAV username</string>
+			<key>Identifier</key>
+			<string>65563396-EB92-43D2-B42A-B756B9991992</string>
+			<key>PayloadKey</key>
+			<string>CardDAVUsername</string>
+			<key>RequiredConditions</key>
+			<array>
+				<dict>
+					<key>Distribution</key>
+					<array>
+						<string>Push</string>
+					</array>
+				</dict>
+			</array>
+			<key>Title</key>
+			<string>Account Username</string>
+			<key>ValueType</key>
+			<string>String</string>
+		</dict>
+		<dict>
+			<key>Description</key>
+			<string>The CardDAV password</string>
+			<key>Identifier</key>
+			<string>9289B582-D3BE-4975-9E2F-C4A8E25085D1</string>
+			<key>PayloadKey</key>
+			<string>CardDAVPassword</string>
+			<key>Title</key>
+			<string>Account Password</string>
+			<key>ValueType</key>
+			<string>String</string>
+			<key>Optional</key>
+			<true/>
+		</dict>
+	</array>
+	<key>Title</key>
+	<string>CardDAV</string>
+</dict>
+</plist>

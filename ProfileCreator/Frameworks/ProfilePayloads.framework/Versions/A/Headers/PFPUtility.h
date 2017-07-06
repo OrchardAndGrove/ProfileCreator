@@ -55,11 +55,10 @@
 // -----------------------------------------------------------------------------
 + (PFPViewType)viewTypeForString:(NSString *_Nonnull)viewType;
 + (NSString *_Nonnull)stringForViewType:(PFPViewType)viewType;
-+ (NSDictionary *_Nonnull)viewTypeTableViewSettings:(PFPPayloadCollectionKey *_Nonnull)payloadCollectionKey
-                                              value:(id _Nonnull)value
-                                           valueKey:(NSString *_Nonnull)valueKey
-                                  notificationEvent:(NSString *_Nullable)notificationEvent
-                                             sender:(id<PFPViewTypeTableView> _Nonnull)sender;
++ (NSDictionary *_Nonnull)userInfoValueChange:(PFPPayloadCollectionKey *_Nonnull)payloadCollectionKey
+                                        value:(id _Nonnull)value
+                                 valueKeyPath:(NSString *_Nonnull)valueKeyPath
+                            notificationEvent:(NSString *_Nullable)notificationEvent;
 
 // -----------------------------------------------------------------------------
 //  ViewStyle Methods
@@ -71,5 +70,6 @@
 //  Other Methods
 // -----------------------------------------------------------------------------
 + (NSDate *_Nonnull)dateAtMidnightForDate:(NSDate *_Nonnull)date;
++ (NSString *_Nonnull)settingsKeyIdentifier:(PFPPayloadTypeKey *_Nonnull)payloadTypeKey payloadCollectionKey:(PFPPayloadCollectionKey *_Nullable)payloadCollectionKey;
 
 @end

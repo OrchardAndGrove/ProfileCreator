@@ -18,12 +18,9 @@
 //  limitations under the License.
 
 #pragma once
-
 @class PFPPayloadCollectionKey;
 
 @protocol PFPPayloadSettingsDelegate <NSObject>
-
 @required
-- (void)userSettingsChanged:(NSNotification *_Nonnull)notification;
-
+- (void)valueDidChange:(NSNotification *_Nonnull)notification;
 @end

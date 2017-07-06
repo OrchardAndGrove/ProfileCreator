@@ -20,8 +20,8 @@
 #import "PFPConstants.h"
 #import "PFPPayloadCollection.h"
 #import "PFPPayloadTypeKey.h"
-#import "PFPViewTypeDelegate.h"
 #import <Cocoa/Cocoa.h>
+@class PFPPayloadSettings;
 
 @interface PFPPayloadCollectionKey : NSObject
 
@@ -31,72 +31,44 @@
 #pragma mark -
 ////////////////////////////////////////////////////////////////////////////////
 
-// Collection Properties
-@property (nonatomic, readonly) PFPValueType valueType;
-@property (nonatomic, readonly) PFPViewType viewType;
-@property (nonatomic, readonly, strong, nullable) id viewRepresentation;
-@property (nonatomic, readonly) PFPFontWeight fontWeightTitle; // Default Value: kPFPFontWeightBold
-@property (nonatomic, readonly, weak, nullable) id<PFPPayloadCollection> payloadCollection;
-@property (nonatomic, readonly, strong, nonnull) NSDictionary *keyDict;
-@property (nonatomic, readonly, strong, nonnull) NSDictionary *payloadKeyDictCollection;
-@property (nonatomic, readonly) BOOL enabled; // Default Value: YES
+// -----------------------------------------------------------------------------
+//  CollectionProperties (Not specific to any key)
+// -----------------------------------------------------------------------------
 
-@property (nonatomic, readonly) BOOL supervised;
-@property (nonatomic, readonly, nullable) NSArray *supervisedConditions;
+//--- REFERENCES ---//
+@property (nonatomic, readonly, weak, nullable) id<PFPPayloadCollection> payloadCollection; // The payload collection this key belongs to
+@property (nonatomic, readonly, strong, nonnull) NSDictionary *subkeyDict;                  // The manifest subkey dict this key is based on
+@property (nonatomic, readonly, strong, nonnull) NSDictionary *payloadKeys;                 // The Payload Keys dict from the subkeyDict
+@property (nonatomic, readonly, strong, nonnull) NSDictionary *payloadTypes;                // The Payload Types referenced in the payload keys, accessed by the payloadKeys keys.
+@property (nonatomic, readonly, strong, nonnull) NSDictionary *valueSubkeys;                // The Subkeys used when a specific value is selected or entered.
 
-@property (nonatomic, readonly, strong, nullable) NSString *payloadTypeString;
-@property (nonatomic, readonly, strong, nullable) NSArray *payloadTypeConditions;
+//--- REQUIRED ---//
+@property (nonatomic, readonly) PFPViewType viewType;                  // Determines the format of the viewRepresentation
+@property (nonatomic, readonly, strong, nonnull) NSString *identifier; // Unique identifier
 
-@property (nonatomic, readonly) BOOL isListItem;                                  // Default Value: NO, Used by: PopUpButton
-@property (nonatomic, readonly) BOOL hasPayload;                                  // If itself (not any subkeys) contains atleast one payloadKeyPath
-@property (nonatomic, readonly) NSInteger visibleRows;                            // Default Value: 3, Used by: TextView
-@property (nonatomic, readonly) NSInteger popUpButtonWidth;                       // Default Value: -1 (Automatic), Used by: PopUpButton
-@property (nonatomic, readonly, strong, nullable) NSArray *allowedFileTypes;      // Default Value: -, Used by: File
-@property (nonatomic, readonly, strong, nullable) NSArray *allowedFileExtensions; // Default Value: -, Used by: File
-@property (nonatomic, readonly, strong, nullable) NSString *filePrompt;           // Default Value: Add File…, Used by: File
-@property (nonatomic, readonly, strong, nullable) NSString *fileProcessor;        // Default Value: -, Used by: File
-@property (nonatomic, readonly, strong, nullable) NSString *fileButtonTitle;      // Default Value: Add File…, Used by: File
+//--- OPTIONAL ---//
+@property (nonatomic, readonly, nullable) NSString *title;               // Title for the representation
+@property (nonatomic, readonly, nullable) NSString *descriptionString;   // Description for the representation
+@property (nonatomic, readonly, nullable) NSString *extendedDescription; // Extended description for the representation
+@property (nonatomic, readonly, strong, nullable) id viewRepresentation; // The representation of this key, matching the viewType
+@property (nonatomic, readonly) PFPFontWeight titleFontWeight;           // Default Value: kPFPFontWeightBold, The font wight used to the title in the representation
+
+// UNSURE
+@property (nonatomic, readonly) PFPViewStyle viewStyle;
+
+// TO BE REPLACED BY DIRECT LOOKUP
 @property (nonatomic, readonly, strong, nullable) NSString *valueDefaultKeyPath;  // If set, contains path to settings key to use as default value
 @property (nonatomic, readonly, weak, nullable) id selectionDefault;
+@property (nonatomic, readonly, nullable) id valuePlaceholder;
+@property (nonatomic, readonly) BOOL valueIsSensitive;
 
-// PayloadKey Properties
-// Required properties
+// PAYLOAD KEYS
+
 @property (nonatomic, readonly) PFPScope scope;
 @property (nonatomic, readonly) PFPDistribution distribution;
 @property (nonatomic, readonly, nullable) PFPPlatform *platform;
 @property (nonatomic, readonly, nonnull) NSArray<PFPPayloadCollectionKey *> *subkeys;
-@property (nonatomic, readonly, nonnull) NSString *identifier;
-
-// Basic information
-@property (nonatomic, readonly, nullable) NSString *title;
-@property (nonatomic, readonly, nullable) NSString *descriptionString;
-@property (nonatomic, readonly, nullable) NSString *extendedDescription;
-@property (nonatomic, readonly, nullable) NSDictionary *excludeDict;
-@property (nonatomic, readonly, nullable) NSArray *requiredArray;
-
-// Value Properties
-@property (nonatomic, readonly, nullable) id valueDefault;
-@property (nonatomic, readonly, nullable) id valueMax;                // (Only used for Integer/Float and Date types)
-@property (nonatomic, readonly, nullable) id valueMin;                // (Only used for Integer/Float and Date types)
-@property (nonatomic, readonly, nullable) NSString *valueFormat;      // Regex string the value need to conform to (Only used for String types)
-@property (nonatomic, readonly, nullable) NSDictionary *valueTitles;
-@property (nonatomic, readonly, nullable) NSArray *valueList;         // List of selectable values
-@property (nonatomic, readonly, nullable) NSDictionary *valueSubkeys; // Dict containing subkeys for values in valueList
-@property (nonatomic, readonly, nullable) id valuePlaceholder;
-@property (nonatomic, readonly) BOOL valueIsSensitive;
-
-@property (nonatomic, readonly) NSInteger valueMinOffsetDays;    // Default Value: 0, Used by: DatePicker
-@property (nonatomic, readonly) NSInteger valueMinOffsetHours;   // Default Value: 0, Used by: DatePicker
-@property (nonatomic, readonly) NSInteger valueMinOffsetMinutes; // Default Value: 0, Used by: DatePicker
-@property (nonatomic, readonly) BOOL showDate;                   // Default Value: YES, Used by: DatePicker
-@property (nonatomic, readonly) BOOL showDateTime;               // Default Value: NO, Used by: DatePicker
-@property (nonatomic, readonly) BOOL showDateInterval;           // Default Value: YES, Used by: DatePicker
-@property (nonatomic, readonly, strong, nullable) NSDate *date;  // Default Value: now, Used by: DatePicker
 @property (nonatomic, readonly, strong, nullable) id payloadValue;
-@property (nonatomic, readonly) PFPViewStyle viewStyle;
-
-@property (nonatomic, readonly) NSInteger inputWidth;
-@property (nonatomic, readonly) BOOL showStepper;
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -105,10 +77,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 - (nonnull instancetype)init NS_UNAVAILABLE;
-- (nonnull instancetype)initWithKeyDict:(NSDictionary *_Nonnull)keyDict
-                      payloadCollection:(id<PFPPayloadCollection> _Nonnull)payloadCollection
-                              viewModel:(PFPViewModel)viewModel
-                       viewTypeDelegate:(id<PFPViewTypeDelegate> _Nonnull)viewTypeDelegate;
+- (nonnull instancetype)initWithSubkeyDict:(NSDictionary *_Nonnull)subkeyDict
+                         payloadCollection:(id<PFPPayloadCollection> _Nonnull)payloadCollection
+                                 viewModel:(PFPViewModel)viewModel
+                          payloadSettings:(PFPPayloadSettings *_Nonnull)payloadSettings;
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
@@ -125,5 +97,11 @@
 - (BOOL)isHiddenWithSettings:(NSDictionary *_Nullable)settings;
 - (BOOL)isOptionalWithSettings:(NSDictionary *_Nullable)settings;
 - (BOOL)isExcludedWithSettings:(NSDictionary *_Nullable)settings;
+
+// Use this to get values for view specific items
+- (id _Nullable)viewItem:(NSString *_Nullable)viewItem payloadTypeKey:(PFPPayloadTypeKey *_Nullable)payloadTypeKey valueForManifestKey:(NSString *_Nonnull)manifestKey;
+- (id _Nullable)viewItem:(NSString *_Nonnull)viewItem valueForManifestKey:(NSString *_Nonnull)manifestKey;
+- (id _Nullable)viewItem:(NSString *_Nullable)viewItem valueSubkeysForPayloadTypeKey:(PFPPayloadTypeKey *_Nonnull)payloadTypeKey;
+- (BOOL)viewItem:(NSString *_Nonnull)viewItem isRequired:(NSDictionary *_Nonnull)settings;
 
 @end

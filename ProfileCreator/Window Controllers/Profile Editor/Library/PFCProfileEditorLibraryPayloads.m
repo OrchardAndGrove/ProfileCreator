@@ -461,8 +461,8 @@ NSString *const PFCProfileEditorLibraryTableColumnIdentifierPayloads = @"TableCo
     // -------------------------------------------------------------------------
     //  Verify "General" settings always are at the top of the profile payloads
     // -------------------------------------------------------------------------
-    NSUInteger indexPayloadGeneral = [self.profilePayloads indexOfObjectPassingTest:^BOOL(NSDictionary *_Nonnull dict, NSUInteger idx, BOOL * _Nonnull stop) {
-        return [dict[PFPPlaceholderKeyIdentifier] isEqualToString:@"com.apple.general.pcmanifest"];
+    NSUInteger indexPayloadGeneral = [self.profilePayloads indexOfObjectPassingTest:^BOOL(NSDictionary *_Nonnull placeholder, NSUInteger idx, BOOL * _Nonnull stop) {
+        return [placeholder[PFPPlaceholderKeyIdentifier] isEqualToString:@"com.apple.general.pcmanifest"];
     }];
     if ( 0 != indexPayloadGeneral ) {
         NSDictionary *payloadGeneral = self.profilePayloads[indexPayloadGeneral];

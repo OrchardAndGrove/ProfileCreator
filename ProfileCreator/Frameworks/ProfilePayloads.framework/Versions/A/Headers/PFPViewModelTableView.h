@@ -18,9 +18,9 @@
 //  limitations under the License.
 
 #import "PFPConstants.h"
-#import "PFPViewTypeDelegate.h"
 #import <Cocoa/Cocoa.h>
-@class PFPPayloadCOllectionKey;
+@class PFPPayloadCollectionKey;
+@class PFPPayloadSettings;
 
 @interface PFPViewModelTableView : NSObject
 
@@ -40,6 +40,6 @@
 
 - (NSTableCellView *_Nullable)viewForViewType:(PFPViewType)viewType
                          payloadCollectionKey:(PFPPayloadCollectionKey *_Nonnull)payloadCollectionKey
-                             viewTypeDelegate:(id<PFPViewTypeDelegate> _Nonnull)viewTypeDelegate;
+                             payloadSettings:(PFPPayloadSettings *_Nonnull)payloadSettings;
 
 @end

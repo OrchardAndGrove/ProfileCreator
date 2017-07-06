@@ -36,7 +36,7 @@ typedef NS_ENUM(NSUInteger, PFPValueType) {
 typedef NS_ENUM(NSUInteger, PFPViewModel) { kPFPViewModelNone = 0, kPFPViewModelTableView };
 
 // PFPViewType
-typedef NS_ENUM(NSUInteger, PFPViewType) { kPFPViewTypeNone = 0, kPFPViewTypeUnknown, kPFPViewTypeDatePicker, kPFPViewTypeFile, kPFPViewTypePopUpButton, kPFPViewTypeTextField, kPFPViewTypeTextView, kPFPViewTypeCheckbox };
+typedef NS_ENUM(NSUInteger, PFPViewType) { kPFPViewTypeNone = 0, kPFPViewTypeUnknown, kPFPViewTypeDatePicker, kPFPViewTypeFile, kPFPViewTypeHostPort, kPFPViewTypePopUpButton, kPFPViewTypeTextField, kPFPViewTypeTextView, kPFPViewTypeCheckbox };
 
 // PFPViewStyle
 typedef NS_ENUM(NSUInteger, PFPViewStyle) { kPFPViewStyleDefault = 0, kPFPViewStyleList, kPFPViewStyleListCentered };
@@ -115,6 +115,7 @@ extern NSString *_Nonnull const PFPPlatformVersionMinmacOS; // String representi
 #pragma mark Manifest Keys
 ////////////////////////////////////////////////////////////////////////////////
 // Unsorted
+extern NSString *_Nonnull const PFPManifestKeyDate;
 extern NSString *_Nonnull const PFPManifestKeyDescription;
 extern NSString *_Nonnull const PFPManifestKeyDomain;
 extern NSString *_Nonnull const PFPManifestKeyExtendedDescription;
@@ -148,10 +149,13 @@ extern NSString *_Nonnull const PFPManifestKeyDistributionPush;
 
 // Payload
 extern NSString *_Nonnull const PFPManifestKeyPayloadKey;
+extern NSString *_Nonnull const PFPManifestKeyPayloadKeys;
 extern NSString *_Nonnull const PFPManifestKeyPayloadKeyPath;
 extern NSString *_Nonnull const PFPManifestKeyPayloadKeyPathCheckbox;
 extern NSString *_Nonnull const PFPManifestKeyPayloadKeyPathDatePicker;
 extern NSString *_Nonnull const PFPManifestKeyPayloadKeyPathFile;
+extern NSString *_Nonnull const PFPManifestKeyPayloadKeyPathHost;
+extern NSString *_Nonnull const PFPManifestKeyPayloadKeyPathPort;
 extern NSString *_Nonnull const PFPManifestKeyPayloadKeyPathPopUpButton;
 extern NSString *_Nonnull const PFPManifestKeyPayloadKeyPathTextField;
 extern NSString *_Nonnull const PFPManifestKeyPayloadKeyPathTextView;
@@ -209,6 +213,18 @@ extern NSString *_Nonnull const PFPManifestKeyViewStyle;
 extern NSString *_Nonnull const PFPViewStyleList;
 extern NSString *_Nonnull const PFPViewStyleListCentered;
 
+// ViewItem
+extern NSString *_Nonnull const PFPViewItemDatePicker;
+extern NSString *_Nonnull const PFPViewItemFile;
+extern NSString *_Nonnull const PFPViewItemHost;
+extern NSString *_Nonnull const PFPViewItemPort;
+extern NSString *_Nonnull const PFPViewItemPopUpButton;
+extern NSString *_Nonnull const PFPViewItemTextField;
+extern NSString *_Nonnull const PFPViewItemTextView;
+extern NSString *_Nonnull const PFPViewItemCheckbox;
+
+// More
+
 extern NSString *_Nonnull const PFPManifestKeyInputWidth;
 extern NSString *_Nonnull const PFPManifestKeyShowStepper;
 
@@ -258,6 +274,8 @@ extern NSString *_Nonnull const PFPSettingsKeyValueCheckbox;
 extern NSString *_Nonnull const PFPSettingsKeyValueDatePicker;
 extern NSString *_Nonnull const PFPSettingsKeyValueFile;
 extern NSString *_Nonnull const PFPSettingsKeyValueFileInfo;
+extern NSString *_Nonnull const PFPSettingsKeyValueHost;
+extern NSString *_Nonnull const PFPSettingsKeyValuePort;
 extern NSString *_Nonnull const PFPSettingsKeyValueKey;
 extern NSString *_Nonnull const PFPSettingsKeyValueSelection;
 extern NSString *_Nonnull const PFPSettingsKeyValueTextField;
@@ -285,6 +303,7 @@ extern NSString *_Nonnull const PFPProfileKeyPayloadVersion;
 extern NSString *_Nonnull const PFPViewTypeCheckbox;
 extern NSString *_Nonnull const PFPViewTypeDatePicker;
 extern NSString *_Nonnull const PFPViewTypeFile;
+extern NSString *_Nonnull const PFPViewTypeHostPort;
 extern NSString *_Nonnull const PFPViewTypePopUpButton;
 extern NSString *_Nonnull const PFPViewTypeTextField;
 extern NSString *_Nonnull const PFPViewTypeTextView;
@@ -296,4 +315,4 @@ extern NSString *_Nonnull const PFPUserChangeKeyCollectionIdentifier;
 extern NSString *_Nonnull const PFPUserChangeKeyCollectionKeyIdentifier;
 extern NSString *_Nonnull const PFPUserChangeKeyNotificationEvent;
 extern NSString *_Nonnull const PFPUserChangeKeyValue;
-extern NSString *_Nonnull const PFPUserChangeKeyValueKey;
+extern NSString *_Nonnull const PFPUserChangeKeyValueKeyPath;

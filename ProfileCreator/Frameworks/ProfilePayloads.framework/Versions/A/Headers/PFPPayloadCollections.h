@@ -19,9 +19,9 @@
 
 #import "PFPPayloadCollection.h"
 #import "PFPPayloadCollectionSet.h"
-#import "PFPViewTypeDelegate.h"
 #import <Foundation/Foundation.h>
 @class PFPPayloadCollectionKey;
+@class PFPPayloadSettings;
 
 @interface PFPPayloadCollections : NSObject
 
@@ -32,7 +32,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 - (nonnull instancetype)init NS_UNAVAILABLE;
-- (nonnull instancetype)initWithViewModel:(PFPViewModel)viewModel viewTypeDelegate:(id<PFPViewTypeDelegate> _Nullable)viewTypeDelegate;
+- (nonnull instancetype)initWithViewModel:(PFPViewModel)viewModel payloadSettings:(PFPPayloadSettings *_Nullable)payloadSettings;
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -
