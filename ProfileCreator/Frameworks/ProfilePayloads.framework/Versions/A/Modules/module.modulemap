@@ -1,6 +1,0 @@
-framework module ProfilePayloads {
-  umbrella header "ProfilePayloads.h"
-
-  export *
-  module * { export * }
-}
