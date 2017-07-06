@@ -44,4 +44,6 @@
 @property (nonatomic, readonly, strong, nullable) NSString *payloadTypeString;
 @property (nonatomic, readonly, strong, nullable) NSArray *payloadTypeConditions;
 
+@property (nonatomic, strong, nullable) id selectedViewItem;
+
 @end

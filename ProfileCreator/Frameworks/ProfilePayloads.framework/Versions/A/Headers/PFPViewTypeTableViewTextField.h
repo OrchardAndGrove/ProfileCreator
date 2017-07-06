@@ -30,7 +30,6 @@
 
 @property (nonatomic, readonly) NSInteger row;
 @property (nonatomic) NSInteger height;
-@property (nonatomic, weak, nullable) id delegate;
 @property (nonatomic, readonly, strong, nullable) NSTextField *textFieldInput;
 
 @end

@@ -21,8 +21,8 @@
 
 #import "PFPPayloadCollectionKey.h"
 #import "PFPViewModelTableView.h"
-#import "PFPViewTypeDelegate.h"
 #import <Cocoa/Cocoa.h>
+@class PFPPayloadSettings;
 
 @protocol PFPViewTypeTableView <NSObject>
 
@@ -36,7 +36,6 @@
 
 // Readwrite Properties
 @property (nonatomic) NSInteger height;
-@property (nonatomic, weak, nullable) id<PFPViewTypeDelegate> delegate;
 @property (nonatomic, readonly) NSInteger row;
 
 // Readonly Properties
@@ -51,9 +50,14 @@
 
 - (nonnull instancetype)initWithPayloadCollectionKey:(PFPPayloadCollectionKey *_Nonnull)payloadCollectionKey
                                            viewModel:(PFPViewModelTableView *_Nonnull)viewModel
-                                    viewTypeDelegate:(id<PFPViewTypeDelegate> _Nullable)viewTypeDelegate;
+                                    payloadSettings:(PFPPayloadSettings *_Nullable)payloadSettings;
 
-- (void)updateSettings:(NSDictionary *_Nullable)settingsDict sender:(id _Nonnull)sender;
+- (void)updateValue:(NSDictionary *_Nullable)settings sender:(id _Nonnull)sender;
 
 @optional
+
+- (void)updateTag:(NSInteger)tag;
+- (nullable id)firstElement;
+- (nullable id)selectedElement;
+
 @end

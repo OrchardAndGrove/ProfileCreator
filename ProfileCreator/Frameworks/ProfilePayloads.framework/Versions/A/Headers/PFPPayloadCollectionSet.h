@@ -20,9 +20,9 @@
 #pragma once
 
 #import "PFPPayloadCollection.h"
-#import "PFPViewTypeDelegate.h"
 #import <Foundation/Foundation.h>
 @class PFPPayloadCollections;
+@class PFPPayloadSettings;
 
 @protocol PFPPayloadCollectionSet <NSObject>
 
@@ -43,7 +43,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 - (nonnull instancetype)init NS_UNAVAILABLE;
-- (nonnull instancetype)initWithViewModel:(PFPViewModel)viewModel viewTypeDelegate:(id<PFPViewTypeDelegate> _Nonnull)viewTypeDelegate payloadCollections:(PFPPayloadCollections *_Nonnull)payloadCollections;
+- (nonnull instancetype)initWithViewModel:(PFPViewModel)viewModel payloadSettings:(PFPPayloadSettings *_Nonnull)payloadSettings payloadCollections:(PFPPayloadCollections *_Nonnull)payloadCollections;
 
 ////////////////////////////////////////////////////////////////////////////////
 #pragma mark -

@@ -41,7 +41,6 @@ FOUNDATION_EXPORT const unsigned char ProfilePayloadsVersionString[];
 #import "PFPProfilePayloads.h"
 #import "PFPUtility.h"
 #import "PFPViewModelTableView.h"
-#import "PFPViewTypeDelegate.h"
 #import "PFPViewTypeTableView.h"
 #import "PFPViewTypeTableViewPadding.h"
 #import "PFPViewTypeTableViewTextField.h"

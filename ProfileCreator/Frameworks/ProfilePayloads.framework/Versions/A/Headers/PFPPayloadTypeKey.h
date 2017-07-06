@@ -41,6 +41,7 @@
 @property (nonatomic, readonly, nonnull) NSDictionary *payloadKeyDict;
 @property (nonatomic, readonly, nonnull) NSString *payloadKey;
 @property (nonatomic, readonly, nonnull) NSString *payloadKeyPath;
+@property (nonatomic, readonly, nonnull) NSString *payloadKeyPathLocal; // Could be renamed, convenience when you only want the key path for the payload type
 @property (nonatomic, readonly, nonnull) NSString *payloadTypeString;
 @property (nonatomic, readonly, nonnull) NSString *identifier;
 
