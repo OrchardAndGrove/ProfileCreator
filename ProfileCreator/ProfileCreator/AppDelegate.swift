@@ -11,16 +11,20 @@ import Cocoa
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
 
+    // MARK: -
+    // MARK: Variables
+    
+    let mainWindowController = MainWindowController()
 
-
-    func applicationDidFinishLaunching(_ aNotification: Notification) {
-        // Insert code here to initialize your application
+    // MARK: -
+    // MARK: NSApplicationDelegate Methods
+    
+    func applicationWillFinishLaunching(_ notification: Notification) {
+        
+        // ---------------------------------------------------------------------
+        //  Show main window
+        // ---------------------------------------------------------------------
+        mainWindowController.window?.makeKeyAndOrderFront(self)
     }
-
-    func applicationWillTerminate(_ aNotification: Notification) {
-        // Insert code here to tear down your application
-    }
-
-
 }
 
