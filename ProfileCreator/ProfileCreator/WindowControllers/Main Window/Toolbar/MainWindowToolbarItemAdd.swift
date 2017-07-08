@@ -153,7 +153,7 @@ class MainWindowToolbarItemAddButton: NSButton {
         self.bezelStyle = .texturedRounded
         self.image = NSImage(named: NSImageNameAddTemplate)
         self.target = self
-        self.action = #selector(MainWindowToolbarItemAddButton.clicked(button:))
+        self.action = #selector(clicked(button:))
         self.imageScaling = .scaleProportionallyDown
         self.imagePosition = .imageOnly
         
@@ -335,5 +335,4 @@ extension MainWindowToolbarItemAddButton: NSMenuDelegate {
             toolbarItemAdd.disclosureTriangle(show: false)
         }
     }
-    
 }

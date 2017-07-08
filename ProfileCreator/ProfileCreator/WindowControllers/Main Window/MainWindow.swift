@@ -18,11 +18,12 @@ class MainWindowController: NSWindowController {
     // MARK: -
     // MARK: Variables
     
+    let splitView = MainWindowSplitView(frame: NSZeroRect)
+    
     let toolbar = NSToolbar(identifier: "MainWindowToolbar")
     let toolbarItemIdentifiers = [MainWindowToolbarIdentifier.add,
                                   MainWindowToolbarIdentifier.export,
                                   NSToolbarFlexibleSpaceItemIdentifier]
-    
     var toolbarItemAdd: MainWindowToolbarItemAdd?
     var toolbarItemExport: MainWindowToolbarItemExport?
     
@@ -57,9 +58,9 @@ class MainWindowController: NSWindowController {
         window.center()
         
         // ---------------------------------------------------------------------
-        //  Setup splitview
+        //  Add splitview as window content view
         // ---------------------------------------------------------------------
-        // TODO: Add SplitView
+        window.contentView = self.splitView
         
         // ---------------------------------------------------------------------
         //  Initialize self after the class variables have been instantiated
@@ -124,5 +125,4 @@ extension MainWindowController: NSToolbarDelegate {
         }
         return nil
     }
-    
 }

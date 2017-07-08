@@ -323,5 +323,4 @@ extension MainWindowToolbarItemExportButton: NSMenuDelegate {
             toolbarItemExport.disclosureTriangle(show: false)
         }
     }
-    
 }

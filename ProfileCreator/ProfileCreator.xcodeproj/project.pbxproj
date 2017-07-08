@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5365F4851F0F4D430064C02A /* MainWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5365F4841F0F4D430064C02A /* MainWindowController.swift */; };
+		534732DB1F10C35500770446 /* MainWindowSplitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 534732DA1F10C35500770446 /* MainWindowSplitView.swift */; };
+		534732DD1F10C3BB00770446 /* MainWindowOutlineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 534732DC1F10C3BB00770446 /* MainWindowOutlineView.swift */; };
+		5365F4851F0F4D430064C02A /* MainWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5365F4841F0F4D430064C02A /* MainWindow.swift */; };
 		5365F4881F0F71850064C02A /* MainWindowToolbarItemAdd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5365F4871F0F71850064C02A /* MainWindowToolbarItemAdd.swift */; };
 		5365F48C1F0F87440064C02A /* downarrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 5365F48B1F0F87440064C02A /* downarrow.png */; };
 		5395925F1F1012F3005090B3 /* MainWindowToolbarItemExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5395925E1F1012F3005090B3 /* MainWindowToolbarItemExport.swift */; };
@@ -15,19 +17,23 @@
 		539832121F0EE15400C4792D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539832111F0EE15400C4792D /* AppDelegate.swift */; };
 		539832161F0EE15400C4792D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 539832151F0EE15400C4792D /* Assets.xcassets */; };
 		539832191F0EE15400C4792D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 539832171F0EE15400C4792D /* Main.storyboard */; };
+		53DF38771F11675F006DE5BE /* MainWindowTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DF38761F11675F006DE5BE /* MainWindowTableView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		5365F4841F0F4D430064C02A /* MainWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowController.swift; path = "WindowControllers/Main Window/MainWindowController.swift"; sourceTree = "<group>"; };
-		5365F4871F0F71850064C02A /* MainWindowToolbarItemAdd.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowToolbarItemAdd.swift; path = "WindowControllers/Main Window/MainWindowToolbarItemAdd.swift"; sourceTree = "<group>"; };
+		534732DA1F10C35500770446 /* MainWindowSplitView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowSplitView.swift; path = "WindowControllers/Main Window/MainWindowSplitView.swift"; sourceTree = "<group>"; };
+		534732DC1F10C3BB00770446 /* MainWindowOutlineView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowOutlineView.swift; path = "WindowControllers/Main Window/Sidebar/MainWindowOutlineView.swift"; sourceTree = "<group>"; };
+		5365F4841F0F4D430064C02A /* MainWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindow.swift; path = "WindowControllers/Main Window/MainWindow.swift"; sourceTree = "<group>"; };
+		5365F4871F0F71850064C02A /* MainWindowToolbarItemAdd.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowToolbarItemAdd.swift; path = "WindowControllers/Main Window/Toolbar/MainWindowToolbarItemAdd.swift"; sourceTree = "<group>"; };
 		5365F48B1F0F87440064C02A /* downarrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = downarrow.png; path = Graphics/Icons/downarrow.png; sourceTree = "<group>"; };
-		5395925E1F1012F3005090B3 /* MainWindowToolbarItemExport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowToolbarItemExport.swift; path = "WindowControllers/Main Window/MainWindowToolbarItemExport.swift"; sourceTree = "<group>"; };
+		5395925E1F1012F3005090B3 /* MainWindowToolbarItemExport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowToolbarItemExport.swift; path = "WindowControllers/Main Window/Toolbar/MainWindowToolbarItemExport.swift"; sourceTree = "<group>"; };
 		539592611F102DEE005090B3 /* Defaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Defaults.plist; sourceTree = "<group>"; };
 		5398320E1F0EE15400C4792D /* ProfileCreator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ProfileCreator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		539832111F0EE15400C4792D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		539832151F0EE15400C4792D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		539832181F0EE15400C4792D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		5398321A1F0EE15400C4792D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		53DF38761F11675F006DE5BE /* MainWindowTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowTableView.swift; path = "WindowControllers/Main Window/Profile List/MainWindowTableView.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,6 +47,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		534732D81F10C2F100770446 /* Toolbar */ = {
+			isa = PBXGroup;
+			children = (
+				5365F4871F0F71850064C02A /* MainWindowToolbarItemAdd.swift */,
+				5395925E1F1012F3005090B3 /* MainWindowToolbarItemExport.swift */,
+			);
+			name = Toolbar;
+			sourceTree = "<group>";
+		};
+		534732D91F10C32600770446 /* Sidebar */ = {
+			isa = PBXGroup;
+			children = (
+				534732DC1F10C3BB00770446 /* MainWindowOutlineView.swift */,
+			);
+			name = Sidebar;
+			sourceTree = "<group>";
+		};
 		5365F4821F0F4CFE0064C02A /* Window Controllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -52,9 +75,11 @@
 		5365F4831F0F4D060064C02A /* Main Window */ = {
 			isa = PBXGroup;
 			children = (
-				5365F4841F0F4D430064C02A /* MainWindowController.swift */,
-				5365F4871F0F71850064C02A /* MainWindowToolbarItemAdd.swift */,
-				5395925E1F1012F3005090B3 /* MainWindowToolbarItemExport.swift */,
+				5365F4841F0F4D430064C02A /* MainWindow.swift */,
+				534732DA1F10C35500770446 /* MainWindowSplitView.swift */,
+				534732D81F10C2F100770446 /* Toolbar */,
+				534732D91F10C32600770446 /* Sidebar */,
+				53DF38751F116737006DE5BE /* Profile List */,
 			);
 			name = "Main Window";
 			sourceTree = "<group>";
@@ -103,6 +128,14 @@
 				5365F4891F0F871F0064C02A /* Graphics */,
 			);
 			path = ProfileCreator;
+			sourceTree = "<group>";
+		};
+		53DF38751F116737006DE5BE /* Profile List */ = {
+			isa = PBXGroup;
+			children = (
+				53DF38761F11675F006DE5BE /* MainWindowTableView.swift */,
+			);
+			name = "Profile List";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -179,8 +212,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				534732DD1F10C3BB00770446 /* MainWindowOutlineView.swift in Sources */,
 				539832121F0EE15400C4792D /* AppDelegate.swift in Sources */,
-				5365F4851F0F4D430064C02A /* MainWindowController.swift in Sources */,
+				5365F4851F0F4D430064C02A /* MainWindow.swift in Sources */,
+				534732DB1F10C35500770446 /* MainWindowSplitView.swift in Sources */,
+				53DF38771F11675F006DE5BE /* MainWindowTableView.swift in Sources */,
 				5365F4881F0F71850064C02A /* MainWindowToolbarItemAdd.swift in Sources */,
 				5395925F1F1012F3005090B3 /* MainWindowToolbarItemExport.swift in Sources */,
 			);
