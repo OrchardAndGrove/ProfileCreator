@@ -15,6 +15,8 @@ class MainWindowSplitView: NSSplitView {
     
     let outlineViewController = MainWindowOutlineViewController()
     let tableViewController = MainWindowTableViewController()
+    let profilePreviewController = MainWindowProfilePreviewController()
+    let welcomeViewController = MainWindowWelcomeViewController()
     
     // MARK: -
     // MARK: Initialization
@@ -43,46 +45,82 @@ class MainWindowSplitView: NSSplitView {
         self.setHoldingPriority((NSLayoutPriorityDefaultLow + 1), forSubviewAt: 0)
         self.addSubview(tableViewController.scrollView)
         self.setHoldingPriority(NSLayoutPriorityDefaultLow, forSubviewAt: 1)
+        self.addSubview(profilePreviewController.view)
+        self.setHoldingPriority((NSLayoutPriorityDefaultLow - 1), forSubviewAt: 1)
         
         // ---------------------------------------------------------------------
         //  Setup views in splitview
         // ---------------------------------------------------------------------
         var constraints = [NSLayoutConstraint]()
-        setupSplitViewLeft(constraints: &constraints)
-        setupSplitViewCenter(constraints: &constraints)
+        setupSplitViewSidebar(constraints: &constraints)
+        setupSplitViewProfileList(constraints: &constraints)
+        setupSplitViewProfilePreview(constraints: &constraints)
+        setupSplitViewWelcomeView(constraints: &constraints)
         
         // ---------------------------------------------------------------------
         //  Activate layout constraints
         // ---------------------------------------------------------------------
         NSLayoutConstraint.activate(constraints)
+        
+        // ---------------------------------------------------------------------
+        //  If no profile identifiers are loaded, show welcome view
+        // ---------------------------------------------------------------------
+        // TODO: Implement when profile controller is added
+        // self.noProfileConfigured(notification: nil)
+        
+        // ---------------------------------------------------------------------
+        //  Restore AutoSaved positions, as this isn't done automatically
+        // ---------------------------------------------------------------------
+        // TODO: Implement
     }
     
     // MARK: -
-    // MARK: Layout Constraints
+    // MARK: Private Functions
     
-    func setupSplitViewLeft(constraints: inout [NSLayoutConstraint]) {
-        
-        // Min Width
-        constraints.append(NSLayoutConstraint(item: self.outlineViewController.scrollView,
-                                              attribute: .width,
-                                              relatedBy: .greaterThanOrEqual,
-                                              toItem: nil,
-                                              attribute: .notAnAttribute,
-                                              multiplier: 1,
-                                              constant: 150))
-        
-        // Max Width
-        constraints.append(NSLayoutConstraint(item: self.outlineViewController.scrollView,
-                                              attribute: .width,
-                                              relatedBy: .lessThanOrEqual,
-                                              toItem: nil,
-                                              attribute: .notAnAttribute,
-                                              multiplier: 1,
-                                              constant: 300))
-        
+    private func noProfileConfigured(notification: NSNotification?) {
+        if !self.subviews.contains(self.welcomeViewController.view) {
+            self.tableViewController.scrollView.removeFromSuperview()
+            self.profilePreviewController.view.removeFromSuperview()
+            self.addSubview(self.welcomeViewController.view,
+                            positioned: .above,
+                            relativeTo: self.outlineViewController.scrollView)
+            self.setHoldingPriority(NSLayoutPriorityDefaultLow, forSubviewAt: 1)
+        }
     }
     
-    func setupSplitViewCenter(constraints: inout [NSLayoutConstraint]) {
+    // MARK: -
+    // MARK: Setup Layout Constraints
+    
+    private func setupSplitViewSidebar(constraints: inout [NSLayoutConstraint]) {
+        
+        // ---------------------------------------------------------------------
+        //  Add constraints
+        // ---------------------------------------------------------------------
+        
+        // Min Width
+        constraints.append(NSLayoutConstraint(item: self.outlineViewController.scrollView,
+                                              attribute: .width,
+                                              relatedBy: .greaterThanOrEqual,
+                                              toItem: nil,
+                                              attribute: .notAnAttribute,
+                                              multiplier: 1,
+                                              constant: 150))
+        
+        // Max Width
+        constraints.append(NSLayoutConstraint(item: self.outlineViewController.scrollView,
+                                              attribute: .width,
+                                              relatedBy: .lessThanOrEqual,
+                                              toItem: nil,
+                                              attribute: .notAnAttribute,
+                                              multiplier: 1,
+                                              constant: 300))
+    }
+    
+    private func setupSplitViewProfileList(constraints: inout [NSLayoutConstraint]) {
+        
+        // ---------------------------------------------------------------------
+        //  Add constraints
+        // ---------------------------------------------------------------------
         
         // Min Width
         constraints.append(NSLayoutConstraint(item: self.tableViewController.scrollView,
@@ -101,7 +139,38 @@ class MainWindowSplitView: NSSplitView {
                                               attribute: .notAnAttribute,
                                               multiplier: 1,
                                               constant: 300))
+    }
+    
+    private func setupSplitViewProfilePreview(constraints: inout [NSLayoutConstraint]) {
         
+        // ---------------------------------------------------------------------
+        //  Add constraints
+        // ---------------------------------------------------------------------
+        
+        // Min Width
+        constraints.append(NSLayoutConstraint(item: self.profilePreviewController.view,
+                                              attribute: .width,
+                                              relatedBy: .greaterThanOrEqual,
+                                              toItem: nil,
+                                              attribute: .notAnAttribute,
+                                              multiplier: 1,
+                                              constant: 260))
+    }
+    
+    private func setupSplitViewWelcomeView(constraints: inout [NSLayoutConstraint]) {
+        
+        // ---------------------------------------------------------------------
+        //  Add constraints
+        // ---------------------------------------------------------------------
+        
+        // Min Width
+        constraints.append(NSLayoutConstraint(item: self.welcomeViewController.view,
+                                              attribute: .width,
+                                              relatedBy: .greaterThanOrEqual,
+                                              toItem: nil,
+                                              attribute: .notAnAttribute,
+                                              multiplier: 1,
+                                              constant: 400))
     }
 }
 

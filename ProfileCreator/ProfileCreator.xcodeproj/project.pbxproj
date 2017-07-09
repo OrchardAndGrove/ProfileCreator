@@ -12,6 +12,9 @@
 		5365F4851F0F4D430064C02A /* MainWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5365F4841F0F4D430064C02A /* MainWindow.swift */; };
 		5365F4881F0F71850064C02A /* MainWindowToolbarItemAdd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5365F4871F0F71850064C02A /* MainWindowToolbarItemAdd.swift */; };
 		5365F48C1F0F87440064C02A /* downarrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 5365F48B1F0F87440064C02A /* downarrow.png */; };
+		536DA48E1F11FD9D00FB325E /* MainWindowProfilePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536DA48D1F11FD9D00FB325E /* MainWindowProfilePreview.swift */; };
+		536DA4911F1213AE00FB325E /* MainWindowWelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536DA4901F1213AE00FB325E /* MainWindowWelcomeView.swift */; };
+		536DA4941F12143F00FB325E /* ViewWhite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536DA4931F12143F00FB325E /* ViewWhite.swift */; };
 		5395925F1F1012F3005090B3 /* MainWindowToolbarItemExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5395925E1F1012F3005090B3 /* MainWindowToolbarItemExport.swift */; };
 		539592621F102DEE005090B3 /* Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 539592611F102DEE005090B3 /* Defaults.plist */; };
 		539832121F0EE15400C4792D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539832111F0EE15400C4792D /* AppDelegate.swift */; };
@@ -26,6 +29,9 @@
 		5365F4841F0F4D430064C02A /* MainWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindow.swift; path = "WindowControllers/Main Window/MainWindow.swift"; sourceTree = "<group>"; };
 		5365F4871F0F71850064C02A /* MainWindowToolbarItemAdd.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowToolbarItemAdd.swift; path = "WindowControllers/Main Window/Toolbar/MainWindowToolbarItemAdd.swift"; sourceTree = "<group>"; };
 		5365F48B1F0F87440064C02A /* downarrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = downarrow.png; path = Graphics/Icons/downarrow.png; sourceTree = "<group>"; };
+		536DA48D1F11FD9D00FB325E /* MainWindowProfilePreview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowProfilePreview.swift; path = "WindowControllers/Main Window/Profile Preview/MainWindowProfilePreview.swift"; sourceTree = "<group>"; };
+		536DA4901F1213AE00FB325E /* MainWindowWelcomeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowWelcomeView.swift; path = "WindowControllers/Main Window/Welcome View/MainWindowWelcomeView.swift"; sourceTree = "<group>"; };
+		536DA4931F12143F00FB325E /* ViewWhite.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ViewWhite.swift; path = Utility/ViewWhite.swift; sourceTree = "<group>"; };
 		5395925E1F1012F3005090B3 /* MainWindowToolbarItemExport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowToolbarItemExport.swift; path = "WindowControllers/Main Window/Toolbar/MainWindowToolbarItemExport.swift"; sourceTree = "<group>"; };
 		539592611F102DEE005090B3 /* Defaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Defaults.plist; sourceTree = "<group>"; };
 		5398320E1F0EE15400C4792D /* ProfileCreator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ProfileCreator.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -80,6 +86,8 @@
 				534732D81F10C2F100770446 /* Toolbar */,
 				534732D91F10C32600770446 /* Sidebar */,
 				53DF38751F116737006DE5BE /* Profile List */,
+				536DA48C1F11FD4E00FB325E /* Profile Preview */,
+				536DA48F1F12139200FB325E /* Welcome View */,
 			);
 			name = "Main Window";
 			sourceTree = "<group>";
@@ -98,6 +106,30 @@
 				5365F48B1F0F87440064C02A /* downarrow.png */,
 			);
 			name = Icons;
+			sourceTree = "<group>";
+		};
+		536DA48C1F11FD4E00FB325E /* Profile Preview */ = {
+			isa = PBXGroup;
+			children = (
+				536DA48D1F11FD9D00FB325E /* MainWindowProfilePreview.swift */,
+			);
+			name = "Profile Preview";
+			sourceTree = "<group>";
+		};
+		536DA48F1F12139200FB325E /* Welcome View */ = {
+			isa = PBXGroup;
+			children = (
+				536DA4901F1213AE00FB325E /* MainWindowWelcomeView.swift */,
+			);
+			name = "Welcome View";
+			sourceTree = "<group>";
+		};
+		536DA4921F12142100FB325E /* Utility */ = {
+			isa = PBXGroup;
+			children = (
+				536DA4931F12143F00FB325E /* ViewWhite.swift */,
+			);
+			name = Utility;
 			sourceTree = "<group>";
 		};
 		539832051F0EE15400C4792D = {
@@ -124,6 +156,7 @@
 				539832171F0EE15400C4792D /* Main.storyboard */,
 				5398321A1F0EE15400C4792D /* Info.plist */,
 				539592611F102DEE005090B3 /* Defaults.plist */,
+				536DA4921F12142100FB325E /* Utility */,
 				5365F4821F0F4CFE0064C02A /* Window Controllers */,
 				5365F4891F0F871F0064C02A /* Graphics */,
 			);
@@ -213,9 +246,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				534732DD1F10C3BB00770446 /* MainWindowOutlineView.swift in Sources */,
+				536DA4911F1213AE00FB325E /* MainWindowWelcomeView.swift in Sources */,
+				536DA48E1F11FD9D00FB325E /* MainWindowProfilePreview.swift in Sources */,
 				539832121F0EE15400C4792D /* AppDelegate.swift in Sources */,
 				5365F4851F0F4D430064C02A /* MainWindow.swift in Sources */,
 				534732DB1F10C35500770446 /* MainWindowSplitView.swift in Sources */,
+				536DA4941F12143F00FB325E /* ViewWhite.swift in Sources */,
 				53DF38771F11675F006DE5BE /* MainWindowTableView.swift in Sources */,
 				5365F4881F0F71850064C02A /* MainWindowToolbarItemAdd.swift in Sources */,
 				5395925F1F1012F3005090B3 /* MainWindowToolbarItemExport.swift in Sources */,

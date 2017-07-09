@@ -26,9 +26,15 @@ class MainWindowOutlineViewController: NSObject {
     override init() {
         super.init()
         
+        // ---------------------------------------------------------------------
+        //  Setup Table Column
+        // ---------------------------------------------------------------------
         let tableColumn = NSTableColumn(identifier: "MainWindowOutlineViewTableColumn")
         tableColumn.isEditable = true
         
+        // ---------------------------------------------------------------------
+        //  Setup OutlineView
+        // ---------------------------------------------------------------------
         self.outlineView.addTableColumn(tableColumn)
         self.outlineView.translatesAutoresizingMaskIntoConstraints = false
         self.outlineView.selectionHighlightStyle = .sourceList
@@ -40,6 +46,9 @@ class MainWindowOutlineViewController: NSObject {
         //self.outlineView.delegate = self
         self.outlineView.register(forDraggedTypes: [DraggingType.profile])
         
+        // ---------------------------------------------------------------------
+        //  Setup ScrollView
+        // ---------------------------------------------------------------------
         self.scrollView.documentView = self.outlineView
         self.scrollView.translatesAutoresizingMaskIntoConstraints = false
         self.scrollView.autoresizesSubviews = true

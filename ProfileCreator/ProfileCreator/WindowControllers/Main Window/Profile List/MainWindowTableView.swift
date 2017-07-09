@@ -21,9 +21,15 @@ class MainWindowTableViewController: NSObject {
     override init() {
         super.init()
         
+        // ---------------------------------------------------------------------
+        //  Setup Table Column
+        // ---------------------------------------------------------------------
         let tableColumn = NSTableColumn(identifier: "MainWindowTableViewTableColumn")
         tableColumn.isEditable = false
         
+        // ---------------------------------------------------------------------
+        //  Setup TableView
+        // ---------------------------------------------------------------------
         self.tableView.addTableColumn(tableColumn)
         self.tableView.translatesAutoresizingMaskIntoConstraints = false
         self.tableView.sizeLastColumnToFit()
@@ -36,11 +42,16 @@ class MainWindowTableViewController: NSObject {
         self.tableView.doubleAction = #selector(editProfile(tableView:))
         self.tableView.allowsMultipleSelection = true
         
+        // ---------------------------------------------------------------------
+        //  Setup ScrollView
+        // ---------------------------------------------------------------------
         self.scrollView.documentView = self.tableView
         self.scrollView.translatesAutoresizingMaskIntoConstraints = false
         self.scrollView.autoresizesSubviews = true
     }
     
+    // MARK: -
+    // MARK: TableView Actions
     func editProfile(tableView: NSTableView) {
         print("editProfile")
     }
