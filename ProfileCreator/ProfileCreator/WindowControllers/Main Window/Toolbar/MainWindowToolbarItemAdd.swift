@@ -203,7 +203,7 @@ class MainWindowToolbarItemAddButton: NSButton {
     }
     
     func newGroup(menuItem: NSMenuItem?) {
-        Swift.print("New Group: \(String(describing: menuItem))")
+        NotificationCenter.default.post(name: .addGroup, object: self, userInfo: [NotificationKey.parentTitle : SidebarGroupTitle.library])
     }
     
     // MARK: -

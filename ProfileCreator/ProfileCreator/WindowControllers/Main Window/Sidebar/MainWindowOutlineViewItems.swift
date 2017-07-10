@@ -20,15 +20,20 @@ protocol OutlineViewItem: class {
 
 protocol OutlineViewParentItem: OutlineViewItem {
     var cellView: OutlineViewParentCellView? { get }
-    func addChild()
 }
 
 protocol OutlineViewChildItem: OutlineViewItem, NSTextFieldDelegate {
+    var isEditing: Bool { get }
     var icon: NSImage? { get }
     var identifier: UUID { get }
     var profileIdentifiers: [UUID] { get }
     var cellView: OutlineViewChildCellView? { get }
-    func addProfiles(identifiers: [String])
+    
+    func addProfiles(identifiers: [UUID])
+    func removeProfiles(identifiers: [UUID])
+    func removeProfiles(atIndexes: IndexSet)
+    func removeFromDisk() -> (Bool, Error?)
+    func writeToDisk(title: String) -> (Bool, Error?)
 }
 
 // MARK: -
@@ -188,7 +193,7 @@ class OutlineViewParentCellView: NSTableCellView {
                                               multiplier: 1,
                                               constant: 2))
         
-        if parent.isEditable {
+        if !parent.isEditable {
             
             // Trailing
             constraints.append(NSLayoutConstraint(item: self.textFieldTitle,
@@ -471,16 +476,21 @@ class OutlineViewChildCellView: NSTableCellView {
         
         // Leading
         self.constraintTextFieldToButtonCount = NSLayoutConstraint(item: self.buttonCount,
-                                                                 attribute: .leading,
-                                                                 relatedBy: .equal,
-                                                                 toItem: self.textFieldTitle,
-                                                                 attribute: .trailing,
-                                                                 multiplier: 1,
-                                                                 constant: 6)
+                                                                   attribute: .leading,
+                                                                   relatedBy: .equal,
+                                                                   toItem: self.textFieldTitle,
+                                                                   attribute: .trailing,
+                                                                   multiplier: 1,
+                                                                   constant: 6)
         constraints.append(self.constraintTextFieldToButtonCount)
     }
     
     func setupImageViewIcon(constraints: inout [NSLayoutConstraint]) {
+        
+        // ---------------------------------------------------------------------
+        //  Add icon to TableCellView
+        // ---------------------------------------------------------------------
+        self.addSubview(self.imageViewIcon)
         
         // ---------------------------------------------------------------------
         //  Add constraints
@@ -503,7 +513,7 @@ class OutlineViewChildCellView: NSTableCellView {
                                               attribute: .notAnAttribute,
                                               multiplier: 1,
                                               constant: 16))
-
+        
         // Center Vertically
         constraints.append(NSLayoutConstraint(item: self.imageViewIcon,
                                               attribute: .centerY,
@@ -523,13 +533,13 @@ class OutlineViewChildCellView: NSTableCellView {
                                               constant: 16))
         
         // Trailing
-        self.constraintIconToTextField = NSLayoutConstraint(item: self.textField!,
-                                                                   attribute: .leading,
-                                                                   relatedBy: .equal,
-                                                                   toItem: self.imageViewIcon,
-                                                                   attribute: .trailing,
-                                                                   multiplier: 1,
-                                                                   constant: 6)
+        self.constraintIconToTextField = NSLayoutConstraint(item: self.textFieldTitle,
+                                                            attribute: .leading,
+                                                            relatedBy: .equal,
+                                                            toItem: self.imageViewIcon,
+                                                            attribute: .trailing,
+                                                            multiplier: 1,
+                                                            constant: 6)
         constraints.append(self.constraintIconToTextField)
     }
 }

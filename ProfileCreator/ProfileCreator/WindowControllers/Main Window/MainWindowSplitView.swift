@@ -77,7 +77,7 @@ class MainWindowSplitView: NSSplitView {
     // MARK: -
     // MARK: Private Functions
     
-    private func noProfileConfigured(notification: NSNotification?) {
+    private func noProfileConfigured(_ notification: NSNotification?) {
         if !self.subviews.contains(self.welcomeViewController.view) {
             self.tableViewController.scrollView.removeFromSuperview()
             self.profilePreviewController.view.removeFromSuperview()

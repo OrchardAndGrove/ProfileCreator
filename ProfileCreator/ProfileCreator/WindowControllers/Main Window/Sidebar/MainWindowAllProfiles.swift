@@ -14,7 +14,7 @@ class MainWindowAllProfiles: NSObject, OutlineViewParentItem {
     // MARK: Variables
     
     var isEditable = false
-    var title = "All Profiles"
+    var title = SidebarGroupTitle.allProfiles
     var children = [OutlineViewChildItem]()
     var cellView: OutlineViewParentCellView?
     
@@ -40,10 +40,6 @@ class MainWindowAllProfiles: NSObject, OutlineViewParentItem {
         // ---------------------------------------------------------------------
         self.children.append(group)
     }
-    
-    func addChild() {
-        fatalError("This parent item is not editable, this should net be called")
-    }
 }
 
 class MainWindowAllProfilesGroup: NSObject, OutlineViewChildItem {
@@ -52,6 +48,7 @@ class MainWindowAllProfilesGroup: NSObject, OutlineViewChildItem {
     // MARK: Variables
     
     var isEditable = false
+    var isEditing = false
     var icon: NSImage?
     var identifier: UUID
     var title: String
@@ -77,30 +74,41 @@ class MainWindowAllProfilesGroup: NSObject, OutlineViewChildItem {
         // ---------------------------------------------------------------------
         //  Setup Notification Observers
         // ---------------------------------------------------------------------
-        NotificationCenter.default.addObserver(self, selector: #selector(didRemoveProfiles(notification:)), name: .didRemoveProfile, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didRemoveProfile(_:)), name: .didRemoveProfile, object: nil)
     }
     
     deinit {
         NotificationCenter.default.removeObserver(self, name: .didRemoveProfile, object: nil)
     }
-    
-    func addChild() {
-        fatalError("This parent item is not editable, this should net be called")
-    }
-    
+        
     // MARK: -
     // MARK: Notification Functions
     
-    func didRemoveProfiles(notification: NSNotification) {
+    func didRemoveProfile(_ notification: NSNotification) {
         Swift.print("didRemoveProfiles")
     }
-    
     
     // MARK: -
     // MARK: OutlineViewChildItem Functions
     
-    func addProfiles(identifiers: [String]) {
+    func addProfiles(identifiers: [UUID]) {
         //TODO: Implement
+    }
+    
+    func removeProfiles(identifiers: [UUID]) {
+        fatalError("All Profiles should never call removeProfiles(identifiers:)")
+    }
+    
+    func removeProfiles(atIndexes: IndexSet) {
+        fatalError("All Profiles should never call removeProfiles(atIndexes:)")
+    }
+    
+    func removeFromDisk() -> (Bool, Error?) {
+        fatalError("All Profiles should never call removeFromDisk()")
+    }
+    
+    func writeToDisk(title: String) -> (Bool, Error?) {
+        fatalError("All Profiles should never call writeToDisk(title:)")
     }
     
     // MARK: -

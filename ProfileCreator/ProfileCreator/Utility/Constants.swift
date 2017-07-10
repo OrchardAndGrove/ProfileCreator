@@ -25,3 +25,15 @@ struct Defaults {
     static let showProfileCount = "ShowProfileCount"
     static let showGroupIcons = "ShowGroupIcons"
 }
+
+struct SidebarGroupTitle {
+    static let allProfiles = "All Profiles"
+    static let library = "Library"
+}
+
+struct SidebarGroupKey {
+    static let group = "Group"
+    static let title = "Title"
+    static let identifier = "Identifier"
+    static let identifiers = "Identifiers"
+}

@@ -15,6 +15,7 @@
 		5365F4851F0F4D430064C02A /* MainWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5365F4841F0F4D430064C02A /* MainWindow.swift */; };
 		5365F4881F0F71850064C02A /* MainWindowToolbarItemAdd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5365F4871F0F71850064C02A /* MainWindowToolbarItemAdd.swift */; };
 		5365F48C1F0F87440064C02A /* downarrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 5365F48B1F0F87440064C02A /* downarrow.png */; };
+		5367E26C1F13ED440027D0D0 /* Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5367E26B1F13ED440027D0D0 /* Alert.swift */; };
 		536DA48E1F11FD9D00FB325E /* MainWindowProfilePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536DA48D1F11FD9D00FB325E /* MainWindowProfilePreview.swift */; };
 		536DA4911F1213AE00FB325E /* MainWindowWelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536DA4901F1213AE00FB325E /* MainWindowWelcomeView.swift */; };
 		536DA4941F12143F00FB325E /* ViewWhite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536DA4931F12143F00FB325E /* ViewWhite.swift */; };
@@ -23,6 +24,9 @@
 		539832121F0EE15400C4792D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539832111F0EE15400C4792D /* AppDelegate.swift */; };
 		539832161F0EE15400C4792D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 539832151F0EE15400C4792D /* Assets.xcassets */; };
 		539832191F0EE15400C4792D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 539832171F0EE15400C4792D /* Main.storyboard */; };
+		53DADB4C1F137A110045CB3F /* MainWindowLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DADB4B1F137A110045CB3F /* MainWindowLibrary.swift */; };
+		53DADB4E1F1382B40045CB3F /* SidebarFolder.icns in Resources */ = {isa = PBXBuildFile; fileRef = 53DADB4D1F1382B40045CB3F /* SidebarFolder.icns */; };
+		53DADB501F13ACF90045CB3F /* AppResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DADB4F1F13ACF90045CB3F /* AppResources.swift */; };
 		53DF38771F11675F006DE5BE /* MainWindowTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DF38761F11675F006DE5BE /* MainWindowTableView.swift */; };
 /* End PBXBuildFile section */
 
@@ -35,6 +39,7 @@
 		5365F4841F0F4D430064C02A /* MainWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindow.swift; path = "WindowControllers/Main Window/MainWindow.swift"; sourceTree = "<group>"; };
 		5365F4871F0F71850064C02A /* MainWindowToolbarItemAdd.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowToolbarItemAdd.swift; path = "WindowControllers/Main Window/Toolbar/MainWindowToolbarItemAdd.swift"; sourceTree = "<group>"; };
 		5365F48B1F0F87440064C02A /* downarrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = downarrow.png; path = Graphics/Icons/downarrow.png; sourceTree = "<group>"; };
+		5367E26B1F13ED440027D0D0 /* Alert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Alert.swift; path = Utility/Alert.swift; sourceTree = "<group>"; };
 		536DA48D1F11FD9D00FB325E /* MainWindowProfilePreview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowProfilePreview.swift; path = "WindowControllers/Main Window/Profile Preview/MainWindowProfilePreview.swift"; sourceTree = "<group>"; };
 		536DA4901F1213AE00FB325E /* MainWindowWelcomeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowWelcomeView.swift; path = "WindowControllers/Main Window/Welcome View/MainWindowWelcomeView.swift"; sourceTree = "<group>"; };
 		536DA4931F12143F00FB325E /* ViewWhite.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ViewWhite.swift; path = Utility/ViewWhite.swift; sourceTree = "<group>"; };
@@ -45,6 +50,9 @@
 		539832151F0EE15400C4792D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		539832181F0EE15400C4792D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		5398321A1F0EE15400C4792D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		53DADB4B1F137A110045CB3F /* MainWindowLibrary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowLibrary.swift; path = "WindowControllers/Main Window/Sidebar/MainWindowLibrary.swift"; sourceTree = "<group>"; };
+		53DADB4D1F1382B40045CB3F /* SidebarFolder.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = SidebarFolder.icns; sourceTree = "<group>"; };
+		53DADB4F1F13ACF90045CB3F /* AppResources.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppResources.swift; path = Utility/AppResources.swift; sourceTree = "<group>"; };
 		53DF38761F11675F006DE5BE /* MainWindowTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowTableView.swift; path = "WindowControllers/Main Window/Profile List/MainWindowTableView.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -74,6 +82,7 @@
 				534732DC1F10C3BB00770446 /* MainWindowOutlineView.swift */,
 				5315400E1F127F280060011B /* MainWindowOutlineViewItems.swift */,
 				5315400C1F127B340060011B /* MainWindowAllProfiles.swift */,
+				53DADB4B1F137A110045CB3F /* MainWindowLibrary.swift */,
 			);
 			name = Sidebar;
 			sourceTree = "<group>";
@@ -111,6 +120,7 @@
 		5365F48A1F0F87380064C02A /* Icons */ = {
 			isa = PBXGroup;
 			children = (
+				53DADB4D1F1382B40045CB3F /* SidebarFolder.icns */,
 				5365F48B1F0F87440064C02A /* downarrow.png */,
 			);
 			name = Icons;
@@ -137,6 +147,8 @@
 			children = (
 				536DA4931F12143F00FB325E /* ViewWhite.swift */,
 				531540091F1233080060011B /* Constants.swift */,
+				53DADB4F1F13ACF90045CB3F /* AppResources.swift */,
+				5367E26B1F13ED440027D0D0 /* Alert.swift */,
 			);
 			name = Utility;
 			sourceTree = "<group>";
@@ -243,6 +255,7 @@
 				539592621F102DEE005090B3 /* Defaults.plist in Resources */,
 				539832161F0EE15400C4792D /* Assets.xcassets in Resources */,
 				539832191F0EE15400C4792D /* Main.storyboard in Resources */,
+				53DADB4E1F1382B40045CB3F /* SidebarFolder.icns in Resources */,
 				5365F48C1F0F87440064C02A /* downarrow.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -256,6 +269,8 @@
 			files = (
 				534732DD1F10C3BB00770446 /* MainWindowOutlineView.swift in Sources */,
 				5315400A1F1233080060011B /* Constants.swift in Sources */,
+				53DADB501F13ACF90045CB3F /* AppResources.swift in Sources */,
+				53DADB4C1F137A110045CB3F /* MainWindowLibrary.swift in Sources */,
 				536DA4911F1213AE00FB325E /* MainWindowWelcomeView.swift in Sources */,
 				536DA48E1F11FD9D00FB325E /* MainWindowProfilePreview.swift in Sources */,
 				5315400D1F127B340060011B /* MainWindowAllProfiles.swift in Sources */,
@@ -266,6 +281,7 @@
 				5315400F1F127F280060011B /* MainWindowOutlineViewItems.swift in Sources */,
 				53DF38771F11675F006DE5BE /* MainWindowTableView.swift in Sources */,
 				5365F4881F0F71850064C02A /* MainWindowToolbarItemAdd.swift in Sources */,
+				5367E26C1F13ED440027D0D0 /* Alert.swift in Sources */,
 				5395925F1F1012F3005090B3 /* MainWindowToolbarItemExport.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

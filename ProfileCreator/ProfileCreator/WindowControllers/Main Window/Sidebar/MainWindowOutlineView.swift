@@ -31,10 +31,10 @@ class MainWindowOutlineViewController: NSObject {
         // ---------------------------------------------------------------------
         //  Setup Notification Observers
         // ---------------------------------------------------------------------
-        NotificationCenter.default.addObserver(self, selector: #selector(didAddGroup(notification:)), name: .didAddGroup, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(didAddProfile(notification:)), name: .didAddProfile, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(didSaveProfile(notification:)), name: .didSaveProfile, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(didRemoveProfile(notification:)), name: .didRemoveProfile, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didAddGroup(_:)), name: .didAddGroup, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didAddProfile(_:)), name: .didAddProfile, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didSaveProfile(_:)), name: .didSaveProfile, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didRemoveProfile(_:)), name: .didRemoveProfile, object: nil)
         
         // ---------------------------------------------------------------------
         //  Setup Table Column
@@ -110,7 +110,8 @@ class MainWindowOutlineViewController: NSObject {
         // ---------------------------------------------------------------------
         //  Add parent item: "Library"
         // ---------------------------------------------------------------------
-        // ..
+        let library = MainWindowLibrary()
+        self.parents.append(library)
         
         // TODO: - Add more parent groups here like:
         //         JSS/MDM Profiles
@@ -127,7 +128,6 @@ class MainWindowOutlineViewController: NSObject {
     //  Convenience method to reaload data in outline view and keep current selection
     // -------------------------------------------------------------------------
     private func reloadOutlineView() {
-        Swift.print("reloadOutlineView")
         let selectedRowIndexes = self.outlineView.selectedRowIndexes
         self.outlineView.reloadData()
         self.outlineView.selectRowIndexes(selectedRowIndexes, byExtendingSelection: false)
@@ -136,15 +136,49 @@ class MainWindowOutlineViewController: NSObject {
     // MARK: -
     // MARK: Notification Functions
     
-    func didAddGroup(notification: NSNotification?) {
-        print("didAddGroup")
+    func didAddGroup(_ notification: NSNotification?) {
+        
+        // ---------------------------------------------------------------------
+        //  Reload outline view if sender was any of the outline view parents
+        // ---------------------------------------------------------------------
+        guard let sender = notification?.object as? OutlineViewParentItem else {
+            return
+        }
+        
+        // Only checking titles is weak, but as the protocol doesn't support equatable, this will do
+        if self.parents.contains(where: { $0.title == sender.title }) {
+            reloadOutlineView()
+            
+            // -----------------------------------------------------------------
+            //  If the parent the group was added to isn't expanded, expand it
+            // -----------------------------------------------------------------
+            if !self.outlineView.isItemExpanded(sender) {
+                NSAnimationContext.beginGrouping()
+                NSAnimationContext.current().duration = 0
+                self.outlineView.expandItem(sender)
+                NSAnimationContext.endGrouping()
+            }
+            
+            // -----------------------------------------------------------------
+            //  Selecte the user added group
+            // -----------------------------------------------------------------
+            guard let userInfo = notification?.userInfo,
+                  let group = userInfo[SidebarGroupKey.group] as? OutlineViewChildItem else {
+                    return
+            }
+            
+            let row = self.outlineView.row(forItem: group)
+            if 0 <= row {
+                self.outlineView.selectRowIndexes(IndexSet.init(integer: row), byExtendingSelection: false)
+            }
+        }
     }
     
-    func didAddProfile(notification: NSNotification?) {
+    func didAddProfile(_ notification: NSNotification?) {
         print("didAddProfile")
     }
     
-    func didSaveProfile(notification: NSNotification?) {
+    func didSaveProfile(_ notification: NSNotification?) {
         
         // ---------------------------------------------------------------------
         //  Reload outline view when a profile was saved
@@ -153,7 +187,7 @@ class MainWindowOutlineViewController: NSObject {
         reloadOutlineView()
     }
     
-    func didRemoveProfile(notification: NSNotification?) {
+    func didRemoveProfile(_ notification: NSNotification?) {
         
         // ---------------------------------------------------------------------
         //  Reload outline view when a profile was removed
@@ -200,7 +234,7 @@ extension MainWindowOutlineViewController: NSOutlineViewDataSource {
             return false
         }
         
-        guard let profileIdentifiers = NSKeyedUnarchiver.unarchiveObject(with: draggingData) as? [String] else {
+        guard let profileIdentifiers = NSKeyedUnarchiver.unarchiveObject(with: draggingData) as? [UUID] else {
             return false
         }
         
