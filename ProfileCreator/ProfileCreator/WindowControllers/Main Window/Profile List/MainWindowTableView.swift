@@ -18,6 +18,7 @@ class MainWindowTableViewController: NSObject {
     
     // MARK: -
     // MARK: Initialization
+    
     override init() {
         super.init()
         
@@ -52,6 +53,7 @@ class MainWindowTableViewController: NSObject {
     
     // MARK: -
     // MARK: TableView Actions
+    
     func editProfile(tableView: NSTableView) {
         print("editProfile")
     }
@@ -67,6 +69,9 @@ extension MainWindowTableViewController: NSTableViewDataSource {
 
 class MainWindowTableView: NSTableView {
     
+    // -------------------------------------------------------------------------
+    //  Override keyDown to catch backspace to delete item in table view
+    // -------------------------------------------------------------------------
     override func keyDown(with event: NSEvent) {
         if event.charactersIgnoringModifiers == String(Character(UnicodeScalar(NSDeleteCharacter)!)) {
             Swift.print("DELETE!")
