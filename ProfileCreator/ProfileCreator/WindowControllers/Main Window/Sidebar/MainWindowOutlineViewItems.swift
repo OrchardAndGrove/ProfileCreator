@@ -13,7 +13,7 @@ import Cocoa
 // MARK: -
 
 protocol OutlineViewItem: class {
-    var children: [OutlineViewChildItem] { get }
+    var children: [OutlineViewChildItem] { get set }
     var title: String { get }
     var isEditable: Bool { get }
 }
@@ -340,7 +340,9 @@ class OutlineViewChildCellView: NSTableCellView {
         //  Setup Initial Values for showProfileCount and showIcon
         // ---------------------------------------------------------------------
         self.profileCount(show: UserDefaults.standard.bool(forKey: Defaults.showProfileCount))
-        self.icon(show: UserDefaults.standard.bool(forKey: Defaults.showGroupIcons))
+        if self.icon != nil {
+            self.icon(show: UserDefaults.standard.bool(forKey: Defaults.showGroupIcons))
+        }
     }
     
     deinit {
@@ -368,7 +370,7 @@ class OutlineViewChildCellView: NSTableCellView {
     private func icon(show: Bool) {
         self.constraintSuperviewToTextField.isActive = !show
         self.constraintIconToTextField.isActive = show
-        self.buttonCount.isHidden = !show
+        self.imageViewIcon.isHidden = !show
     }
     
     // MARK: -
@@ -539,7 +541,7 @@ class OutlineViewChildCellView: NSTableCellView {
                                                             toItem: self.imageViewIcon,
                                                             attribute: .trailing,
                                                             multiplier: 1,
-                                                            constant: 6)
+                                                            constant: -2)
         constraints.append(self.constraintIconToTextField)
     }
 }

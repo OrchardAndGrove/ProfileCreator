@@ -9,8 +9,9 @@
 import Cocoa
 
 struct ButtonTitle {
-    static let ok = "OK"
-    static let cancel = "Cancel"
+    static let cancel = NSLocalizedString("Cancel", comment: "")
+    static let delete = NSLocalizedString("Delete", comment: "")
+    static let ok = NSLocalizedString("OK", comment: "")
 }
 
 class Alert: NSObject {
@@ -20,7 +21,7 @@ class Alert: NSObject {
     var firstButton: NSButton?
     var secondButton: NSButton?
     var thirdButton: NSButton?
-    
+
     public func showAlert(message: String,
                           informativeText: String?,
                           window: NSWindow,
@@ -90,7 +91,45 @@ class Alert: NSObject {
             returnValue(self.textFieldInput!.stringValue, returnCode)
         }
     }
-    
+
+    func showAlertDelete(message: String,
+                         informativeText: String?,
+                         window: NSWindow,
+                         shouldDelete: @escaping (Bool) -> Void ) {
+        
+        // ---------------------------------------------------------------------
+        //  Configure alert
+        // ---------------------------------------------------------------------
+        self.alert.alertStyle = .critical
+        
+        // ---------------------------------------------------------------------
+        //  Add buttons
+        // ---------------------------------------------------------------------
+        self.alert.addButton(withTitle: ButtonTitle.cancel)
+        self.firstButton = self.alert.buttons.first
+        
+        self.alert.addButton(withTitle: ButtonTitle.delete)
+        self.secondButton = self.alert.buttons.last
+        
+        // ---------------------------------------------------------------------
+        //  Add message
+        // ---------------------------------------------------------------------
+        self.alert.messageText = message
+        if let text = informativeText {
+            self.alert.informativeText = text
+        }
+        
+        // ---------------------------------------------------------------------
+        //  Show modal alert in window
+        // ---------------------------------------------------------------------
+        self.alert.beginSheetModal(for: window) { (returnCode) in
+            if returnCode == NSAlertSecondButtonReturn {
+                shouldDelete(true)
+            } else {
+                shouldDelete(false)
+            }
+        }
+    }
 }
 
 extension Alert: NSTextFieldDelegate {

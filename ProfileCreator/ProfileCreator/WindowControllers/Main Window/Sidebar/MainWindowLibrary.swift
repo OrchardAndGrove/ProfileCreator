@@ -136,9 +136,9 @@ class MainWindowLibrary: NSObject, OutlineViewParentItem, NSTextFieldDelegate {
             return
         }
 
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         //  Verify there is a mainWindow present
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         guard let mainWindow = NSApplication.shared().mainWindow  else {
             return
         }

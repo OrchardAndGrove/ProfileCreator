@@ -5,7 +5,7 @@
 	<key>ShowPayloadLibraryApple</key>
 	<true/>
 	<key>ShowGroupIcons</key>
-	<false/>
+	<true/>
 	<key>ShowProfileCount</key>
 	<false/>
 </dict>

@@ -14,7 +14,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // MARK: -
     // MARK: Variables
     
-    let mainWindowController = MainWindowController()
+    var mainWindowController: MainWindowController?
 
     // MARK: -
     // MARK: NSApplicationDelegate Methods
@@ -27,13 +27,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         registerDefaults()
         
         // ---------------------------------------------------------------------
+        //  Initialize main window
+        // ---------------------------------------------------------------------
+        self.mainWindowController = MainWindowController()
+        
+        // ---------------------------------------------------------------------
         //  Show main window
         // ---------------------------------------------------------------------
-        mainWindowController.window?.makeKeyAndOrderFront(self)
+        self.mainWindowController?.window?.makeKeyAndOrderFront(self)
     }
     
     func registerDefaults() {
-        
+
         // ---------------------------------------------------------------------
         //  Get URL to application default settings
         // ---------------------------------------------------------------------
@@ -46,8 +51,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // ---------------------------------------------------------------------
         //  Register default settings with UserDefaults
         // ---------------------------------------------------------------------
-        if  let defaultSettingsDict = NSDictionary(contentsOf: defaultSettingsURL),
-            let defaultSettings = defaultSettingsDict as? [String : Any] {
+        if let defaultSettings = NSDictionary(contentsOf: defaultSettingsURL) as? [String : Any] {
             UserDefaults.standard.register(defaults: defaultSettings)
         }
     }

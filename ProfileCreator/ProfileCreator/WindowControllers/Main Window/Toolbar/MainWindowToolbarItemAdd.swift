@@ -24,7 +24,7 @@ class MainWindowToolbarItemAdd: NSView {
     }
     
     init() {
-
+        
         // ---------------------------------------------------------------------
         //  Create the size of the toolbar item
         // ---------------------------------------------------------------------
@@ -72,7 +72,7 @@ class MainWindowToolbarItemAdd: NSView {
         // ---------------------------------------------------------------------
         self.toolbarItem.view = self
     }
-
+    
     func disclosureTriangle(show: Bool) {
         self.disclosureTriangle.isHidden = !show
     }
@@ -247,19 +247,19 @@ class MainWindowToolbarItemAddButton: NSButton {
                 self.menuWasShownForLastMouseDown = true
                 guard let menuOrigin = self.superview?.convert(NSPoint(x: self.frame.origin.x + self.frame.size.width - 16,
                                                                        y: self.frame.origin.y + 2), to: nil) else {
-                    return
+                                                                        return
                 }
                 
                 guard let event = NSEvent.mouseEvent(with: event.type,
-                                               location: menuOrigin,
-                                               modifierFlags: event.modifierFlags,
-                                               timestamp: event.timestamp,
-                                               windowNumber: event.windowNumber,
-                                               context: event.context,
-                                               eventNumber: event.eventNumber,
-                                               clickCount: event.clickCount,
-                                               pressure: event.pressure) else {
-                                                return
+                                                     location: menuOrigin,
+                                                     modifierFlags: event.modifierFlags,
+                                                     timestamp: event.timestamp,
+                                                     windowNumber: event.windowNumber,
+                                                     context: event.context,
+                                                     eventNumber: event.eventNumber,
+                                                     clickCount: event.clickCount,
+                                                     pressure: event.pressure) else {
+                                                        return
                 }
                 
                 NSMenu.popUpContextMenu(self.buttonMenu, with: event, for: self)
