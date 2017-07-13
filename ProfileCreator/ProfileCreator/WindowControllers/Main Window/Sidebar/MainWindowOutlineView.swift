@@ -55,7 +55,7 @@ class MainWindowOutlineViewController: NSObject {
         //  Setup OutlineView
         // ---------------------------------------------------------------------
         self.outlineView.addTableColumn(tableColumn)
-        self.outlineView.translatesAutoresizingMaskIntoConstraints = false
+        self.outlineView.translatesAutoresizingMaskIntoConstraints = true
         self.outlineView.selectionHighlightStyle = .sourceList
         self.outlineView.sizeLastColumnToFit()
         self.outlineView.floatsGroupRows = false
@@ -98,7 +98,7 @@ class MainWindowOutlineViewController: NSObject {
         NotificationCenter.default.removeObserver(self, name: .didSaveProfile, object: nil)
         NotificationCenter.default.removeObserver(self, name: .didRemoveProfile, object: nil)
     }
-    
+        
     // MARK: -
     // MARK: Private Functions
     
@@ -237,7 +237,6 @@ class MainWindowOutlineViewController: NSObject {
         // ---------------------------------------------------------------------
         //  Reload outline view when a profile was saved
         // ---------------------------------------------------------------------
-        print("didSaveProfile")
         reloadOutlineView()
     }
     
@@ -246,7 +245,6 @@ class MainWindowOutlineViewController: NSObject {
         // ---------------------------------------------------------------------
         //  Reload outline view when a profile was removed
         // ---------------------------------------------------------------------
-        print("didRemoveProfile")
         reloadOutlineView()
     }
 }

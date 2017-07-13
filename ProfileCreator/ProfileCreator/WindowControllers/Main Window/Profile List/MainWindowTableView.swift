@@ -32,7 +32,7 @@ class MainWindowTableViewController: NSObject {
         //  Setup TableView
         // ---------------------------------------------------------------------
         self.tableView.addTableColumn(tableColumn)
-        self.tableView.translatesAutoresizingMaskIntoConstraints = false
+        self.tableView.translatesAutoresizingMaskIntoConstraints = true
         self.tableView.sizeLastColumnToFit()
         self.tableView.floatsGroupRows = false
         self.tableView.rowSizeStyle = .default

@@ -85,7 +85,7 @@ class MainWindowLibrary: NSObject, OutlineViewParentItem, NSTextFieldDelegate {
                     if let title = groupDict[SidebarGroupKey.title] as? String {
                         var uuid: UUID? = nil
                         if let uuidString = groupDict[SidebarGroupKey.identifier] as? String,
-                           let theUUID = UUID(uuidString: uuidString) {
+                            let theUUID = UUID(uuidString: uuidString) {
                             uuid = theUUID
                         }
                         
@@ -122,7 +122,7 @@ class MainWindowLibrary: NSObject, OutlineViewParentItem, NSTextFieldDelegate {
             Swift.print("error: \(String(describing: error))")
         }
     }
-        
+    
     // MARK: -
     // MARK: Notification Functions
     
@@ -132,10 +132,10 @@ class MainWindowLibrary: NSObject, OutlineViewParentItem, NSTextFieldDelegate {
         //  Verify that addGroup was called for this group
         // ---------------------------------------------------------------------
         guard let parentTitle = notification?.userInfo?[NotificationKey.parentTitle] as? String,
-              parentTitle == self.title else {
-            return
+            parentTitle == self.title else {
+                return
         }
-
+        
         // ---------------------------------------------------------------------
         //  Verify there is a mainWindow present
         // ---------------------------------------------------------------------
@@ -185,9 +185,9 @@ class MainWindowLibrary: NSObject, OutlineViewParentItem, NSTextFieldDelegate {
         //  Get current text in the text field
         // ---------------------------------------------------------------------
         guard let userInfo = notification.userInfo,
-              let fieldEditor = userInfo["NSFieldEditor"] as? NSTextView,
-              let string = fieldEditor.textStorage?.string else {
-            return
+            let fieldEditor = userInfo["NSFieldEditor"] as? NSTextView,
+            let string = fieldEditor.textStorage?.string else {
+                return
         }
         
         // ---------------------------------------------------------------------
@@ -377,11 +377,17 @@ class MainWindowLibraryGroup: NSObject, OutlineViewChildItem {
     }
     
     override func controlTextDidEndEditing(_ notification: Notification) {
-        if let inputText = notification.userInfo?["NSFieldEditor"] as? String, !inputText.isEmpty {
-            Swift.print("inputText: \(inputText)")
-            let (result, error) = writeToDisk(title: inputText)
+        
+        // ---------------------------------------------------------------------
+        //  Get current text in the text field
+        // ---------------------------------------------------------------------
+        if let userInfo = notification.userInfo,
+            let fieldEditor = userInfo["NSFieldEditor"] as? NSTextView,
+            let string = fieldEditor.textStorage?.string,
+            !string.isEmpty {
+            let (result, error) = writeToDisk(title: string)
             if result {
-                self.title = inputText
+                self.title = string
             } else {
                 Swift.print("error: \(String(describing: error))")
             }
