@@ -13,12 +13,12 @@ import Cocoa
 // MARK: -
 
 protocol OutlineViewItem: class {
-    var children: [OutlineViewChildItem] { get set }
     var title: String { get }
     var isEditable: Bool { get }
 }
 
 protocol OutlineViewParentItem: OutlineViewItem {
+    var children: [OutlineViewChildItem] { get set }
     var cellView: OutlineViewParentCellView? { get }
 }
 

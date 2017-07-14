@@ -159,7 +159,7 @@ class MainWindowLibrary: NSObject, OutlineViewParentItem, NSTextFieldDelegate {
                               sender: self,
                               returnValue: { (title, returnCode) in
                                 if returnCode == NSAlertFirstButtonReturn {
-                                    self.addGroup(title: title, identifier: nil, profileIdentifiers: nil)
+                                    self.addGroup(title: title, identifier: nil, profileIdentifiers: [UUID(), UUID(), UUID()])
                                 }
         })
         
@@ -222,7 +222,6 @@ class MainWindowLibraryGroup: NSObject, OutlineViewChildItem {
     var icon = NSImage(named: "SidebarFolder")
     var identifier: UUID
     var title: String
-    var children = [OutlineViewChildItem]()
     var profileIdentifiers = [UUID]()
     var cellView: OutlineViewChildCellView?
     
@@ -252,6 +251,7 @@ class MainWindowLibraryGroup: NSObject, OutlineViewChildItem {
         let (url, urlError) = self.url()
         if url == nil { return (false, urlError) }
         
+        var profileIdentifierStrings = [String]()
         for identifier in self.profileIdentifiers {
             
             // TODO: Implement when profilecontroller exists
@@ -260,15 +260,15 @@ class MainWindowLibraryGroup: NSObject, OutlineViewChildItem {
             //  Get profile instance for current identifier
             // -----------------------------------------------------------------
             //guard let profile =
-            
+            profileIdentifierStrings.append(identifier.uuidString)
         }
-        
+        Swift.print("profileIdentifierStrings: \(profileIdentifierStrings)")
         // ---------------------------------------------------------------------
         //  Create dict to save
         // ---------------------------------------------------------------------
         let groupDict: [String : Any] = [SidebarGroupKey.title : self.title,
                                          SidebarGroupKey.identifier : self.identifier.uuidString,
-                                         SidebarGroupKey.identifiers : self.profileIdentifiers]
+                                         SidebarGroupKey.identifiers : profileIdentifierStrings]
         
         do {
             let groupData = try PropertyListSerialization.data(fromPropertyList: groupDict, format: .xml, options: 0)

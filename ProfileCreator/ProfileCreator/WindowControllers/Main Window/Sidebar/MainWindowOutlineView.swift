@@ -8,13 +8,22 @@
 
 import Cocoa
 
-struct DraggingType {
-    static let profile = "Profile"
+// MARK: -
+// MARK: Protocols
+// MAKR: -
+
+protocol MainWindowOutlineViewDelegate {
+    func shouldRemoveItems(atIndexes: IndexSet)
 }
 
 protocol MainWindowOutlineViewSelectionDelegate: class {
     func selected(item: OutlineViewChildItem, sender: Any?)
+    func updated(item: OutlineViewChildItem, sender: Any?)
 }
+
+// MARK: -
+// MARK: Classes
+// MAKR: -
 
 class MainWindowOutlineViewController: NSObject {
     
@@ -25,7 +34,7 @@ class MainWindowOutlineViewController: NSObject {
     let scrollView = NSScrollView()
     
     var alert: Alert?
-    var selectedItem: MainWindowLibraryGroup?
+    var selectedItem: OutlineViewChildItem?
     var parents = [OutlineViewParentItem]()
     var allProfilesGroup: MainWindowAllProfilesGroup?
     
@@ -57,13 +66,19 @@ class MainWindowOutlineViewController: NSObject {
         self.outlineView.addTableColumn(tableColumn)
         self.outlineView.translatesAutoresizingMaskIntoConstraints = true
         self.outlineView.selectionHighlightStyle = .sourceList
-        self.outlineView.sizeLastColumnToFit()
         self.outlineView.floatsGroupRows = false
         self.outlineView.rowSizeStyle = .default
         self.outlineView.headerView = nil
         self.outlineView.dataSource = self
         self.outlineView.delegate = self
         self.outlineView.register(forDraggedTypes: [DraggingType.profile])
+        
+        // Things I've tried to remove the separator between the views in the outline view
+        /*
+        self.outlineView.gridColor = NSColor.clear
+        self.outlineView.gridStyleMask = NSTableViewGridLineStyle.init(rawValue: 0)
+        self.outlineView.intercellSpacing = NSZeroSize
+         */
         
         // ---------------------------------------------------------------------
         //  Setup ScrollView
@@ -252,15 +267,15 @@ class MainWindowOutlineViewController: NSObject {
 extension MainWindowOutlineViewController: NSOutlineViewDataSource {
     
     func outlineView(_ outlineView: NSOutlineView, numberOfChildrenOfItem item: Any?) -> Int {
-        return (item == nil) ? self.parents.count : (item as! OutlineViewItem).children.count
+        return (item == nil) ? self.parents.count : (item as! OutlineViewParentItem).children.count
     }
     
     func outlineView(_ outlineView: NSOutlineView, child index: Int, ofItem item: Any?) -> Any {
-        return (item == nil) ? self.parents[index] : (item as! OutlineViewItem).children[index]
+        return (item == nil) ? self.parents[index] : (item as! OutlineViewParentItem).children[index]
     }
     
     func outlineView(_ outlineView: NSOutlineView, isItemExpandable item: Any) -> Bool {
-        return item is OutlineViewParentItem ? true : (item as! OutlineViewItem).children.count != 0
+        return item is OutlineViewParentItem ? true : false
     }
     
     func outlineView(_ outlineView: NSOutlineView, objectValueFor tableColumn: NSTableColumn?, byItem item: Any?) -> Any? {
@@ -275,7 +290,7 @@ extension MainWindowOutlineViewController: NSOutlineViewDataSource {
     // -------------------------------------------------------------------------
     
     func outlineView(_ outlineView: NSOutlineView, validateDrop info: NSDraggingInfo, proposedItem item: Any?, proposedChildIndex index: Int) -> NSDragOperation {
-        if (item as! OutlineViewItem).isEditable {
+        if let group = item as? OutlineViewChildItem, group.isEditable {
             return (info.draggingSourceOperationMask() == NSDragOperation.copy ? NSDragOperation.copy : NSDragOperation.move)
         }
         return NSDragOperation()
@@ -329,7 +344,7 @@ extension MainWindowOutlineViewController: NSOutlineViewDelegate {
             //  Assumes MainWindowLibraryGroup and that only one selection is possible.
             //  This might change in a future release and need update
             // -----------------------------------------------------------------
-            if let selectedItem = self.outlineView.item(atRow: selectedRowIndexes.first!) as? MainWindowLibraryGroup  {
+            if let selectedItem = self.outlineView.item(atRow: selectedRowIndexes.first!) as? OutlineViewChildItem  {
                 self.selectedItem = selectedItem
                 
                 // -------------------------------------------------------------
@@ -427,10 +442,6 @@ extension MainWindowOutlineViewController: MainWindowOutlineViewDelegate {
         
     }
     
-}
-
-protocol MainWindowOutlineViewDelegate {
-    func shouldRemoveItems(atIndexes: IndexSet)
 }
 
 class MainWindowOutlineView: NSOutlineView {

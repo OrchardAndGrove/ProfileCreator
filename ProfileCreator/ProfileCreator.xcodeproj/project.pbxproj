@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		530CD3DA1F17793B0071E866 /* MainWindowTableViewItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530CD3D91F17793B0071E866 /* MainWindowTableViewItems.swift */; };
 		5315400A1F1233080060011B /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531540091F1233080060011B /* Constants.swift */; };
 		5315400D1F127B340060011B /* MainWindowAllProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5315400C1F127B340060011B /* MainWindowAllProfiles.swift */; };
 		5315400F1F127F280060011B /* MainWindowOutlineViewItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5315400E1F127F280060011B /* MainWindowOutlineViewItems.swift */; };
@@ -31,6 +32,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		530CD3D91F17793B0071E866 /* MainWindowTableViewItems.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowTableViewItems.swift; path = "WindowControllers/Main Window/Profile List/MainWindowTableViewItems.swift"; sourceTree = "<group>"; };
 		531540091F1233080060011B /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Constants.swift; path = Utility/Constants.swift; sourceTree = "<group>"; };
 		5315400C1F127B340060011B /* MainWindowAllProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowAllProfiles.swift; path = "WindowControllers/Main Window/Sidebar/MainWindowAllProfiles.swift"; sourceTree = "<group>"; };
 		5315400E1F127F280060011B /* MainWindowOutlineViewItems.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowOutlineViewItems.swift; path = "WindowControllers/Main Window/Sidebar/MainWindowOutlineViewItems.swift"; sourceTree = "<group>"; };
@@ -188,6 +190,7 @@
 			isa = PBXGroup;
 			children = (
 				53DF38761F11675F006DE5BE /* MainWindowTableView.swift */,
+				530CD3D91F17793B0071E866 /* MainWindowTableViewItems.swift */,
 			);
 			name = "Profile List";
 			sourceTree = "<group>";
@@ -280,6 +283,7 @@
 				536DA4941F12143F00FB325E /* ViewWhite.swift in Sources */,
 				5315400F1F127F280060011B /* MainWindowOutlineViewItems.swift in Sources */,
 				53DF38771F11675F006DE5BE /* MainWindowTableView.swift in Sources */,
+				530CD3DA1F17793B0071E866 /* MainWindowTableViewItems.swift in Sources */,
 				5365F4881F0F71850064C02A /* MainWindowToolbarItemAdd.swift in Sources */,
 				5367E26C1F13ED440027D0D0 /* Alert.swift in Sources */,
 				5395925F1F1012F3005090B3 /* MainWindowToolbarItemExport.swift in Sources */,

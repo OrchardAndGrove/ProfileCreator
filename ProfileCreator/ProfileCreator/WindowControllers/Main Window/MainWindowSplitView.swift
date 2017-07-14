@@ -58,6 +58,11 @@ class MainWindowSplitView: NSSplitView {
         setupSplitViewWelcomeView(constraints: &constraints)
         
         // ---------------------------------------------------------------------
+        //  Setup delegate connections
+        // ---------------------------------------------------------------------
+        self.outlineViewController.selectionDelegate = self.tableViewController
+        
+        // ---------------------------------------------------------------------
         //  Activate layout constraints
         // ---------------------------------------------------------------------
         NSLayoutConstraint.activate(constraints)

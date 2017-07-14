@@ -24,11 +24,6 @@ class MainWindowProfilePreviewController: NSObject {
         super.init()
         
         // ---------------------------------------------------------------------
-        //  Setup Variables
-        // ---------------------------------------------------------------------
-        var constraints = [NSLayoutConstraint]()
-        
-        // ---------------------------------------------------------------------
         //  Setup Effect View (Background)
         // ---------------------------------------------------------------------
         self.view.translatesAutoresizingMaskIntoConstraints = false
@@ -37,23 +32,50 @@ class MainWindowProfilePreviewController: NSObject {
         // ---------------------------------------------------------------------
         //  Setup Info View
         // ---------------------------------------------------------------------
-        setupInfoView(constraints: &constraints)
+        insert(subview: infoViewController.view)
         
         // ---------------------------------------------------------------------
-        //  Activate Layout Constraints
+        //  Setup Notification Observers
         // ---------------------------------------------------------------------
-        NSLayoutConstraint.activate(constraints)
+        NotificationCenter.default.addObserver(self, selector: #selector(didChangeProfileSelection(_:)), name: .didChangeProfileSelection, object: nil)
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: .didChangeProfileSelection, object: nil)
+    }
+
+    func didChangeProfileSelection(_ notification: NSNotification?) {
+        if let userInfo = notification?.userInfo,
+            let profileIdentifiers = userInfo["ProfileIdentifiers"] as? [UUID] {
+            
+            if profileIdentifiers.count == 1 {
+                self.previewViewController.updateSelection(profile: profileIdentifiers.first?.uuidString ?? "Temporary")
+                infoViewController.view.removeFromSuperview()
+                insert(subview: previewViewController.view)
+                self.view.state = .inactive
+            } else {
+                self.infoViewController.updateSelection(count: profileIdentifiers.count)
+                previewViewController.view.removeFromSuperview()
+                insert(subview: infoViewController.view)
+                self.view.state = .active
+            }
+        }
     }
     
     // MARK: -
     // MARK: Setup Layout Constraints
     
-    private func setupInfoView(constraints: inout [NSLayoutConstraint]) {
+    private func insert(subview: NSView) {
+        
+        // ---------------------------------------------------------------------
+        //  Setup Variables
+        // ---------------------------------------------------------------------
+        var constraints = [NSLayoutConstraint]()
         
         // ---------------------------------------------------------------------
         //  Add subview to main view
         // ---------------------------------------------------------------------
-        self.view.addSubview(self.infoViewController.view)
+        self.view.addSubview(subview)
         
         // ---------------------------------------------------------------------
         //  Add constraints
@@ -63,7 +85,7 @@ class MainWindowProfilePreviewController: NSObject {
         constraints.append(NSLayoutConstraint(item: self.view,
                                               attribute: .top,
                                               relatedBy: .equal,
-                                              toItem: self.infoViewController.view,
+                                              toItem: subview,
                                               attribute: .top,
                                               multiplier: 1,
                                               constant: 0))
@@ -72,7 +94,7 @@ class MainWindowProfilePreviewController: NSObject {
         constraints.append(NSLayoutConstraint(item: self.view,
                                               attribute: .bottom,
                                               relatedBy: .equal,
-                                              toItem: self.infoViewController.view,
+                                              toItem: subview,
                                               attribute: .bottom,
                                               multiplier: 1,
                                               constant: 0))
@@ -81,7 +103,7 @@ class MainWindowProfilePreviewController: NSObject {
         constraints.append(NSLayoutConstraint(item: self.view,
                                               attribute: .leading,
                                               relatedBy: .equal,
-                                              toItem: self.infoViewController.view,
+                                              toItem: subview,
                                               attribute: .leading,
                                               multiplier: 1,
                                               constant: 0))
@@ -90,15 +112,113 @@ class MainWindowProfilePreviewController: NSObject {
         constraints.append(NSLayoutConstraint(item: self.view,
                                               attribute: .trailing,
                                               relatedBy: .equal,
-                                              toItem: self.infoViewController.view,
+                                              toItem: subview,
                                               attribute: .trailing,
                                               multiplier: 1,
                                               constant: 0))
+        
+        // ---------------------------------------------------------------------
+        //  Activate Layout Constraints
+        // ---------------------------------------------------------------------
+        NSLayoutConstraint.activate(constraints)
     }
 }
 
 class MainWindowProfilePreviewViewController: NSObject {
 
+    // MARK: -
+    // MARK: Variables
+    
+    let view = NSView()
+    let textFieldTitle = NSTextField()
+    
+    // MARK: -
+    // MARK: Initialization
+    
+    override init() {
+        super.init()
+        
+        // ---------------------------------------------------------------------
+        //  Setup Variables
+        // ---------------------------------------------------------------------
+        var constraints = [NSLayoutConstraint]()
+        
+        // ---------------------------------------------------------------------
+        //  Setup View
+        // ---------------------------------------------------------------------
+        self.view.translatesAutoresizingMaskIntoConstraints = false
+        
+        // ---------------------------------------------------------------------
+        //  Create and add TextField
+        // ---------------------------------------------------------------------
+        self.textFieldTitle.translatesAutoresizingMaskIntoConstraints = false
+        self.textFieldTitle.lineBreakMode = .byWordWrapping
+        self.textFieldTitle.isBordered = false
+        self.textFieldTitle.isBezeled = false
+        self.textFieldTitle.drawsBackground = false
+        self.textFieldTitle.isEditable = false
+        self.textFieldTitle.font = NSFont.boldSystemFont(ofSize: 30)
+        self.textFieldTitle.textColor = NSColor.labelColor
+        self.textFieldTitle.alignment = .center
+        setupTextFieldTitle(constraints: &constraints)
+        
+        // ---------------------------------------------------------------------
+        //  Activate Layout Constraints
+        // ---------------------------------------------------------------------
+        NSLayoutConstraint.activate(constraints)
+    }
+    
+    // MARK: -
+    // MARK: Public Functions
+    
+    public func updateSelection(profile: String) {
+        
+        // TODO: This is a placeholder, profile should be the profile class and not just a string
+        
+        self.textFieldTitle.stringValue = profile
+    }
+    
+    // MARK: -
+    // MARK: Setup Layout Constraints
+    
+    private func setupTextFieldTitle(constraints: inout [NSLayoutConstraint]) {
+        
+        // ---------------------------------------------------------------------
+        //  Add subview to main view
+        // ---------------------------------------------------------------------
+        self.view.addSubview(self.textFieldTitle)
+        
+        // ---------------------------------------------------------------------
+        //  Add constraints
+        // ---------------------------------------------------------------------
+        
+        // Center Vertically
+        constraints.append(NSLayoutConstraint(item: self.textFieldTitle,
+                                              attribute: .centerY,
+                                              relatedBy: .equal,
+                                              toItem: self.view,
+                                              attribute: .centerY,
+                                              multiplier: 1,
+                                              constant: 0))
+        
+        // Leading
+        constraints.append(NSLayoutConstraint(item: self.textFieldTitle,
+                                              attribute: .leading,
+                                              relatedBy: .equal,
+                                              toItem: self.view,
+                                              attribute: .leading,
+                                              multiplier: 1,
+                                              constant: 0))
+        
+        // Trailing
+        constraints.append(NSLayoutConstraint(item: self.textFieldTitle,
+                                              attribute: .trailing,
+                                              relatedBy: .equal,
+                                              toItem: self.view,
+                                              attribute: .trailing,
+                                              multiplier: 1,
+                                              constant: 0))
+    }
 }
 
 class MainWindowProfilePreviewInfoViewController: NSObject {
@@ -175,7 +295,7 @@ class MainWindowProfilePreviewInfoViewController: NSObject {
         // ---------------------------------------------------------------------
         //  Add subview to main view
         // ---------------------------------------------------------------------
-        self.view.addSubview(textField)
+        self.view.addSubview(self.textField)
         
         // ---------------------------------------------------------------------
         //  Add constraints
