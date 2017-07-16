@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5309D3031F19E537002133A0 /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5309D3021F19E537002133A0 /* Profile.swift */; };
+		5309D3051F1A430F002133A0 /* ProfileController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5309D3041F1A430F002133A0 /* ProfileController.swift */; };
+		5309D30A1F1AB287002133A0 /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5309D3091F1AB287002133A0 /* Preferences.swift */; };
 		530CD3DA1F17793B0071E866 /* MainWindowTableViewItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 530CD3D91F17793B0071E866 /* MainWindowTableViewItems.swift */; };
 		5315400A1F1233080060011B /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531540091F1233080060011B /* Constants.swift */; };
 		5315400D1F127B340060011B /* MainWindowAllProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5315400C1F127B340060011B /* MainWindowAllProfiles.swift */; };
@@ -20,6 +23,8 @@
 		536DA48E1F11FD9D00FB325E /* MainWindowProfilePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536DA48D1F11FD9D00FB325E /* MainWindowProfilePreview.swift */; };
 		536DA4911F1213AE00FB325E /* MainWindowWelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536DA4901F1213AE00FB325E /* MainWindowWelcomeView.swift */; };
 		536DA4941F12143F00FB325E /* ViewWhite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536DA4931F12143F00FB325E /* ViewWhite.swift */; };
+		538D2C471F1BC73800FF6051 /* PreferencesGeneral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 538D2C461F1BC73800FF6051 /* PreferencesGeneral.swift */; };
+		538D2C491F1BCB2500FF6051 /* PreferencesProfileDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 538D2C481F1BCB2500FF6051 /* PreferencesProfileDefaults.swift */; };
 		5395925F1F1012F3005090B3 /* MainWindowToolbarItemExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5395925E1F1012F3005090B3 /* MainWindowToolbarItemExport.swift */; };
 		539592621F102DEE005090B3 /* Defaults.plist in Resources */ = {isa = PBXBuildFile; fileRef = 539592611F102DEE005090B3 /* Defaults.plist */; };
 		539832121F0EE15400C4792D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 539832111F0EE15400C4792D /* AppDelegate.swift */; };
@@ -32,6 +37,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		5309D3021F19E537002133A0 /* Profile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Profile.swift; path = Profile/Profile.swift; sourceTree = "<group>"; };
+		5309D3041F1A430F002133A0 /* ProfileController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProfileController.swift; path = Profile/ProfileController.swift; sourceTree = "<group>"; };
+		5309D3091F1AB287002133A0 /* Preferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Preferences.swift; path = WindowControllers/Preferences/Preferences.swift; sourceTree = "<group>"; };
 		530CD3D91F17793B0071E866 /* MainWindowTableViewItems.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowTableViewItems.swift; path = "WindowControllers/Main Window/Profile List/MainWindowTableViewItems.swift"; sourceTree = "<group>"; };
 		531540091F1233080060011B /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Constants.swift; path = Utility/Constants.swift; sourceTree = "<group>"; };
 		5315400C1F127B340060011B /* MainWindowAllProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowAllProfiles.swift; path = "WindowControllers/Main Window/Sidebar/MainWindowAllProfiles.swift"; sourceTree = "<group>"; };
@@ -45,6 +53,8 @@
 		536DA48D1F11FD9D00FB325E /* MainWindowProfilePreview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowProfilePreview.swift; path = "WindowControllers/Main Window/Profile Preview/MainWindowProfilePreview.swift"; sourceTree = "<group>"; };
 		536DA4901F1213AE00FB325E /* MainWindowWelcomeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowWelcomeView.swift; path = "WindowControllers/Main Window/Welcome View/MainWindowWelcomeView.swift"; sourceTree = "<group>"; };
 		536DA4931F12143F00FB325E /* ViewWhite.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ViewWhite.swift; path = Utility/ViewWhite.swift; sourceTree = "<group>"; };
+		538D2C461F1BC73800FF6051 /* PreferencesGeneral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PreferencesGeneral.swift; path = WindowControllers/Preferences/PreferencesGeneral.swift; sourceTree = "<group>"; };
+		538D2C481F1BCB2500FF6051 /* PreferencesProfileDefaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PreferencesProfileDefaults.swift; path = WindowControllers/Preferences/PreferencesProfileDefaults.swift; sourceTree = "<group>"; };
 		5395925E1F1012F3005090B3 /* MainWindowToolbarItemExport.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowToolbarItemExport.swift; path = "WindowControllers/Main Window/Toolbar/MainWindowToolbarItemExport.swift"; sourceTree = "<group>"; };
 		539592611F102DEE005090B3 /* Defaults.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Defaults.plist; sourceTree = "<group>"; };
 		5398320E1F0EE15400C4792D /* ProfileCreator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ProfileCreator.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -69,6 +79,32 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5309D3011F19E516002133A0 /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				5309D3021F19E537002133A0 /* Profile.swift */,
+				5309D3041F1A430F002133A0 /* ProfileController.swift */,
+			);
+			name = Profile;
+			sourceTree = "<group>";
+		};
+		5309D3071F1AB254002133A0 /* Profile Editor */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "Profile Editor";
+			sourceTree = "<group>";
+		};
+		5309D3081F1AB266002133A0 /* Preferences */ = {
+			isa = PBXGroup;
+			children = (
+				5309D3091F1AB287002133A0 /* Preferences.swift */,
+				538D2C461F1BC73800FF6051 /* PreferencesGeneral.swift */,
+				538D2C481F1BCB2500FF6051 /* PreferencesProfileDefaults.swift */,
+			);
+			name = Preferences;
+			sourceTree = "<group>";
+		};
 		534732D81F10C2F100770446 /* Toolbar */ = {
 			isa = PBXGroup;
 			children = (
@@ -92,7 +128,9 @@
 		5365F4821F0F4CFE0064C02A /* Window Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				5309D3081F1AB266002133A0 /* Preferences */,
 				5365F4831F0F4D060064C02A /* Main Window */,
+				5309D3071F1AB254002133A0 /* Profile Editor */,
 			);
 			name = "Window Controllers";
 			sourceTree = "<group>";
@@ -180,6 +218,7 @@
 				5398321A1F0EE15400C4792D /* Info.plist */,
 				539592611F102DEE005090B3 /* Defaults.plist */,
 				536DA4921F12142100FB325E /* Utility */,
+				5309D3011F19E516002133A0 /* Profile */,
 				5365F4821F0F4CFE0064C02A /* Window Controllers */,
 				5365F4891F0F871F0064C02A /* Graphics */,
 			);
@@ -272,17 +311,22 @@
 			files = (
 				534732DD1F10C3BB00770446 /* MainWindowOutlineView.swift in Sources */,
 				5315400A1F1233080060011B /* Constants.swift in Sources */,
+				5309D30A1F1AB287002133A0 /* Preferences.swift in Sources */,
+				5309D3051F1A430F002133A0 /* ProfileController.swift in Sources */,
 				53DADB501F13ACF90045CB3F /* AppResources.swift in Sources */,
+				538D2C491F1BCB2500FF6051 /* PreferencesProfileDefaults.swift in Sources */,
 				53DADB4C1F137A110045CB3F /* MainWindowLibrary.swift in Sources */,
 				536DA4911F1213AE00FB325E /* MainWindowWelcomeView.swift in Sources */,
 				536DA48E1F11FD9D00FB325E /* MainWindowProfilePreview.swift in Sources */,
 				5315400D1F127B340060011B /* MainWindowAllProfiles.swift in Sources */,
+				5309D3031F19E537002133A0 /* Profile.swift in Sources */,
 				539832121F0EE15400C4792D /* AppDelegate.swift in Sources */,
 				5365F4851F0F4D430064C02A /* MainWindow.swift in Sources */,
 				534732DB1F10C35500770446 /* MainWindowSplitView.swift in Sources */,
 				536DA4941F12143F00FB325E /* ViewWhite.swift in Sources */,
 				5315400F1F127F280060011B /* MainWindowOutlineViewItems.swift in Sources */,
 				53DF38771F11675F006DE5BE /* MainWindowTableView.swift in Sources */,
+				538D2C471F1BC73800FF6051 /* PreferencesGeneral.swift in Sources */,
 				530CD3DA1F17793B0071E866 /* MainWindowTableViewItems.swift in Sources */,
 				5365F4881F0F71850064C02A /* MainWindowToolbarItemAdd.swift in Sources */,
 				5367E26C1F13ED440027D0D0 /* Alert.swift in Sources */,

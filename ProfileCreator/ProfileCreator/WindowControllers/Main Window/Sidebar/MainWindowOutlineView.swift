@@ -36,7 +36,7 @@ class MainWindowOutlineViewController: NSObject {
     var alert: Alert?
     var selectedItem: OutlineViewChildItem?
     var parents = [OutlineViewParentItem]()
-    var allProfilesGroup: MainWindowAllProfilesGroup?
+    var allProfilesGroup: OutlineViewChildItem?
     
     weak var selectionDelegate: MainWindowOutlineViewSelectionDelegate?
     
@@ -75,9 +75,9 @@ class MainWindowOutlineViewController: NSObject {
         
         // Things I've tried to remove the separator between the views in the outline view
         /*
-        self.outlineView.gridColor = NSColor.clear
-        self.outlineView.gridStyleMask = NSTableViewGridLineStyle.init(rawValue: 0)
-        self.outlineView.intercellSpacing = NSZeroSize
+         self.outlineView.gridColor = NSColor.clear
+         self.outlineView.gridStyleMask = NSTableViewGridLineStyle.init(rawValue: 0)
+         self.outlineView.intercellSpacing = NSZeroSize
          */
         
         // ---------------------------------------------------------------------
@@ -113,7 +113,7 @@ class MainWindowOutlineViewController: NSObject {
         NotificationCenter.default.removeObserver(self, name: .didSaveProfile, object: nil)
         NotificationCenter.default.removeObserver(self, name: .didRemoveProfile, object: nil)
     }
-        
+    
     // MARK: -
     // MARK: Private Functions
     
@@ -128,7 +128,7 @@ class MainWindowOutlineViewController: NSObject {
         // ---------------------------------------------------------------------
         //  Store the "All Profiles" group in it's own instance variable for future use
         // ---------------------------------------------------------------------
-        if let allProfilesGroup = allProfiles.children.first as? MainWindowAllProfilesGroup {
+        if let allProfilesGroup = allProfiles.children.first {
             self.allProfilesGroup = allProfilesGroup
         }
         
@@ -214,7 +214,7 @@ class MainWindowOutlineViewController: NSObject {
             return
         }
         
-        // Only checking titles is weak, but as the protocol doesn't support equatable, this will do
+        // FIXME: Only checking titles is weak, but as the protocol doesn't support equatable, this will do
         if self.parents.contains(where: { $0.title == sender.title }) {
             reloadOutlineView()
             
@@ -232,7 +232,7 @@ class MainWindowOutlineViewController: NSObject {
             //  Select the user added group
             // -----------------------------------------------------------------
             guard let userInfo = notification?.userInfo,
-                let group = userInfo[SidebarGroupKey.group] as? OutlineViewChildItem else {
+                let group = userInfo[SettingsKey.group] as? OutlineViewChildItem else {
                     return
             }
             
@@ -243,8 +243,43 @@ class MainWindowOutlineViewController: NSObject {
         }
     }
     
+    // -------------------------------------------------------------------------
+    //  When a profile was added, add it to the selected group and the All Profiles group.
+    //  NOTE: This notifications should not be implemented in the All Profiles group.
+    //        Then it might update after the outline view has reloaded and it won't
+    //        update the profile count or profile list.
+    // -------------------------------------------------------------------------
     func didAddProfile(_ notification: NSNotification?) {
-        print("didAddProfile")
+        
+        // ---------------------------------------------------------------------
+        //  Get passed identifier and verify that something is selected
+        // ---------------------------------------------------------------------
+        guard let selectedItem = self.selectedItem,
+              let userInfo = notification?.userInfo,
+              let identifier = userInfo[SettingsKey.identifier] as? UUID else {
+                return
+        }
+        
+        // ---------------------------------------------------------------------
+        //  Add identifier to the "All Profiles" group
+        // ---------------------------------------------------------------------
+        if let allProfilesGroup = self.allProfilesGroup {
+            allProfilesGroup.addProfiles(identifiers: [identifier])
+        }
+        
+        // ---------------------------------------------------------------------
+        //  Add identifier to the selected group (If it's not the "All Profiles" group)
+        // ---------------------------------------------------------------------
+        if !(selectedItem is MainWindowAllProfilesGroup) {
+            selectedItem.addProfiles(identifiers: [identifier])
+        }
+        
+        // ---------------------------------------------------------------------
+        //  Notify delegate that the selected item was updated
+        // ---------------------------------------------------------------------
+        if let delegateMethod = self.selectionDelegate?.updated {
+            delegateMethod(selectedItem, self)
+        }
     }
     
     func didSaveProfile(_ notification: NSNotification?) {
@@ -576,5 +611,4 @@ extension MainWindowOutlineView: NSMenuDelegate {
         self.clickedItem = nil
         self.clickedItemRow = -1
     }
-    
 }

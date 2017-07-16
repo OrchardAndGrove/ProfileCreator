@@ -33,10 +33,9 @@ class MainWindowAllProfiles: NSObject, OutlineViewParentItem {
         //  Setup the single outline view child group for this parent
         // ---------------------------------------------------------------------
         let group = MainWindowAllProfilesGroup.init(title: self.title, identifier: nil, parent: self)
-        // TODO: When profile controller is added, add all profile identifiers here
         
         // ---------------------------------------------------------------------
-        //  Add the group to this parent's childen
+        //  Add the group to this parent
         // ---------------------------------------------------------------------
         self.children.append(group)
     }
@@ -62,7 +61,7 @@ class MainWindowAllProfilesGroup: NSObject, OutlineViewChildItem {
     init(title: String, identifier: UUID?, parent: OutlineViewParentItem) {
         
         self.title = title
-        self.identifier = (identifier != nil) ? identifier! : UUID()
+        self.identifier = identifier ?? UUID()
         
         super.init()
         
@@ -71,6 +70,13 @@ class MainWindowAllProfilesGroup: NSObject, OutlineViewChildItem {
         // ---------------------------------------------------------------------
         self.cellView = OutlineViewChildCellView(child: self)
 
+        // ---------------------------------------------------------------------
+        //  Add all saved profiles to this group
+        // ---------------------------------------------------------------------
+        if let profileIdentifiers = ProfileController.shared.profileIdentifiers() {
+            self.addProfiles(identifiers: profileIdentifiers)
+        }
+        
         // ---------------------------------------------------------------------
         //  Setup Notification Observers
         // ---------------------------------------------------------------------
@@ -86,13 +92,18 @@ class MainWindowAllProfilesGroup: NSObject, OutlineViewChildItem {
     
     func didRemoveProfile(_ notification: NSNotification) {
         Swift.print("didRemoveProfiles")
+        
+        // ---------------------------------------------------------------------
+        //  Remove the passed identifiers
+        // ---------------------------------------------------------------------
+        //self.profileIdentifiers = Array(Set(self.profileIdentifiers).subtracting(identifiers))
     }
     
     // MARK: -
     // MARK: OutlineViewChildItem Functions
     
     func addProfiles(identifiers: [UUID]) {
-        //TODO: Implement
+        self.profileIdentifiers = Array(Set(self.profileIdentifiers + identifiers))
     }
     
     func removeProfiles(identifiers: [UUID]) {

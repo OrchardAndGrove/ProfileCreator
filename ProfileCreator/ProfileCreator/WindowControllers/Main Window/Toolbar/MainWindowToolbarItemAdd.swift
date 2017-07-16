@@ -33,7 +33,7 @@ class MainWindowToolbarItemAdd: NSView {
         // ---------------------------------------------------------------------
         //  Create the actual toolbar item
         // ---------------------------------------------------------------------
-        self.toolbarItem = NSToolbarItem(itemIdentifier: MainWindowToolbarIdentifier.add)
+        self.toolbarItem = NSToolbarItem(itemIdentifier: ToolbarIdentifier.mainWindowAdd)
         self.toolbarItem.toolTip = NSLocalizedString("Add profile or library group", comment: "")
         
         // ---------------------------------------------------------------------
@@ -199,7 +199,7 @@ class MainWindowToolbarItemAddButton: NSButton {
     }
     
     func newProfile(menuItem: NSMenuItem?) {
-        Swift.print("New Profile: \(String(describing: menuItem))")
+        NotificationCenter.default.post(name: .addProfile, object: self, userInfo: [NotificationKey.parentTitle : SidebarGroupTitle.library])
     }
     
     func newGroup(menuItem: NSMenuItem?) {

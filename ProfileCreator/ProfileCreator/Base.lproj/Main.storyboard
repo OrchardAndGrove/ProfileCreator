@@ -627,6 +627,12 @@
                                             </connections>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="eu3-7i-yIM"/>
+                                        <menuItem title="Main Window" keyEquivalent="0" id="a2c-jW-q4G">
+                                            <connections>
+                                                <action selector="performZoom:" target="Ady-hI-5gd" id="PSK-Ht-yW6"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem isSeparatorItem="YES" id="Ae1-n3-VRr"/>
                                         <menuItem title="Bring All to Front" id="LE2-aR-0XJ">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>

@@ -31,15 +31,15 @@ class MainWindowLibrary: NSObject, OutlineViewParentItem, NSTextFieldDelegate {
         self.cellView = OutlineViewParentCellView(parent: self)
         
         // ---------------------------------------------------------------------
+        //  Load all saved groups from disk
+        // ---------------------------------------------------------------------
+        loadSavedGroups()
+        
+        // ---------------------------------------------------------------------
         //  Setup Notification Observers
         // ---------------------------------------------------------------------
         NotificationCenter.default.addObserver(self, selector: #selector(addGroup(_:)), name: .addGroup, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(didRemoveProfile(_:)), name: .didRemoveProfile, object: nil)
-        
-        // ---------------------------------------------------------------------
-        //  Load any saved groups
-        // ---------------------------------------------------------------------
-        loadSavedGroups()
     }
     
     deinit {
@@ -70,9 +70,9 @@ class MainWindowLibrary: NSObject, OutlineViewParentItem, NSTextFieldDelegate {
         }
         
         // ---------------------------------------------------------------------
-        //  Remove all items that doesn't have the pfcgrp extension
+        //  Remove all items that doesn't have the FileExtension.group extension
         // ---------------------------------------------------------------------
-        groupURLs = groupURLs.filter { $0.pathExtension == "pfcgrp" }
+        groupURLs = groupURLs.filter { $0.pathExtension == FileExtension.group }
         
         // ---------------------------------------------------------------------
         //  Loop through all group files and add them to the group
@@ -82,15 +82,15 @@ class MainWindowLibrary: NSObject, OutlineViewParentItem, NSTextFieldDelegate {
                 let groupData = try Data.init(contentsOf: groupURL)
                 let groupDict = try PropertyListSerialization.propertyList(from: groupData, options: [], format: nil) as! [String : Any]
                 if !groupDict.isEmpty {
-                    if let title = groupDict[SidebarGroupKey.title] as? String {
+                    if let title = groupDict[SettingsKey.title] as? String {
                         var uuid: UUID? = nil
-                        if let uuidString = groupDict[SidebarGroupKey.identifier] as? String,
+                        if let uuidString = groupDict[SettingsKey.identifier] as? String,
                             let theUUID = UUID(uuidString: uuidString) {
                             uuid = theUUID
                         }
                         
                         var uuids = [UUID]()
-                        if let uuidStrings = groupDict[SidebarGroupKey.identifiers] as? [String] {
+                        if let uuidStrings = groupDict[SettingsKey.identifiers] as? [String] {
                             for uuidString in uuidStrings {
                                 if let theUUID = UUID(uuidString: uuidString) {
                                     uuids.append(theUUID)
@@ -117,7 +117,7 @@ class MainWindowLibrary: NSObject, OutlineViewParentItem, NSTextFieldDelegate {
         let (result, error) = group.writeToDisk(title: title)
         if result {
             self.children.append(group)
-            NotificationCenter.default.post(name: .didAddGroup, object: self, userInfo: [SidebarGroupKey.group : group])
+            NotificationCenter.default.post(name: .didAddGroup, object: self, userInfo: [SettingsKey.group : group])
         } else {
             Swift.print("error: \(String(describing: error))")
         }
@@ -251,25 +251,39 @@ class MainWindowLibraryGroup: NSObject, OutlineViewChildItem {
         let (url, urlError) = self.url()
         if url == nil { return (false, urlError) }
         
+        // ---------------------------------------------------------------------
+        //  Get all profile identifiers in group that have been saved to disk
+        // ---------------------------------------------------------------------
         var profileIdentifierStrings = [String]()
         for identifier in self.profileIdentifiers {
             
-            // TODO: Implement when profilecontroller exists
-            
-            // -----------------------------------------------------------------
-            //  Get profile instance for current identifier
-            // -----------------------------------------------------------------
-            //guard let profile =
-            profileIdentifierStrings.append(identifier.uuidString)
+            // ---------------------------------------------------------------------
+            //  Get url to save at
+            // ---------------------------------------------------------------------
+            if let profile = ProfileController.shared.profile(withIdentifier: identifier) {
+                
+                // -------------------------------------------------------------
+                //  Check if profile has been saved to disk at least once (If it has a URL assigned).
+                //  If not, don't include it in the group on disk
+                // -------------------------------------------------------------
+                if profile.url != nil {
+                    profileIdentifierStrings.append(identifier.uuidString)
+                }
+            } else {
+                Swift.print("No profile found with identifier: \(identifier)")
+            }
         }
-        Swift.print("profileIdentifierStrings: \(profileIdentifierStrings)")
+
         // ---------------------------------------------------------------------
         //  Create dict to save
         // ---------------------------------------------------------------------
-        let groupDict: [String : Any] = [SidebarGroupKey.title : self.title,
-                                         SidebarGroupKey.identifier : self.identifier.uuidString,
-                                         SidebarGroupKey.identifiers : profileIdentifierStrings]
+        let groupDict: [String : Any] = [SettingsKey.title : self.title,
+                                         SettingsKey.identifier : self.identifier.uuidString,
+                                         SettingsKey.identifiers : profileIdentifierStrings]
         
+        // ---------------------------------------------------------------------
+        //  Try to write the group dict to disk
+        // ---------------------------------------------------------------------
         do {
             let groupData = try PropertyListSerialization.data(fromPropertyList: groupDict, format: .xml, options: 0)
             try groupData.write(to: url!)
@@ -284,7 +298,7 @@ class MainWindowLibraryGroup: NSObject, OutlineViewChildItem {
         if let groupFolderURL = applicationFolder(Folder.groupLibrary) {
             do {
                 try FileManager.default.createDirectory(at: groupFolderURL, withIntermediateDirectories: true, attributes: nil)
-                return (groupFolderURL.appendingPathComponent(self.identifier.uuidString).appendingPathExtension("pfcgrp"), nil)
+                return (groupFolderURL.appendingPathComponent(self.identifier.uuidString).appendingPathExtension(FileExtension.group), nil)
             } catch {
                 return (nil, error)
             }

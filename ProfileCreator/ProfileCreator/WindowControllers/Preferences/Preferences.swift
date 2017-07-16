@@ -1,26 +1,26 @@
 //
-//  MainWindowController.swift
+//  Preferences.swift
 //  ProfileCreator
 //
-//  Created by Erik Berglund on 2017-07-07.
+//  Created by Erik Berglund on 2017-07-15.
 //  Copyright © 2017 Erik Berglund. All rights reserved.
 //
 
 import Cocoa
 
-class MainWindowController: NSWindowController {
+class PreferencesWindowController: NSWindowController {
     
     // MARK: -
     // MARK: Variables
     
-    let splitView = MainWindowSplitView(frame: NSZeroRect)
+    private let windowWidth = 450
     
-    let toolbar = NSToolbar(identifier: "MainWindowToolbar")
-    let toolbarItemIdentifiers = [ToolbarIdentifier.mainWindowAdd,
-                                  ToolbarIdentifier.mainWindowExport,
+    let toolbar = NSToolbar(identifier: "PreferencesWindowToolbar")
+    let toolbarItemIdentifiers = [ToolbarIdentifier.preferencesWindowGeneral,
+                                  ToolbarIdentifier.preferencesWindowProfileDefaults,
                                   NSToolbarFlexibleSpaceItemIdentifier]
-    var toolbarItemAdd: MainWindowToolbarItemAdd?
-    var toolbarItemExport: MainWindowToolbarItemExport?
+    var preferencesGeneral: PreferencesGeneral?
+    var preferencesProfileDefaults: PreferencesProfileDefaults?
     
     // MARK: -
     // MARK: Initialization
@@ -32,30 +32,18 @@ class MainWindowController: NSWindowController {
     init() {
         
         // ---------------------------------------------------------------------
-        //  Setup main window
+        //  Setup preferences window
         // ---------------------------------------------------------------------
-        let rect = NSRect(x: 0, y: 0, width: 750, height: 550)
+        let rect = NSRect(x: 0, y: 0, width: windowWidth, height: 200)
         let styleMask = NSWindowStyleMask(rawValue: (
-            NSWindowStyleMask.fullSizeContentView.rawValue |
-            NSWindowStyleMask.titled.rawValue |
-            NSWindowStyleMask.unifiedTitleAndToolbar.rawValue |
-            NSWindowStyleMask.closable.rawValue |
-            NSWindowStyleMask.miniaturizable.rawValue |
-            NSWindowStyleMask.resizable.rawValue
+                NSWindowStyleMask.titled.rawValue |
+                NSWindowStyleMask.closable.rawValue |
+                NSWindowStyleMask.miniaturizable.rawValue
         ))
         let window = NSWindow(contentRect: rect, styleMask: styleMask, backing: NSBackingStoreType.buffered, defer: false)
-        window.titleVisibility = .hidden
         window.isReleasedWhenClosed = false
         window.isRestorable = true
-        window.identifier = "ProfileCreatorMainWindow-ID"
-        window.setFrameAutosaveName("ProfileCreatorMainWindow-AS")
-        window.contentMinSize = NSSize.init(width: 600, height: 400)
         window.center()
-        
-        // ---------------------------------------------------------------------
-        //  Add splitview as window content view
-        // ---------------------------------------------------------------------
-        window.contentView = self.splitView
         
         // ---------------------------------------------------------------------
         //  Initialize self after the class variables have been instantiated
@@ -70,7 +58,7 @@ class MainWindowController: NSWindowController {
         self.toolbar.allowsUserCustomization = false
         self.toolbar.autosavesConfiguration = false
         self.toolbar.sizeMode = .regular
-        self.toolbar.displayMode = .iconOnly
+        self.toolbar.displayMode = .iconAndLabel
         self.toolbar.delegate = self
         
         // ---------------------------------------------------------------------
@@ -78,17 +66,21 @@ class MainWindowController: NSWindowController {
         // ---------------------------------------------------------------------
         self.window?.toolbar = self.toolbar
     }
+    
+    public func toolbarItemSelected(_ toolbarItem: NSToolbarItem) {
+        Swift.print("toolbarItemSelected: \(toolbarItem)")
+    }
 }
 
 // MARK: -
 // MARK: NSToolbarDelegate
 
-extension MainWindowController: NSToolbarDelegate {
+extension PreferencesWindowController: NSToolbarDelegate {
     
     func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [String] {
         return self.toolbarItemIdentifiers
     }
-
+    
     func toolbarDefaultItemIdentifiers(_ toolbar: NSToolbar) -> [String] {
         return self.toolbarItemIdentifiers
     }
@@ -101,22 +93,13 @@ extension MainWindowController: NSToolbarDelegate {
     }
     
     func toolbarItem(identifier: String) -> NSToolbarItem? {
-        if identifier == ToolbarIdentifier.mainWindowAdd {
-            if self.toolbarItemAdd == nil {
-                self.toolbarItemAdd = MainWindowToolbarItemAdd()
-            }
+        if identifier == ToolbarIdentifier.preferencesWindowGeneral {
+            if self.preferencesGeneral == nil { self.preferencesGeneral = PreferencesGeneral(sender: self) }
+            return self.preferencesGeneral?.toolbarItem
             
-            if let toolbarView = self.toolbarItemAdd {
-                return toolbarView.toolbarItem
-            }
-        } else if identifier == ToolbarIdentifier.mainWindowExport {
-            if self.toolbarItemExport == nil {
-                self.toolbarItemExport = MainWindowToolbarItemExport()
-            }
-            
-            if let toolbarView = self.toolbarItemExport {
-                return toolbarView.toolbarItem
-            }
+        } else if identifier == ToolbarIdentifier.preferencesWindowProfileDefaults {
+            if self.preferencesProfileDefaults == nil { self.preferencesProfileDefaults = PreferencesProfileDefaults(sender: self) }
+            return self.preferencesProfileDefaults?.toolbarItem
         }
         return nil
     }

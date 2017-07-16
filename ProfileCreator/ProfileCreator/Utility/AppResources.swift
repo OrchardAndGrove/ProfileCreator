@@ -24,7 +24,15 @@ func applicationFolder(_ folder: Folder) -> URL? {
         break
     case Folder.profiles:
         if let userApplicationSupport = applicationFolder(Folder.applicationSupport) {
-            return userApplicationSupport.appendingPathComponent("Profiles", isDirectory: true)
+            let profileFolder = userApplicationSupport.appendingPathComponent("Profiles", isDirectory: true)
+            if !FileManager.default.fileExists(atPath: profileFolder.path) {
+                do {
+                    try FileManager.default.createDirectory(at: profileFolder, withIntermediateDirectories: true, attributes: nil)
+                } catch {
+                    return nil
+                }
+            }
+            return profileFolder
         }
         break
     case Folder.groups:

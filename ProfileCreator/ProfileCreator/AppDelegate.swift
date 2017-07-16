@@ -14,8 +14,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // MARK: -
     // MARK: Variables
     
-    var mainWindowController: MainWindowController?
-
+    let mainWindowController = MainWindowController()
+    let preferencesWindowController = PreferencesWindowController()
+    
     // MARK: -
     // MARK: NSApplicationDelegate Methods
     
@@ -27,15 +28,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         registerDefaults()
         
         // ---------------------------------------------------------------------
-        //  Initialize main window
+        //  Initialize application menus
         // ---------------------------------------------------------------------
-        self.mainWindowController = MainWindowController()
+        configureMenuItems()
         
         // ---------------------------------------------------------------------
         //  Show main window
         // ---------------------------------------------------------------------
-        self.mainWindowController?.window?.makeKeyAndOrderFront(self)
+        self.mainWindowController.window?.makeKeyAndOrderFront(self)
     }
+    
+    // MARK: -
+    // MARK: Initialization
     
     func registerDefaults() {
 
@@ -54,6 +58,53 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if let defaultSettings = NSDictionary(contentsOf: defaultSettingsURL) as? [String : Any] {
             UserDefaults.standard.register(defaults: defaultSettings)
         }
+    }
+    
+    func configureMenuItems() {
+        
+        // ---------------------------------------------------------------------
+        //  Get main menu
+        // ---------------------------------------------------------------------
+        guard let mainMenu = NSApplication.shared().mainMenu else { return }
+        
+        // ---------------------------------------------------------------------
+        //  Get application menu item submenu
+        // ---------------------------------------------------------------------
+        if let applicationMenu = mainMenu.item(at: 0)?.submenu {
+            
+            // -----------------------------------------------------------------
+            //  Set action for menu item "Preferences…"
+            // -----------------------------------------------------------------
+            if let preferencesMenuItem = applicationMenu.item(withTitle: "Preferences\u{2026}") {
+                preferencesMenuItem.target = self
+                preferencesMenuItem.action = #selector(menuItemPreferences(_:))
+            }
+        }
+        
+        // ---------------------------------------------------------------------
+        //  Get window menu item submenu
+        // ---------------------------------------------------------------------
+        if let windowMenu = mainMenu.item(at: 5)?.submenu {
+            
+            // -----------------------------------------------------------------
+            //  Set action for menu item "Main Window"
+            // -----------------------------------------------------------------
+            if let mainWindowMenuItem = windowMenu.item(withTitle: "Main Window") {
+                mainWindowMenuItem.target = self
+                mainWindowMenuItem.action = #selector(menuItemMainWindow(_:))
+            }
+        }
+    }
+    
+    // MARK: -
+    // MARK: NSMenuItem Functions
+    
+    func menuItemMainWindow(_ menuItem: NSMenuItem?) {
+        self.mainWindowController.window?.makeKeyAndOrderFront(self)
+    }
+    
+    func menuItemPreferences(_ menuItem: NSMenuItem?) {
+        self.preferencesWindowController.window?.makeKeyAndOrderFront(self)
     }
 }
 

@@ -33,7 +33,7 @@ class MainWindowToolbarItemExport: NSView {
         // ---------------------------------------------------------------------
         //  Create the actual toolbar item
         // ---------------------------------------------------------------------
-        self.toolbarItem = NSToolbarItem(itemIdentifier: MainWindowToolbarIdentifier.export)
+        self.toolbarItem = NSToolbarItem(itemIdentifier: ToolbarIdentifier.mainWindowExport)
         self.toolbarItem.toolTip = NSLocalizedString("Export profile", comment: "")
         
         // ---------------------------------------------------------------------
