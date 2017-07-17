@@ -8,6 +8,8 @@
 
 import Foundation
 
+let preferencesWindowWidth: CGFloat = 450.0
+
 extension Notification.Name {
     static let addGroup = Notification.Name("addGroup")
     static let addProfile = Notification.Name("addProfile")

@@ -130,7 +130,7 @@ class MainWindowToolbarItemAddButton: NSButton {
     // MARK: Variables
     
     let buttonMenu = NSMenu()
-    let menuDelay = 0.3
+    let menuDelay = 0.2
     
     var trackingArea: NSTrackingArea?
     var mouseIsDown = false

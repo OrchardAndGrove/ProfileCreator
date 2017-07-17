@@ -8,26 +8,24 @@
 
 import Cocoa
 
-class PreferencesGeneral: NSView {
+class PreferencesGeneral: PreferencesItem {
     
     // MARK: -
     // MARK: Variables
     
+    let identifier = ToolbarIdentifier.preferencesWindowGeneral
     let toolbarItem: NSToolbarItem
+    let view: NSView
     
     // MARK: -
     // MARK: Initialization
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     init(sender: PreferencesWindowController) {
         
         // ---------------------------------------------------------------------
-        //  Create the actual toolbar item
+        //  Create the toolbar item
         // ---------------------------------------------------------------------
-        self.toolbarItem = NSToolbarItem(itemIdentifier: ToolbarIdentifier.preferencesWindowGeneral)
+        self.toolbarItem = NSToolbarItem(itemIdentifier: identifier)
         self.toolbarItem.image = NSImage(named: NSImageNamePreferencesGeneral)
         self.toolbarItem.label = NSLocalizedString("General", comment: "")
         self.toolbarItem.paletteLabel = self.toolbarItem.label
@@ -36,8 +34,72 @@ class PreferencesGeneral: NSView {
         self.toolbarItem.action = #selector(sender.toolbarItemSelected(_:))
         
         // ---------------------------------------------------------------------
-        //  Initialize self after the class variables have been instantiated
+        //  Create the preferences view
         // ---------------------------------------------------------------------
-        super.init(frame: NSZeroRect)
+        self.view = PreferencesGeneralView()
     }
+}
+
+class PreferencesGeneralView: NSView {
+    
+    // MARK: -
+    // MARK: Initialization
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    init() {
+        super.init(frame: NSZeroRect)
+        
+        self.translatesAutoresizingMaskIntoConstraints = false
+        
+        // ---------------------------------------------------------------------
+        //  Setup Variables
+        // ---------------------------------------------------------------------
+        var constraints = [NSLayoutConstraint]()
+        var frameHeight: CGFloat = 0.0
+        var lastSubview: NSView?
+        
+        lastSubview = add(title: "Sidebar",
+                          withSeparator: true,
+                          toView: self,
+                          lastSubview: nil,
+                          height: &frameHeight,
+                          constraints: &constraints)
+        
+        lastSubview = add(title: "Logging",
+                          withSeparator: true,
+                          toView: self,
+                          lastSubview: lastSubview,
+                          height: &frameHeight,
+                          constraints: &constraints)
+        
+        // ---------------------------------------------------------------------
+        //  Add constraints to last view
+        // ---------------------------------------------------------------------
+        
+        // Bottom
+        constraints.append(NSLayoutConstraint(
+            item: self,
+            attribute: .bottom,
+            relatedBy: .equal,
+            toItem: lastSubview,
+            attribute: .bottom,
+            multiplier: 1,
+            constant: 20))
+        
+        frameHeight = frameHeight + 20.0
+        
+        // ---------------------------------------------------------------------
+        //  Activate Layout Constraints
+        // ---------------------------------------------------------------------
+        NSLayoutConstraint.activate(constraints)
+        
+        // ---------------------------------------------------------------------
+        //  Set the view frame for use when switching between preference views
+        // ---------------------------------------------------------------------
+        self.frame = NSRect.init(x: 0.0, y: 0.0, width: preferencesWindowWidth, height: frameHeight)
+    }
+    
 }

@@ -8,13 +8,17 @@
 
 import Cocoa
 
+protocol PreferencesItem {
+    var identifier: String { get }
+    var toolbarItem: NSToolbarItem { get }
+    var view: NSView { get }
+}
+
 class PreferencesWindowController: NSWindowController {
     
     // MARK: -
     // MARK: Variables
-    
-    private let windowWidth = 450
-    
+        
     let toolbar = NSToolbar(identifier: "PreferencesWindowToolbar")
     let toolbarItemIdentifiers = [ToolbarIdentifier.preferencesWindowGeneral,
                                   ToolbarIdentifier.preferencesWindowProfileDefaults,
@@ -34,9 +38,9 @@ class PreferencesWindowController: NSWindowController {
         // ---------------------------------------------------------------------
         //  Setup preferences window
         // ---------------------------------------------------------------------
-        let rect = NSRect(x: 0, y: 0, width: windowWidth, height: 200)
+        let rect = NSRect(x: 0, y: 0, width: preferencesWindowWidth, height: 200)
         let styleMask = NSWindowStyleMask(rawValue: (
-                NSWindowStyleMask.titled.rawValue |
+            NSWindowStyleMask.titled.rawValue |
                 NSWindowStyleMask.closable.rawValue |
                 NSWindowStyleMask.miniaturizable.rawValue
         ))
@@ -65,10 +69,71 @@ class PreferencesWindowController: NSWindowController {
         // Add toolbar to window
         // ---------------------------------------------------------------------
         self.window?.toolbar = self.toolbar
+        
+        // ---------------------------------------------------------------------
+        // Show "General" Preferences
+        // ---------------------------------------------------------------------
+        self.showPreferencesView(identifier: ToolbarIdentifier.preferencesWindowGeneral)
     }
     
+    // MARK: -
+    // MARK: Public Functions
+    
     public func toolbarItemSelected(_ toolbarItem: NSToolbarItem) {
-        Swift.print("toolbarItemSelected: \(toolbarItem)")
+        self.showPreferencesView(identifier: toolbarItem.itemIdentifier)
+    }
+    
+    // MARK: -
+    // MARK: Private Functions
+    
+    private func showPreferencesView(identifier: String) {
+        if let preferencesItem = preferencesItem(identifier: identifier) {
+            
+            // -----------------------------------------------------------------
+            //  Update window title
+            // -----------------------------------------------------------------
+            self.window?.title = preferencesItem.identifier
+            
+            // -----------------------------------------------------------------
+            //  Remove current view and add the selected view, animating the transition
+            // -----------------------------------------------------------------
+            self.window?.contentView?.removeFromSuperview()
+            
+            var frame = self.window?.frame
+            let oldView = self.window?.contentView?.frame
+            let newView = preferencesItem.view.frame
+
+            if let windowFrame = frame, let oldViewFrame = oldView {
+                frame!.origin.y = windowFrame.origin.y + (oldViewFrame.size.height - newView.size.height)
+                frame!.size.height = ((windowFrame.size.height - oldViewFrame.size.height) + newView.size.height)
+                self.window?.setFrame(frame!, display: true, animate: true)
+            }
+            
+            self.window?.contentView = preferencesItem.view
+            
+            // -----------------------------------------------------------------
+            //  Add constraint to set window width
+            // -----------------------------------------------------------------
+            NSLayoutConstraint.activate([ NSLayoutConstraint(item: self.window?.contentView ?? preferencesItem.view,
+                                                             attribute: .width,
+                                                             relatedBy: .equal,
+                                                             toItem: nil,
+                                                             attribute: .notAnAttribute,
+                                                             multiplier: 1.0,
+                                                             constant: preferencesWindowWidth) ])
+        }
+    }
+    
+    fileprivate func preferencesItem(identifier: String) -> PreferencesItem? {
+        if identifier == ToolbarIdentifier.preferencesWindowGeneral {
+            if self.preferencesGeneral == nil { self.preferencesGeneral = PreferencesGeneral(sender: self) }
+            return self.preferencesGeneral
+            
+        } else if identifier == ToolbarIdentifier.preferencesWindowProfileDefaults {
+            if self.preferencesProfileDefaults == nil { self.preferencesProfileDefaults = PreferencesProfileDefaults(sender: self) }
+            return self.preferencesProfileDefaults
+        }
+        return nil
     }
 }
 
@@ -86,20 +151,8 @@ extension PreferencesWindowController: NSToolbarDelegate {
     }
     
     func toolbar(_ toolbar: NSToolbar, itemForItemIdentifier itemIdentifier: String, willBeInsertedIntoToolbar flag: Bool) -> NSToolbarItem? {
-        if let toolbarItem = toolbarItem(identifier: itemIdentifier) {
-            return toolbarItem
-        }
-        return nil
-    }
-    
-    func toolbarItem(identifier: String) -> NSToolbarItem? {
-        if identifier == ToolbarIdentifier.preferencesWindowGeneral {
-            if self.preferencesGeneral == nil { self.preferencesGeneral = PreferencesGeneral(sender: self) }
-            return self.preferencesGeneral?.toolbarItem
-            
-        } else if identifier == ToolbarIdentifier.preferencesWindowProfileDefaults {
-            if self.preferencesProfileDefaults == nil { self.preferencesProfileDefaults = PreferencesProfileDefaults(sender: self) }
-            return self.preferencesProfileDefaults?.toolbarItem
+        if let preferencesItem = preferencesItem(identifier: itemIdentifier) {
+            return preferencesItem.toolbarItem
         }
         return nil
     }
