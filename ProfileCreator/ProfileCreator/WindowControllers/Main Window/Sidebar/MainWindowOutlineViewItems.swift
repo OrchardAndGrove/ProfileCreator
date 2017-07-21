@@ -29,9 +29,9 @@ protocol OutlineViewChildItem: OutlineViewItem, NSTextFieldDelegate {
     var profileIdentifiers: [UUID] { get }
     var cellView: OutlineViewChildCellView? { get }
     
-    func addProfiles(identifiers: [UUID])
-    func removeProfiles(identifiers: [UUID])
-    func removeProfiles(atIndexes: IndexSet)
+    func addProfiles(withIdentifiers: [UUID])
+    func removeProfiles(withIdentifiers: [UUID])
+    func removeProfiles(atIndexes: IndexSet, withIdentifiers: [UUID])
     func removeFromDisk() -> (Bool, Error?)
     func writeToDisk(title: String) -> (Bool, Error?)
 }
@@ -236,13 +236,13 @@ class OutlineViewParentCellView: NSTableCellView {
                                               constant: 4))
         
         // Trailing
-        constraints.append(NSLayoutConstraint(item: button,
+        constraints.append(NSLayoutConstraint(item: self,
                                               attribute: .trailing,
                                               relatedBy: .equal,
-                                              toItem: self,
+                                              toItem: button,
                                               attribute: .trailing,
                                               multiplier: 1,
-                                              constant: 1))
+                                              constant: 4))
     }
 }
 
@@ -285,8 +285,7 @@ class OutlineViewChildCellView: NSTableCellView {
         // ---------------------------------------------------------------------
         //  Setup Notification Observers
         // ---------------------------------------------------------------------
-        NotificationCenter.default.addObserver(self, forKeyPath: Defaults.showProfileCount, options: .new, context: nil)
-        NotificationCenter.default.addObserver(self, forKeyPath: Defaults.showGroupIcons, options: .new, context: nil)
+        UserDefaults.standard.addObserver(self, forKeyPath: PreferenceKey.showProfileCount, options: .new, context: nil)
         
         // ---------------------------------------------------------------------
         //  Configure TextField
@@ -317,7 +316,7 @@ class OutlineViewChildCellView: NSTableCellView {
         self.buttonCount.sizeToFit()
         (self.buttonCount.cell as! NSButtonCell).highlightsBy = NSCellStyleMask(rawValue: 0)
         self.buttonCount.setContentHuggingPriority(NSLayoutPriorityDefaultHigh, for: .horizontal)
-        self.buttonCount.isHidden = !UserDefaults.standard.bool(forKey: Defaults.showProfileCount)
+        self.buttonCount.isHidden = !UserDefaults.standard.bool(forKey: PreferenceKey.showProfileCount)
         setupButtonCount(constraints: &constraints)
         
         // ---------------------------------------------------------------------
@@ -329,6 +328,7 @@ class OutlineViewChildCellView: NSTableCellView {
             self.imageViewIcon.setContentHuggingPriority(NSLayoutPriorityDefaultHigh, for: .horizontal)
             self.imageViewIcon.image = icon
             setupImageViewIcon(constraints: &constraints)
+            UserDefaults.standard.addObserver(self, forKeyPath: PreferenceKey.showGroupIcons, options: .new, context: nil)
         }
         
         // ---------------------------------------------------------------------
@@ -339,49 +339,71 @@ class OutlineViewChildCellView: NSTableCellView {
         // ---------------------------------------------------------------------
         //  Setup Initial Values for showProfileCount and showIcon
         // ---------------------------------------------------------------------
-        self.profileCount(show: UserDefaults.standard.bool(forKey: Defaults.showProfileCount))
+        self.profileCount(show: UserDefaults.standard.bool(forKey: PreferenceKey.showProfileCount))
         if self.icon != nil {
-            self.icon(show: UserDefaults.standard.bool(forKey: Defaults.showGroupIcons))
+            self.icon(show: UserDefaults.standard.bool(forKey: PreferenceKey.showGroupIcons))
         }
     }
     
     deinit {
-        NotificationCenter.default.removeObserver(self, forKeyPath: Defaults.showProfileCount, context: nil)
-        NotificationCenter.default.removeObserver(self, forKeyPath: Defaults.showGroupIcons, context: nil)
+        UserDefaults.standard.removeObserver(self, forKeyPath: PreferenceKey.showProfileCount, context: nil)
+        UserDefaults.standard.removeObserver(self, forKeyPath: PreferenceKey.showGroupIcons, context: nil)
     }
     
     // MARK: -
     // MARK: Key/Value Observing Functions
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if keyPath == Defaults.showProfileCount {
+        if keyPath == PreferenceKey.showProfileCount {
             if let show = change?[NSKeyValueChangeKey.newKey] as? Bool { profileCount(show: show) }
-        } else if keyPath == Defaults.showGroupIcons {
+        } else if keyPath == PreferenceKey.showGroupIcons {
             if let show = change?[NSKeyValueChangeKey.newKey] as? Bool { icon(show: show) }
         }
     }
     
+    // MARK: -
+    // MARK: Private Functions
+    
     private func profileCount(show: Bool) {
-        self.constraintTextFieldToSuperview.isActive = !show
-        self.constraintTextFieldToButtonCount.isActive = show
+        if show {
+            self.constraintTextFieldToSuperview.isActive = false
+            self.constraintTextFieldToButtonCount.isActive = true
+        } else {
+            self.constraintTextFieldToButtonCount.isActive = false
+            self.constraintTextFieldToSuperview.isActive = true
+        }
         self.buttonCount.isHidden = !show
     }
     
     private func icon(show: Bool) {
-        self.constraintSuperviewToTextField.isActive = !show
-        self.constraintIconToTextField.isActive = show
+        if show {
+            self.constraintSuperviewToTextField.isActive = false
+            self.constraintIconToTextField.isActive = true
+        } else {
+            self.constraintIconToTextField.isActive = false
+            self.constraintSuperviewToTextField.isActive = true
+        }
         self.imageViewIcon.isHidden = !show
+    }
+    
+    // MARK: -
+    // MARK: Public Functions
+    public func updateView() {
+        if let child = self.child {
+            self.textFieldTitle.stringValue = child.title
+            self.buttonCount.title = String(child.profileIdentifiers.count)
+        }
     }
     
     // MARK: -
     // MARK: NSView Functions
     
     override func viewWillDraw() {
-        super.viewWillDraw()
         if let child = self.child {
             self.textFieldTitle.stringValue = child.title
             self.buttonCount.title = String(child.profileIdentifiers.count)
         }
+        super.viewWillDraw()
     }
     
     // MARK: -

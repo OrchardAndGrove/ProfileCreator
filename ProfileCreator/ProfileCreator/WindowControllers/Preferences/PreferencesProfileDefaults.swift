@@ -62,12 +62,12 @@ class PreferencesProfileDefaultsView: NSView {
         // ---------------------------------------------------------------------
         //  Add Preferences "Default Profile Settings"
         // ---------------------------------------------------------------------
-        lastSubview = add(title: "Default Profile Settings",
-                          withSeparator: true,
-                          toView: self,
-                          lastSubview: nil,
-                          height: &frameHeight,
-                          constraints: &constraints)
+        lastSubview = addHeader(title: "Default Profile Settings",
+                                withSeparator: true,
+                                toView: self,
+                                lastSubview: nil,
+                                height: &frameHeight,
+                                constraints: &constraints)
         
         // ---------------------------------------------------------------------
         //  Add constraints to last view

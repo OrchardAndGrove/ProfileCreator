@@ -30,6 +30,8 @@ class MainWindowTableViewController: NSObject, MainWindowOutlineViewSelectionDel
     let cellView = MainWindowTableViewCellView()
     let scrollView = NSScrollView()
     
+    var alert: Alert?
+    var updateSelectedProfileIdentifiers = true
     var selectedProfileGroup: OutlineViewChildItem?
     var selectedProfileIdentitifers: [UUID]?
     
@@ -76,13 +78,13 @@ class MainWindowTableViewController: NSObject, MainWindowOutlineViewSelectionDel
         // ---------------------------------------------------------------------
         //  Setup Notification Observers
         // ---------------------------------------------------------------------
-        NotificationCenter.default.addObserver(self, selector: #selector(didRemoveProfile(_:)), name: .didRemoveProfile, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didRemoveProfilesFromGroup(_:)), name: .didRemoveProfilesFromGroup, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(didSaveProfile(_:)), name: .didSaveProfile, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(exportProfile(_:)), name: .exportProfile, object: nil)
     }
     
     deinit {
-        NotificationCenter.default.removeObserver(self, name: .didRemoveProfile, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .didRemoveProfiles, object: nil)
         NotificationCenter.default.removeObserver(self, name: .didSaveProfile, object: nil)
         NotificationCenter.default.removeObserver(self, name: .exportProfile, object: nil)
     }
@@ -91,19 +93,17 @@ class MainWindowTableViewController: NSObject, MainWindowOutlineViewSelectionDel
     // MARK: MainWindowOutlineViewDelegate Functions
     
     func selected(item: OutlineViewChildItem, sender: Any?) {
-        Swift.print("selectedItem: \(item)")
         self.selectedProfileGroup = item
-        reloadTableView()
+        reloadTableView(updateSelection: false)
     }
     
     func updated(item: OutlineViewChildItem, sender: Any?) {
-        Swift.print("updatedItem: \(item)")
         // TODO: Another weak check using the title because it isn't equatable
         if let selectedProfileGroup = self.selectedProfileGroup, selectedProfileGroup.title == item.title {
             reloadTableView()
         }
     }
-
+    
     
     // MARK: -
     // MARK: TableView Actions
@@ -115,35 +115,137 @@ class MainWindowTableViewController: NSObject, MainWindowOutlineViewSelectionDel
     // MARK: -
     // MARK: Notification Functions
     
-    func didRemoveProfile(_ notification: NSNotification) {
-        Swift.print("didRemoveProfiles")
+    func didRemoveProfilesFromGroup(_ notification: NSNotification?) {
+        if let userInfo = notification?.userInfo,
+            let indexSet = userInfo[NotificationKey.indexSet] as? IndexSet,
+            let profileIdentifiers = self.selectedProfileGroup?.profileIdentifiers,
+            !profileIdentifiers.isEmpty {
+            
+            var newIndex = (indexSet.last! - indexSet.count)
+            if newIndex < 0 { newIndex = 0 }
+            
+            self.tableView.reloadData()
+            self.tableView.selectRowIndexes(IndexSet(integer: newIndex), byExtendingSelection: false)
+        }
+        
+        self.tableViewSelectionDidChange(Notification(name: .emptyNotification))
     }
     
-    func exportProfile(_ notification: NSNotification) {
+    func exportProfile(_ notification: NSNotification?) {
         Swift.print("exportProfile")
     }
     
-    func didSaveProfile(_ notification: NSNotification) {
+    func didSaveProfile(_ notification: NSNotification?) {
         reloadTableView()
     }
     
     // -------------------------------------------------------------------------
     //  Convenience method to reaload data in table view and keep current selection
     // -------------------------------------------------------------------------
-    func reloadTableView() {
-        let selectedRowIndexes = self.tableView.selectedRowIndexes
+    fileprivate func reloadTableView(updateSelection: Bool = true) {
+        
+        var rowIndexesToSelect: IndexSet?
+        
+        // ---------------------------------------------------------------------
+        //  Verify that the group has atleast one identifier, else just reload and don't select anything
+        // ---------------------------------------------------------------------
+        guard let groupProfileIdentifiers = self.selectedProfileGroup?.profileIdentifiers, !groupProfileIdentifiers.isEmpty else {
+            self.tableView.reloadData()
+            return
+        }
+        
+        // ---------------------------------------------------------------------
+        //  Get the indexes of the currently selected profile(s)
+        // ---------------------------------------------------------------------
+        if let selectedIdentifiers = self.selectedProfileIdentitifers {
+            rowIndexesToSelect = groupProfileIdentifiers.indexes(ofItems: selectedIdentifiers)
+        }
+        
         self.tableView.reloadData()
-        self.tableView.selectRowIndexes(selectedRowIndexes, byExtendingSelection: false)
+        
+        // ---------------------------------------------------------------------
+        //  Select all currently selected profiles that exist in the group
+        // ---------------------------------------------------------------------
+        if let indexes = rowIndexesToSelect {
+            self.updateSelectedProfileIdentifiers = updateSelection
+            self.tableView.selectRowIndexes(indexes, byExtendingSelection: false)
+        }
     }
     
-    func removeItems(atIndexes: IndexSet) {
+    func removeItems(atIndexes: IndexSet, withIdentifiers: [UUID]) {
         if let selectedProfileGroup = self.selectedProfileGroup {
-            selectedProfileGroup.removeProfiles(atIndexes: atIndexes)
+            selectedProfileGroup.removeProfiles(atIndexes: atIndexes, withIdentifiers: withIdentifiers)
         }
     }
     
     func shouldRemoveItems(atIndexes: IndexSet) {
-        Swift.print("shouldRemoveItems: \(atIndexes)")
+        
+        // ---------------------------------------------------------------------
+        //  Verify there is a mainWindow present
+        // ---------------------------------------------------------------------
+        guard 0 < atIndexes.count,
+            let mainWindow = NSApplication.shared().mainWindow,
+            let selectedProfileGroup = self.selectedProfileGroup else {
+                return
+        }
+        
+        // ---------------------------------------------------------------------
+        //  Create the alert message depending on how may groups were selected
+        //  Currently only one is allowed to be selected, that might change in a future release.
+        // ---------------------------------------------------------------------
+        var identifiers = [UUID]()
+        var alertMessage = ""
+        var alertInformativeText = ""
+        
+        if selectedProfileGroup is MainWindowAllProfilesGroup {
+            if atIndexes.count == 1 {
+                let identifier = selectedProfileGroup.profileIdentifiers[atIndexes.first!]
+                identifiers.append(identifier)
+                
+                let title = ProfileController.shared.titleOfProfile(withIdentifier: identifier)
+                alertMessage = NSLocalizedString("Are you sure you want to delete the profile \"\(title ?? identifier.uuidString)\"?", comment: "")
+                alertInformativeText = NSLocalizedString("This cannot be undone", comment: "")
+            } else {
+                alertMessage = NSLocalizedString("Are you sure you want to delete the following profiles?", comment: "")
+                for index in atIndexes {
+                    let identifier = selectedProfileGroup.profileIdentifiers[index]
+                    identifiers.append(identifier)
+                    
+                    let title = ProfileController.shared.titleOfProfile(withIdentifier: identifier)
+                    alertInformativeText = alertInformativeText + "\t\(title ?? identifier.uuidString)\n"
+                }
+                alertInformativeText = alertInformativeText + NSLocalizedString("\nThis cannot be undone", comment: "")
+            }
+        } else {
+            if atIndexes.count == 1 {
+                let identifier = selectedProfileGroup.profileIdentifiers[atIndexes.first!]
+                identifiers.append(identifier)
+                
+                let title = ProfileController.shared.titleOfProfile(withIdentifier: identifier)
+                alertMessage = NSLocalizedString("Are you sure you want to remove the profile \"\(title ?? identifier.uuidString)\" from group \"\(selectedProfileGroup.title)\"?", comment: "")
+                alertInformativeText = NSLocalizedString("The profile will still be available under \"All Profiles\"", comment: "")
+            } else {
+                alertMessage = NSLocalizedString("Are you sure you want to remove the following profiles from group \"\(selectedProfileGroup.title)\"?", comment: "")
+                for index in atIndexes {
+                    let identifier = selectedProfileGroup.profileIdentifiers[index]
+                    identifiers.append(identifier)
+                    
+                    let title = ProfileController.shared.titleOfProfile(withIdentifier: identifier)
+                    alertInformativeText = alertInformativeText + "\t\(title ?? identifier.uuidString)\n"
+                }
+                alertInformativeText = alertInformativeText + NSLocalizedString("\nAll profiles will still be available under \"All Profiles\"", comment: "")
+            }
+        }
+        
+        // ---------------------------------------------------------------------
+        //  Show remove profile alert to user
+        // ---------------------------------------------------------------------
+        self.alert = Alert()
+        self.alert?.showAlertDelete(message: alertMessage, informativeText: alertInformativeText, window: mainWindow, shouldDelete: { (delete) in
+            if delete {
+                self.removeItems(atIndexes: atIndexes, withIdentifiers: identifiers)
+            }
+        })
     }
     
     func profileIdentifier(atRow: Int) -> UUID? {
@@ -151,6 +253,13 @@ class MainWindowTableViewController: NSObject, MainWindowOutlineViewSelectionDel
             return selectedProfileGroup.profileIdentifiers[atRow]
         }
         return nil
+    }
+}
+
+extension Array where Element: Equatable {
+    
+    func indexes(ofItems items: [Element]) -> IndexSet?  {
+        return IndexSet(self.enumerated().flatMap { items.contains($0.element) ? $0.offset : nil })
     }
 }
 
@@ -169,7 +278,7 @@ extension MainWindowTableViewController: NSTableViewDataSource {
     
     func tableView(_ tableView: NSTableView, updateDraggingItemsForDrag draggingInfo: NSDraggingInfo) {
         if let draggingData = draggingInfo.draggingPasteboard().data(forType: DraggingType.profile),
-           let profileIdentifiers = NSKeyedUnarchiver.unarchiveObject(with: draggingData) as? [UUID] {
+            let profileIdentifiers = NSKeyedUnarchiver.unarchiveObject(with: draggingData) as? [UUID] {
             draggingInfo.numberOfValidItemsForDrop = profileIdentifiers.count
         }
     }
@@ -204,35 +313,18 @@ extension MainWindowTableViewController: NSTableViewDataSource {
             }
             
             // -----------------------------------------------------------------
-            //  Get the index of the last profile in the passed array
-            // -----------------------------------------------------------------
-            guard let lastProfileUUID = profileIdentifiers.last, let lastProfileIndex = selectedProfileGroup.profileIdentifiers.index(of: lastProfileUUID) else {
-                return
-            }
-            
-            // -----------------------------------------------------------------
             //  Remove the passed profile identifiers from the current group
             // -----------------------------------------------------------------
-            selectedProfileGroup.removeProfiles(identifiers: profileIdentifiers)
+            selectedProfileGroup.removeProfiles(withIdentifiers: profileIdentifiers)
             
-            // -----------------------------------------------------------------
-            //  !! Do not call the custom method reloadTableView() here !!
-            //  Use the default method to be able to make a nice selection transition
-            // -----------------------------------------------------------------
-            self.tableView.reloadData()
-            
-            // -----------------------------------------------------------------
-            //  Select a new profile after passed profiles were deleted
-            // -----------------------------------------------------------------
-            let newIndex = (lastProfileIndex - profileIdentifiers.count)
-            if 0 < newIndex {
-                self.tableView.selectRowIndexes(IndexSet(integer: newIndex), byExtendingSelection: false)
-            } else {
-                self.tableViewSelectionDidChange(Notification(name: .emptyNotification))
-            }
+            reloadTableView()
         }
     }
 }
+
+// FIXME: A "bug" where if you select 4 profiles in one group, then select another group where only 1 profile of the four is present, 
+// then if you clikc that profile when it's selected the selection doesnt change, as it is the only selection, even if the internal selection state is 4 and won't change.
+// You need to clik another profile or outside to get the selection to update. This should be fixed
 
 extension MainWindowTableViewController: NSTableViewDelegate {
     
@@ -245,28 +337,28 @@ extension MainWindowTableViewController: NSTableViewDelegate {
             return nil
         }
         
-        // TODO: Implement when profile controller exists
-        // let identifier = selectedProfileGroup.profileIdentifiers[row]
-        // let profile = ...
-        let profile = "Profile"
+        let identifier = selectedProfileGroup.profileIdentifiers[row]
+        let profileName = ProfileController.shared.titleOfProfile(withIdentifier: identifier) ?? "UNKNOWN PROFILE"
+        let payloadCount = 1 // TODO: Implement when profile export exists
         
-        // TODO: Implement when profile export exists
-        let payloadSettings = 1
-        
-        let profileName = !profile.isEmpty ? profile : StringConstant.defaultProfileName
-        let profileUUID = UUID()
-        
-        return self.cellView.cellView(title: profileName, identifier: profileUUID, payloadCount: payloadSettings, errorCount: 0)
+        return self.cellView.cellView(title: profileName, identifier: identifier, payloadCount: payloadCount, errorCount: 0)
     }
     
     func tableViewSelectionDidChange(_ notification: Notification) {
-        guard let profileIdentifiers = self.selectedProfileGroup?.profileIdentifiers as NSArray?,
-            let selectedProfileIdentifiers = profileIdentifiers.objects(at: self.tableView.selectedRowIndexes) as? [UUID] else {
-            return
+        if self.updateSelectedProfileIdentifiers {
+            guard let profileIdentifiers = self.selectedProfileGroup?.profileIdentifiers as NSArray?,
+                let selectedProfileIdentifiers = profileIdentifiers.objects(at: self.tableView.selectedRowIndexes) as? [UUID] else {
+                    return
+            }
+            
+            self.selectedProfileIdentitifers = selectedProfileIdentifiers
+            
+            // FIXME: Replace this with a delegate call maybe? If it's only there to update selection of the preview
+            NotificationCenter.default.post(name: .didChangeProfileSelection, object: self, userInfo: [NotificationKey.identifiers : selectedProfileIdentifiers,
+                                                                                                       NotificationKey.indexSet : self.tableView.selectedRowIndexes])
+        } else {
+            self.updateSelectedProfileIdentifiers = true
         }
-        
-        self.selectedProfileIdentitifers = selectedProfileIdentifiers
-        NotificationCenter.default.post(name: .didChangeProfileSelection, object: self, userInfo: ["ProfileIdentifiers" : selectedProfileIdentifiers, "IndexSet" : self.tableView.selectedRowIndexes])
     }
 }
 
@@ -308,7 +400,7 @@ class MainWindowTableView: NSTableView {
         // ---------------------------------------------------------------------
         guard let delegate = self.delegate as? MainWindowTableViewDelegate,
             let clickedProfileIdentifier = delegate.profileIdentifier(atRow: self.clickedProfileRow) else {
-            return nil
+                return nil
         }
         
         self.clickedProfile = clickedProfileIdentifier
@@ -316,13 +408,13 @@ class MainWindowTableView: NSTableView {
         
         /*
          TODO: Here I wanted to draw the blue focus ring around the views affected by the right click action.
-               It should do that by defaut (?) but doesn't. I haven't found a good way to force that either.
+         It should do that by defaut (?) but doesn't. I haven't found a good way to force that either.
          
-        if let clickedView = self.rowView(atRow: self.clickedProfileRow, makeIfNecessary: false) {
-            clickedView.focusRingType = .exterior
-            Swift.print("clickedView: \(clickedView)")
-        }
-        */
+         if let clickedView = self.rowView(atRow: self.clickedProfileRow, makeIfNecessary: false) {
+         clickedView.focusRingType = .exterior
+         Swift.print("clickedView: \(clickedView)")
+         }
+         */
         
         // ---------------------------------------------------------------------
         //  Create menu
@@ -379,7 +471,7 @@ class MainWindowTableView: NSTableView {
     }
     
     func removeSelectedProfiles(_ sender: Any?) {
-
+        
         // ---------------------------------------------------------------------
         //  Verify the delegate is set and is a MainWindowTableViewDelegate
         //  Depending on who is calling the function, get the selected items separately

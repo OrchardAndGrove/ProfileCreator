@@ -74,44 +74,59 @@ class MainWindowAllProfilesGroup: NSObject, OutlineViewChildItem {
         //  Add all saved profiles to this group
         // ---------------------------------------------------------------------
         if let profileIdentifiers = ProfileController.shared.profileIdentifiers() {
-            self.addProfiles(identifiers: profileIdentifiers)
+            self.addProfiles(withIdentifiers: profileIdentifiers)
         }
         
         // ---------------------------------------------------------------------
         //  Setup Notification Observers
         // ---------------------------------------------------------------------
-        NotificationCenter.default.addObserver(self, selector: #selector(didRemoveProfile(_:)), name: .didRemoveProfile, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didRemoveProfiles(_:)), name: .didRemoveProfiles, object: nil)
     }
     
     deinit {
-        NotificationCenter.default.removeObserver(self, name: .didRemoveProfile, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .didRemoveProfiles, object: nil)
     }
         
     // MARK: -
     // MARK: Notification Functions
     
-    func didRemoveProfile(_ notification: NSNotification) {
-        Swift.print("didRemoveProfiles")
-        
-        // ---------------------------------------------------------------------
-        //  Remove the passed identifiers
-        // ---------------------------------------------------------------------
-        //self.profileIdentifiers = Array(Set(self.profileIdentifiers).subtracting(identifiers))
+    func didRemoveProfiles(_ notification: NSNotification?) {
+        if let userInfo = notification?.userInfo,
+            let identifiers = userInfo[NotificationKey.identifiers] as? [UUID] {
+            
+            // -----------------------------------------------------------------
+            //  Remove the passed identifiers
+            // -----------------------------------------------------------------
+            self.profileIdentifiers = Array(Set(self.profileIdentifiers).subtracting(identifiers))
+            
+            // -----------------------------------------------------------------
+            //  Post notification that a grop removed profiles
+            // -----------------------------------------------------------------
+            NotificationCenter.default.post(name: .didRemoveProfilesFromGroup, object: self, userInfo: [NotificationKey.identifiers : identifiers])
+            
+            // -----------------------------------------------------------------
+            //  If profileIdentifiers are empyty, post notification that no profiles are configured
+            // -----------------------------------------------------------------
+            if self.profileIdentifiers.isEmpty {
+                NotificationCenter.default.post(name: .noProfileConfigured, object: self)
+            }
+        }
     }
     
     // MARK: -
     // MARK: OutlineViewChildItem Functions
     
-    func addProfiles(identifiers: [UUID]) {
+    func addProfiles(withIdentifiers identifiers: [UUID]) {
         self.profileIdentifiers = Array(Set(self.profileIdentifiers + identifiers))
     }
     
-    func removeProfiles(identifiers: [UUID]) {
-        fatalError("All Profiles should never call removeProfiles(identifiers:)")
+    func removeProfiles(withIdentifiers: [UUID]) {
+        fatalError("All Profiles should never call removeProfiles(withIdentifiers:)")
+        //ProfileController.shared.removeProfiles(withIdentifiers: withIdentifiers)
     }
     
-    func removeProfiles(atIndexes: IndexSet) {
-        fatalError("All Profiles should never call removeProfiles(atIndexes:)")
+    func removeProfiles(atIndexes: IndexSet, withIdentifiers: [UUID]) {
+        ProfileController.shared.removeProfiles(atIndexes: atIndexes, withIdentifiers: withIdentifiers)
     }
     
     func removeFromDisk() -> (Bool, Error?) {

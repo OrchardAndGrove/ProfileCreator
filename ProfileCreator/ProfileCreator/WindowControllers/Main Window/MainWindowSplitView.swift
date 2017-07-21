@@ -58,20 +58,30 @@ class MainWindowSplitView: NSSplitView {
         setupSplitViewWelcomeView(constraints: &constraints)
         
         // ---------------------------------------------------------------------
-        //  Setup delegate connections
-        // ---------------------------------------------------------------------
-        self.outlineViewController.selectionDelegate = self.tableViewController
-        
-        // ---------------------------------------------------------------------
         //  Activate layout constraints
         // ---------------------------------------------------------------------
         NSLayoutConstraint.activate(constraints)
         
         // ---------------------------------------------------------------------
+        //  Setup delegate connections
+        // ---------------------------------------------------------------------
+        self.outlineViewController.selectionDelegate = self.tableViewController
+        
+        // ---------------------------------------------------------------------
+        //  Setup Notification Observers
+        // ---------------------------------------------------------------------
+        NotificationCenter.default.addObserver(self, selector: #selector(noProfileConfigured(_:)), name: .noProfileConfigured, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didAddProfile(_:)), name: .didAddProfile, object: nil)
+        
+        // ---------------------------------------------------------------------
+        //  Select "All Profiles"
+        // ---------------------------------------------------------------------
+        self.outlineViewController.outlineView.selectRowIndexes(IndexSet(integer: 1), byExtendingSelection: false)
+        
+        // ---------------------------------------------------------------------
         //  If no profile identifiers are loaded, show welcome view
         // ---------------------------------------------------------------------
-        // TODO: Implement when profile controller is added
-        // self.noProfileConfigured(notification: nil)
+        self.noProfileConfigured(nil)
         
         // ---------------------------------------------------------------------
         //  Restore AutoSaved positions, as this isn't done automatically when using AutoLayout
@@ -81,17 +91,30 @@ class MainWindowSplitView: NSSplitView {
         // restoreAutoSavePositions()
     }
     
-    // MARK: -
-    // MARK: Private Functions
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: .noProfileConfigured, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .didAddProfile, object: nil)
+    }
     
-    private func noProfileConfigured(_ notification: NSNotification?) {
+    // MARK: -
+    // MARK: Notification Functions
+    
+    func noProfileConfigured(_ notification: NSNotification?) {
         if !self.subviews.contains(self.welcomeViewController.view) {
             self.tableViewController.scrollView.removeFromSuperview()
             self.profilePreviewController.view.removeFromSuperview()
-            self.addSubview(self.welcomeViewController.view,
-                            positioned: .above,
-                            relativeTo: self.outlineViewController.scrollView)
+            self.addSubview(self.welcomeViewController.view)
             self.setHoldingPriority(NSLayoutPriorityDefaultLow, forSubviewAt: 1)
+        }
+    }
+    
+    func didAddProfile(_ notification: NSNotification?) {
+        if !self.subviews.contains(self.tableViewController.scrollView) {
+            self.welcomeViewController.view.removeFromSuperview()
+            self.addSubview(self.tableViewController.scrollView)
+            self.setHoldingPriority(NSLayoutPriorityDefaultLow, forSubviewAt: 1)
+            self.addSubview(self.profilePreviewController.view)
+            self.setHoldingPriority((NSLayoutPriorityDefaultLow - 1 ), forSubviewAt: 2)
         }
     }
     

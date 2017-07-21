@@ -61,19 +61,40 @@ class PreferencesGeneralView: NSView {
         var frameHeight: CGFloat = 0.0
         var lastSubview: NSView?
         
-        lastSubview = add(title: "Sidebar",
-                          withSeparator: true,
-                          toView: self,
-                          lastSubview: nil,
-                          height: &frameHeight,
-                          constraints: &constraints)
+        // ---------------------------------------------------------------------
+        //  Add Preferences "Sidebar"
+        // ---------------------------------------------------------------------
+        lastSubview = addHeader(title: "Sidebar",
+                                withSeparator: true,
+                                toView: self,
+                                lastSubview: nil,
+                                height: &frameHeight,
+                                constraints: &constraints)
         
-        lastSubview = add(title: "Logging",
-                          withSeparator: true,
-                          toView: self,
-                          lastSubview: lastSubview,
-                          height: &frameHeight,
-                          constraints: &constraints)
+        lastSubview = addCheckbox(title: "Show Profile Count",
+                                  keyPath: PreferenceKey.showProfileCount,
+                                  toView: self,
+                                  lastSubview: lastSubview,
+                                  height: &frameHeight,
+                                  constraints: &constraints)
+        
+        lastSubview = addCheckbox(title: "Show Group Icons",
+                                  keyPath: PreferenceKey.showGroupIcons,
+                                  toView: self,
+                                  lastSubview: lastSubview,
+                                  height: &frameHeight,
+                                  constraints: &constraints)
+        
+        // ---------------------------------------------------------------------
+        //  Add Preferences "Logging"
+        // ---------------------------------------------------------------------
+        
+        lastSubview = addHeader(title: "Logging",
+                                withSeparator: true,
+                                toView: self,
+                                lastSubview: lastSubview,
+                                height: &frameHeight,
+                                constraints: &constraints)
         
         // ---------------------------------------------------------------------
         //  Add constraints to last view

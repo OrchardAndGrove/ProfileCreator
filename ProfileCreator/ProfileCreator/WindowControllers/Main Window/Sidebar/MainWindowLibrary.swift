@@ -39,12 +39,12 @@ class MainWindowLibrary: NSObject, OutlineViewParentItem, NSTextFieldDelegate {
         //  Setup Notification Observers
         // ---------------------------------------------------------------------
         NotificationCenter.default.addObserver(self, selector: #selector(addGroup(_:)), name: .addGroup, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(didRemoveProfile(_:)), name: .didRemoveProfile, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didRemoveProfiles(_:)), name: .didRemoveProfiles, object: nil)
     }
     
     deinit {
         NotificationCenter.default.removeObserver(self, name: .didAddGroup, object: nil)
-        NotificationCenter.default.removeObserver(self, name: .didRemoveProfile, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .didRemoveProfiles, object: nil)
     }
     
     // MARK: -
@@ -111,7 +111,7 @@ class MainWindowLibrary: NSObject, OutlineViewParentItem, NSTextFieldDelegate {
         let group = MainWindowLibraryGroup(title: title, identifier: identifier, parent: self)
         
         if let identifiers = profileIdentifiers {
-            group.addProfiles(identifiers: identifiers)
+            group.addProfiles(withIdentifiers: identifiers)
         }
         
         let (result, error) = group.writeToDisk(title: title)
@@ -169,8 +169,13 @@ class MainWindowLibrary: NSObject, OutlineViewParentItem, NSTextFieldDelegate {
         self.alert!.textFieldInput!.selectText(self)
     }
     
-    func didRemoveProfile(_ notification: NSNotification?) {
-        print("didRemoveProfile")
+    func didRemoveProfiles(_ notification: NSNotification?) {
+        if let userInfo = notification?.userInfo,
+            let identifiers = userInfo[SettingsKey.identifiers] as? [UUID] {
+            for child in children {
+                child.removeProfiles(withIdentifiers: identifiers)
+            }
+        }
     }
     
     // MARK: -
@@ -243,6 +248,7 @@ class MainWindowLibraryGroup: NSObject, OutlineViewChildItem {
     
     // MARK: -
     // MARK: Instance Functions
+    
     func writeToDisk(title: String) -> (Bool, Error?) {
         
         // ---------------------------------------------------------------------
@@ -295,22 +301,30 @@ class MainWindowLibraryGroup: NSObject, OutlineViewChildItem {
     
     private func url() -> (URL?, Error?) {
         
+        // ---------------------------------------------------------------------
+        //  Get path to group save folder
+        // ---------------------------------------------------------------------
         if let groupFolderURL = applicationFolder(Folder.groupLibrary) {
             do {
+                
+                // -------------------------------------------------------------
+                //  Try to create the folder if it doesn't exist
+                // -------------------------------------------------------------
                 try FileManager.default.createDirectory(at: groupFolderURL, withIntermediateDirectories: true, attributes: nil)
                 return (groupFolderURL.appendingPathComponent(self.identifier.uuidString).appendingPathExtension(FileExtension.group), nil)
             } catch {
                 return (nil, error)
             }
+        } else {
+            // TODO: Proper logging
+            return (nil, nil)
         }
-        
-        return (nil, nil)
     }
     
     // MARK: -
     // MARK: OutlineViewChildItem Functions
     
-    func addProfiles(identifiers: [UUID]) {
+    func addProfiles(withIdentifiers identifiers: [UUID]) {
         
         // ---------------------------------------------------------------------
         //  Add the passed identifiers
@@ -320,43 +334,55 @@ class MainWindowLibraryGroup: NSObject, OutlineViewChildItem {
         // ---------------------------------------------------------------------
         //  Save the new group contents to disk
         // ---------------------------------------------------------------------
-        writeToDisk(title: self.title)
+        let (success, error) = writeToDisk(title: self.title)
+        if !success {
+            // TODO: Proper logging
+            Swift.print("error: \(String(describing: error))")
+        }
     }
     
-    func removeProfiles(identifiers: [UUID]) {
+    func removeProfiles(withIdentifiers: [UUID]) {
         
         // ---------------------------------------------------------------------
         //  Remove the passed identifiers
         // ---------------------------------------------------------------------
-        self.profileIdentifiers = Array(Set(self.profileIdentifiers).subtracting(identifiers))
+        self.profileIdentifiers = Array(Set(self.profileIdentifiers).subtracting(withIdentifiers))
         
         // ---------------------------------------------------------------------
         //  Save the new group contents to disk
         // ---------------------------------------------------------------------
-        writeToDisk(title: self.title)
+        let (success, error) = writeToDisk(title: self.title)
+        if !success {
+            // TODO: Proper logging
+            Swift.print("error: \(String(describing: error))")
+        }
         
         // ---------------------------------------------------------------------
         //  Post notification that a grop removed profiles
         // ---------------------------------------------------------------------
-        NotificationCenter.default.post(name: .didRemoveProfile, object: self)
+        NotificationCenter.default.post(name: .didRemoveProfilesFromGroup, object: self, userInfo: [NotificationKey.identifiers : withIdentifiers])
     }
     
-    func removeProfiles(atIndexes: IndexSet) {
+    func removeProfiles(atIndexes: IndexSet, withIdentifiers: [UUID]) {
         
         // ---------------------------------------------------------------------
-        //  Remove from the passed indexes
+        //  Remove the passed identifiers
         // ---------------------------------------------------------------------
-        // TODO: Implement
+        self.profileIdentifiers = Array(Set(self.profileIdentifiers).subtracting(withIdentifiers))
         
         // ---------------------------------------------------------------------
         //  Save the new group contents to disk
         // ---------------------------------------------------------------------
-        writeToDisk(title: self.title)
+        let (success, error) = writeToDisk(title: self.title)
+        if !success {
+            // TODO: Proper logging
+            Swift.print("error: \(String(describing: error))")
+        }
         
         // ---------------------------------------------------------------------
         //  Post notification that a grop removed profiles
         // ---------------------------------------------------------------------
-        NotificationCenter.default.post(name: .didRemoveProfile, object: self)
+        NotificationCenter.default.post(name: .didRemoveProfilesFromGroup, object: self, userInfo: [NotificationKey.identifiers : withIdentifiers, NotificationKey.indexSet : atIndexes])
     }
     
     func removeFromDisk() -> (Bool, Error?) {
@@ -399,10 +425,11 @@ class MainWindowLibraryGroup: NSObject, OutlineViewChildItem {
             let fieldEditor = userInfo["NSFieldEditor"] as? NSTextView,
             let string = fieldEditor.textStorage?.string,
             !string.isEmpty {
-            let (result, error) = writeToDisk(title: string)
-            if result {
+            let (success, error) = writeToDisk(title: string)
+            if success {
                 self.title = string
             } else {
+                // TODO: Proper logging
                 Swift.print("error: \(String(describing: error))")
             }
         }

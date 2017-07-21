@@ -52,7 +52,7 @@ class MainWindowOutlineViewController: NSObject {
         NotificationCenter.default.addObserver(self, selector: #selector(didAddGroup(_:)), name: .didAddGroup, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(didAddProfile(_:)), name: .didAddProfile, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(didSaveProfile(_:)), name: .didSaveProfile, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(didRemoveProfile(_:)), name: .didRemoveProfile, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didRemoveProfilesFromGroup(_:)), name: .didRemoveProfilesFromGroup, object: nil)
         
         // ---------------------------------------------------------------------
         //  Setup Table Column
@@ -100,18 +100,13 @@ class MainWindowOutlineViewController: NSObject {
         self.outlineView.expandItem(self.parents[0], expandChildren: false)
         self.outlineView.expandItem(self.parents[1], expandChildren: false)
         NSAnimationContext.endGrouping()
-        
-        // ---------------------------------------------------------------------
-        //  Select "All Profiles"
-        // ---------------------------------------------------------------------
-        self.outlineView.selectRowIndexes(IndexSet(integer: 1), byExtendingSelection: false)
     }
     
     deinit {
         NotificationCenter.default.removeObserver(self, name: .didAddGroup, object: nil)
         NotificationCenter.default.removeObserver(self, name: .didAddProfile, object: nil)
         NotificationCenter.default.removeObserver(self, name: .didSaveProfile, object: nil)
-        NotificationCenter.default.removeObserver(self, name: .didRemoveProfile, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .didRemoveProfilesFromGroup, object: nil)
     }
     
     // MARK: -
@@ -151,7 +146,7 @@ class MainWindowOutlineViewController: NSObject {
     // -------------------------------------------------------------------------
     //  Convenience method to reaload data in outline view and keep current selection
     // -------------------------------------------------------------------------
-    private func reloadOutlineView() {
+    fileprivate func reloadOutlineView() {
         let selectedRowIndexes = self.outlineView.selectedRowIndexes
         self.outlineView.reloadData()
         self.outlineView.selectRowIndexes(selectedRowIndexes, byExtendingSelection: false)
@@ -264,14 +259,14 @@ class MainWindowOutlineViewController: NSObject {
         //  Add identifier to the "All Profiles" group
         // ---------------------------------------------------------------------
         if let allProfilesGroup = self.allProfilesGroup {
-            allProfilesGroup.addProfiles(identifiers: [identifier])
+            allProfilesGroup.addProfiles(withIdentifiers: [identifier])
         }
         
         // ---------------------------------------------------------------------
         //  Add identifier to the selected group (If it's not the "All Profiles" group)
         // ---------------------------------------------------------------------
         if !(selectedItem is MainWindowAllProfilesGroup) {
-            selectedItem.addProfiles(identifiers: [identifier])
+            selectedItem.addProfiles(withIdentifiers: [identifier])
         }
         
         // ---------------------------------------------------------------------
@@ -280,6 +275,8 @@ class MainWindowOutlineViewController: NSObject {
         if let delegateMethod = self.selectionDelegate?.updated {
             delegateMethod(selectedItem, self)
         }
+        
+        reloadOutlineView()
     }
     
     func didSaveProfile(_ notification: NSNotification?) {
@@ -290,7 +287,7 @@ class MainWindowOutlineViewController: NSObject {
         reloadOutlineView()
     }
     
-    func didRemoveProfile(_ notification: NSNotification?) {
+    func didRemoveProfilesFromGroup(_ notification: NSNotification?) {
         
         // ---------------------------------------------------------------------
         //  Reload outline view when a profile was removed
@@ -340,8 +337,9 @@ extension MainWindowOutlineViewController: NSOutlineViewDataSource {
             return false
         }
         
-        if let outlineViewChildItem = item as? OutlineViewChildItem {
-            outlineViewChildItem.addProfiles(identifiers: profileIdentifiers)
+        if let child = item as? OutlineViewChildItem {
+            child.addProfiles(withIdentifiers: profileIdentifiers)
+            reloadOutlineView()
             return true
         }
         
@@ -407,6 +405,7 @@ extension MainWindowOutlineViewController: NSOutlineViewDelegate {
         if let parent = item as? OutlineViewParentItem {
             return parent.cellView
         } else if let child = item as? OutlineViewChildItem {
+            child.cellView?.updateView()
             return child.cellView
         }
         return nil
@@ -441,25 +440,22 @@ extension MainWindowOutlineViewController: MainWindowOutlineViewDelegate {
         //  Create the alert message depending on how may groups were selected
         //  Currently only one is allowed to be selected, that might change in a future release.
         // ---------------------------------------------------------------------
-        var alertMessage: String?
+        var alertMessage = ""
         
         if atIndexes.count == 1 {
-            guard let row = atIndexes.first,
-                let item = self.outlineView.item(atRow: row) as? OutlineViewChildItem,
-                !item.isEditing else {
-                    return
+            if let row = atIndexes.first, let item = self.outlineView.item(atRow: row) as? OutlineViewChildItem, !item.isEditing {
+                alertMessage = NSLocalizedString("Are you sure you want to delete the group: \"\(item.title)\"?", comment: "")
+            } else {
+                return
             }
-            
-            alertMessage = NSLocalizedString("Are you sure you want to delete the group: \"\(item.title)\"", comment: "")
         } else {
             alertMessage = NSLocalizedString("Are you sure you want to delete the following groups:\n", comment: "")
             for row in atIndexes {
-                guard let item = self.outlineView.item(atRow: row) as? OutlineViewChildItem,
-                    !item.isEditing else {
-                        return
+                if let item = self.outlineView.item(atRow: row) as? OutlineViewChildItem, !item.isEditing {
+                    alertMessage = alertMessage + "\t\(item.title)\n"
+                } else {
+                    return
                 }
-                
-                alertMessage = alertMessage! + "\t\(item.title)\n"
             }
         }
         
@@ -469,12 +465,11 @@ extension MainWindowOutlineViewController: MainWindowOutlineViewDelegate {
         //  Show remove group alert to user
         // ---------------------------------------------------------------------
         self.alert = Alert()
-        self.alert?.showAlertDelete(message: alertMessage!, informativeText: alertInformativeText, window: mainWindow, shouldDelete: { (delete) in
+        self.alert?.showAlertDelete(message: alertMessage, informativeText: alertInformativeText, window: mainWindow, shouldDelete: { (delete) in
             if delete {
                 self.removeItems(atIndexes: atIndexes)
             }
         })
-        
     }
     
 }

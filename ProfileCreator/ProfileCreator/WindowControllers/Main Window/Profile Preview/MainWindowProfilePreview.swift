@@ -46,7 +46,7 @@ class MainWindowProfilePreviewController: NSObject {
 
     func didChangeProfileSelection(_ notification: NSNotification?) {
         if let userInfo = notification?.userInfo,
-            let profileIdentifiers = userInfo["ProfileIdentifiers"] as? [UUID] {
+            let profileIdentifiers = userInfo[NotificationKey.identifiers] as? [UUID] {
             
             if profileIdentifiers.count == 1 {
                 self.previewViewController.updateSelection(profile: profileIdentifiers.first?.uuidString ?? "Temporary")

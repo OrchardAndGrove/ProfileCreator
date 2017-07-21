@@ -9,6 +9,7 @@
 import Foundation
 
 let preferencesWindowWidth: CGFloat = 450.0
+let preferencesIndent: CGFloat = 40.0
 
 extension Notification.Name {
     static let addGroup = Notification.Name("addGroup")
@@ -16,7 +17,8 @@ extension Notification.Name {
     static let didAddGroup = Notification.Name("didAddGroup")
     static let didAddProfile = Notification.Name("didAddProfile")
     static let didChangeProfileSelection = Notification.Name("didChangeProfileSelection")
-    static let didRemoveProfile = Notification.Name("didRemoveProfile")
+    static let didRemoveProfiles = Notification.Name("didRemoveProfiles")
+    static let didRemoveProfilesFromGroup = Notification.Name("didRemoveProfilesFromGroup")
     static let didSaveProfile = Notification.Name("didSaveProfile")
     static let emptyNotification = Notification.Name("emptyNotification")
     static let exportProfile = Notification.Name("exportProfile")
@@ -38,7 +40,7 @@ struct FileExtension {
 
 // This needs to be renamed after more items are added, to make it easier to understand and use.
 struct StringConstant {
-    static let defaultProfileName = "Untitle"
+    static let defaultProfileName = "Untitled"
 }
 
 struct DraggingType {
@@ -47,10 +49,12 @@ struct DraggingType {
 
 struct NotificationKey {
     static let identifier = "Identifier"
+    static let identifiers = "Identifiers"
+    static let indexSet = "IndexSet"
     static let parentTitle = "ParentTitle"
 }
 
-struct Defaults {
+struct PreferenceKey {
     static let organization = ""
     static let showProfileCount = "ShowProfileCount"
     static let showGroupIcons = "ShowGroupIcons"
