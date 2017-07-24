@@ -84,7 +84,7 @@ class MainWindowTableViewController: NSObject, MainWindowOutlineViewSelectionDel
     }
     
     deinit {
-        NotificationCenter.default.removeObserver(self, name: .didRemoveProfiles, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .didRemoveProfilesFromGroup, object: nil)
         NotificationCenter.default.removeObserver(self, name: .didSaveProfile, object: nil)
         NotificationCenter.default.removeObserver(self, name: .exportProfile, object: nil)
     }
@@ -98,8 +98,8 @@ class MainWindowTableViewController: NSObject, MainWindowOutlineViewSelectionDel
     }
     
     func updated(item: OutlineViewChildItem, sender: Any?) {
-        // TODO: Another weak check using the title because it isn't equatable
-        if let selectedProfileGroup = self.selectedProfileGroup, selectedProfileGroup.title == item.title {
+        // TODO: Another weak check using the identifier because it isn't equatable
+        if let selectedProfileGroup = self.selectedProfileGroup, selectedProfileGroup.identifier == item.identifier {
             reloadTableView()
         }
     }
@@ -109,13 +109,23 @@ class MainWindowTableViewController: NSObject, MainWindowOutlineViewSelectionDel
     // MARK: TableView Actions
     
     func editProfile(tableView: NSTableView) {
-        print("editProfile")
+        if 0 <= self.tableView.clickedRow, let identifier = self.profileIdentifier(atRow: self.tableView.clickedRow), let profile = ProfileController.shared.profile(withIdentifier: identifier) {
+            profile.edit()
+        } else {
+            // TODO: Proper logging
+            Swift.print("Found no identifier!")
+        }
     }
+    
     
     // MARK: -
     // MARK: Notification Functions
     
     func didRemoveProfilesFromGroup(_ notification: NSNotification?) {
+        guard let group = notification?.object as? OutlineViewChildItem, group.identifier == self.selectedProfileGroup?.identifier else {
+            return
+        }
+        
         if let userInfo = notification?.userInfo,
             let indexSet = userInfo[NotificationKey.indexSet] as? IndexSet,
             let profileIdentifiers = self.selectedProfileGroup?.profileIdentifiers,
@@ -143,7 +153,6 @@ class MainWindowTableViewController: NSObject, MainWindowOutlineViewSelectionDel
     //  Convenience method to reaload data in table view and keep current selection
     // -------------------------------------------------------------------------
     fileprivate func reloadTableView(updateSelection: Bool = true) {
-        
         var rowIndexesToSelect: IndexSet?
         
         // ---------------------------------------------------------------------
@@ -298,7 +307,7 @@ extension MainWindowTableViewController: NSTableViewDataSource {
         if operation == .move {
             
             // -----------------------------------------------------------------
-            //  Verify a group is selected and editable (as we are remove items from this group)
+            //  Verify a group is selected and editable (as we are to remove items from this group)
             // -----------------------------------------------------------------
             guard let selectedProfileGroup = self.selectedProfileGroup, selectedProfileGroup.isEditable else {
                 return
@@ -322,7 +331,7 @@ extension MainWindowTableViewController: NSTableViewDataSource {
     }
 }
 
-// FIXME: A "bug" where if you select 4 profiles in one group, then select another group where only 1 profile of the four is present, 
+// FIXME: A "bug" where if you select 4 profiles in one group, then select another group where only 1 profile of the four is present,
 // then if you clikc that profile when it's selected the selection doesnt change, as it is the only selection, even if the internal selection state is 4 and won't change.
 // You need to clik another profile or outside to get the selection to update. This should be fixed
 
@@ -467,7 +476,10 @@ class MainWindowTableView: NSTableView {
     }
     
     func editProfile(_ sender: NSTableView?) {
-        Swift.print("editProfiles")
+        if let clickedIdentifier = self.clickedProfile,
+            let profile = ProfileController.shared.profile(withIdentifier: clickedIdentifier) {
+            profile.edit()
+        }
     }
     
     func removeSelectedProfiles(_ sender: Any?) {
@@ -494,5 +506,4 @@ extension MainWindowTableView: NSMenuDelegate {
         self.clickedProfile = nil
         self.clickedProfileRow = -1
     }
-    
 }

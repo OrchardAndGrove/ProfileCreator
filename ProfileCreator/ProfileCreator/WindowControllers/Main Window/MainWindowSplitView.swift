@@ -81,7 +81,9 @@ class MainWindowSplitView: NSSplitView {
         // ---------------------------------------------------------------------
         //  If no profile identifiers are loaded, show welcome view
         // ---------------------------------------------------------------------
-        self.noProfileConfigured(nil)
+        if ProfileController.shared.profiles.count == 0 {
+            self.noProfileConfigured(nil)
+        }
         
         // ---------------------------------------------------------------------
         //  Restore AutoSaved positions, as this isn't done automatically when using AutoLayout
@@ -105,6 +107,12 @@ class MainWindowSplitView: NSSplitView {
             self.profilePreviewController.view.removeFromSuperview()
             self.addSubview(self.welcomeViewController.view)
             self.setHoldingPriority(NSLayoutPriorityDefaultLow, forSubviewAt: 1)
+            
+            // -----------------------------------------------------------------
+            //  Remove the internal selection state
+            // -----------------------------------------------------------------
+            // TODO: This should probably be handled elsewhere. Feels like a bug.
+            self.tableViewController.selectedProfileIdentitifers = nil
         }
     }
     
@@ -115,6 +123,11 @@ class MainWindowSplitView: NSSplitView {
             self.setHoldingPriority(NSLayoutPriorityDefaultLow, forSubviewAt: 1)
             self.addSubview(self.profilePreviewController.view)
             self.setHoldingPriority((NSLayoutPriorityDefaultLow - 1 ), forSubviewAt: 2)
+            
+            // -----------------------------------------------------------------
+            //  Select the newly created profile
+            // -----------------------------------------------------------------
+            self.tableViewController.tableView.selectRowIndexes(IndexSet(integer: 0), byExtendingSelection: false)
         }
     }
     

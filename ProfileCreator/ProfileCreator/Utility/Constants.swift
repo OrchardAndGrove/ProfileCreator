@@ -13,7 +13,7 @@ let preferencesIndent: CGFloat = 40.0
 
 extension Notification.Name {
     static let addGroup = Notification.Name("addGroup")
-    static let addProfile = Notification.Name("addProfile")
+    static let newProfile = Notification.Name("newProfile")
     static let didAddGroup = Notification.Name("didAddGroup")
     static let didAddProfile = Notification.Name("didAddProfile")
     static let didChangeProfileSelection = Notification.Name("didChangeProfileSelection")
@@ -27,10 +27,15 @@ extension Notification.Name {
 }
 
 struct ToolbarIdentifier {
+    static let profileEditorTitle = "profileEditorTitle"
     static let mainWindowAdd = NSLocalizedString("Add", comment: "")
     static let mainWindowExport = NSLocalizedString("Export", comment: "")
     static let preferencesWindowGeneral = NSLocalizedString("General", comment: "")
     static let preferencesWindowProfileDefaults = NSLocalizedString("ProfileDefaults", comment: "")
+}
+
+struct TypeName {
+    static let profile = "Profile"
 }
 
 struct FileExtension {

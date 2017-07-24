@@ -14,8 +14,11 @@
 		5315400A1F1233080060011B /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531540091F1233080060011B /* Constants.swift */; };
 		5315400D1F127B340060011B /* MainWindowAllProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5315400C1F127B340060011B /* MainWindowAllProfiles.swift */; };
 		5315400F1F127F280060011B /* MainWindowOutlineViewItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5315400E1F127F280060011B /* MainWindowOutlineViewItems.swift */; };
+		531852061F22907C00529E6B /* ProfileEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531852051F22907C00529E6B /* ProfileEditor.swift */; };
+		531852221F2295B000529E6B /* ProfileEditorSplitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531852211F2295B000529E6B /* ProfileEditorSplitView.swift */; };
 		534732DB1F10C35500770446 /* MainWindowSplitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 534732DA1F10C35500770446 /* MainWindowSplitView.swift */; };
 		534732DD1F10C3BB00770446 /* MainWindowOutlineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 534732DC1F10C3BB00770446 /* MainWindowOutlineView.swift */; };
+		536554DC1F248CA4000543A3 /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536554DB1F248CA4000543A3 /* Error.swift */; };
 		5365F4851F0F4D430064C02A /* MainWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5365F4841F0F4D430064C02A /* MainWindow.swift */; };
 		5365F4881F0F71850064C02A /* MainWindowToolbarItemAdd.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5365F4871F0F71850064C02A /* MainWindowToolbarItemAdd.swift */; };
 		5365F48C1F0F87440064C02A /* downarrow.png in Resources */ = {isa = PBXBuildFile; fileRef = 5365F48B1F0F87440064C02A /* downarrow.png */; };
@@ -23,6 +26,7 @@
 		536DA48E1F11FD9D00FB325E /* MainWindowProfilePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536DA48D1F11FD9D00FB325E /* MainWindowProfilePreview.swift */; };
 		536DA4911F1213AE00FB325E /* MainWindowWelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536DA4901F1213AE00FB325E /* MainWindowWelcomeView.swift */; };
 		536DA4941F12143F00FB325E /* ViewWhite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536DA4931F12143F00FB325E /* ViewWhite.swift */; };
+		5370780D1F232DAA00570090 /* ProfileEditorToolbarItemTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5370780C1F232DAA00570090 /* ProfileEditorToolbarItemTitle.swift */; };
 		538D2C471F1BC73800FF6051 /* PreferencesGeneral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 538D2C461F1BC73800FF6051 /* PreferencesGeneral.swift */; };
 		538D2C491F1BCB2500FF6051 /* PreferencesProfileDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 538D2C481F1BCB2500FF6051 /* PreferencesProfileDefaults.swift */; };
 		538D2C4D1F1C970C00FF6051 /* PreferencesViewElements.swift in Sources */ = {isa = PBXBuildFile; fileRef = 538D2C4C1F1C970C00FF6051 /* PreferencesViewElements.swift */; };
@@ -45,8 +49,11 @@
 		531540091F1233080060011B /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Constants.swift; path = Utility/Constants.swift; sourceTree = "<group>"; };
 		5315400C1F127B340060011B /* MainWindowAllProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowAllProfiles.swift; path = "WindowControllers/Main Window/Sidebar/MainWindowAllProfiles.swift"; sourceTree = "<group>"; };
 		5315400E1F127F280060011B /* MainWindowOutlineViewItems.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowOutlineViewItems.swift; path = "WindowControllers/Main Window/Sidebar/MainWindowOutlineViewItems.swift"; sourceTree = "<group>"; };
+		531852051F22907C00529E6B /* ProfileEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProfileEditor.swift; path = "WindowControllers/Profile Editor/ProfileEditor.swift"; sourceTree = "<group>"; };
+		531852211F2295B000529E6B /* ProfileEditorSplitView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProfileEditorSplitView.swift; path = "WindowControllers/Profile Editor/ProfileEditorSplitView.swift"; sourceTree = "<group>"; };
 		534732DA1F10C35500770446 /* MainWindowSplitView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowSplitView.swift; path = "WindowControllers/Main Window/MainWindowSplitView.swift"; sourceTree = "<group>"; };
 		534732DC1F10C3BB00770446 /* MainWindowOutlineView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowOutlineView.swift; path = "WindowControllers/Main Window/Sidebar/MainWindowOutlineView.swift"; sourceTree = "<group>"; };
+		536554DB1F248CA4000543A3 /* Error.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Error.swift; path = Utility/Error.swift; sourceTree = "<group>"; };
 		5365F4841F0F4D430064C02A /* MainWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindow.swift; path = "WindowControllers/Main Window/MainWindow.swift"; sourceTree = "<group>"; };
 		5365F4871F0F71850064C02A /* MainWindowToolbarItemAdd.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowToolbarItemAdd.swift; path = "WindowControllers/Main Window/Toolbar/MainWindowToolbarItemAdd.swift"; sourceTree = "<group>"; };
 		5365F48B1F0F87440064C02A /* downarrow.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = downarrow.png; path = Graphics/Icons/downarrow.png; sourceTree = "<group>"; };
@@ -54,6 +61,7 @@
 		536DA48D1F11FD9D00FB325E /* MainWindowProfilePreview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowProfilePreview.swift; path = "WindowControllers/Main Window/Profile Preview/MainWindowProfilePreview.swift"; sourceTree = "<group>"; };
 		536DA4901F1213AE00FB325E /* MainWindowWelcomeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowWelcomeView.swift; path = "WindowControllers/Main Window/Welcome View/MainWindowWelcomeView.swift"; sourceTree = "<group>"; };
 		536DA4931F12143F00FB325E /* ViewWhite.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ViewWhite.swift; path = Utility/ViewWhite.swift; sourceTree = "<group>"; };
+		5370780C1F232DAA00570090 /* ProfileEditorToolbarItemTitle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProfileEditorToolbarItemTitle.swift; path = "WindowControllers/Profile Editor/Toolbar/ProfileEditorToolbarItemTitle.swift"; sourceTree = "<group>"; };
 		538D2C461F1BC73800FF6051 /* PreferencesGeneral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PreferencesGeneral.swift; path = WindowControllers/Preferences/PreferencesGeneral.swift; sourceTree = "<group>"; };
 		538D2C481F1BCB2500FF6051 /* PreferencesProfileDefaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PreferencesProfileDefaults.swift; path = WindowControllers/Preferences/PreferencesProfileDefaults.swift; sourceTree = "<group>"; };
 		538D2C4C1F1C970C00FF6051 /* PreferencesViewElements.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PreferencesViewElements.swift; path = WindowControllers/Preferences/PreferencesViewElements.swift; sourceTree = "<group>"; };
@@ -93,6 +101,9 @@
 		5309D3071F1AB254002133A0 /* Profile Editor */ = {
 			isa = PBXGroup;
 			children = (
+				531852051F22907C00529E6B /* ProfileEditor.swift */,
+				531852211F2295B000529E6B /* ProfileEditorSplitView.swift */,
+				5370780B1F232D8500570090 /* Toolbar */,
 			);
 			name = "Profile Editor";
 			sourceTree = "<group>";
@@ -192,8 +203,17 @@
 				531540091F1233080060011B /* Constants.swift */,
 				53DADB4F1F13ACF90045CB3F /* AppResources.swift */,
 				5367E26B1F13ED440027D0D0 /* Alert.swift */,
+				536554DB1F248CA4000543A3 /* Error.swift */,
 			);
 			name = Utility;
+			sourceTree = "<group>";
+		};
+		5370780B1F232D8500570090 /* Toolbar */ = {
+			isa = PBXGroup;
+			children = (
+				5370780C1F232DAA00570090 /* ProfileEditorToolbarItemTitle.swift */,
+			);
+			name = Toolbar;
 			sourceTree = "<group>";
 		};
 		539832051F0EE15400C4792D = {
@@ -315,9 +335,11 @@
 				534732DD1F10C3BB00770446 /* MainWindowOutlineView.swift in Sources */,
 				5315400A1F1233080060011B /* Constants.swift in Sources */,
 				5309D30A1F1AB287002133A0 /* Preferences.swift in Sources */,
+				531852221F2295B000529E6B /* ProfileEditorSplitView.swift in Sources */,
 				5309D3051F1A430F002133A0 /* ProfileController.swift in Sources */,
 				53DADB501F13ACF90045CB3F /* AppResources.swift in Sources */,
 				538D2C491F1BCB2500FF6051 /* PreferencesProfileDefaults.swift in Sources */,
+				536554DC1F248CA4000543A3 /* Error.swift in Sources */,
 				53DADB4C1F137A110045CB3F /* MainWindowLibrary.swift in Sources */,
 				536DA4911F1213AE00FB325E /* MainWindowWelcomeView.swift in Sources */,
 				536DA48E1F11FD9D00FB325E /* MainWindowProfilePreview.swift in Sources */,
@@ -326,12 +348,14 @@
 				539832121F0EE15400C4792D /* AppDelegate.swift in Sources */,
 				5365F4851F0F4D430064C02A /* MainWindow.swift in Sources */,
 				534732DB1F10C35500770446 /* MainWindowSplitView.swift in Sources */,
+				531852061F22907C00529E6B /* ProfileEditor.swift in Sources */,
 				536DA4941F12143F00FB325E /* ViewWhite.swift in Sources */,
 				538D2C4D1F1C970C00FF6051 /* PreferencesViewElements.swift in Sources */,
 				5315400F1F127F280060011B /* MainWindowOutlineViewItems.swift in Sources */,
 				53DF38771F11675F006DE5BE /* MainWindowTableView.swift in Sources */,
 				538D2C471F1BC73800FF6051 /* PreferencesGeneral.swift in Sources */,
 				530CD3DA1F17793B0071E866 /* MainWindowTableViewItems.swift in Sources */,
+				5370780D1F232DAA00570090 /* ProfileEditorToolbarItemTitle.swift in Sources */,
 				5365F4881F0F71850064C02A /* MainWindowToolbarItemAdd.swift in Sources */,
 				5367E26C1F13ED440027D0D0 /* Alert.swift in Sources */,
 				5395925F1F1012F3005090B3 /* MainWindowToolbarItemExport.swift in Sources */,

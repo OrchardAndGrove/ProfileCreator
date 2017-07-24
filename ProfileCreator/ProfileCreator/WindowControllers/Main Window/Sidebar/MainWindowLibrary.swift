@@ -15,6 +15,7 @@ class MainWindowLibrary: NSObject, OutlineViewParentItem, NSTextFieldDelegate {
     
     var alert: Alert?
     var isEditable = true
+    var identifier = UUID()
     var title = SidebarGroupTitle.library
     var children = [OutlineViewChildItem]()
     var cellView: OutlineViewParentCellView?
@@ -171,9 +172,10 @@ class MainWindowLibrary: NSObject, OutlineViewParentItem, NSTextFieldDelegate {
     
     func didRemoveProfiles(_ notification: NSNotification?) {
         if let userInfo = notification?.userInfo,
-            let identifiers = userInfo[SettingsKey.identifiers] as? [UUID] {
+            let identifiers = userInfo[NotificationKey.identifiers] as? [UUID],
+            let indexSet = userInfo[NotificationKey.indexSet] as? IndexSet {
             for child in children {
-                child.removeProfiles(withIdentifiers: identifiers)
+                child.removeProfiles(atIndexes: indexSet, withIdentifiers: identifiers)
             }
         }
     }
@@ -272,14 +274,14 @@ class MainWindowLibraryGroup: NSObject, OutlineViewChildItem {
                 //  Check if profile has been saved to disk at least once (If it has a URL assigned).
                 //  If not, don't include it in the group on disk
                 // -------------------------------------------------------------
-                if profile.url != nil {
+                if profile.fileURL != nil {
                     profileIdentifierStrings.append(identifier.uuidString)
                 }
             } else {
                 Swift.print("No profile found with identifier: \(identifier)")
             }
         }
-
+        
         // ---------------------------------------------------------------------
         //  Create dict to save
         // ---------------------------------------------------------------------
@@ -344,45 +346,75 @@ class MainWindowLibraryGroup: NSObject, OutlineViewChildItem {
     func removeProfiles(withIdentifiers: [UUID]) {
         
         // ---------------------------------------------------------------------
-        //  Remove the passed identifiers
+        //  Check that the group contains atleast one of the passed identifiers
         // ---------------------------------------------------------------------
-        self.profileIdentifiers = Array(Set(self.profileIdentifiers).subtracting(withIdentifiers))
-        
-        // ---------------------------------------------------------------------
-        //  Save the new group contents to disk
-        // ---------------------------------------------------------------------
-        let (success, error) = writeToDisk(title: self.title)
-        if !success {
-            // TODO: Proper logging
-            Swift.print("error: \(String(describing: error))")
+        if !Set(self.profileIdentifiers).intersection(withIdentifiers).isEmpty {
+            
+            // -----------------------------------------------------------------
+            //  Get the indexes of the passed identifiers
+            // -----------------------------------------------------------------
+            // TODO: This COULD be passed if the drag/drop methods included the indexes. Minor thing, maybe not even better that this implementation.
+            let profileIndexes = self.profileIdentifiers.indexes(ofItems: withIdentifiers) ?? IndexSet()
+            
+            // -----------------------------------------------------------------
+            //  Remove the passed identifiers
+            // -----------------------------------------------------------------
+            self.profileIdentifiers = Array(Set(self.profileIdentifiers).subtracting(withIdentifiers))
+            
+            // -----------------------------------------------------------------
+            //  Save the new group contents to disk
+            // -----------------------------------------------------------------
+            let (success, error) = writeToDisk(title: self.title)
+            if !success {
+                // TODO: Proper logging
+                Swift.print("error: \(String(describing: error))")
+            }
+            
+            // -----------------------------------------------------------------
+            //  Post notification that a grop removed profiles
+            // -----------------------------------------------------------------
+            NotificationCenter.default.post(name: .didRemoveProfilesFromGroup, object: self, userInfo: [NotificationKey.identifiers : withIdentifiers,
+                                                                                                        NotificationKey.indexSet : profileIndexes])
         }
-        
-        // ---------------------------------------------------------------------
-        //  Post notification that a grop removed profiles
-        // ---------------------------------------------------------------------
-        NotificationCenter.default.post(name: .didRemoveProfilesFromGroup, object: self, userInfo: [NotificationKey.identifiers : withIdentifiers])
     }
     
     func removeProfiles(atIndexes: IndexSet, withIdentifiers: [UUID]) {
         
         // ---------------------------------------------------------------------
-        //  Remove the passed identifiers
+        //  Check that the group contains atleast one of the passed identifiers
         // ---------------------------------------------------------------------
-        self.profileIdentifiers = Array(Set(self.profileIdentifiers).subtracting(withIdentifiers))
-        
-        // ---------------------------------------------------------------------
-        //  Save the new group contents to disk
-        // ---------------------------------------------------------------------
-        let (success, error) = writeToDisk(title: self.title)
-        if !success {
-            // TODO: Proper logging
-            Swift.print("error: \(String(describing: error))")
+        if !Set(self.profileIdentifiers).intersection(withIdentifiers).isEmpty {
+            
+            // -----------------------------------------------------------------
+            //  If no indexes or wrong indexes are passed, calculate them here.
+            //  This is for when closing an editor of an unsaved profile. That action will call a remove of the profile, without an index.
+            // -----------------------------------------------------------------
+            let indexes: IndexSet
+            if atIndexes.count != withIdentifiers.count {
+                indexes = self.profileIdentifiers.indexes(ofItems: withIdentifiers) ?? atIndexes
+            } else {
+                indexes = atIndexes
+            }
+
+            // -----------------------------------------------------------------
+            //  Remove the passed identifiers
+            // -----------------------------------------------------------------
+            self.profileIdentifiers = Array(Set(self.profileIdentifiers).subtracting(withIdentifiers))
+            
+            // -----------------------------------------------------------------
+            //  Save the new group contents to disk
+            // -----------------------------------------------------------------
+            let (success, error) = writeToDisk(title: self.title)
+            if !success {
+                // TODO: Proper logging
+                Swift.print("error: \(String(describing: error))")
+            }
+            
+            // -----------------------------------------------------------------
+            //  Post notification that a grop removed profiles
+            // -----------------------------------------------------------------
+            NotificationCenter.default.post(name: .didRemoveProfilesFromGroup, object: self, userInfo: [NotificationKey.identifiers : withIdentifiers, NotificationKey.indexSet : indexes])
         }
-        
-        // ---------------------------------------------------------------------
-        //  Post notification that a grop removed profiles
-        // ---------------------------------------------------------------------
-        NotificationCenter.default.post(name: .didRemoveProfilesFromGroup, object: self, userInfo: [NotificationKey.identifiers : withIdentifiers, NotificationKey.indexSet : atIndexes])
     }
     
     func removeFromDisk() -> (Bool, Error?) {

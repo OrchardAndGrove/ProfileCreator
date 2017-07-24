@@ -209,8 +209,8 @@ class MainWindowOutlineViewController: NSObject {
             return
         }
         
-        // FIXME: Only checking titles is weak, but as the protocol doesn't support equatable, this will do
-        if self.parents.contains(where: { $0.title == sender.title }) {
+        // FIXME: Only checking identifiers feels weak, but as the protocol doesn't support equatable, this will do
+        if self.parents.contains(where: { $0.identifier == sender.identifier }) {
             reloadOutlineView()
             
             // -----------------------------------------------------------------
@@ -497,7 +497,7 @@ class MainWindowOutlineView: NSOutlineView {
     //  Override keyDown to catch backspace to delete group in outline view
     // -------------------------------------------------------------------------
     override func keyDown(with event: NSEvent) {
-        if event.charactersIgnoringModifiers == String(Character(UnicodeScalar(NSDeleteCharacter)!)) {
+        if event.charactersIgnoringModifiers == String(Character(UnicodeScalar(NSDeleteCharacter)!)), 2 < self.selectedRow {
             self.removeSelectedGroups(self)
         }
         super.keyDown(with: event)
@@ -581,7 +581,7 @@ class MainWindowOutlineView: NSOutlineView {
     }
     
     func removeSelectedGroups(_ sender: Any?) {
-        
+
         // ---------------------------------------------------------------------
         //  Verify the delegate is set and is a MainWindowOutlineViewDelegate
         //  Depending on who is calling the function, get the selected items separately

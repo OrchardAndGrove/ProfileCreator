@@ -9,11 +9,12 @@
 import Cocoa
 
 class MainWindowAllProfiles: NSObject, OutlineViewParentItem {
-
+    
     // MARK: -
     // MARK: Variables
     
     var isEditable = false
+    var identifier = UUID()
     var title = SidebarGroupTitle.allProfiles
     var children = [OutlineViewChildItem]()
     var cellView: OutlineViewParentCellView?
@@ -95,6 +96,15 @@ class MainWindowAllProfilesGroup: NSObject, OutlineViewChildItem {
             let identifiers = userInfo[NotificationKey.identifiers] as? [UUID] {
             
             // -----------------------------------------------------------------
+            //  If no indexes or wrong indexes are passed, calculate them here.
+            //  This is for when closing an editor of an unsaved profile. That action will call a remove of the profile, without an index.
+            // -----------------------------------------------------------------
+            var indexes = userInfo[NotificationKey.indexSet] as? IndexSet
+            if indexes == nil || indexes!.count != identifiers.count {
+                indexes = self.profileIdentifiers.indexes(ofItems: identifiers)
+            }
+            
+            // -----------------------------------------------------------------
             //  Remove the passed identifiers
             // -----------------------------------------------------------------
             self.profileIdentifiers = Array(Set(self.profileIdentifiers).subtracting(identifiers))
@@ -102,7 +112,7 @@ class MainWindowAllProfilesGroup: NSObject, OutlineViewChildItem {
             // -----------------------------------------------------------------
             //  Post notification that a grop removed profiles
             // -----------------------------------------------------------------
-            NotificationCenter.default.post(name: .didRemoveProfilesFromGroup, object: self, userInfo: [NotificationKey.identifiers : identifiers])
+            NotificationCenter.default.post(name: .didRemoveProfilesFromGroup, object: self, userInfo: [NotificationKey.identifiers : identifiers, NotificationKey.indexSet : indexes ?? IndexSet()])
             
             // -----------------------------------------------------------------
             //  If profileIdentifiers are empyty, post notification that no profiles are configured
@@ -122,7 +132,6 @@ class MainWindowAllProfilesGroup: NSObject, OutlineViewChildItem {
     
     func removeProfiles(withIdentifiers: [UUID]) {
         fatalError("All Profiles should never call removeProfiles(withIdentifiers:)")
-        //ProfileController.shared.removeProfiles(withIdentifiers: withIdentifiers)
     }
     
     func removeProfiles(atIndexes: IndexSet, withIdentifiers: [UUID]) {

@@ -53,7 +53,7 @@ class MainWindowToolbarItemAdd: NSView {
         super.init(frame: rect)
         
         // ---------------------------------------------------------------------
-        //  Create the button instance and add it to the toolbar item view
+        //  Add the button to the toolbar item view
         // ---------------------------------------------------------------------
         self.addSubview(MainWindowToolbarItemAddButton(frame: rect))
         
@@ -199,7 +199,7 @@ class MainWindowToolbarItemAddButton: NSButton {
     }
     
     func newProfile(menuItem: NSMenuItem?) {
-        NotificationCenter.default.post(name: .addProfile, object: self, userInfo: [NotificationKey.parentTitle : SidebarGroupTitle.library])
+        NotificationCenter.default.post(name: .newProfile, object: self, userInfo: [NotificationKey.parentTitle : SidebarGroupTitle.library])
     }
     
     func newGroup(menuItem: NSMenuItem?) {

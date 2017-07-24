@@ -88,7 +88,7 @@ class MainWindowWelcomeViewController: NSObject {
     // MARK: Button Actions
     
     func clicked(button: NSButton) {
-        NotificationCenter.default.post(name: .addProfile, object: self, userInfo: [NotificationKey.parentTitle : SidebarGroupTitle.library])
+        NotificationCenter.default.post(name: .newProfile, object: self, userInfo: [NotificationKey.parentTitle : SidebarGroupTitle.library])
     }
     
     // MARK: -

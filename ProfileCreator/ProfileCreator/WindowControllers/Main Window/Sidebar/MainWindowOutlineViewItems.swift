@@ -15,6 +15,7 @@ import Cocoa
 protocol OutlineViewItem: class {
     var title: String { get }
     var isEditable: Bool { get }
+    var identifier: UUID { get }
 }
 
 protocol OutlineViewParentItem: OutlineViewItem {
@@ -25,7 +26,6 @@ protocol OutlineViewParentItem: OutlineViewItem {
 protocol OutlineViewChildItem: OutlineViewItem, NSTextFieldDelegate {
     var isEditing: Bool { get }
     var icon: NSImage? { get }
-    var identifier: UUID { get }
     var profileIdentifiers: [UUID] { get }
     var cellView: OutlineViewChildCellView? { get }
     
