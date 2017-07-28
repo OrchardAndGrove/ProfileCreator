@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class ProfileEditorToolbarItemTitle: NSView {
+class ProfileEditorWindowToolbarItemTitle: NSView {
     
     // MARK: -
     // MARK: Variables

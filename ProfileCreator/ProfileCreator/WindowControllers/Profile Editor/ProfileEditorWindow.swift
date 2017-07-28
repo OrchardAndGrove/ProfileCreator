@@ -8,19 +8,18 @@
 
 import Cocoa
 
-public class ProfileEditorController: NSWindowController {
+public class ProfileEditorWindowController: NSWindowController {
 
     // MARK: -
     // MARK: Variables
     
-    let splitView = ProfileEditorSplitView(frame: NSZeroRect)
-    
     let profile: Profile
+    let splitView: ProfileEditorWindowSplitView
     let toolbar = NSToolbar(identifier: "MainWindowToolbar")
     let toolbarItemIdentifiers = [NSToolbarFlexibleSpaceItemIdentifier,
                                   ToolbarIdentifier.profileEditorTitle,
                                   NSToolbarFlexibleSpaceItemIdentifier]
-    var toolbarItemTitle: ProfileEditorToolbarItemTitle?
+    var toolbarItemTitle: ProfileEditorWindowToolbarItemTitle?
     
     // MARK: -
     // MARK: Initialization
@@ -31,7 +30,11 @@ public class ProfileEditorController: NSWindowController {
     
     init(profile: Profile) {
         
+        // ---------------------------------------------------------------------
+        //  Setup Variables
+        // ---------------------------------------------------------------------
         self.profile = profile
+        self.splitView = ProfileEditorWindowSplitView(profile: profile)
         
         // ---------------------------------------------------------------------
         //  Setup editor window
@@ -52,7 +55,7 @@ public class ProfileEditorController: NSWindowController {
         window.identifier = "ProfileCreatorEditorWindow-\(profile.identifier.uuidString)"
         window.contentMinSize = NSSize.init(width: 600, height: 400)
         window.backgroundColor = NSColor.white
-        window.autorecalculatesKeyViewLoop = true
+        window.autorecalculatesKeyViewLoop = false
         // window.delegate = self
         window.center()
         
@@ -81,6 +84,11 @@ public class ProfileEditorController: NSWindowController {
         // Add toolbar to window
         // ---------------------------------------------------------------------
         self.window?.toolbar = self.toolbar
+        
+        // ---------------------------------------------------------------------
+        // Update the Key View Loop and set first responder
+        // ---------------------------------------------------------------------
+        self.splitView.editor?.updateKeyViewLoop(window: self.window!)
     }
     
     deinit {
@@ -95,7 +103,7 @@ public class ProfileEditorController: NSWindowController {
 // MARK: -
 // MARK: NSToolbarDelegate
 
-extension ProfileEditorController: NSToolbarDelegate {
+extension ProfileEditorWindowController: NSToolbarDelegate {
     
     public func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [String] {
         return self.toolbarItemIdentifiers
@@ -115,7 +123,7 @@ extension ProfileEditorController: NSToolbarDelegate {
     func toolbarItem(identifier: String) -> NSToolbarItem? {
         if identifier == ToolbarIdentifier.profileEditorTitle {
             if self.toolbarItemTitle == nil {
-                self.toolbarItemTitle = ProfileEditorToolbarItemTitle(profile: self.profile)
+                self.toolbarItemTitle = ProfileEditorWindowToolbarItemTitle(profile: self.profile)
             }
             
             if let toolbarView = self.toolbarItemTitle {

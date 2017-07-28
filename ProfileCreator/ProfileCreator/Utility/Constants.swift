@@ -11,6 +11,13 @@ import Foundation
 let preferencesWindowWidth: CGFloat = 450.0
 let preferencesIndent: CGFloat = 40.0
 
+let editorTableViewColumnPaddingWidth: CGFloat = 24.0
+let editorTableViewColumnPayloadWidth: CGFloat = 500.0
+
+enum TableViewTag: Int {
+    case profilePayloads, libraryPayloads
+}
+
 extension Notification.Name {
     static let addGroup = Notification.Name("addGroup")
     static let newProfile = Notification.Name("newProfile")
@@ -34,6 +41,15 @@ struct ToolbarIdentifier {
     static let preferencesWindowProfileDefaults = NSLocalizedString("ProfileDefaults", comment: "")
 }
 
+struct TableColumnIdentifier {
+    static let padding = "padding"
+    static let paddingLeading = "paddingLeading"
+    static let paddingTrailing = "paddingTrailing"
+    static let payload = "payload"
+    static let profilePayloads = "profilePayloads"
+    static let libraryPayloads = "libraryPayloads"
+}
+
 struct TypeName {
     static let profile = "Profile"
 }
@@ -50,6 +66,7 @@ struct StringConstant {
 
 struct DraggingType {
     static let profile = "Profile"
+    static let payload = "Payload"
 }
 
 struct NotificationKey {

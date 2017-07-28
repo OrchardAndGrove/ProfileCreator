@@ -1,22 +1,19 @@
 //
-//  ProfileEditorSplitView.swift
+//  PayloadLibrarySplitView.swift
 //  ProfileCreator
 //
-//  Created by Erik Berglund on 2017-07-21.
+//  Created by Erik Berglund on 2017-07-28.
 //  Copyright © 2017 Erik Berglund. All rights reserved.
 //
 
 import Cocoa
 
-class ProfileEditorSplitView: NSSplitView {
-
+class PayloadLibrarySplitView: NSSplitView {
+    
     // MARK: -
     // MARK: Variables
     
-    //let outlineViewController = MainWindowOutlineViewController()
-    //let tableViewController = MainWindowTableViewController()
-    //let profilePreviewController = MainWindowProfilePreviewController()
-    //let welcomeViewController = MainWindowWelcomeViewController()
+    private let tableViews = PayloadLibraryTableViews()
     
     // MARK: -
     // MARK: Initialization
@@ -25,21 +22,63 @@ class ProfileEditorSplitView: NSSplitView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override init(frame frameRect: NSRect) {
-        super.init(frame: frameRect)
+    convenience init(profile: Profile) {
+        self.init(frame: NSZeroRect)
+        
+        // ---------------------------------------------------------------------
+        //  Setup Variables
+        // ---------------------------------------------------------------------
+        var constraints = [NSLayoutConstraint]()
         
         // ---------------------------------------------------------------------
         //  Setup SplitView
         // ---------------------------------------------------------------------
-        self.identifier = "ProfileEditorSplitView-ID"
+        self.identifier = "PayloadLibrarySplitView-ID"
         self.translatesAutoresizingMaskIntoConstraints = false
         self.dividerStyle = .thin
-        self.isVertical = true
+        self.isVertical = false
         self.delegate = self
+        
+        // ---------------------------------------------------------------------
+        //  Add subviews to splitview
+        // ---------------------------------------------------------------------
+        setupSplitViewProfilePayloads(constraints: &constraints)
+        //setupSplitViewLibraryPayloads(constraints: &constraints)
+        
+        // ---------------------------------------------------------------------
+        //  Activate layout constraints
+        // ---------------------------------------------------------------------
+        NSLayoutConstraint.activate(constraints)
+    }
+    
+    override init(frame frameRect: NSRect) {
+        super.init(frame: frameRect)
+    }
+    
+    // MARK: -
+    // MARK: Setup Layout Constraints
+    
+    private func setupSplitViewProfilePayloads(constraints: inout [NSLayoutConstraint]) {
+        
+        self.addSubview(self.tableViews.profilePayloadsScrollView)
+        self.setHoldingPriority(NSLayoutPriorityDefaultLow, forSubviewAt: 0)
+        
+        // ---------------------------------------------------------------------
+        //  Add constraints
+        // ---------------------------------------------------------------------
+        
+        // Height
+        constraints.append(NSLayoutConstraint(item: self.tableViews.profilePayloadsScrollView,
+                                              attribute: .height,
+                                              relatedBy: .greaterThanOrEqual,
+                                              toItem: nil,
+                                              attribute: .notAnAttribute,
+                                              multiplier: 1,
+                                              constant: 96))
     }
 }
 
-extension ProfileEditorSplitView: NSSplitViewDelegate {
+extension PayloadLibrarySplitView: NSSplitViewDelegate {
     
     /*
      ///////////////////////////////////////////////////////////////////////////////
@@ -63,7 +102,7 @@ extension ProfileEditorSplitView: NSSplitViewDelegate {
         //  Allow left view (SIDEBAR) to be collapsed
         // ---------------------------------------------------------------------
         //if subview == splitView.subviews.first && splitView.subviews.contains(self.tableViewController.scrollView) {
-            return true
+        return true
         //}
         //return false
     }
@@ -82,4 +121,3 @@ extension ProfileEditorSplitView: NSSplitViewDelegate {
         return false
     }
 }
-

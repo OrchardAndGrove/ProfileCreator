@@ -191,7 +191,6 @@ class MainWindowProfilePreviewViewController: NSObject {
         // ---------------------------------------------------------------------
         //  Add constraints
         // ---------------------------------------------------------------------
-        
         // Center Vertically
         constraints.append(NSLayoutConstraint(item: self.textFieldTitle,
                                               attribute: .centerY,
