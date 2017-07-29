@@ -111,7 +111,7 @@ class ProfileEditor: NSObject {
                 if let previous = previousCellView {
                     previous.trailingKeyView!.nextKeyView = payloadCellView.leadingKeyView
                     
-                    Swift.print("nextKeyView: \(String(describing: previous.trailingKeyView!.nextKeyView))")
+                    // Swift.print("nextKeyView: \(String(describing: previous.trailingKeyView!.nextKeyView))")
                 } else {
                     firstCellView = payloadCellView
                 }
@@ -120,7 +120,7 @@ class ProfileEditor: NSObject {
                 if self.payloadCellViews.count == index + 1  {
                     tableView.nextKeyView = firstCellView?.leadingKeyView
                     payloadCellView.trailingKeyView!.nextKeyView = tableView
-                    Swift.print("previousCellView.trailingKeyView!.nextKeyView: \(String(describing: payloadCellView.trailingKeyView!.nextKeyView))")
+                    // Swift.print("previousCellView.trailingKeyView!.nextKeyView: \(String(describing: payloadCellView.trailingKeyView!.nextKeyView))")
                 }
             }
         }

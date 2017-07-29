@@ -1,19 +1,19 @@
 //
-//  PreferencesViewProfileDefaults.swift
+//  PreferencesEditor.swift
 //  ProfileCreator
 //
-//  Created by Erik Berglund on 2017-07-16.
+//  Created by Erik Berglund on 2017-07-29.
 //  Copyright © 2017 Erik Berglund. All rights reserved.
 //
 
 import Cocoa
 
-class PreferencesProfileDefaults: PreferencesItem {
+class PreferencesEditor: PreferencesItem {
     
     // MARK: -
     // MARK: Variables
     
-    let identifier = ToolbarIdentifier.preferencesProfileDefaults
+    let identifier = ToolbarIdentifier.preferencesEditor
     let toolbarItem: NSToolbarItem
     let view: NSView
     
@@ -26,8 +26,8 @@ class PreferencesProfileDefaults: PreferencesItem {
         //  Create the toolbar item
         // ---------------------------------------------------------------------
         self.toolbarItem = NSToolbarItem(itemIdentifier: identifier)
-        self.toolbarItem.image = NSImage(named: NSImageNameHomeTemplate)
-        self.toolbarItem.label = NSLocalizedString("Profile Defaults", comment: "")
+        self.toolbarItem.image = NSImage(named: NSImageNamePreferencesGeneral)
+        self.toolbarItem.label = NSLocalizedString("Editor", comment: "")
         self.toolbarItem.paletteLabel = self.toolbarItem.label
         self.toolbarItem.toolTip = self.toolbarItem.label
         self.toolbarItem.target = sender
@@ -36,11 +36,11 @@ class PreferencesProfileDefaults: PreferencesItem {
         // ---------------------------------------------------------------------
         //  Create the preferences view
         // ---------------------------------------------------------------------
-        self.view = PreferencesProfileDefaultsView()
+        self.view = PreferencesEditorView()
     }
 }
 
-class PreferencesProfileDefaultsView: NSView {
+class PreferencesEditorView: NSView {
     
     // MARK: -
     // MARK: Initialization
@@ -52,6 +52,8 @@ class PreferencesProfileDefaultsView: NSView {
     init() {
         super.init(frame: NSZeroRect)
         
+        self.translatesAutoresizingMaskIntoConstraints = false
+        
         // ---------------------------------------------------------------------
         //  Setup Variables
         // ---------------------------------------------------------------------
@@ -60,14 +62,35 @@ class PreferencesProfileDefaultsView: NSView {
         var lastSubview: NSView?
         
         // ---------------------------------------------------------------------
-        //  Add Preferences "Default Profile Settings"
+        //  Add Preferences "Sidebar"
         // ---------------------------------------------------------------------
-        lastSubview = addHeader(title: "Default Profile Settings",
+        lastSubview = addHeader(title: "Payload Library",
                                 withSeparator: true,
                                 toView: self,
                                 lastSubview: nil,
                                 height: &frameHeight,
                                 constraints: &constraints)
+        
+        lastSubview = addCheckbox(title: "Show Apple Collections",
+                                  keyPath: PreferenceKey.showPayloadLibraryAppleCollections,
+                                  toView: self,
+                                  lastSubview: lastSubview,
+                                  height: &frameHeight,
+                                  constraints: &constraints)
+        
+        lastSubview = addCheckbox(title: "Show Apple Domains",
+                                  keyPath: PreferenceKey.showPayloadLibraryAppleDomains,
+                                  toView: self,
+                                  lastSubview: lastSubview,
+                                  height: &frameHeight,
+                                  constraints: &constraints)
+        
+        lastSubview = addCheckbox(title: "Show Developer",
+                                  keyPath: PreferenceKey.showPayloadLibraryDeveloper,
+                                  toView: self,
+                                  lastSubview: lastSubview,
+                                  height: &frameHeight,
+                                  constraints: &constraints)
         
         // ---------------------------------------------------------------------
         //  Add constraints to last view
@@ -95,5 +118,4 @@ class PreferencesProfileDefaultsView: NSView {
         // ---------------------------------------------------------------------
         self.frame = NSRect.init(x: 0.0, y: 0.0, width: preferencesWindowWidth, height: frameHeight)
     }
-    
 }

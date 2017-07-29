@@ -20,10 +20,12 @@ class PreferencesWindowController: NSWindowController {
     // MARK: Variables
         
     let toolbar = NSToolbar(identifier: "PreferencesWindowToolbar")
-    let toolbarItemIdentifiers = [ToolbarIdentifier.preferencesWindowGeneral,
-                                  ToolbarIdentifier.preferencesWindowProfileDefaults,
+    let toolbarItemIdentifiers = [ToolbarIdentifier.preferencesGeneral,
+                                  ToolbarIdentifier.preferencesEditor,
+                                  ToolbarIdentifier.preferencesProfileDefaults,
                                   NSToolbarFlexibleSpaceItemIdentifier]
     var preferencesGeneral: PreferencesGeneral?
+    var preferencesEditor: PreferencesEditor?
     var preferencesProfileDefaults: PreferencesProfileDefaults?
     
     // MARK: -
@@ -73,7 +75,7 @@ class PreferencesWindowController: NSWindowController {
         // ---------------------------------------------------------------------
         // Show "General" Preferences
         // ---------------------------------------------------------------------
-        self.showPreferencesView(identifier: ToolbarIdentifier.preferencesWindowGeneral)
+        self.showPreferencesView(identifier: ToolbarIdentifier.preferencesGeneral)
     }
     
     // MARK: -
@@ -125,11 +127,15 @@ class PreferencesWindowController: NSWindowController {
     }
     
     fileprivate func preferencesItem(identifier: String) -> PreferencesItem? {
-        if identifier == ToolbarIdentifier.preferencesWindowGeneral {
+        if identifier == ToolbarIdentifier.preferencesGeneral {
             if self.preferencesGeneral == nil { self.preferencesGeneral = PreferencesGeneral(sender: self) }
             return self.preferencesGeneral
             
-        } else if identifier == ToolbarIdentifier.preferencesWindowProfileDefaults {
+        } else if identifier == ToolbarIdentifier.preferencesEditor {
+            if self.preferencesEditor == nil { self.preferencesEditor = PreferencesEditor(sender: self) }
+            return self.preferencesEditor
+            
+        } else if identifier == ToolbarIdentifier.preferencesProfileDefaults {
             if self.preferencesProfileDefaults == nil { self.preferencesProfileDefaults = PreferencesProfileDefaults(sender: self) }
             return self.preferencesProfileDefaults
         }

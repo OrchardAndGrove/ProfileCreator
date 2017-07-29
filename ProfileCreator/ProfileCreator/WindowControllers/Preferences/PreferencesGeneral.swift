@@ -13,7 +13,7 @@ class PreferencesGeneral: PreferencesItem {
     // MARK: -
     // MARK: Variables
     
-    let identifier = ToolbarIdentifier.preferencesWindowGeneral
+    let identifier = ToolbarIdentifier.preferencesGeneral
     let toolbarItem: NSToolbarItem
     let view: NSView
     
@@ -122,5 +122,4 @@ class PreferencesGeneralView: NSView {
         // ---------------------------------------------------------------------
         self.frame = NSRect.init(x: 0.0, y: 0.0, width: preferencesWindowWidth, height: frameHeight)
     }
-    
 }

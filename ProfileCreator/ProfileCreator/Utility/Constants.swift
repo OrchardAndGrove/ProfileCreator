@@ -18,6 +18,10 @@ enum TableViewTag: Int {
     case profilePayloads, libraryPayloads
 }
 
+enum LibraryTag: Int {
+    case appleCollections, appleDomains, developer
+}
+
 extension Notification.Name {
     static let addGroup = Notification.Name("addGroup")
     static let newProfile = Notification.Name("newProfile")
@@ -37,8 +41,9 @@ struct ToolbarIdentifier {
     static let profileEditorTitle = "profileEditorTitle"
     static let mainWindowAdd = NSLocalizedString("Add", comment: "")
     static let mainWindowExport = NSLocalizedString("Export", comment: "")
-    static let preferencesWindowGeneral = NSLocalizedString("General", comment: "")
-    static let preferencesWindowProfileDefaults = NSLocalizedString("ProfileDefaults", comment: "")
+    static let preferencesGeneral = NSLocalizedString("General", comment: "")
+    static let preferencesEditor = NSLocalizedString("Editor", comment: "")
+    static let preferencesProfileDefaults = NSLocalizedString("ProfileDefaults", comment: "")
 }
 
 struct TableColumnIdentifier {
@@ -80,6 +85,9 @@ struct PreferenceKey {
     static let organization = ""
     static let showProfileCount = "ShowProfileCount"
     static let showGroupIcons = "ShowGroupIcons"
+    static let showPayloadLibraryAppleCollections = "ShowPayloadLibraryAppleCollections"
+    static let showPayloadLibraryAppleDomains = "ShowPayloadLibraryAppleDomains"
+    static let showPayloadLibraryDeveloper = "ShowPayloadLibraryDeveloper"
 }
 
 struct SidebarGroupTitle {
