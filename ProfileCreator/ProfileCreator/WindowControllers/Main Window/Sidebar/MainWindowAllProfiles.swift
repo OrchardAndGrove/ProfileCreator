@@ -33,7 +33,7 @@ class MainWindowAllProfiles: NSObject, OutlineViewParentItem {
         // ---------------------------------------------------------------------
         //  Setup the single outline view child group for this parent
         // ---------------------------------------------------------------------
-        let group = MainWindowAllProfilesGroup.init(title: self.title, identifier: nil, parent: self)
+        let group = MainWindowAllProfilesGroup(title: self.title, identifier: nil, parent: self)
         
         // ---------------------------------------------------------------------
         //  Add the group to this parent

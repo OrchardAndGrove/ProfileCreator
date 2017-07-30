@@ -82,9 +82,11 @@ class ProfileEditor: NSObject {
         // self.scrollView.autoresizesSubviews = true
         
         // Only For Testing
-        self.payloadCellViews.append(PayloadCellViewTextField.init(key: "Test1", settings: [String : Any]()))
-        self.payloadCellViews.append(PayloadCellViewTextField.init(key: "Test2", settings: [String : Any]()))
-        self.payloadCellViews.append(PayloadCellViewTextField.init(key: "Test3", settings: [String : Any]()))
+        self.payloadCellViews.append(PayloadCellViewPadding(height: nil))
+        self.payloadCellViews.append(PayloadCellViewTextField(key: "Test1", settings: [String : Any]()))
+        self.payloadCellViews.append(PayloadCellViewTextField(key: "Test2", settings: [String : Any]()))
+        self.payloadCellViews.append(PayloadCellViewTextField(key: "Test3", settings: [String : Any]()))
+        self.payloadCellViews.append(PayloadCellViewPadding(height: nil))
         
         self.reloadTableView(force: true)
     }
@@ -139,7 +141,7 @@ extension ProfileEditor: NSTableViewDataSource {
 
 extension ProfileEditor: NSTableViewDelegate {
     func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
-        if let cellView = self.payloadCellViews[row] as? PayloadCellView {
+        if let cellView = self.payloadCellViews[row] as? ProfileCreatorCellView {
             return cellView.height
         }
         return 1
@@ -161,12 +163,6 @@ class PayloadTextField: NSTextField {
 }
 
 class ProfileEditorTableView: NSTableView {
-    override var acceptsFirstResponder: Bool { return false }
-    override var canBecomeKeyView: Bool { return false }
-}
-
-// UNUSED
-class ProfileEditorSplitView: NSSplitView {
     override var acceptsFirstResponder: Bool { return false }
     override var canBecomeKeyView: Bool { return false }
 }

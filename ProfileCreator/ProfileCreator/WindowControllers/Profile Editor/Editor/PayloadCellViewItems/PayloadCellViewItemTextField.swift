@@ -8,15 +8,15 @@
 
 import Cocoa
 
-class TextField {
+class EditorTextField {
     
     class func description(string: String?,
                            constraints: inout [NSLayoutConstraint],
                            cellView: PayloadCellView) -> NSTextField {
         
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         //  Create and setup text field
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         let textField = PayloadTextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.lineBreakMode = .byWordWrapping
@@ -30,9 +30,9 @@ class TextField {
         textField.preferredMaxLayoutWidth = editorTableViewColumnPayloadWidth
         textField.stringValue = string ?? ""
         
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         //  Add text field to cell view
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         cellView.addSubview(textField)
         
         // -------------------------------------------------------------------------

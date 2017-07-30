@@ -16,8 +16,11 @@
 		5315400A1F1233080060011B /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531540091F1233080060011B /* Constants.swift */; };
 		5315400D1F127B340060011B /* MainWindowAllProfiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5315400C1F127B340060011B /* MainWindowAllProfiles.swift */; };
 		5315400F1F127F280060011B /* MainWindowOutlineViewItems.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5315400E1F127F280060011B /* MainWindowOutlineViewItems.swift */; };
-		531852061F22907C00529E6B /* ProfileEditorWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531852051F22907C00529E6B /* ProfileEditorWindow.swift */; };
-		531852221F2295B000529E6B /* ProfileEditorWindowSplitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531852211F2295B000529E6B /* ProfileEditorWindowSplitView.swift */; };
+		531852061F22907C00529E6B /* ProfileEditorWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531852051F22907C00529E6B /* ProfileEditorWindowController.swift */; };
+		531852221F2295B000529E6B /* ProfileEditorSplitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531852211F2295B000529E6B /* ProfileEditorSplitView.swift */; };
+		5326D2291F2DD2AC00D93C67 /* PayloadLibraryNoPayloadsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5326D2281F2DD2AC00D93C67 /* PayloadLibraryNoPayloadsView.swift */; };
+		5326D22B1F2DECED00D93C67 /* CoreExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5326D22A1F2DECED00D93C67 /* CoreExtensions.swift */; };
+		5326D22E1F2E2CAA00D93C67 /* PayloadPlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5326D22D1F2E2CAA00D93C67 /* PayloadPlaceholder.swift */; };
 		534732DB1F10C35500770446 /* MainWindowSplitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 534732DA1F10C35500770446 /* MainWindowSplitView.swift */; };
 		534732DD1F10C3BB00770446 /* MainWindowOutlineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 534732DC1F10C3BB00770446 /* MainWindowOutlineView.swift */; };
 		535CB4551F2B1ABD00A746F6 /* PayloadLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535CB4541F2B1ABD00A746F6 /* PayloadLibrary.swift */; };
@@ -39,6 +42,13 @@
 		536DA4941F12143F00FB325E /* ViewWhite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536DA4931F12143F00FB325E /* ViewWhite.swift */; };
 		5370780D1F232DAA00570090 /* ProfileEditorWindowToolbarItemTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5370780C1F232DAA00570090 /* ProfileEditorWindowToolbarItemTitle.swift */; };
 		5383C1931F2C8B5C004EBE9B /* PreferencesEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5383C1921F2C8B5C004EBE9B /* PreferencesEditor.swift */; };
+		5383C1961F2C9127004EBE9B /* PayloadLibraryCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5383C1951F2C9127004EBE9B /* PayloadLibraryCellView.swift */; };
+		5383C1981F2C919A004EBE9B /* PayloadLibraryCellViewProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5383C1971F2C919A004EBE9B /* PayloadLibraryCellViewProfile.swift */; };
+		5383C19A1F2C91AF004EBE9B /* PayloadLibraryCellViewLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5383C1991F2C91AF004EBE9B /* PayloadLibraryCellViewLibrary.swift */; };
+		5383C19D1F2C9592004EBE9B /* LibraryCellViewItemImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5383C19C1F2C9592004EBE9B /* LibraryCellViewItemImageView.swift */; };
+		5383C19F1F2C9AC3004EBE9B /* LibraryCellViewItemButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5383C19E1F2C9AC3004EBE9B /* LibraryCellViewItemButton.swift */; };
+		5383C1A11F2C9EE1004EBE9B /* LibraryCellViewItemTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5383C1A01F2C9EE1004EBE9B /* LibraryCellViewItemTextField.swift */; };
+		5383C1A41F2D0B7C004EBE9B /* PayloadCellViewPadding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5383C1A31F2D0B7C004EBE9B /* PayloadCellViewPadding.swift */; };
 		538D2C471F1BC73800FF6051 /* PreferencesGeneral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 538D2C461F1BC73800FF6051 /* PreferencesGeneral.swift */; };
 		538D2C491F1BCB2500FF6051 /* PreferencesProfileDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 538D2C481F1BCB2500FF6051 /* PreferencesProfileDefaults.swift */; };
 		538D2C4D1F1C970C00FF6051 /* PreferencesViewElements.swift in Sources */ = {isa = PBXBuildFile; fileRef = 538D2C4C1F1C970C00FF6051 /* PreferencesViewElements.swift */; };
@@ -66,8 +76,11 @@
 		531540091F1233080060011B /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Constants.swift; path = Utility/Constants.swift; sourceTree = "<group>"; };
 		5315400C1F127B340060011B /* MainWindowAllProfiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowAllProfiles.swift; path = "WindowControllers/Main Window/Sidebar/MainWindowAllProfiles.swift"; sourceTree = "<group>"; };
 		5315400E1F127F280060011B /* MainWindowOutlineViewItems.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowOutlineViewItems.swift; path = "WindowControllers/Main Window/Sidebar/MainWindowOutlineViewItems.swift"; sourceTree = "<group>"; };
-		531852051F22907C00529E6B /* ProfileEditorWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProfileEditorWindow.swift; path = "WindowControllers/Profile Editor/ProfileEditorWindow.swift"; sourceTree = "<group>"; };
-		531852211F2295B000529E6B /* ProfileEditorWindowSplitView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProfileEditorWindowSplitView.swift; path = "WindowControllers/Profile Editor/ProfileEditorWindowSplitView.swift"; sourceTree = "<group>"; };
+		531852051F22907C00529E6B /* ProfileEditorWindowController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProfileEditorWindowController.swift; path = "WindowControllers/Profile Editor/ProfileEditorWindowController.swift"; sourceTree = "<group>"; };
+		531852211F2295B000529E6B /* ProfileEditorSplitView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProfileEditorSplitView.swift; path = "WindowControllers/Profile Editor/ProfileEditorSplitView.swift"; sourceTree = "<group>"; };
+		5326D2281F2DD2AC00D93C67 /* PayloadLibraryNoPayloadsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PayloadLibraryNoPayloadsView.swift; path = "WindowControllers/Profile Editor/Payload Library/PayloadLibraryNoPayloadsView.swift"; sourceTree = "<group>"; };
+		5326D22A1F2DECED00D93C67 /* CoreExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CoreExtensions.swift; path = Utility/CoreExtensions.swift; sourceTree = "<group>"; };
+		5326D22D1F2E2CAA00D93C67 /* PayloadPlaceholder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PayloadPlaceholder.swift; path = "Payload Controller/PayloadPlaceholder.swift"; sourceTree = "<group>"; };
 		534732DA1F10C35500770446 /* MainWindowSplitView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowSplitView.swift; path = "WindowControllers/Main Window/MainWindowSplitView.swift"; sourceTree = "<group>"; };
 		534732DC1F10C3BB00770446 /* MainWindowOutlineView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowOutlineView.swift; path = "WindowControllers/Main Window/Sidebar/MainWindowOutlineView.swift"; sourceTree = "<group>"; };
 		535CB4541F2B1ABD00A746F6 /* PayloadLibrary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PayloadLibrary.swift; path = "WindowControllers/Profile Editor/Payload Library/PayloadLibrary.swift"; sourceTree = "<group>"; };
@@ -89,6 +102,13 @@
 		536DA4931F12143F00FB325E /* ViewWhite.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ViewWhite.swift; path = Utility/ViewWhite.swift; sourceTree = "<group>"; };
 		5370780C1F232DAA00570090 /* ProfileEditorWindowToolbarItemTitle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProfileEditorWindowToolbarItemTitle.swift; path = "WindowControllers/Profile Editor/Toolbar/ProfileEditorWindowToolbarItemTitle.swift"; sourceTree = "<group>"; };
 		5383C1921F2C8B5C004EBE9B /* PreferencesEditor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PreferencesEditor.swift; path = WindowControllers/Preferences/PreferencesEditor.swift; sourceTree = "<group>"; };
+		5383C1951F2C9127004EBE9B /* PayloadLibraryCellView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PayloadLibraryCellView.swift; path = "WindowControllers/Profile Editor/Payload Library/PayloadLibraryCellViews/PayloadLibraryCellView.swift"; sourceTree = "<group>"; };
+		5383C1971F2C919A004EBE9B /* PayloadLibraryCellViewProfile.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PayloadLibraryCellViewProfile.swift; path = "WindowControllers/Profile Editor/Payload Library/PayloadLibraryCellViews/PayloadLibraryCellViewProfile.swift"; sourceTree = "<group>"; };
+		5383C1991F2C91AF004EBE9B /* PayloadLibraryCellViewLibrary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PayloadLibraryCellViewLibrary.swift; path = "WindowControllers/Profile Editor/Payload Library/PayloadLibraryCellViews/PayloadLibraryCellViewLibrary.swift"; sourceTree = "<group>"; };
+		5383C19C1F2C9592004EBE9B /* LibraryCellViewItemImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LibraryCellViewItemImageView.swift; path = "WindowControllers/Profile Editor/Payload Library/PayloadLibraryCellViewItems/LibraryCellViewItemImageView.swift"; sourceTree = "<group>"; };
+		5383C19E1F2C9AC3004EBE9B /* LibraryCellViewItemButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LibraryCellViewItemButton.swift; path = "WindowControllers/Profile Editor/Payload Library/PayloadLibraryCellViewItems/LibraryCellViewItemButton.swift"; sourceTree = "<group>"; };
+		5383C1A01F2C9EE1004EBE9B /* LibraryCellViewItemTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LibraryCellViewItemTextField.swift; path = "WindowControllers/Profile Editor/Payload Library/PayloadLibraryCellViewItems/LibraryCellViewItemTextField.swift"; sourceTree = "<group>"; };
+		5383C1A31F2D0B7C004EBE9B /* PayloadCellViewPadding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PayloadCellViewPadding.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViewPadding.swift"; sourceTree = "<group>"; };
 		538D2C461F1BC73800FF6051 /* PreferencesGeneral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PreferencesGeneral.swift; path = WindowControllers/Preferences/PreferencesGeneral.swift; sourceTree = "<group>"; };
 		538D2C481F1BCB2500FF6051 /* PreferencesProfileDefaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PreferencesProfileDefaults.swift; path = WindowControllers/Preferences/PreferencesProfileDefaults.swift; sourceTree = "<group>"; };
 		538D2C4C1F1C970C00FF6051 /* PreferencesViewElements.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PreferencesViewElements.swift; path = WindowControllers/Preferences/PreferencesViewElements.swift; sourceTree = "<group>"; };
@@ -140,8 +160,8 @@
 		5309D3071F1AB254002133A0 /* Profile Editor */ = {
 			isa = PBXGroup;
 			children = (
-				531852051F22907C00529E6B /* ProfileEditorWindow.swift */,
-				531852211F2295B000529E6B /* ProfileEditorWindowSplitView.swift */,
+				531852051F22907C00529E6B /* ProfileEditorWindowController.swift */,
+				531852211F2295B000529E6B /* ProfileEditorSplitView.swift */,
 				5370780B1F232D8500570090 /* Toolbar */,
 				539A164B1F267742009CA7B6 /* Editor */,
 				535CB4531F2B1A0900A746F6 /* Payload Library */,
@@ -159,6 +179,14 @@
 				538D2C4C1F1C970C00FF6051 /* PreferencesViewElements.swift */,
 			);
 			name = Preferences;
+			sourceTree = "<group>";
+		};
+		5326D22C1F2E2C7000D93C67 /* Payload Controller */ = {
+			isa = PBXGroup;
+			children = (
+				5326D22D1F2E2CAA00D93C67 /* PayloadPlaceholder.swift */,
+			);
+			name = "Payload Controller";
 			sourceTree = "<group>";
 		};
 		534732D81F10C2F100770446 /* Toolbar */ = {
@@ -189,6 +217,9 @@
 				535CB45C1F2B97A600A746F6 /* PayloadLibraryMenu.swift */,
 				535CB4561F2B1CD300A746F6 /* PayloadLibrarySplitView.swift */,
 				535CB4581F2B1E4100A746F6 /* PayloadLibraryTableViews.swift */,
+				5326D2281F2DD2AC00D93C67 /* PayloadLibraryNoPayloadsView.swift */,
+				5383C1941F2C90DB004EBE9B /* PayloadLibraryCellViews */,
+				5383C19B1F2C934C004EBE9B /* PayloadLibraryCellViewItems */,
 			);
 			name = "Payload Library";
 			sourceTree = "<group>";
@@ -262,6 +293,7 @@
 				53DADB4F1F13ACF90045CB3F /* AppResources.swift */,
 				5367E26B1F13ED440027D0D0 /* Alert.swift */,
 				536554DB1F248CA4000543A3 /* Error.swift */,
+				5326D22A1F2DECED00D93C67 /* CoreExtensions.swift */,
 			);
 			name = Utility;
 			sourceTree = "<group>";
@@ -272,6 +304,26 @@
 				5370780C1F232DAA00570090 /* ProfileEditorWindowToolbarItemTitle.swift */,
 			);
 			name = Toolbar;
+			sourceTree = "<group>";
+		};
+		5383C1941F2C90DB004EBE9B /* PayloadLibraryCellViews */ = {
+			isa = PBXGroup;
+			children = (
+				5383C1951F2C9127004EBE9B /* PayloadLibraryCellView.swift */,
+				5383C1971F2C919A004EBE9B /* PayloadLibraryCellViewProfile.swift */,
+				5383C1991F2C91AF004EBE9B /* PayloadLibraryCellViewLibrary.swift */,
+			);
+			name = PayloadLibraryCellViews;
+			sourceTree = "<group>";
+		};
+		5383C19B1F2C934C004EBE9B /* PayloadLibraryCellViewItems */ = {
+			isa = PBXGroup;
+			children = (
+				5383C19C1F2C9592004EBE9B /* LibraryCellViewItemImageView.swift */,
+				5383C19E1F2C9AC3004EBE9B /* LibraryCellViewItemButton.swift */,
+				5383C1A01F2C9EE1004EBE9B /* LibraryCellViewItemTextField.swift */,
+			);
+			name = PayloadLibraryCellViewItems;
 			sourceTree = "<group>";
 		};
 		539832051F0EE15400C4792D = {
@@ -301,6 +353,7 @@
 				536DA4921F12142100FB325E /* Utility */,
 				5309D3011F19E516002133A0 /* Profile */,
 				5365F4821F0F4CFE0064C02A /* Window Controllers */,
+				5326D22C1F2E2C7000D93C67 /* Payload Controller */,
 				5365F4891F0F871F0064C02A /* Graphics */,
 			);
 			path = ProfileCreator;
@@ -321,6 +374,7 @@
 			children = (
 				53C4B3601F27D0B300457CB5 /* PayloadCellView.swift */,
 				53C4B35E1F27D06000457CB5 /* PayloadCellViewTextField.swift */,
+				5383C1A31F2D0B7C004EBE9B /* PayloadCellViewPadding.swift */,
 			);
 			name = PayloadCellViews;
 			sourceTree = "<group>";
@@ -414,17 +468,22 @@
 			buildActionMask = 2147483647;
 			files = (
 				535CB4571F2B1CD300A746F6 /* PayloadLibrarySplitView.swift in Sources */,
+				5383C1981F2C919A004EBE9B /* PayloadLibraryCellViewProfile.swift in Sources */,
 				534732DD1F10C3BB00770446 /* MainWindowOutlineView.swift in Sources */,
 				5315400A1F1233080060011B /* Constants.swift in Sources */,
 				5309D30A1F1AB287002133A0 /* Preferences.swift in Sources */,
 				53C4B3611F27D0B300457CB5 /* PayloadCellView.swift in Sources */,
 				535CB45D1F2B97A600A746F6 /* PayloadLibraryMenu.swift in Sources */,
-				531852221F2295B000529E6B /* ProfileEditorWindowSplitView.swift in Sources */,
+				531852221F2295B000529E6B /* ProfileEditorSplitView.swift in Sources */,
+				5383C19D1F2C9592004EBE9B /* LibraryCellViewItemImageView.swift in Sources */,
 				5309D3051F1A430F002133A0 /* ProfileController.swift in Sources */,
 				53DADB501F13ACF90045CB3F /* AppResources.swift in Sources */,
+				5326D2291F2DD2AC00D93C67 /* PayloadLibraryNoPayloadsView.swift in Sources */,
 				538D2C491F1BCB2500FF6051 /* PreferencesProfileDefaults.swift in Sources */,
 				536554DC1F248CA4000543A3 /* Error.swift in Sources */,
+				5383C1A41F2D0B7C004EBE9B /* PayloadCellViewPadding.swift in Sources */,
 				53DADB4C1F137A110045CB3F /* MainWindowLibrary.swift in Sources */,
+				5383C19A1F2C91AF004EBE9B /* PayloadLibraryCellViewLibrary.swift in Sources */,
 				536DA4911F1213AE00FB325E /* MainWindowWelcomeView.swift in Sources */,
 				536DA48E1F11FD9D00FB325E /* MainWindowProfilePreview.swift in Sources */,
 				5315400D1F127B340060011B /* MainWindowAllProfiles.swift in Sources */,
@@ -432,14 +491,18 @@
 				539832121F0EE15400C4792D /* AppDelegate.swift in Sources */,
 				5365F4851F0F4D430064C02A /* MainWindow.swift in Sources */,
 				534732DB1F10C35500770446 /* MainWindowSplitView.swift in Sources */,
+				5383C19F1F2C9AC3004EBE9B /* LibraryCellViewItemButton.swift in Sources */,
 				535CB45B1F2B8BAD00A746F6 /* PayloadLibraryFilter.swift in Sources */,
-				531852061F22907C00529E6B /* ProfileEditorWindow.swift in Sources */,
+				531852061F22907C00529E6B /* ProfileEditorWindowController.swift in Sources */,
+				5383C1A11F2C9EE1004EBE9B /* LibraryCellViewItemTextField.swift in Sources */,
 				536DA4941F12143F00FB325E /* ViewWhite.swift in Sources */,
 				535CB4591F2B1E4100A746F6 /* PayloadLibraryTableViews.swift in Sources */,
 				5383C1931F2C8B5C004EBE9B /* PreferencesEditor.swift in Sources */,
 				539A164D1F26787A009CA7B6 /* ProfileEditor.swift in Sources */,
+				5326D22E1F2E2CAA00D93C67 /* PayloadPlaceholder.swift in Sources */,
 				538D2C4D1F1C970C00FF6051 /* PreferencesViewElements.swift in Sources */,
 				5315400F1F127F280060011B /* MainWindowOutlineViewItems.swift in Sources */,
+				5326D22B1F2DECED00D93C67 /* CoreExtensions.swift in Sources */,
 				53C4B35F1F27D06000457CB5 /* PayloadCellViewTextField.swift in Sources */,
 				53DF38771F11675F006DE5BE /* MainWindowTableView.swift in Sources */,
 				538D2C471F1BC73800FF6051 /* PreferencesGeneral.swift in Sources */,
@@ -448,6 +511,7 @@
 				5309D1341F29EE03007C9D01 /* PayloadCellViewItemConstraints.swift in Sources */,
 				5365F4881F0F71850064C02A /* MainWindowToolbarItemAdd.swift in Sources */,
 				5367E26C1F13ED440027D0D0 /* Alert.swift in Sources */,
+				5383C1961F2C9127004EBE9B /* PayloadLibraryCellView.swift in Sources */,
 				535CB4551F2B1ABD00A746F6 /* PayloadLibrary.swift in Sources */,
 				5309D1311F29BB1E007C9D01 /* PayloadCellViewItemTextField.swift in Sources */,
 				5395925F1F1012F3005090B3 /* MainWindowToolbarItemExport.swift in Sources */,

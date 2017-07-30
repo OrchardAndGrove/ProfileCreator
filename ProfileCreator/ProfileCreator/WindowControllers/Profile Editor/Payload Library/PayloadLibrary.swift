@@ -16,7 +16,6 @@ class PayloadLibrary: NSObject {
     private weak var profile: Profile?
     
     let splitView: PayloadLibrarySplitView
-    let filter = PayloadLibraryFilter()
     
     init(profile: Profile) {
         

@@ -76,7 +76,7 @@ class MainWindowOutlineViewController: NSObject {
         // Things I've tried to remove the separator between the views in the outline view
         /*
          self.outlineView.gridColor = NSColor.clear
-         self.outlineView.gridStyleMask = NSTableViewGridLineStyle.init(rawValue: 0)
+         self.outlineView.gridStyleMask = NSTableViewGridLineStyle(rawValue: 0)
          self.outlineView.intercellSpacing = NSZeroSize
          */
         
@@ -233,7 +233,7 @@ class MainWindowOutlineViewController: NSObject {
             
             let row = self.outlineView.row(forItem: group)
             if 0 <= row {
-                self.outlineView.selectRowIndexes(IndexSet.init(integer: row), byExtendingSelection: false)
+                self.outlineView.selectRowIndexes(IndexSet(integer: row), byExtendingSelection: false)
             }
         }
     }
@@ -575,7 +575,7 @@ class MainWindowOutlineView: NSOutlineView {
         //  Set the group in editing mode
         // ---------------------------------------------------------------------
         if self.clickedItemRow != -1 {
-            self.selectRowIndexes(IndexSet.init(integer: self.clickedItemRow), byExtendingSelection: false)
+            self.selectRowIndexes(IndexSet(integer: self.clickedItemRow), byExtendingSelection: false)
             self.editColumn(0, row: self.clickedItemRow, with: nil, select: true)
         }
     }

@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class PayloadCellViewTextField: NSTableCellView, PayloadCellView {
+class PayloadCellViewTextField: NSTableCellView, ProfileCreatorCellView, PayloadCellView {
     
     // MARK: -
     // MARK: PayloadCellView Variables
@@ -45,13 +45,13 @@ class PayloadCellViewTextField: NSTableCellView, PayloadCellView {
         // ---------------------------------------------------------------------
         //  Setup Static View Content
         // ---------------------------------------------------------------------
-        self.textFieldTitle = TextField.title(string: key, fontWeight: NSFontWeightBold, leadingItem: nil, constraints: &constraints, cellView: self)
-        self.textFieldDescription = TextField.description(string: key + "DESCRIPTION", constraints: &constraints, cellView: self)
+        self.textFieldTitle = EditorTextField.title(string: key, fontWeight: NSFontWeightBold, leadingItem: nil, constraints: &constraints, cellView: self)
+        self.textFieldDescription = EditorTextField.description(string: key + "DESCRIPTION", constraints: &constraints, cellView: self)
         
         // ---------------------------------------------------------------------
         //  Setup Custom View Content
         // ---------------------------------------------------------------------
-        self.textFieldInput = TextField.input(defaultString: "", placeholderString: "TextPlaceholder", constraints: &constraints, cellView: self)
+        self.textFieldInput = EditorTextField.input(defaultString: "", placeholderString: "TextPlaceholder", constraints: &constraints, cellView: self)
         self.setupTextFieldInput(constraints: &constraints)
         
         // ---------------------------------------------------------------------

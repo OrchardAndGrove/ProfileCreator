@@ -8,7 +8,7 @@
 
 import Cocoa
 
-class ProfileEditorWindowSplitView: NSSplitView {
+class ProfileEditorSplitView: NSSplitView {
     
     // MARK: -
     // MARK: Variables
@@ -17,7 +17,11 @@ class ProfileEditorWindowSplitView: NSSplitView {
     let editorView = NSView()
     
     var library: PayloadLibrary?
+    
+    let libraryFilter = PayloadLibraryFilter()
     var libraryFilterConstraints = [NSLayoutConstraint]()
+    var libraryMenuConstraints = [NSLayoutConstraint]()
+    
     let libraryView = NSView()
     let libraryViewLine = NSBox()
     
@@ -65,7 +69,81 @@ class ProfileEditorWindowSplitView: NSSplitView {
     }
     
     // MARK: -
+    // MARK: Instance Functions
+    
+    public func showLibraryMenu(view: NSView, show: Bool) {
+        if show {
+            if self.libraryView.subviews.contains(self.libraryFilter.view) { self.libraryFilter.view.removeFromSuperview() }
+            if self.libraryView.subviews.contains(self.libraryViewLine) { self.libraryViewLine.removeFromSuperview() }
+            self.libraryView.addSubview(view)
+            if self.libraryMenuConstraints.count == 0 {
+                self.setupLibraryMenu(view: view)
+            }
+            NSLayoutConstraint.activate(self.libraryMenuConstraints)
+        } else {
+            if self.libraryView.subviews.contains(view) { view.removeFromSuperview() }
+            self.libraryView.addSubview(self.libraryFilter.view)
+            self.libraryView.addSubview(self.libraryViewLine)
+            NSLayoutConstraint.activate(self.libraryFilterConstraints)
+        }
+    }
+    
+    // MARK: -
     // MARK: Setup Layout Constraints
+    
+    private func setupLibraryMenu(view: NSView) {
+        
+        guard let library = self.library else {
+            // TODO: Proper Logging
+            return
+        }
+        
+        // Height
+        self.libraryMenuConstraints.append(NSLayoutConstraint(item: view,
+                                                              attribute: .height,
+                                                              relatedBy: .equal,
+                                                              toItem: nil,
+                                                              attribute: .notAnAttribute,
+                                                              multiplier: 1,
+                                                              constant: 27))
+        
+        // Top
+        self.libraryMenuConstraints.append(NSLayoutConstraint(item: library.splitView,
+                                                              attribute: .bottom,
+                                                              relatedBy: .equal,
+                                                              toItem: view,
+                                                              attribute: .top,
+                                                              multiplier: 1,
+                                                              constant: 0))
+        
+        // Leading
+        self.libraryMenuConstraints.append(NSLayoutConstraint(item: view,
+                                                              attribute: .leading,
+                                                              relatedBy: .equal,
+                                                              toItem: self.libraryView,
+                                                              attribute: .leading,
+                                                              multiplier: 1,
+                                                              constant: 0))
+        
+        // Trailing
+        self.libraryMenuConstraints.append(NSLayoutConstraint(item: view,
+                                                              attribute: .trailing,
+                                                              relatedBy: .equal,
+                                                              toItem: self.libraryView,
+                                                              attribute: .trailing,
+                                                              multiplier: 1,
+                                                              constant: 0))
+        
+        // Bottom
+        self.libraryMenuConstraints.append(NSLayoutConstraint(item: view,
+                                                              attribute: .bottom,
+                                                              relatedBy: .equal,
+                                                              toItem: self.libraryView,
+                                                              attribute: .bottom,
+                                                              multiplier: 1,
+                                                              constant: 0))
+        
+    }
     
     private func setupSplitViewEditor(constraints: inout [NSLayoutConstraint]) {
         
@@ -199,13 +277,13 @@ class ProfileEditorWindowSplitView: NSSplitView {
         // ---------------------------------------------------------------------
         //  Add Library Filter to Library View
         // ---------------------------------------------------------------------
-        self.libraryView.addSubview(library.filter.view)
+        self.libraryView.addSubview(self.libraryFilter.view)
         
         // ---------------------------------------------------------------------
         //  Add constraints for Library Filter
         // ---------------------------------------------------------------------
         // Height
-        self.libraryFilterConstraints.append(NSLayoutConstraint(item: library.filter.view,
+        self.libraryFilterConstraints.append(NSLayoutConstraint(item: self.libraryFilter.view,
                                                                 attribute: .height,
                                                                 relatedBy: .equal,
                                                                 toItem: nil,
@@ -217,13 +295,13 @@ class ProfileEditorWindowSplitView: NSSplitView {
         self.libraryFilterConstraints.append(NSLayoutConstraint(item: self.libraryViewLine,
                                                                 attribute: .bottom,
                                                                 relatedBy: .equal,
-                                                                toItem: library.filter.view,
+                                                                toItem: self.libraryFilter.view,
                                                                 attribute: .top,
                                                                 multiplier: 1,
                                                                 constant: 0))
         
         // Leading
-        self.libraryFilterConstraints.append(NSLayoutConstraint(item: library.filter.view,
+        self.libraryFilterConstraints.append(NSLayoutConstraint(item: self.libraryFilter.view,
                                                                 attribute: .leading,
                                                                 relatedBy: .equal,
                                                                 toItem: self.libraryView,
@@ -232,7 +310,7 @@ class ProfileEditorWindowSplitView: NSSplitView {
                                                                 constant: 0))
         
         // Trailing
-        self.libraryFilterConstraints.append(NSLayoutConstraint(item: library.filter.view,
+        self.libraryFilterConstraints.append(NSLayoutConstraint(item: self.libraryFilter.view,
                                                                 attribute: .trailing,
                                                                 relatedBy: .equal,
                                                                 toItem: self.libraryView,
@@ -241,7 +319,7 @@ class ProfileEditorWindowSplitView: NSSplitView {
                                                                 constant: 0))
         
         // Bottom
-        self.libraryFilterConstraints.append(NSLayoutConstraint(item: library.filter.view,
+        self.libraryFilterConstraints.append(NSLayoutConstraint(item: self.libraryFilter.view,
                                                                 attribute: .bottom,
                                                                 relatedBy: .equal,
                                                                 toItem: self.libraryView,
@@ -257,7 +335,7 @@ class ProfileEditorWindowSplitView: NSSplitView {
     
 }
 
-extension ProfileEditorWindowSplitView: NSSplitViewDelegate {
+extension ProfileEditorSplitView: NSSplitViewDelegate {
     
     /*
      ///////////////////////////////////////////////////////////////////////////////

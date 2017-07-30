@@ -14,7 +14,7 @@ public class ProfileEditorWindowController: NSWindowController {
     // MARK: Variables
     
     let profile: Profile
-    let splitView: ProfileEditorWindowSplitView
+    let splitView: ProfileEditorSplitView
     let toolbar = NSToolbar(identifier: "MainWindowToolbar")
     let toolbarItemIdentifiers = [NSToolbarFlexibleSpaceItemIdentifier,
                                   ToolbarIdentifier.profileEditorTitle,
@@ -34,7 +34,7 @@ public class ProfileEditorWindowController: NSWindowController {
         //  Setup Variables
         // ---------------------------------------------------------------------
         self.profile = profile
-        self.splitView = ProfileEditorWindowSplitView(profile: profile)
+        self.splitView = ProfileEditorSplitView(profile: profile)
         
         // ---------------------------------------------------------------------
         //  Setup editor window
@@ -89,6 +89,13 @@ public class ProfileEditorWindowController: NSWindowController {
         // Update the Key View Loop and set first responder
         // ---------------------------------------------------------------------
         self.splitView.editor?.updateKeyViewLoop(window: self.window!)
+        
+        // ---------------------------------------------------------------------
+        // Set the initial position of the library SplitView
+        // NOTE: This has to be called twice, probably because of using AutoLayout.
+        // ---------------------------------------------------------------------
+        self.splitView.library?.splitView.setPosition(250.0, ofDividerAt: 0)
+        self.splitView.library?.splitView.setPosition(250.0, ofDividerAt: 0)
     }
     
     deinit {

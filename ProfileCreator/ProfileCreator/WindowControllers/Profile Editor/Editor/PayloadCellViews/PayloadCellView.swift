@@ -8,8 +8,11 @@
 
 import Cocoa
 
-protocol PayloadCellView {
+protocol ProfileCreatorCellView {
     var height: CGFloat { get set }
+}
+
+protocol PayloadCellView {
     var row: Int { get set }
     
     var textFieldTitle: NSTextField? { get set }

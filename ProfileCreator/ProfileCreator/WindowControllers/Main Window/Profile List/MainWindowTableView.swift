@@ -265,13 +265,6 @@ class MainWindowTableViewController: NSObject, MainWindowOutlineViewSelectionDel
     }
 }
 
-extension Array where Element: Equatable {
-    
-    func indexes(ofItems items: [Element]) -> IndexSet?  {
-        return IndexSet(self.enumerated().flatMap { items.contains($0.element) ? $0.offset : nil })
-    }
-}
-
 extension MainWindowTableViewController: NSTableViewDataSource {
     
     func numberOfRows(in tableView: NSTableView) -> Int {
