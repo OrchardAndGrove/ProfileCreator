@@ -100,7 +100,7 @@ class LibraryTextField {
         textField.controlSize = .regular
         textField.textColor = NSColor.controlTextColor
         textField.alignment = .left
-        textField.font = NSFont.systemFont(ofSize: fontSize, weight: fontWeight)
+        textField.font = NSFont.systemFont(ofSize: fontSize, weight: NSFont.Weight(rawValue: fontWeight))
         textField.stringValue = string ?? ""
         
         // ---------------------------------------------------------------------

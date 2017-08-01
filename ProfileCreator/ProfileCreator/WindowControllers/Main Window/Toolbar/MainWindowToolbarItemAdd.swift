@@ -33,7 +33,7 @@ class MainWindowToolbarItemAdd: NSView {
         // ---------------------------------------------------------------------
         //  Create the actual toolbar item
         // ---------------------------------------------------------------------
-        self.toolbarItem = NSToolbarItem(itemIdentifier: ToolbarIdentifier.mainWindowAdd)
+        self.toolbarItem = NSToolbarItem(itemIdentifier: .mainWindowAdd)
         self.toolbarItem.toolTip = NSLocalizedString("Add profile or library group", comment: "")
         
         // ---------------------------------------------------------------------
@@ -41,7 +41,7 @@ class MainWindowToolbarItemAdd: NSView {
         // ---------------------------------------------------------------------
         self.disclosureTriangle = NSImageView()
         self.disclosureTriangle.translatesAutoresizingMaskIntoConstraints = false
-        self.disclosureTriangle.image = NSImage(named: "downarrow")
+        self.disclosureTriangle.image = NSImage(named: NSImage.Name(rawValue: "downarrow"))
         self.disclosureTriangle.imageScaling = .scaleProportionallyUpOrDown
         self.disclosureTriangle.widthAnchor.constraint(equalToConstant: 3)
         self.disclosureTriangle.heightAnchor.constraint(equalToConstant: 3)
@@ -151,7 +151,7 @@ class MainWindowToolbarItemAddButton: NSButton {
         //  Setup Self (Toolbar Item)
         // ---------------------------------------------------------------------
         self.bezelStyle = .texturedRounded
-        self.image = NSImage(named: NSImageNameAddTemplate)
+        self.image = NSImage(named: NSImage.Name.addTemplate)
         self.target = self
         self.action = #selector(clicked(button:))
         self.imageScaling = .scaleProportionallyDown
@@ -190,7 +190,7 @@ class MainWindowToolbarItemAddButton: NSButton {
     // MARK: -
     // MARK: Button/Menu Actions
     
-    func clicked(button: NSButton) {
+    @objc func clicked(button: NSButton) {
         
         // ---------------------------------------------------------------------
         //  If only button was clicked, call 'newProfile'
@@ -198,11 +198,11 @@ class MainWindowToolbarItemAddButton: NSButton {
         self.newProfile(menuItem: nil)
     }
     
-    func newProfile(menuItem: NSMenuItem?) {
+    @objc func newProfile(menuItem: NSMenuItem?) {
         NotificationCenter.default.post(name: .newProfile, object: self, userInfo: [NotificationKey.parentTitle : SidebarGroupTitle.library])
     }
     
-    func newGroup(menuItem: NSMenuItem?) {
+    @objc func newGroup(menuItem: NSMenuItem?) {
         NotificationCenter.default.post(name: .addGroup, object: self, userInfo: [NotificationKey.parentTitle : SidebarGroupTitle.library])
     }
     
@@ -303,7 +303,7 @@ class MainWindowToolbarItemAddButton: NSButton {
         // ---------------------------------------------------------------------
         //  Create a new tracking area
         // ---------------------------------------------------------------------
-        let trackingOptions = NSTrackingAreaOptions(rawValue: (NSTrackingAreaOptions.mouseEnteredAndExited.rawValue | NSTrackingAreaOptions.activeAlways.rawValue))
+        let trackingOptions = NSTrackingArea.Options(rawValue: (NSTrackingArea.Options.mouseEnteredAndExited.rawValue | NSTrackingArea.Options.activeAlways.rawValue))
         self.trackingArea = NSTrackingArea(rect: self.bounds, options: trackingOptions, owner: self, userInfo: nil)
         
         // ---------------------------------------------------------------------

@@ -77,7 +77,7 @@ class OutlineViewParentCellView: NSTableCellView {
         self.textFieldTitle.drawsBackground = false
         self.textFieldTitle.isEditable = false
         self.textFieldTitle.isSelectable = false
-        self.textFieldTitle.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .small), weight: NSFontWeightMedium)
+        self.textFieldTitle.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .small), weight: NSFont.Weight.medium)
         self.textFieldTitle.textColor = NSColor.secondaryLabelColor
         self.textFieldTitle.alignment = .left
         setupTextFieldTitle(constraints: &constraints, parent: parent)
@@ -89,15 +89,15 @@ class OutlineViewParentCellView: NSTableCellView {
             self.buttonAdd = NSButton()
             self.buttonAdd?.translatesAutoresizingMaskIntoConstraints = false
             self.buttonAdd?.bezelStyle = .inline
-            self.buttonAdd?.setButtonType(NSMomentaryChangeButton)
+            self.buttonAdd?.setButtonType(.momentaryChange)
             self.buttonAdd?.isBordered = false
             self.buttonAdd?.isTransparent = false
             self.buttonAdd?.imagePosition = .imageOnly
-            self.buttonAdd?.image = NSImage(named: NSImageNameAddTemplate)
-            (self.buttonAdd?.cell as! NSButtonCell).highlightsBy = NSCellStyleMask(rawValue: (
-                NSCellStyleMask.pushInCellMask.rawValue | NSCellStyleMask.changeBackgroundCellMask.rawValue ))
+            self.buttonAdd?.image = NSImage(named: NSImage.Name.addTemplate)
+            (self.buttonAdd?.cell as! NSButtonCell).highlightsBy = NSCell.StyleMask(rawValue: (
+                NSCell.StyleMask.pushInCellMask.rawValue | NSCell.StyleMask.changeBackgroundCellMask.rawValue ))
             self.buttonAdd?.sizeToFit()
-            self.buttonAdd?.setContentHuggingPriority(NSLayoutPriorityDefaultHigh, for: .horizontal)
+            self.buttonAdd?.setContentHuggingPriority(NSLayoutConstraint.Priority.defaultHigh, for: .horizontal)
             self.buttonAdd?.target = self
             self.buttonAdd?.action = #selector(addGroup)
             self.buttonAdd?.isHidden = true
@@ -113,7 +113,7 @@ class OutlineViewParentCellView: NSTableCellView {
     // MARK: -
     // MARK: Button Functions
     
-    func addGroup() {
+    @objc func addGroup() {
         if let parent = self.parent {
             NotificationCenter.default.post(name: .addGroup, object: self, userInfo: [ NotificationKey.parentTitle : parent.title ])
         }
@@ -152,7 +152,7 @@ class OutlineViewParentCellView: NSTableCellView {
         // ---------------------------------------------------------------------
         //  Create a new tracking area
         // ---------------------------------------------------------------------
-        let trackingOptions = NSTrackingAreaOptions(rawValue: (NSTrackingAreaOptions.mouseEnteredAndExited.rawValue | NSTrackingAreaOptions.activeAlways.rawValue))
+        let trackingOptions = NSTrackingArea.Options(rawValue: (NSTrackingArea.Options.mouseEnteredAndExited.rawValue | NSTrackingArea.Options.activeAlways.rawValue))
         self.trackingArea = NSTrackingArea(rect: self.bounds, options: trackingOptions, owner: self, userInfo: nil)
         
         // ---------------------------------------------------------------------
@@ -300,7 +300,7 @@ class OutlineViewChildCellView: NSTableCellView {
         self.textFieldTitle.font = NSFont.systemFont(ofSize: 12)
         self.textFieldTitle.textColor = NSColor.controlTextColor
         self.textFieldTitle.alignment = .left
-        self.textFieldTitle.setContentHuggingPriority(NSLayoutPriorityDefaultLow, for: .horizontal)
+        self.textFieldTitle.setContentHuggingPriority(NSLayoutConstraint.Priority.defaultLow, for: .horizontal)
         setupTextFieldTitle(constraints: &constraints)
         
         // ---------------------------------------------------------------------
@@ -308,14 +308,14 @@ class OutlineViewChildCellView: NSTableCellView {
         // ---------------------------------------------------------------------
         self.buttonCount.translatesAutoresizingMaskIntoConstraints = false
         self.buttonCount.bezelStyle = .inline
-        self.buttonCount.setButtonType(NSMomentaryPushInButton)
+        self.buttonCount.setButtonType(.momentaryPushIn)
         self.buttonCount.isBordered = true
         self.buttonCount.isTransparent = false
         self.buttonCount.title = "0"
         self.buttonCount.font = NSFont.boldSystemFont(ofSize: 12)
         self.buttonCount.sizeToFit()
-        (self.buttonCount.cell as! NSButtonCell).highlightsBy = NSCellStyleMask(rawValue: 0)
-        self.buttonCount.setContentHuggingPriority(NSLayoutPriorityDefaultHigh, for: .horizontal)
+        (self.buttonCount.cell as! NSButtonCell).highlightsBy = NSCell.StyleMask(rawValue: 0)
+        self.buttonCount.setContentHuggingPriority(NSLayoutConstraint.Priority.defaultHigh, for: .horizontal)
         self.buttonCount.isHidden = !UserDefaults.standard.bool(forKey: PreferenceKey.showProfileCount)
         setupButtonCount(constraints: &constraints)
         
@@ -325,7 +325,7 @@ class OutlineViewChildCellView: NSTableCellView {
         if let icon = child.icon {
             self.icon = child.icon
             self.imageViewIcon.translatesAutoresizingMaskIntoConstraints = false
-            self.imageViewIcon.setContentHuggingPriority(NSLayoutPriorityDefaultHigh, for: .horizontal)
+            self.imageViewIcon.setContentHuggingPriority(NSLayoutConstraint.Priority.defaultHigh, for: .horizontal)
             self.imageViewIcon.image = icon
             setupImageViewIcon(constraints: &constraints)
             UserDefaults.standard.addObserver(self, forKeyPath: PreferenceKey.showGroupIcons, options: .new, context: nil)

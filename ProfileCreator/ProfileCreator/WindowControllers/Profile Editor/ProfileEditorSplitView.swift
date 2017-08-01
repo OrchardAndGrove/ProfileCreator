@@ -43,7 +43,7 @@ class ProfileEditorSplitView: NSSplitView {
         // ---------------------------------------------------------------------
         //  Setup SplitView
         // ---------------------------------------------------------------------
-        self.identifier = "ProfileEditorWindowSplitView-ID"
+        self.identifier = NSUserInterfaceItemIdentifier(rawValue: "ProfileEditorWindowSplitView-ID")
         self.translatesAutoresizingMaskIntoConstraints = false
         self.dividerStyle = .thin
         self.isVertical = true
@@ -153,7 +153,7 @@ class ProfileEditorSplitView: NSSplitView {
         }
         
         self.addSubview(editor.scrollView)
-        self.setHoldingPriority(NSLayoutPriorityDefaultLow, forSubviewAt: 1)
+        self.setHoldingPriority(NSLayoutConstraint.Priority.defaultLow, forSubviewAt: 1)
         
         // ---------------------------------------------------------------------
         //  Add constraints
@@ -330,7 +330,7 @@ class ProfileEditorSplitView: NSSplitView {
         constraints.append(contentsOf: self.libraryFilterConstraints)
         
         self.addSubview(self.libraryView)
-        self.setHoldingPriority((NSLayoutPriorityDefaultLow + 1), forSubviewAt: 0)
+        self.setHoldingPriority((NSLayoutConstraint.Priority(rawValue: NSLayoutConstraint.Priority.RawValue(Int(NSLayoutConstraint.Priority.defaultLow.rawValue) + 1))), forSubviewAt: 0)
     }
     
 }

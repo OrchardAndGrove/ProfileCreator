@@ -27,15 +27,15 @@ class PayloadLibraryFilter {
         //  Setup View
         // ---------------------------------------------------------------------
         self.view.translatesAutoresizingMaskIntoConstraints = false
-        self.view.setContentHuggingPriority(NSLayoutPriorityRequired, for: .vertical)
-        self.view.setContentCompressionResistancePriority(NSLayoutPriorityRequired, for: .vertical)
+        self.view.setContentHuggingPriority(NSLayoutConstraint.Priority.required, for: .vertical)
+        self.view.setContentCompressionResistancePriority(NSLayoutConstraint.Priority.required, for: .vertical)
         
         // ---------------------------------------------------------------------
         //  Create and setup SearchField
         // ---------------------------------------------------------------------
         self.searchField.translatesAutoresizingMaskIntoConstraints = false
         self.searchField.controlSize = .small
-        self.searchField.font = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize())
+        self.searchField.font = NSFont.systemFont(ofSize: NSFont.smallSystemFontSize)
         self.searchField.placeholderString = NSLocalizedString("Filter Payloads", comment: "")
         setupSearchField(constraints: &constraints)
         

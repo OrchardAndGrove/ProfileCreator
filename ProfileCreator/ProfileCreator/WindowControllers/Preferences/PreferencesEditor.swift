@@ -13,7 +13,7 @@ class PreferencesEditor: PreferencesItem {
     // MARK: -
     // MARK: Variables
     
-    let identifier = ToolbarIdentifier.preferencesEditor
+    let identifier: NSToolbarItem.Identifier = .preferencesEditor
     let toolbarItem: NSToolbarItem
     let view: NSView
     
@@ -26,7 +26,7 @@ class PreferencesEditor: PreferencesItem {
         //  Create the toolbar item
         // ---------------------------------------------------------------------
         self.toolbarItem = NSToolbarItem(itemIdentifier: identifier)
-        self.toolbarItem.image = NSImage(named: NSImageNamePreferencesGeneral)
+        self.toolbarItem.image = NSImage(named: NSImage.Name.preferencesGeneral)
         self.toolbarItem.label = NSLocalizedString("Editor", comment: "")
         self.toolbarItem.paletteLabel = self.toolbarItem.label
         self.toolbarItem.toolTip = self.toolbarItem.label

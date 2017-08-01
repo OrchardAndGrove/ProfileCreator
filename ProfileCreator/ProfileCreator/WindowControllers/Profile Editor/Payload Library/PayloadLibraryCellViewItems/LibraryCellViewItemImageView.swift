@@ -22,11 +22,11 @@ class LibraryImageView {
         let imageView = NSImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.imageScaling = .scaleProportionallyUpOrDown
-        imageView.setContentHuggingPriority(NSLayoutPriorityDefaultHigh, for: .horizontal)
+        imageView.setContentHuggingPriority(NSLayoutConstraint.Priority.defaultHigh, for: .horizontal)
         
         if let icon = image {
             imageView.image = icon
-        } else if let defaultImage = NSImage(named: "") {
+        } else if let defaultImage = NSImage(named: NSImage.Name(rawValue: "")) {
             // FIXME: Add a default icon if missing
             imageView.image = defaultImage
         }

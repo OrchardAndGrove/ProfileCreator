@@ -74,7 +74,7 @@ class MainWindowAllProfilesGroup: NSObject, OutlineViewChildItem {
         // ---------------------------------------------------------------------
         //  Add all saved profiles to this group
         // ---------------------------------------------------------------------
-        if let profileIdentifiers = ProfileController.shared.profileIdentifiers() {
+        if let profileIdentifiers = ProfileController.sharedInstance.profileIdentifiers() {
             self.addProfiles(withIdentifiers: profileIdentifiers)
         }
         
@@ -91,7 +91,7 @@ class MainWindowAllProfilesGroup: NSObject, OutlineViewChildItem {
     // MARK: -
     // MARK: Notification Functions
     
-    func didRemoveProfiles(_ notification: NSNotification?) {
+    @objc func didRemoveProfiles(_ notification: NSNotification?) {
         if let userInfo = notification?.userInfo,
             let identifiers = userInfo[NotificationKey.identifiers] as? [UUID] {
             
@@ -135,7 +135,7 @@ class MainWindowAllProfilesGroup: NSObject, OutlineViewChildItem {
     }
     
     func removeProfiles(atIndexes: IndexSet, withIdentifiers: [UUID]) {
-        ProfileController.shared.removeProfiles(atIndexes: atIndexes, withIdentifiers: withIdentifiers)
+        ProfileController.sharedInstance.removeProfiles(atIndexes: atIndexes, withIdentifiers: withIdentifiers)
     }
     
     func removeFromDisk() -> (Bool, Error?) {

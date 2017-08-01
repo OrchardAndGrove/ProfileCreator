@@ -137,7 +137,7 @@ class EditorTextField {
         textField.isEditable = false
         textField.isSelectable = false
         textField.textColor = NSColor.labelColor
-        textField.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .regular), weight: fontWeight ?? NSFontWeightBold)
+        textField.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .regular), weight: fontWeight.map { NSFont.Weight(rawValue: $0) } ?? NSFont.Weight.bold)
         textField.preferredMaxLayoutWidth = editorTableViewColumnPayloadWidth
         textField.stringValue = string ?? ""
         

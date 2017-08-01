@@ -11,6 +11,6 @@ import Cocoa
 class ViewWhite: NSView {
     override func draw(_ dirtyRect: NSRect) {
         NSColor.white.set()
-        NSRectFill(self.bounds)
+        self.bounds.fill()
     }
 }

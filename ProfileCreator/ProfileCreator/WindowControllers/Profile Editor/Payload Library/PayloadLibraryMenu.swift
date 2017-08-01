@@ -82,12 +82,12 @@ class PayloadLibraryMenu: NSObject {
     // MARK: -
     // MARK: Button Action Functions
     
-    func selectLibrary(_ sender: NSButton) {
+    @objc func selectLibrary(_ sender: NSButton) {
         // FIXME: Tell selection delegate what library was selected
         Swift.print("selectLibrary: \(button)")
-        sender.state = NSOnState
+        sender.state = NSControl.StateValue.onState
         for button in self.buttons {
-            if button != sender { button.state = NSOffState }
+            if button != sender { button.state = NSControl.StateValue.offState }
         }
     }
     
@@ -149,21 +149,21 @@ class PayloadLibraryMenu: NSObject {
         
         if keyPath == PreferenceKey.showPayloadLibraryAppleCollections {
             if self.buttonAppleCollections == nil {
-                if let image = NSImage(named: "Approval-18"), let alternateImage = NSImage(named: "Approval Filled-18") {
+                if let image = NSImage(named: NSImage.Name(rawValue: "Approval-18")), let alternateImage = NSImage(named: NSImage.Name(rawValue: "Approval Filled-18")) {
                     self.buttonAppleCollections = self.button(image: image, alternateImage: alternateImage, tag: self.libraryTagFor(keyPath: keyPath).rawValue)
                 }
             }
             return self.buttonAppleCollections
         } else if keyPath == PreferenceKey.showPayloadLibraryAppleDomains {
             if self.buttonAppleDomains == nil {
-                if let image = NSImage(named: "Approval-18"), let alternateImage = NSImage(named: "Approval Filled-18") {
+                if let image = NSImage(named: NSImage.Name(rawValue: "Approval-18")), let alternateImage = NSImage(named: NSImage.Name(rawValue: "Approval Filled-18")) {
                     self.buttonAppleDomains = self.button(image: image, alternateImage: alternateImage, tag: self.libraryTagFor(keyPath: keyPath).rawValue)
                 }
             }
             return self.buttonAppleDomains
         } else if keyPath == PreferenceKey.showPayloadLibraryDeveloper {
             if self.buttonDeveloper == nil {
-                if let image = NSImage(named: "Settings-16"), let alternateImage = NSImage(named: "Settings Filled-16") {
+                if let image = NSImage(named: NSImage.Name(rawValue: "Settings-16")), let alternateImage = NSImage(named: NSImage.Name(rawValue: "Settings Filled-16")) {
                     self.buttonDeveloper = self.button(image: image, alternateImage: alternateImage, tag: self.libraryTagFor(keyPath: keyPath).rawValue)
                 }
             }

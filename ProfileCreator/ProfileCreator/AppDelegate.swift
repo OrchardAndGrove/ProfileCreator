@@ -65,7 +65,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // ---------------------------------------------------------------------
         //  Get main menu
         // ---------------------------------------------------------------------
-        guard let mainMenu = NSApplication.shared().mainMenu else { return }
+        guard let mainMenu = NSApplication.shared.mainMenu else { return }
         
         // ---------------------------------------------------------------------
         //  Get application menu item submenu
@@ -99,11 +99,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     // MARK: -
     // MARK: NSMenuItem Functions
     
-    func menuItemMainWindow(_ menuItem: NSMenuItem?) {
+    @objc func menuItemMainWindow(_ menuItem: NSMenuItem?) {
         self.mainWindowController.window?.makeKeyAndOrderFront(self)
     }
     
-    func menuItemPreferences(_ menuItem: NSMenuItem?) {
+    @objc func menuItemPreferences(_ menuItem: NSMenuItem?) {
         self.preferencesWindowController.window?.makeKeyAndOrderFront(self)
     }
 }

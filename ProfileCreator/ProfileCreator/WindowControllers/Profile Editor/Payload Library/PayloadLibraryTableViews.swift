@@ -56,8 +56,8 @@ class PayloadLibraryTableViews: NSObject {
         // ---------------------------------------------------------------------
         //  Sort both library and profile arrays alphabetically
         // ---------------------------------------------------------------------
-        self.libraryPayloads.sort(sortDescriptors: [sortDescriptorTitle])
-        self.profilePayloads.sort(sortDescriptors: [sortDescriptorTitle])
+        self.libraryPayloads.sort(by: { $0.title < $1.title })
+        self.profilePayloads.sort(by: { $0.title < $1.title })
         
         // ---------------------------------------------------------------------
         //  Reload both table views
@@ -104,7 +104,7 @@ class PayloadLibraryTableViews: NSObject {
         self.profilePayloadsTableView.allowsMultipleSelection = false
         self.profilePayloadsTableView.tag = TableViewTag.profilePayloads.rawValue
         self.profilePayloadsTableView.intercellSpacing = NSSize(width: 0, height: 0)
-        self.profilePayloadsTableView.register(forDraggedTypes: [DraggingType.payload])
+        self.profilePayloadsTableView.registerForDraggedTypes([.payload])
         self.profilePayloadsTableView.dataSource = self
         self.profilePayloadsTableView.delegate = self
         self.profilePayloadsTableView.target = self
@@ -113,7 +113,7 @@ class PayloadLibraryTableViews: NSObject {
         // ---------------------------------------------------------------------
         //  Setup TableColumn
         // ---------------------------------------------------------------------
-        let tableColumn = NSTableColumn.init(identifier: TableColumnIdentifier.profilePayloads)
+        let tableColumn = NSTableColumn.init(identifier: .tableColumnProfilePayloads)
         tableColumn.isEditable = false
         self.profilePayloadsTableView.addTableColumn(tableColumn)
         
@@ -139,7 +139,7 @@ class PayloadLibraryTableViews: NSObject {
         self.libraryPayloadsTableView.allowsMultipleSelection = false
         self.libraryPayloadsTableView.tag = TableViewTag.libraryPayloads.rawValue
         self.libraryPayloadsTableView.intercellSpacing = NSSize(width: 0, height: 0)
-        self.libraryPayloadsTableView.register(forDraggedTypes: [DraggingType.payload])
+        self.libraryPayloadsTableView.registerForDraggedTypes([.payload])
         self.libraryPayloadsTableView.dataSource = self
         self.libraryPayloadsTableView.delegate = self
         self.libraryPayloadsTableView.target = self
@@ -148,7 +148,7 @@ class PayloadLibraryTableViews: NSObject {
         // ---------------------------------------------------------------------
         //  Setup TableColumn
         // ---------------------------------------------------------------------
-        let tableColumn = NSTableColumn.init(identifier: TableColumnIdentifier.libraryPayloads)
+        let tableColumn = NSTableColumn.init(identifier: .tableColumnLibraryPayloads)
         tableColumn.isEditable = false
         self.libraryPayloadsTableView.addTableColumn(tableColumn)
         
@@ -190,31 +190,38 @@ extension PayloadLibraryTableViews: NSTableViewDataSource {
             selectedPayloadPlaceholders = self.libraryPayloads.objectsAtIndexes(indexes: rowIndexes)
         }
         
-        pboard.clearContents()
-        pboard.declareTypes([DraggingType.payload], owner: nil)
-        pboard.setData(NSKeyedArchiver.archivedData(withRootObject: selectedPayloadPlaceholders), forType: DraggingType.payload)
+        if let encodedData = try? JSONEncoder().encode(selectedPayloadPlaceholders) {
+            pboard.clearContents()
+            pboard.declareTypes([.payload], owner: nil)
+            pboard.setData(encodedData, forType: .payload)
+        }
         
         return true
     }
     
-    func tableView(_ tableView: NSTableView, validateDrop info: NSDraggingInfo, proposedRow row: Int, proposedDropOperation dropOperation: NSTableViewDropOperation) -> NSDragOperation {
-        if let infoSource = info.draggingSource() as? NSTableView, tableView == infoSource || dropOperation == NSTableViewDropOperation.on {
+    func tableView(_ tableView: NSTableView, validateDrop info: NSDraggingInfo, proposedRow row: Int, proposedDropOperation dropOperation: NSTableView.DropOperation) -> NSDragOperation {
+        if let infoSource = info.draggingSource() as? NSTableView, tableView == infoSource || dropOperation == NSTableView.DropOperation.on {
             return NSDragOperation(rawValue: 0)
         } else {
-            tableView.setDropRow(-1, dropOperation: NSTableViewDropOperation.on)
+            tableView.setDropRow(-1, dropOperation: NSTableView.DropOperation.on)
             return NSDragOperation.copy
         }
     }
     
-    func tableView(_ tableView: NSTableView, acceptDrop info: NSDraggingInfo, row: Int, dropOperation: NSTableViewDropOperation) -> Bool {
-        if let data = info.draggingPasteboard().data(forType: DraggingType.payload),
-            let payloadPlaceholders = NSKeyedUnarchiver.unarchiveObject(with: data) as? [PayloadPlaceholder] {
-            if tableView.tag == TableViewTag.profilePayloads.rawValue {
-                self.move(payloadPlaceholders: payloadPlaceholders, from: self.libraryPayloads, to: self.profilePayloads)
-            } else if tableView.tag == TableViewTag.libraryPayloads.rawValue {
-                self.move(payloadPlaceholders: payloadPlaceholders, from: self.profilePayloads, to: self.libraryPayloads)
+    func tableView(_ tableView: NSTableView, acceptDrop info: NSDraggingInfo, row: Int, dropOperation: NSTableView.DropOperation) -> Bool {
+        if let data = info.draggingPasteboard().data(forType: .payload) {
+            do {
+                let payloadPlaceholders = try JSONDecoder().decode([PayloadPlaceholder].self, from: data)
+                if tableView.tag == TableViewTag.profilePayloads.rawValue {
+                    self.move(payloadPlaceholders: payloadPlaceholders, from: self.libraryPayloads, to: self.profilePayloads)
+                } else if tableView.tag == TableViewTag.libraryPayloads.rawValue {
+                    self.move(payloadPlaceholders: payloadPlaceholders, from: self.profilePayloads, to: self.libraryPayloads)
+                }
+                return true
+            } catch {
+                // TODO: Proper Logging
+                Swift.print("Could not decode dropped items")
             }
-            return true
         }
         return false
     }
@@ -272,24 +279,32 @@ extension PayloadLibraryTableViews: NSDraggingSource {
     }
 }
 
+/* Unused ?
 extension PayloadLibraryTableViews: NSDraggingDestination {
     func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
+        Swift.print("draggingEntered")
         // FIXME - Here forcing a focus ring would fit, haven't looked into how to yet.
         return NSDragOperation.copy
     }
     
     // Is this neccessary?
     func prepareForDragOperation(_ sender: NSDraggingInfo) -> Bool {
+        Swift.print("prepareForDragOperation")
         return true
     }
     
     // Why is this only from profile to library?
     func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
-        Swift.print("performDragOperation: \(sender)")
-        if let data = sender.draggingPasteboard().data(forType: DraggingType.payload),
-            let payloadPlaceholders = NSKeyedUnarchiver.unarchiveObject(with: data) as? [PayloadPlaceholder] {
-            self.move(payloadPlaceholders: payloadPlaceholders, from: self.profilePayloads, to: self.libraryPayloads)
+        if let data = sender.draggingPasteboard().data(forType: .payload) {
+            do {
+                let payloadPlaceholders = try JSONDecoder().decode([PayloadPlaceholder].self, from: data)
+                self.move(payloadPlaceholders: payloadPlaceholders, from: self.profilePayloads, to: self.libraryPayloads)
+            } catch {
+                // TODO: Proper Logging
+                Swift.print("Could not decode dropped items")
+            }
         }
         return false
     }
 }
+ */

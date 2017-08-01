@@ -127,7 +127,7 @@ class MainWindowLibrary: NSObject, OutlineViewParentItem, NSTextFieldDelegate {
     // MARK: -
     // MARK: Notification Functions
     
-    func addGroup(_ notification: NSNotification?) {
+    @objc func addGroup(_ notification: NSNotification?) {
         
         // ---------------------------------------------------------------------
         //  Verify that addGroup was called for this group
@@ -140,7 +140,7 @@ class MainWindowLibrary: NSObject, OutlineViewParentItem, NSTextFieldDelegate {
         // ---------------------------------------------------------------------
         //  Verify there is a mainWindow present
         // ---------------------------------------------------------------------
-        guard let mainWindow = NSApplication.shared().mainWindow  else {
+        guard let mainWindow = NSApplication.shared.mainWindow  else {
             return
         }
         
@@ -158,8 +158,8 @@ class MainWindowLibrary: NSObject, OutlineViewParentItem, NSTextFieldDelegate {
                               thirdButtonTitle: nil,
                               firstButtonState: true,
                               sender: self,
-                              returnValue: { (title, returnCode) in
-                                if returnCode == NSAlertFirstButtonReturn {
+                              returnValue: { (title, response) in
+                                if response == NSApplication.ModalResponse.alertFirstButtonReturn {
                                     self.addGroup(title: title, identifier: nil, profileIdentifiers: [UUID(), UUID(), UUID()])
                                 }
         })
@@ -170,7 +170,7 @@ class MainWindowLibrary: NSObject, OutlineViewParentItem, NSTextFieldDelegate {
         self.alert!.textFieldInput!.selectText(self)
     }
     
-    func didRemoveProfiles(_ notification: NSNotification?) {
+    @objc func didRemoveProfiles(_ notification: NSNotification?) {
         if let userInfo = notification?.userInfo,
             let identifiers = userInfo[NotificationKey.identifiers] as? [UUID],
             let indexSet = userInfo[NotificationKey.indexSet] as? IndexSet {
@@ -226,7 +226,7 @@ class MainWindowLibraryGroup: NSObject, OutlineViewChildItem {
     
     var isEditable = true
     var isEditing = false
-    var icon = NSImage(named: "SidebarFolder")
+    var icon = NSImage(named: NSImage.Name(rawValue: "SidebarFolder"))
     var identifier: UUID
     var title: String
     var profileIdentifiers = [UUID]()
@@ -268,7 +268,7 @@ class MainWindowLibraryGroup: NSObject, OutlineViewChildItem {
             // ---------------------------------------------------------------------
             //  Get url to save at
             // ---------------------------------------------------------------------
-            if let profile = ProfileController.shared.profile(withIdentifier: identifier) {
+            if let profile = ProfileController.sharedInstance.profile(withIdentifier: identifier) {
                 
                 // -------------------------------------------------------------
                 //  Check if profile has been saved to disk at least once (If it has a URL assigned).

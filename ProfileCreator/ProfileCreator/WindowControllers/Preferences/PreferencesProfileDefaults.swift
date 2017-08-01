@@ -13,7 +13,7 @@ class PreferencesProfileDefaults: PreferencesItem {
     // MARK: -
     // MARK: Variables
     
-    let identifier = ToolbarIdentifier.preferencesProfileDefaults
+    let identifier: NSToolbarItem.Identifier = .preferencesProfileDefaults
     let toolbarItem: NSToolbarItem
     let view: NSView
     
@@ -26,7 +26,7 @@ class PreferencesProfileDefaults: PreferencesItem {
         //  Create the toolbar item
         // ---------------------------------------------------------------------
         self.toolbarItem = NSToolbarItem(itemIdentifier: identifier)
-        self.toolbarItem.image = NSImage(named: NSImageNameHomeTemplate)
+        self.toolbarItem.image = NSImage(named: NSImage.Name.homeTemplate)
         self.toolbarItem.label = NSLocalizedString("Profile Defaults", comment: "")
         self.toolbarItem.paletteLabel = self.toolbarItem.label
         self.toolbarItem.toolTip = self.toolbarItem.label
@@ -93,7 +93,7 @@ class PreferencesProfileDefaultsView: NSView {
         // ---------------------------------------------------------------------
         //  Set the view frame for use when switching between preference views
         // ---------------------------------------------------------------------
-        self.frame = NSRect.init(x: 0.0, y: 0.0, width: preferencesWindowWidth, height: frameHeight)
+        self.frame = NSRect(x: 0.0, y: 0.0, width: preferencesWindowWidth, height: frameHeight)
     }
     
 }

@@ -9,7 +9,7 @@
 import Cocoa
 
 protocol PreferencesItem {
-    var identifier: String { get }
+    var identifier: NSToolbarItem.Identifier { get }
     var toolbarItem: NSToolbarItem { get }
     var view: NSView { get }
 }
@@ -18,12 +18,12 @@ class PreferencesWindowController: NSWindowController {
     
     // MARK: -
     // MARK: Variables
-        
-    let toolbar = NSToolbar(identifier: "PreferencesWindowToolbar")
-    let toolbarItemIdentifiers = [ToolbarIdentifier.preferencesGeneral,
-                                  ToolbarIdentifier.preferencesEditor,
-                                  ToolbarIdentifier.preferencesProfileDefaults,
-                                  NSToolbarFlexibleSpaceItemIdentifier]
+    
+    let toolbar = NSToolbar(identifier: NSToolbar.Identifier(rawValue: "PreferencesWindowToolbar"))
+    let toolbarItemIdentifiers: [NSToolbarItem.Identifier] = [.preferencesGeneral,
+                                                              .preferencesEditor,
+                                                              .preferencesProfileDefaults,
+                                                              NSToolbarItem.Identifier.flexibleSpace]
     var preferencesGeneral: PreferencesGeneral?
     var preferencesEditor: PreferencesEditor?
     var preferencesProfileDefaults: PreferencesProfileDefaults?
@@ -41,12 +41,12 @@ class PreferencesWindowController: NSWindowController {
         //  Setup preferences window
         // ---------------------------------------------------------------------
         let rect = NSRect(x: 0, y: 0, width: preferencesWindowWidth, height: 200)
-        let styleMask = NSWindowStyleMask(rawValue: (
-            NSWindowStyleMask.titled.rawValue |
-                NSWindowStyleMask.closable.rawValue |
-                NSWindowStyleMask.miniaturizable.rawValue
+        let styleMask = NSWindow.StyleMask(rawValue: (
+            NSWindow.StyleMask.titled.rawValue |
+                NSWindow.StyleMask.closable.rawValue |
+                NSWindow.StyleMask.miniaturizable.rawValue
         ))
-        let window = NSWindow(contentRect: rect, styleMask: styleMask, backing: NSBackingStoreType.buffered, defer: false)
+        let window = NSWindow(contentRect: rect, styleMask: styleMask, backing: NSWindow.BackingStoreType.buffered, defer: false)
         window.isReleasedWhenClosed = false
         window.isRestorable = true
         window.center()
@@ -75,26 +75,27 @@ class PreferencesWindowController: NSWindowController {
         // ---------------------------------------------------------------------
         // Show "General" Preferences
         // ---------------------------------------------------------------------
-        self.showPreferencesView(identifier: ToolbarIdentifier.preferencesGeneral)
+        self.showPreferencesView(identifier: .preferencesGeneral)
     }
     
     // MARK: -
     // MARK: Public Functions
     
-    public func toolbarItemSelected(_ toolbarItem: NSToolbarItem) {
+    @objc public func toolbarItemSelected(_ toolbarItem: NSToolbarItem) {
         self.showPreferencesView(identifier: toolbarItem.itemIdentifier)
     }
     
     // MARK: -
     // MARK: Private Functions
     
-    private func showPreferencesView(identifier: String) {
+    private func showPreferencesView(identifier: NSToolbarItem.Identifier) {
         if let preferencesItem = preferencesItem(identifier: identifier) {
             
             // -----------------------------------------------------------------
             //  Update window title
             // -----------------------------------------------------------------
-            self.window?.title = preferencesItem.identifier
+            // FIXME: Get title from a function
+            self.window?.title = preferencesItem.identifier.rawValue
             
             // -----------------------------------------------------------------
             //  Remove current view and add the selected view, animating the transition
@@ -104,7 +105,7 @@ class PreferencesWindowController: NSWindowController {
             var frame = self.window?.frame
             let oldView = self.window?.contentView?.frame
             let newView = preferencesItem.view.frame
-
+            
             if let windowFrame = frame, let oldViewFrame = oldView {
                 frame!.origin.y = windowFrame.origin.y + (oldViewFrame.size.height - newView.size.height)
                 frame!.size.height = ((windowFrame.size.height - oldViewFrame.size.height) + newView.size.height)
@@ -126,16 +127,16 @@ class PreferencesWindowController: NSWindowController {
         }
     }
     
-    fileprivate func preferencesItem(identifier: String) -> PreferencesItem? {
-        if identifier == ToolbarIdentifier.preferencesGeneral {
+    fileprivate func preferencesItem(identifier: NSToolbarItem.Identifier) -> PreferencesItem? {
+        if identifier == .preferencesGeneral {
             if self.preferencesGeneral == nil { self.preferencesGeneral = PreferencesGeneral(sender: self) }
             return self.preferencesGeneral
             
-        } else if identifier == ToolbarIdentifier.preferencesEditor {
+        } else if identifier == .preferencesEditor {
             if self.preferencesEditor == nil { self.preferencesEditor = PreferencesEditor(sender: self) }
             return self.preferencesEditor
             
-        } else if identifier == ToolbarIdentifier.preferencesProfileDefaults {
+        } else if identifier == .preferencesProfileDefaults {
             if self.preferencesProfileDefaults == nil { self.preferencesProfileDefaults = PreferencesProfileDefaults(sender: self) }
             return self.preferencesProfileDefaults
         }
@@ -148,15 +149,15 @@ class PreferencesWindowController: NSWindowController {
 
 extension PreferencesWindowController: NSToolbarDelegate {
     
-    func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [String] {
+    func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
         return self.toolbarItemIdentifiers
     }
     
-    func toolbarDefaultItemIdentifiers(_ toolbar: NSToolbar) -> [String] {
+    func toolbarDefaultItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
         return self.toolbarItemIdentifiers
     }
     
-    func toolbar(_ toolbar: NSToolbar, itemForItemIdentifier itemIdentifier: String, willBeInsertedIntoToolbar flag: Bool) -> NSToolbarItem? {
+    func toolbar(_ toolbar: NSToolbar, itemForItemIdentifier itemIdentifier: NSToolbarItem.Identifier, willBeInsertedIntoToolbar flag: Bool) -> NSToolbarItem? {
         if let preferencesItem = preferencesItem(identifier: itemIdentifier) {
             return preferencesItem.toolbarItem
         }

@@ -44,7 +44,7 @@ class MainWindowProfilePreviewController: NSObject {
         NotificationCenter.default.removeObserver(self, name: .didChangeProfileSelection, object: nil)
     }
 
-    func didChangeProfileSelection(_ notification: NSNotification?) {
+    @objc func didChangeProfileSelection(_ notification: NSNotification?) {
         if let userInfo = notification?.userInfo,
             let profileIdentifiers = userInfo[NotificationKey.identifiers] as? [UUID] {
             

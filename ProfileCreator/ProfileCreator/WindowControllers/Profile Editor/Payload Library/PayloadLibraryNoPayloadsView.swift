@@ -40,7 +40,7 @@ struct PayloadLibraryNoPayloads {
         self.textField.isSelectable = false
         self.textField.stringValue = NSLocalizedString("No Payloads", comment: "")
         self.textField.textColor = NSColor.tertiaryLabelColor
-        self.textField.font = NSFont.systemFont(ofSize: 14, weight: NSFontWeightMedium)
+        self.textField.font = NSFont.systemFont(ofSize: 14, weight: NSFont.Weight.medium)
         self.textField.alignment = .center
         setupTextField(constraints: &constraints)
         

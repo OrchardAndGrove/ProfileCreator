@@ -71,7 +71,7 @@ class MainWindowWelcomeViewController: NSObject {
         // ---------------------------------------------------------------------
         self.button.translatesAutoresizingMaskIntoConstraints = false
         self.button.bezelStyle = .texturedRounded
-        self.button.image = NSImage(named: NSImageNameAddTemplate)
+        self.button.image = NSImage(named: NSImage.Name.addTemplate)
         self.button.target = self
         self.button.action = #selector(clicked(button:))
         self.button.imageScaling = .scaleProportionallyDown
@@ -87,7 +87,7 @@ class MainWindowWelcomeViewController: NSObject {
     // MARK: -
     // MARK: Button Actions
     
-    func clicked(button: NSButton) {
+    @objc func clicked(button: NSButton) {
         NotificationCenter.default.post(name: .newProfile, object: self, userInfo: [NotificationKey.parentTitle : SidebarGroupTitle.library])
     }
     

@@ -13,7 +13,7 @@ class PreferencesGeneral: PreferencesItem {
     // MARK: -
     // MARK: Variables
     
-    let identifier = ToolbarIdentifier.preferencesGeneral
+    let identifier: NSToolbarItem.Identifier = .preferencesGeneral
     let toolbarItem: NSToolbarItem
     let view: NSView
     
@@ -26,7 +26,7 @@ class PreferencesGeneral: PreferencesItem {
         //  Create the toolbar item
         // ---------------------------------------------------------------------
         self.toolbarItem = NSToolbarItem(itemIdentifier: identifier)
-        self.toolbarItem.image = NSImage(named: NSImageNamePreferencesGeneral)
+        self.toolbarItem.image = NSImage(named: NSImage.Name.preferencesGeneral)
         self.toolbarItem.label = NSLocalizedString("General", comment: "")
         self.toolbarItem.paletteLabel = self.toolbarItem.label
         self.toolbarItem.toolTip = self.toolbarItem.label

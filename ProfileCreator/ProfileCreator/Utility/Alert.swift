@@ -32,7 +32,7 @@ class Alert: NSObject {
                           thirdButtonTitle: String?,
                           firstButtonState: Bool,
                           sender: Any?,
-                          returnValue: @escaping (String, Int) -> Void ) {
+                          returnValue: @escaping (String, NSApplication.ModalResponse) -> Void ) {
         
         // ---------------------------------------------------------------------
         //  Configure alert
@@ -87,8 +87,8 @@ class Alert: NSObject {
         // ---------------------------------------------------------------------
         //  Show modal alert in window
         // ---------------------------------------------------------------------
-        self.alert.beginSheetModal(for: window) { (returnCode) in
-            returnValue(self.textFieldInput!.stringValue, returnCode)
+        self.alert.beginSheetModal(for: window) { response in
+            returnValue(self.textFieldInput!.stringValue, response)
         }
     }
 
@@ -123,7 +123,7 @@ class Alert: NSObject {
         //  Show modal alert in window
         // ---------------------------------------------------------------------
         self.alert.beginSheetModal(for: window) { (returnCode) in
-            if returnCode == NSAlertSecondButtonReturn {
+            if returnCode == NSApplication.ModalResponse.alertSecondButtonReturn {
                 shouldDelete(true)
             } else {
                 shouldDelete(false)

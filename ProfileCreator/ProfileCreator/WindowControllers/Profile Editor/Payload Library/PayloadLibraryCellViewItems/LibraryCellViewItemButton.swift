@@ -32,7 +32,7 @@ class LibraryButton {
         // button.target = cellView
         // button.action = #selector(cellView.togglePayload(_:))
         button.sizeToFit()
-        button.setContentHuggingPriority(NSLayoutPriorityDefaultHigh, for: .horizontal)
+        button.setContentHuggingPriority(NSLayoutConstraint.Priority.defaultHigh, for: .horizontal)
         button.isHidden = true
 
         // ---------------------------------------------------------------------

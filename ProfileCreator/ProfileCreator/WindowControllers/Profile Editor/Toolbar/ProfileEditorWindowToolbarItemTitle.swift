@@ -43,7 +43,7 @@ class ProfileEditorWindowToolbarItemTitle: NSView {
         self.textFieldTitle.isBezeled = false
         self.textFieldTitle.drawsBackground = false
         self.textFieldTitle.isEditable = false
-        self.textFieldTitle.font = NSFont.systemFont(ofSize: 18, weight: NSFontWeightLight)
+        self.textFieldTitle.font = NSFont.systemFont(ofSize: 18, weight: NSFont.Weight.light)
         self.textFieldTitle.textColor = NSColor.controlTextColor
         self.textFieldTitle.alignment = .center
         self.textFieldTitle.lineBreakMode = .byTruncatingTail
@@ -72,7 +72,7 @@ class ProfileEditorWindowToolbarItemTitle: NSView {
         // ---------------------------------------------------------------------
         //  Create the actual toolbar item
         // ---------------------------------------------------------------------
-        self.toolbarItem = NSToolbarItem(itemIdentifier: ToolbarIdentifier.mainWindowAdd)
+        self.toolbarItem = NSToolbarItem(itemIdentifier: .editorTitle)
         self.toolbarItem?.minSize = frame.size
         self.toolbarItem?.maxSize = frame.size
         

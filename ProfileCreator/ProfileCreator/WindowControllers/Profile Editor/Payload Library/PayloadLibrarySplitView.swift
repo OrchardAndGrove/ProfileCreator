@@ -46,7 +46,7 @@ class PayloadLibrarySplitView: NSSplitView {
         // ---------------------------------------------------------------------
         //  Setup SplitView
         // ---------------------------------------------------------------------
-        self.identifier = "PayloadLibrarySplitView-ID"
+        self.identifier = NSUserInterfaceItemIdentifier(rawValue: "PayloadLibrarySplitView-ID")
         self.translatesAutoresizingMaskIntoConstraints = false
         self.dividerStyle = .thin
         self.isVertical = false
@@ -160,7 +160,7 @@ class PayloadLibrarySplitView: NSSplitView {
     private func setupSplitViewProfilePayloads(constraints: inout [NSLayoutConstraint]) {
         
         self.addSubview(self.tableViews.profilePayloadsScrollView)
-        self.setHoldingPriority(NSLayoutPriorityDefaultLow, forSubviewAt: 0)
+        self.setHoldingPriority(NSLayoutConstraint.Priority.defaultLow, forSubviewAt: 0)
         
         // ---------------------------------------------------------------------
         //  Add constraints
@@ -323,7 +323,7 @@ class PayloadLibrarySplitView: NSSplitView {
         constraints.append(contentsOf: self.libraryPayloadsConstraints)
         
         self.addSubview(self.libraryView)
-        self.setHoldingPriority(NSLayoutPriorityDefaultLow, forSubviewAt: 1)
+        self.setHoldingPriority(NSLayoutConstraint.Priority.defaultLow, forSubviewAt: 1)
     }
     
     private func setupSplitViewNoPayloads(constraints: inout [NSLayoutConstraint]) {

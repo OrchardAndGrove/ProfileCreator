@@ -33,7 +33,7 @@ class MainWindowToolbarItemExport: NSView {
         // ---------------------------------------------------------------------
         //  Create the actual toolbar item
         // ---------------------------------------------------------------------
-        self.toolbarItem = NSToolbarItem(itemIdentifier: ToolbarIdentifier.mainWindowExport)
+        self.toolbarItem = NSToolbarItem(itemIdentifier: .mainWindowExport)
         self.toolbarItem.toolTip = NSLocalizedString("Export profile", comment: "")
         
         // ---------------------------------------------------------------------
@@ -41,7 +41,7 @@ class MainWindowToolbarItemExport: NSView {
         // ---------------------------------------------------------------------
         self.disclosureTriangle = NSImageView()
         self.disclosureTriangle.translatesAutoresizingMaskIntoConstraints = false
-        self.disclosureTriangle.image = NSImage(named: "downarrow")
+        self.disclosureTriangle.image = NSImage(named: NSImage.Name(rawValue: "downarrow"))
         self.disclosureTriangle.imageScaling = .scaleProportionallyUpOrDown
         self.disclosureTriangle.widthAnchor.constraint(equalToConstant: 3)
         self.disclosureTriangle.heightAnchor.constraint(equalToConstant: 3)
@@ -151,7 +151,7 @@ class MainWindowToolbarItemExportButton: NSButton {
         //  Setup Self (Toolbar Item)
         // ---------------------------------------------------------------------
         self.bezelStyle = .texturedRounded
-        self.image = NSImage(named: NSImageNameShareTemplate)
+        self.image = NSImage(named: NSImage.Name.shareTemplate)
         self.target = self
         self.action = #selector(MainWindowToolbarItemExportButton.clicked(button:))
         self.imageScaling = .scaleProportionallyDown
@@ -180,7 +180,7 @@ class MainWindowToolbarItemExportButton: NSButton {
     // MARK: -
     // MARK: Button/Menu Actions
     
-    func clicked(button: NSButton) {
+    @objc func clicked(button: NSButton) {
         if self.isEnabled {
             
             // -----------------------------------------------------------------
@@ -190,7 +190,7 @@ class MainWindowToolbarItemExportButton: NSButton {
         }
     }
     
-    func exportProfile(menuItem: NSMenuItem?) {
+    @objc func exportProfile(menuItem: NSMenuItem?) {
         Swift.print("Export Profile: \(String(describing: menuItem))")
     }
     
@@ -291,7 +291,7 @@ class MainWindowToolbarItemExportButton: NSButton {
         // ---------------------------------------------------------------------
         //  Create a new tracking area
         // ---------------------------------------------------------------------
-        let trackingOptions = NSTrackingAreaOptions(rawValue: (NSTrackingAreaOptions.mouseEnteredAndExited.rawValue | NSTrackingAreaOptions.activeAlways.rawValue))
+        let trackingOptions = NSTrackingArea.Options(rawValue: (NSTrackingArea.Options.mouseEnteredAndExited.rawValue | NSTrackingArea.Options.activeAlways.rawValue))
         self.trackingArea = NSTrackingArea(rect: self.bounds, options: trackingOptions, owner: self, userInfo: nil)
         
         // ---------------------------------------------------------------------

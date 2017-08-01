@@ -44,7 +44,7 @@ class MainWindowTableViewController: NSObject, MainWindowOutlineViewSelectionDel
         // ---------------------------------------------------------------------
         //  Setup Table Column
         // ---------------------------------------------------------------------
-        let tableColumn = NSTableColumn(identifier: "MainWindowTableViewTableColumn")
+        let tableColumn = NSTableColumn(identifier: NSUserInterfaceItemIdentifier(rawValue: "MainWindowTableViewTableColumn"))
         tableColumn.isEditable = false
         
         // ---------------------------------------------------------------------
@@ -108,8 +108,8 @@ class MainWindowTableViewController: NSObject, MainWindowOutlineViewSelectionDel
     // MARK: -
     // MARK: TableView Actions
     
-    func editProfile(tableView: NSTableView) {
-        if 0 <= self.tableView.clickedRow, let identifier = self.profileIdentifier(atRow: self.tableView.clickedRow), let profile = ProfileController.shared.profile(withIdentifier: identifier) {
+    @objc func editProfile(tableView: NSTableView) {
+        if 0 <= self.tableView.clickedRow, let identifier = self.profileIdentifier(atRow: self.tableView.clickedRow), let profile = ProfileController.sharedInstance.profile(withIdentifier: identifier) {
             profile.edit()
         } else {
             // TODO: Proper logging
@@ -121,7 +121,7 @@ class MainWindowTableViewController: NSObject, MainWindowOutlineViewSelectionDel
     // MARK: -
     // MARK: Notification Functions
     
-    func didRemoveProfilesFromGroup(_ notification: NSNotification?) {
+    @objc func didRemoveProfilesFromGroup(_ notification: NSNotification?) {
         guard let group = notification?.object as? OutlineViewChildItem, group.identifier == self.selectedProfileGroup?.identifier else {
             return
         }
@@ -141,11 +141,11 @@ class MainWindowTableViewController: NSObject, MainWindowOutlineViewSelectionDel
         self.tableViewSelectionDidChange(Notification(name: .emptyNotification))
     }
     
-    func exportProfile(_ notification: NSNotification?) {
+    @objc func exportProfile(_ notification: NSNotification?) {
         Swift.print("exportProfile")
     }
     
-    func didSaveProfile(_ notification: NSNotification?) {
+    @objc func didSaveProfile(_ notification: NSNotification?) {
         reloadTableView()
     }
     
@@ -193,7 +193,7 @@ class MainWindowTableViewController: NSObject, MainWindowOutlineViewSelectionDel
         //  Verify there is a mainWindow present
         // ---------------------------------------------------------------------
         guard 0 < atIndexes.count,
-            let mainWindow = NSApplication.shared().mainWindow,
+            let mainWindow = NSApplication.shared.mainWindow,
             let selectedProfileGroup = self.selectedProfileGroup else {
                 return
         }
@@ -211,7 +211,7 @@ class MainWindowTableViewController: NSObject, MainWindowOutlineViewSelectionDel
                 let identifier = selectedProfileGroup.profileIdentifiers[atIndexes.first!]
                 identifiers.append(identifier)
                 
-                let title = ProfileController.shared.titleOfProfile(withIdentifier: identifier)
+                let title = ProfileController.sharedInstance.titleOfProfile(withIdentifier: identifier)
                 alertMessage = NSLocalizedString("Are you sure you want to delete the profile \"\(title ?? identifier.uuidString)\"?", comment: "")
                 alertInformativeText = NSLocalizedString("This cannot be undone", comment: "")
             } else {
@@ -220,7 +220,7 @@ class MainWindowTableViewController: NSObject, MainWindowOutlineViewSelectionDel
                     let identifier = selectedProfileGroup.profileIdentifiers[index]
                     identifiers.append(identifier)
                     
-                    let title = ProfileController.shared.titleOfProfile(withIdentifier: identifier)
+                    let title = ProfileController.sharedInstance.titleOfProfile(withIdentifier: identifier)
                     alertInformativeText = alertInformativeText + "\t\(title ?? identifier.uuidString)\n"
                 }
                 alertInformativeText = alertInformativeText + NSLocalizedString("\nThis cannot be undone", comment: "")
@@ -230,7 +230,7 @@ class MainWindowTableViewController: NSObject, MainWindowOutlineViewSelectionDel
                 let identifier = selectedProfileGroup.profileIdentifiers[atIndexes.first!]
                 identifiers.append(identifier)
                 
-                let title = ProfileController.shared.titleOfProfile(withIdentifier: identifier)
+                let title = ProfileController.sharedInstance.titleOfProfile(withIdentifier: identifier)
                 alertMessage = NSLocalizedString("Are you sure you want to remove the profile \"\(title ?? identifier.uuidString)\" from group \"\(selectedProfileGroup.title)\"?", comment: "")
                 alertInformativeText = NSLocalizedString("The profile will still be available under \"All Profiles\"", comment: "")
             } else {
@@ -239,7 +239,7 @@ class MainWindowTableViewController: NSObject, MainWindowOutlineViewSelectionDel
                     let identifier = selectedProfileGroup.profileIdentifiers[index]
                     identifiers.append(identifier)
                     
-                    let title = ProfileController.shared.titleOfProfile(withIdentifier: identifier)
+                    let title = ProfileController.sharedInstance.titleOfProfile(withIdentifier: identifier)
                     alertInformativeText = alertInformativeText + "\t\(title ?? identifier.uuidString)\n"
                 }
                 alertInformativeText = alertInformativeText + NSLocalizedString("\nAll profiles will still be available under \"All Profiles\"", comment: "")
@@ -279,20 +279,25 @@ extension MainWindowTableViewController: NSTableViewDataSource {
     // -------------------------------------------------------------------------
     
     func tableView(_ tableView: NSTableView, updateDraggingItemsForDrag draggingInfo: NSDraggingInfo) {
-        if let draggingData = draggingInfo.draggingPasteboard().data(forType: DraggingType.profile),
-            let profileIdentifiers = NSKeyedUnarchiver.unarchiveObject(with: draggingData) as? [UUID] {
-            draggingInfo.numberOfValidItemsForDrop = profileIdentifiers.count
+        if let draggingData = draggingInfo.draggingPasteboard().data(forType: .profile) {
+            do {
+                let profileIdentifiers = try JSONDecoder().decode([UUID].self, from: draggingData)
+                draggingInfo.numberOfValidItemsForDrop = profileIdentifiers.count
+            } catch {
+                // TODO: Proper Logging
+                Swift.print("Could not decode dropped items")
+            }
         }
     }
     
     func tableView(_ tableView: NSTableView, writeRowsWith rowIndexes: IndexSet, to pboard: NSPasteboard) -> Bool {
-        guard let profileIdentifiers = self.selectedProfileGroup?.profileIdentifiers as NSArray? else {
-            return false
+        guard let allProfileIdentifiers = self.selectedProfileGroup?.profileIdentifiers else { return false }
+        if let encodedData = try? JSONEncoder().encode(allProfileIdentifiers.objectsAtIndexes(indexes: rowIndexes)) {
+            pboard.clearContents()
+            pboard.declareTypes([.profile], owner: nil)
+            pboard.setData(encodedData, forType: .profile)
         }
         
-        pboard.clearContents()
-        pboard.declareTypes([DraggingType.profile], owner: nil)
-        pboard.setData(NSKeyedArchiver.archivedData(withRootObject: profileIdentifiers.objects(at: rowIndexes)), forType: DraggingType.profile)
         return true
     }
     
@@ -309,17 +314,23 @@ extension MainWindowTableViewController: NSTableViewDataSource {
             // -----------------------------------------------------------------
             //  Verify a valid profile identifier array is passed
             // -----------------------------------------------------------------
-            guard let draggingData = session.draggingPasteboard.data(forType: DraggingType.profile),
-                let profileIdentifiers = NSKeyedUnarchiver.unarchiveObject(with: draggingData) as? [UUID] else {
-                    return
+            guard let draggingData = session.draggingPasteboard.data(forType: .profile) else {
+                return
             }
             
-            // -----------------------------------------------------------------
-            //  Remove the passed profile identifiers from the current group
-            // -----------------------------------------------------------------
-            selectedProfileGroup.removeProfiles(withIdentifiers: profileIdentifiers)
-            
-            reloadTableView()
+            do {
+                let profileIdentifiers = try JSONDecoder().decode([UUID].self, from: draggingData)
+                
+                // -----------------------------------------------------------------
+                //  Remove the passed profile identifiers from the current group
+                // -----------------------------------------------------------------
+                selectedProfileGroup.removeProfiles(withIdentifiers: profileIdentifiers)
+                
+                reloadTableView()
+            } catch {
+                // TODO: Proper Logging
+                Swift.print("Could not decode dropped items")
+            }
         }
     }
 }
@@ -340,7 +351,7 @@ extension MainWindowTableViewController: NSTableViewDelegate {
         }
         
         let identifier = selectedProfileGroup.profileIdentifiers[row]
-        let profileName = ProfileController.shared.titleOfProfile(withIdentifier: identifier) ?? "UNKNOWN PROFILE"
+        let profileName = ProfileController.sharedInstance.titleOfProfile(withIdentifier: identifier) ?? "UNKNOWN PROFILE"
         let payloadCount = 1 // TODO: Implement when profile export exists
         
         return self.cellView.cellView(title: profileName, identifier: identifier, payloadCount: payloadCount, errorCount: 0)
@@ -468,14 +479,14 @@ class MainWindowTableView: NSTableView {
         super.keyDown(with: event)
     }
     
-    func editProfile(_ sender: NSTableView?) {
+    @objc func editProfile(_ sender: NSTableView?) {
         if let clickedIdentifier = self.clickedProfile,
-            let profile = ProfileController.shared.profile(withIdentifier: clickedIdentifier) {
+            let profile = ProfileController.sharedInstance.profile(withIdentifier: clickedIdentifier) {
             profile.edit()
         }
     }
     
-    func removeSelectedProfiles(_ sender: Any?) {
+    @objc func removeSelectedProfiles(_ sender: Any?) {
         
         // ---------------------------------------------------------------------
         //  Verify the delegate is set and is a MainWindowTableViewDelegate

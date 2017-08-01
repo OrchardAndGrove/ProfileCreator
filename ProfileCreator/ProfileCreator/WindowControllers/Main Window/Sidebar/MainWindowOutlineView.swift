@@ -57,7 +57,7 @@ class MainWindowOutlineViewController: NSObject {
         // ---------------------------------------------------------------------
         //  Setup Table Column
         // ---------------------------------------------------------------------
-        let tableColumn = NSTableColumn(identifier: "MainWindowOutlineViewTableColumn")
+        let tableColumn = NSTableColumn(identifier: NSUserInterfaceItemIdentifier(rawValue: "MainWindowOutlineViewTableColumn"))
         tableColumn.isEditable = true
         
         // ---------------------------------------------------------------------
@@ -71,7 +71,7 @@ class MainWindowOutlineViewController: NSObject {
         self.outlineView.headerView = nil
         self.outlineView.dataSource = self
         self.outlineView.delegate = self
-        self.outlineView.register(forDraggedTypes: [DraggingType.profile])
+        self.outlineView.registerForDraggedTypes([.profile])
         
         // Things I've tried to remove the separator between the views in the outline view
         /*
@@ -96,7 +96,7 @@ class MainWindowOutlineViewController: NSObject {
         //  Expand the first two parents (All Profiles & Library which can't show/hide later)
         // ---------------------------------------------------------------------
         NSAnimationContext.beginGrouping()
-        NSAnimationContext.current().duration = 0
+        NSAnimationContext.current.duration = 0
         self.outlineView.expandItem(self.parents[0], expandChildren: false)
         self.outlineView.expandItem(self.parents[1], expandChildren: false)
         NSAnimationContext.endGrouping()
@@ -200,7 +200,7 @@ class MainWindowOutlineViewController: NSObject {
     // MARK: -
     // MARK: Notification Functions
     
-    func didAddGroup(_ notification: NSNotification?) {
+    @objc func didAddGroup(_ notification: NSNotification?) {
         
         // ---------------------------------------------------------------------
         //  Reload outline view if sender was any of the outline view parents
@@ -218,7 +218,7 @@ class MainWindowOutlineViewController: NSObject {
             // -----------------------------------------------------------------
             if !self.outlineView.isItemExpanded(sender) {
                 NSAnimationContext.beginGrouping()
-                NSAnimationContext.current().duration = 0
+                NSAnimationContext.current.duration = 0
                 self.outlineView.expandItem(sender)
                 NSAnimationContext.endGrouping()
             }
@@ -244,14 +244,14 @@ class MainWindowOutlineViewController: NSObject {
     //        Then it might update after the outline view has reloaded and it won't
     //        update the profile count or profile list.
     // -------------------------------------------------------------------------
-    func didAddProfile(_ notification: NSNotification?) {
+    @objc func didAddProfile(_ notification: NSNotification?) {
         
         // ---------------------------------------------------------------------
         //  Get passed identifier and verify that something is selected
         // ---------------------------------------------------------------------
         guard let selectedItem = self.selectedItem,
-              let userInfo = notification?.userInfo,
-              let identifier = userInfo[SettingsKey.identifier] as? UUID else {
+            let userInfo = notification?.userInfo,
+            let identifier = userInfo[SettingsKey.identifier] as? UUID else {
                 return
         }
         
@@ -279,7 +279,7 @@ class MainWindowOutlineViewController: NSObject {
         reloadOutlineView()
     }
     
-    func didSaveProfile(_ notification: NSNotification?) {
+    @objc func didSaveProfile(_ notification: NSNotification?) {
         
         // ---------------------------------------------------------------------
         //  Reload outline view when a profile was saved
@@ -287,7 +287,7 @@ class MainWindowOutlineViewController: NSObject {
         reloadOutlineView()
     }
     
-    func didRemoveProfilesFromGroup(_ notification: NSNotification?) {
+    @objc func didRemoveProfilesFromGroup(_ notification: NSNotification?) {
         
         // ---------------------------------------------------------------------
         //  Reload outline view when a profile was removed
@@ -311,7 +311,7 @@ extension MainWindowOutlineViewController: NSOutlineViewDataSource {
     }
     
     func outlineView(_ outlineView: NSOutlineView, objectValueFor tableColumn: NSTableColumn?, byItem item: Any?) -> Any? {
-        if tableColumn?.identifier == "MainWindowOutlineViewTableColumn", let outlineViewItem = item as? OutlineViewItem {
+        if tableColumn?.identifier == .tableColumnMainWindowOutlineView, let outlineViewItem = item as? OutlineViewItem {
             return outlineViewItem.title
         }
         return "-"
@@ -329,20 +329,21 @@ extension MainWindowOutlineViewController: NSOutlineViewDataSource {
     }
     
     func outlineView(_ outlineView: NSOutlineView, acceptDrop info: NSDraggingInfo, item: Any?, childIndex index: Int) -> Bool {
-        guard let draggingData = info.draggingPasteboard().data(forType: DraggingType.profile) else {
+        guard let draggingData = info.draggingPasteboard().data(forType: .profile) else {
             return false
         }
         
-        guard let profileIdentifiers = NSKeyedUnarchiver.unarchiveObject(with: draggingData) as? [UUID] else {
-            return false
+        do {
+            let profileIdentifiers = try JSONDecoder().decode([UUID].self, from: draggingData)
+            if let child = item as? OutlineViewChildItem {
+                child.addProfiles(withIdentifiers: profileIdentifiers)
+                reloadOutlineView()
+                return true
+            }
+        } catch {
+            // TODO: Proper Logging
+            Swift.print("Could not decode dropped items")
         }
-        
-        if let child = item as? OutlineViewChildItem {
-            child.addProfiles(withIdentifiers: profileIdentifiers)
-            reloadOutlineView()
-            return true
-        }
-        
         return false
     }
 }
@@ -432,7 +433,7 @@ extension MainWindowOutlineViewController: MainWindowOutlineViewDelegate {
         // ---------------------------------------------------------------------
         //  Verify there is a mainWindow present
         // ---------------------------------------------------------------------
-        guard let mainWindow = NSApplication.shared().mainWindow  else {
+        guard let mainWindow = NSApplication.shared.mainWindow  else {
             return
         }
         
@@ -569,7 +570,7 @@ class MainWindowOutlineView: NSOutlineView {
         return false
     }
     
-    func editGroup() {
+    @objc func editGroup() {
         
         // ---------------------------------------------------------------------
         //  Set the group in editing mode
@@ -580,8 +581,8 @@ class MainWindowOutlineView: NSOutlineView {
         }
     }
     
-    func removeSelectedGroups(_ sender: Any?) {
-
+    @objc func removeSelectedGroups(_ sender: Any?) {
+        
         // ---------------------------------------------------------------------
         //  Verify the delegate is set and is a MainWindowOutlineViewDelegate
         //  Depending on who is calling the function, get the selected items separately

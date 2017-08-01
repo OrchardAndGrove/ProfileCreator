@@ -15,10 +15,10 @@ class MainWindowController: NSWindowController {
     
     let splitView = MainWindowSplitView(frame: NSZeroRect)
     
-    let toolbar = NSToolbar(identifier: "MainWindowToolbar")
-    let toolbarItemIdentifiers = [ToolbarIdentifier.mainWindowAdd,
-                                  ToolbarIdentifier.mainWindowExport,
-                                  NSToolbarFlexibleSpaceItemIdentifier]
+    let toolbar = NSToolbar(identifier: NSToolbar.Identifier(rawValue: "MainWindowToolbar"))
+    let toolbarItemIdentifiers: [NSToolbarItem.Identifier] = [.mainWindowAdd,
+                                                              .mainWindowExport,
+                                                              NSToolbarItem.Identifier.flexibleSpace]
     var toolbarItemAdd: MainWindowToolbarItemAdd?
     var toolbarItemExport: MainWindowToolbarItemExport?
     
@@ -35,20 +35,20 @@ class MainWindowController: NSWindowController {
         //  Setup main window
         // ---------------------------------------------------------------------
         let rect = NSRect(x: 0, y: 0, width: 750, height: 550)
-        let styleMask = NSWindowStyleMask(rawValue: (
-            NSWindowStyleMask.fullSizeContentView.rawValue |
-            NSWindowStyleMask.titled.rawValue |
-            NSWindowStyleMask.unifiedTitleAndToolbar.rawValue |
-            NSWindowStyleMask.closable.rawValue |
-            NSWindowStyleMask.miniaturizable.rawValue |
-            NSWindowStyleMask.resizable.rawValue
+        let styleMask = NSWindow.StyleMask(rawValue: (
+            NSWindow.StyleMask.fullSizeContentView.rawValue |
+                NSWindow.StyleMask.titled.rawValue |
+                NSWindow.StyleMask.unifiedTitleAndToolbar.rawValue |
+                NSWindow.StyleMask.closable.rawValue |
+                NSWindow.StyleMask.miniaturizable.rawValue |
+                NSWindow.StyleMask.resizable.rawValue
         ))
-        let window = NSWindow(contentRect: rect, styleMask: styleMask, backing: NSBackingStoreType.buffered, defer: false)
+        let window = NSWindow(contentRect: rect, styleMask: styleMask, backing: NSWindow.BackingStoreType.buffered, defer: false)
         window.titleVisibility = .hidden
         window.isReleasedWhenClosed = false
         window.isRestorable = true
-        window.identifier = "ProfileCreatorMainWindow-ID"
-        window.setFrameAutosaveName("ProfileCreatorMainWindow-AS")
+        window.identifier = NSUserInterfaceItemIdentifier(rawValue: "ProfileCreatorMainWindow-ID")
+        window.setFrameAutosaveName(NSWindow.FrameAutosaveName(rawValue: "ProfileCreatorMainWindow-AS"))
         window.contentMinSize = NSSize.init(width: 600, height: 400)
         window.center()
         
@@ -85,23 +85,23 @@ class MainWindowController: NSWindowController {
 
 extension MainWindowController: NSToolbarDelegate {
     
-    func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [String] {
-        return self.toolbarItemIdentifiers
-    }
-
-    func toolbarDefaultItemIdentifiers(_ toolbar: NSToolbar) -> [String] {
+    func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
         return self.toolbarItemIdentifiers
     }
     
-    func toolbar(_ toolbar: NSToolbar, itemForItemIdentifier itemIdentifier: String, willBeInsertedIntoToolbar flag: Bool) -> NSToolbarItem? {
+    func toolbarDefaultItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
+        return self.toolbarItemIdentifiers
+    }
+    
+    func toolbar(_ toolbar: NSToolbar, itemForItemIdentifier itemIdentifier: NSToolbarItem.Identifier, willBeInsertedIntoToolbar flag: Bool) -> NSToolbarItem? {
         if let toolbarItem = toolbarItem(identifier: itemIdentifier) {
             return toolbarItem
         }
         return nil
     }
     
-    func toolbarItem(identifier: String) -> NSToolbarItem? {
-        if identifier == ToolbarIdentifier.mainWindowAdd {
+    func toolbarItem(identifier: NSToolbarItem.Identifier) -> NSToolbarItem? {
+        if identifier == .mainWindowAdd {
             if self.toolbarItemAdd == nil {
                 self.toolbarItemAdd = MainWindowToolbarItemAdd()
             }
@@ -109,7 +109,7 @@ extension MainWindowController: NSToolbarDelegate {
             if let toolbarView = self.toolbarItemAdd {
                 return toolbarView.toolbarItem
             }
-        } else if identifier == ToolbarIdentifier.mainWindowExport {
+        } else if identifier == .mainWindowExport {
             if self.toolbarItemExport == nil {
                 self.toolbarItemExport = MainWindowToolbarItemExport()
             }

@@ -45,7 +45,7 @@ class PayloadCellViewTextField: NSTableCellView, ProfileCreatorCellView, Payload
         // ---------------------------------------------------------------------
         //  Setup Static View Content
         // ---------------------------------------------------------------------
-        self.textFieldTitle = EditorTextField.title(string: key, fontWeight: NSFontWeightBold, leadingItem: nil, constraints: &constraints, cellView: self)
+        self.textFieldTitle = EditorTextField.title(string: key, fontWeight: NSFont.Weight.bold.rawValue, leadingItem: nil, constraints: &constraints, cellView: self)
         self.textFieldDescription = EditorTextField.description(string: key + "DESCRIPTION", constraints: &constraints, cellView: self)
         
         // ---------------------------------------------------------------------

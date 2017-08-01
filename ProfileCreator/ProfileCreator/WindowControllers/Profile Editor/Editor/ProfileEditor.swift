@@ -48,7 +48,7 @@ class ProfileEditor: NSObject {
         // ---------------------------------------------------------------------
         //  Add TableColumn Padding Leading
         // ---------------------------------------------------------------------
-        let tableColumnPaddingLeading = NSTableColumn(identifier: TableColumnIdentifier.paddingLeading)
+        let tableColumnPaddingLeading = NSTableColumn(identifier: .tableColumnPaddingLeading)
         tableColumnPaddingLeading.isEditable = false
         tableColumnPaddingLeading.width = editorTableViewColumnPaddingWidth
         tableColumnPaddingLeading.minWidth = editorTableViewColumnPaddingWidth
@@ -57,7 +57,7 @@ class ProfileEditor: NSObject {
         // ---------------------------------------------------------------------
         //  Add TableColumn Payload
         // ---------------------------------------------------------------------
-        let tableColumnPayload = NSTableColumn(identifier: TableColumnIdentifier.payload)
+        let tableColumnPayload = NSTableColumn(identifier: .tableColumnPayload)
         tableColumnPayload.isEditable = false
         tableColumnPayload.width = editorTableViewColumnPayloadWidth
         tableColumnPayload.minWidth = editorTableViewColumnPayloadWidth
@@ -67,7 +67,7 @@ class ProfileEditor: NSObject {
         // ---------------------------------------------------------------------
         //  Add TableColumn Padding Trailing
         // ---------------------------------------------------------------------
-        let tableColumnPaddingTrailing = NSTableColumn(identifier: TableColumnIdentifier.paddingTrailing)
+        let tableColumnPaddingTrailing = NSTableColumn(identifier: .tableColumnPaddingTrailing)
         tableColumnPaddingTrailing.isEditable = false
         tableColumnPaddingTrailing.width = editorTableViewColumnPaddingWidth
         tableColumnPaddingTrailing.minWidth = editorTableViewColumnPaddingWidth
@@ -148,7 +148,7 @@ extension ProfileEditor: NSTableViewDelegate {
     }
     
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-        if tableColumn?.identifier == TableColumnIdentifier.payload {
+        if tableColumn?.identifier == .tableColumnPayload {
             // FIXME: Should only be needed once and NOT here
             self.updateKeyViewLoop(window: tableView.window!)
             return self.payloadCellViews[row]

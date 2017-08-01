@@ -9,16 +9,16 @@
 import Cocoa
 
 public class ProfileEditorWindowController: NSWindowController {
-
+    
     // MARK: -
     // MARK: Variables
     
     let profile: Profile
     let splitView: ProfileEditorSplitView
-    let toolbar = NSToolbar(identifier: "MainWindowToolbar")
-    let toolbarItemIdentifiers = [NSToolbarFlexibleSpaceItemIdentifier,
-                                  ToolbarIdentifier.profileEditorTitle,
-                                  NSToolbarFlexibleSpaceItemIdentifier]
+    let toolbar = NSToolbar(identifier: NSToolbar.Identifier(rawValue: "MainWindowToolbar"))
+    let toolbarItemIdentifiers: [NSToolbarItem.Identifier] = [NSToolbarItem.Identifier.flexibleSpace,
+                                                              .editorTitle,
+                                                              NSToolbarItem.Identifier.flexibleSpace]
     var toolbarItemTitle: ProfileEditorWindowToolbarItemTitle?
     
     // MARK: -
@@ -40,19 +40,19 @@ public class ProfileEditorWindowController: NSWindowController {
         //  Setup editor window
         // ---------------------------------------------------------------------
         let rect = NSRect(x: 0, y: 0, width: 801, height: 700) // 801 because if 800 the text appears blurry when first loaded
-        let styleMask = NSWindowStyleMask(rawValue: (
-            NSWindowStyleMask.fullSizeContentView.rawValue |
-                NSWindowStyleMask.titled.rawValue |
-                NSWindowStyleMask.unifiedTitleAndToolbar.rawValue |
-                NSWindowStyleMask.closable.rawValue |
-                NSWindowStyleMask.miniaturizable.rawValue |
-                NSWindowStyleMask.resizable.rawValue
+        let styleMask = NSWindow.StyleMask(rawValue: (
+            NSWindow.StyleMask.fullSizeContentView.rawValue |
+                NSWindow.StyleMask.titled.rawValue |
+                NSWindow.StyleMask.unifiedTitleAndToolbar.rawValue |
+                NSWindow.StyleMask.closable.rawValue |
+                NSWindow.StyleMask.miniaturizable.rawValue |
+                NSWindow.StyleMask.resizable.rawValue
         ))
-        let window = NSWindow(contentRect: rect, styleMask: styleMask, backing: NSBackingStoreType.buffered, defer: false)
+        let window = NSWindow(contentRect: rect, styleMask: styleMask, backing: NSWindow.BackingStoreType.buffered, defer: false)
         window.titleVisibility = .hidden
         window.isReleasedWhenClosed = false
         window.isRestorable = true
-        window.identifier = "ProfileCreatorEditorWindow-\(profile.identifier.uuidString)"
+        window.identifier = NSUserInterfaceItemIdentifier(rawValue: "ProfileCreatorEditorWindow-\(profile.identifier.uuidString)")
         window.contentMinSize = NSSize.init(width: 600, height: 400)
         window.backgroundColor = NSColor.white
         window.autorecalculatesKeyViewLoop = false
@@ -112,23 +112,23 @@ public class ProfileEditorWindowController: NSWindowController {
 
 extension ProfileEditorWindowController: NSToolbarDelegate {
     
-    public func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [String] {
+    public func toolbarAllowedItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
         return self.toolbarItemIdentifiers
     }
     
-    public func toolbarDefaultItemIdentifiers(_ toolbar: NSToolbar) -> [String] {
+    public func toolbarDefaultItemIdentifiers(_ toolbar: NSToolbar) -> [NSToolbarItem.Identifier] {
         return self.toolbarItemIdentifiers
     }
     
-    public func toolbar(_ toolbar: NSToolbar, itemForItemIdentifier itemIdentifier: String, willBeInsertedIntoToolbar flag: Bool) -> NSToolbarItem? {
+    public func toolbar(_ toolbar: NSToolbar, itemForItemIdentifier itemIdentifier: NSToolbarItem.Identifier, willBeInsertedIntoToolbar flag: Bool) -> NSToolbarItem? {
         if let toolbarItem = toolbarItem(identifier: itemIdentifier) {
             return toolbarItem
         }
         return nil
     }
     
-    func toolbarItem(identifier: String) -> NSToolbarItem? {
-        if identifier == ToolbarIdentifier.profileEditorTitle {
+    func toolbarItem(identifier: NSToolbarItem.Identifier) -> NSToolbarItem? {
+        if identifier == .editorTitle {
             if self.toolbarItemTitle == nil {
                 self.toolbarItemTitle = ProfileEditorWindowToolbarItemTitle(profile: self.profile)
             }

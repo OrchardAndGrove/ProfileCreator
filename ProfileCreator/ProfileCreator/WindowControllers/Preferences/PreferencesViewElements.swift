@@ -28,7 +28,7 @@ public func addCheckbox(title: String,
     // ---------------------------------------------------------------------
     //  Bind checkbox to keyPath
     // ---------------------------------------------------------------------
-    checkbox.bind(NSValueBinding, to: UserDefaults.standard, withKeyPath: keyPath, options: [NSContinuouslyUpdatesValueBindingOption: true])
+    checkbox.bind(NSBindingName.value, to: UserDefaults.standard, withKeyPath: keyPath, options: [NSBindingOption.continuouslyUpdatesValue: true])
     
     // -------------------------------------------------------------------------
     //  Add Constraints

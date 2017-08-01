@@ -6,7 +6,7 @@
 //  Copyright © 2017 Erik Berglund. All rights reserved.
 //
 
-import Foundation
+import Cocoa
 
 let preferencesWindowWidth: CGFloat = 450.0
 let preferencesIndent: CGFloat = 40.0
@@ -20,6 +20,25 @@ enum TableViewTag: Int {
 
 enum LibraryTag: Int {
     case appleCollections, appleDomains, developer
+}
+
+extension NSToolbarItem.Identifier {
+    static let editorTitle = NSToolbarItem.Identifier("editorTitle")
+    static let mainWindowAdd = NSToolbarItem.Identifier("mainWindowAdd")
+    static let mainWindowExport = NSToolbarItem.Identifier("mainWindowExport")
+    static let preferencesGeneral = NSToolbarItem.Identifier("preferencesGeneral")
+    static let preferencesEditor = NSToolbarItem.Identifier("preferencesEditor")
+    static let preferencesProfileDefaults = NSToolbarItem.Identifier("preferencesProfileDefaults")
+}
+
+extension NSUserInterfaceItemIdentifier {
+    static let paddingPayload = NSUserInterfaceItemIdentifier("paddingPayload")
+    static let tableColumnPaddingLeading = NSUserInterfaceItemIdentifier("tableColumnPaddingLeading")
+    static let tableColumnPaddingTrailing = NSUserInterfaceItemIdentifier("tableColumnPaddingTrailing")
+    static let tableColumnProfilePayloads = NSUserInterfaceItemIdentifier("tableColumnProfilePayloads")
+    static let tableColumnLibraryPayloads = NSUserInterfaceItemIdentifier("tableColumnLibraryPayloads")
+    static let tableColumnMainWindowOutlineView = NSUserInterfaceItemIdentifier("tableColumnMainWindowOutlineView")
+    static let tableColumnPayload = NSUserInterfaceItemIdentifier("tableColumnPayload")
 }
 
 extension Notification.Name {
@@ -37,22 +56,9 @@ extension Notification.Name {
     static let removeProfile = Notification.Name("removeProfile")
 }
 
-struct ToolbarIdentifier {
-    static let profileEditorTitle = "profileEditorTitle"
-    static let mainWindowAdd = NSLocalizedString("Add", comment: "")
-    static let mainWindowExport = NSLocalizedString("Export", comment: "")
-    static let preferencesGeneral = NSLocalizedString("General", comment: "")
-    static let preferencesEditor = NSLocalizedString("Editor", comment: "")
-    static let preferencesProfileDefaults = NSLocalizedString("ProfileDefaults", comment: "")
-}
-
-struct TableColumnIdentifier {
-    static let padding = "padding"
-    static let paddingLeading = "paddingLeading"
-    static let paddingTrailing = "paddingTrailing"
-    static let payload = "payload"
-    static let profilePayloads = "profilePayloads"
-    static let libraryPayloads = "libraryPayloads"
+extension NSPasteboard.PasteboardType {
+    static let profile = NSPasteboard.PasteboardType(rawValue: "Profile")
+    static let payload = NSPasteboard.PasteboardType(rawValue: "Payload")
 }
 
 struct TypeName {
@@ -67,11 +73,6 @@ struct FileExtension {
 // This needs to be renamed after more items are added, to make it easier to understand and use.
 struct StringConstant {
     static let defaultProfileName = "Untitled"
-}
-
-struct DraggingType {
-    static let profile = "Profile"
-    static let payload = "Payload"
 }
 
 struct NotificationKey {

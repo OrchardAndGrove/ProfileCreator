@@ -8,7 +8,7 @@
 
 import Foundation
 
-class PayloadPlaceholder: NSObject {
+class PayloadPlaceholder: NSObject, Codable {
     
     let title: String
     let identifier: UUID

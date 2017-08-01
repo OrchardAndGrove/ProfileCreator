@@ -31,8 +31,8 @@ class MainWindowSplitView: NSSplitView {
         // ---------------------------------------------------------------------
         //  Setup SplitView
         // ---------------------------------------------------------------------
-        self.identifier = "MainWindowSplitView-ID"
-        self.autosaveName = "MainWindowSplitView-AS"
+        self.identifier = NSUserInterfaceItemIdentifier(rawValue: "MainWindowSplitView-ID")
+        self.autosaveName = NSSplitView.AutosaveName(rawValue: "MainWindowSplitView-AS")
         self.translatesAutoresizingMaskIntoConstraints = false
         self.dividerStyle = .thin
         self.isVertical = true
@@ -42,11 +42,11 @@ class MainWindowSplitView: NSSplitView {
         //  Add subviews to splitview
         // ---------------------------------------------------------------------
         self.addSubview(outlineViewController.scrollView)
-        self.setHoldingPriority((NSLayoutPriorityDefaultLow + 1), forSubviewAt: 0)
+        self.setHoldingPriority((NSLayoutConstraint.Priority(rawValue: NSLayoutConstraint.Priority.RawValue(Int(NSLayoutConstraint.Priority.defaultLow.rawValue) + 1))), forSubviewAt: 0)
         self.addSubview(tableViewController.scrollView)
-        self.setHoldingPriority(NSLayoutPriorityDefaultLow, forSubviewAt: 1)
+        self.setHoldingPriority(NSLayoutConstraint.Priority.defaultLow, forSubviewAt: 1)
         self.addSubview(profilePreviewController.view)
-        self.setHoldingPriority((NSLayoutPriorityDefaultLow - 1), forSubviewAt: 1)
+        self.setHoldingPriority((NSLayoutConstraint.Priority(rawValue: NSLayoutConstraint.Priority.RawValue(Int(NSLayoutConstraint.Priority.defaultLow.rawValue) - 1))), forSubviewAt: 1)
         
         // ---------------------------------------------------------------------
         //  Setup views in splitview
@@ -81,7 +81,7 @@ class MainWindowSplitView: NSSplitView {
         // ---------------------------------------------------------------------
         //  If no profile identifiers are loaded, show welcome view
         // ---------------------------------------------------------------------
-        if ProfileController.shared.profiles.count == 0 {
+        if ProfileController.sharedInstance.profiles.count == 0 {
             self.noProfileConfigured(nil)
         }
         
@@ -101,12 +101,12 @@ class MainWindowSplitView: NSSplitView {
     // MARK: -
     // MARK: Notification Functions
     
-    func noProfileConfigured(_ notification: NSNotification?) {
+    @objc func noProfileConfigured(_ notification: NSNotification?) {
         if !self.subviews.contains(self.welcomeViewController.view) {
             self.tableViewController.scrollView.removeFromSuperview()
             self.profilePreviewController.view.removeFromSuperview()
             self.addSubview(self.welcomeViewController.view)
-            self.setHoldingPriority(NSLayoutPriorityDefaultLow, forSubviewAt: 1)
+            self.setHoldingPriority(NSLayoutConstraint.Priority.defaultLow, forSubviewAt: 1)
             
             // -----------------------------------------------------------------
             //  Remove the internal selection state
@@ -116,13 +116,13 @@ class MainWindowSplitView: NSSplitView {
         }
     }
     
-    func didAddProfile(_ notification: NSNotification?) {
+    @objc func didAddProfile(_ notification: NSNotification?) {
         if !self.subviews.contains(self.tableViewController.scrollView) {
             self.welcomeViewController.view.removeFromSuperview()
             self.addSubview(self.tableViewController.scrollView)
-            self.setHoldingPriority(NSLayoutPriorityDefaultLow, forSubviewAt: 1)
+            self.setHoldingPriority(NSLayoutConstraint.Priority.defaultLow, forSubviewAt: 1)
             self.addSubview(self.profilePreviewController.view)
-            self.setHoldingPriority((NSLayoutPriorityDefaultLow - 1 ), forSubviewAt: 2)
+            self.setHoldingPriority((NSLayoutConstraint.Priority(rawValue: NSLayoutConstraint.Priority.RawValue(Int(NSLayoutConstraint.Priority.defaultLow.rawValue) - 1)) ), forSubviewAt: 2)
             
             // -----------------------------------------------------------------
             //  Select the newly created profile
@@ -273,7 +273,7 @@ extension NSSplitView {
      */
     func restoreAutoSavePositions() {
         
-        let key = String(format: "NSSplitView Subview Frames %@", self.autosaveName!)
+        let key = String(format: "NSSplitView Subview Frames %@", self.autosaveName! as CVarArg)
         Swift.print("key: \(key)")
         let subViewFrames = UserDefaults.standard.array(forKey: key)
         Swift.print("subViewFrames: \(String(describing: subViewFrames))")
