@@ -24,19 +24,28 @@ class PayloadLibraryTableViews: NSObject {
     private let sortDescriptorTitle = NSSortDescriptor(key: "title", ascending: true)
     
     private var selectedPayloadPlaceholder: PayloadPlaceholder?
+    private var generalPayloadPlaceholder: PayloadPlaceholder?
     
-    override init() {
+    private weak var editor: ProfileEditor?
+    private weak var librarySplitView: PayloadLibrarySplitView?
+    
+    init(editor: ProfileEditor, splitView: PayloadLibrarySplitView) {
         super.init()
+        
+        self.editor = editor
+        self.librarySplitView = splitView
         
         self.setupProfilePayloads()
         self.setupLibraryPayloads()
         
         // Only For Testing
-        self.profilePayloads.append(PayloadPlaceholder.init(payload: "General"))
+        self.generalPayloadPlaceholder = PayloadPlaceholder.init(payload: "General")
+        self.profilePayloads.append(generalPayloadPlaceholder!)
         self.profilePayloads.append(PayloadPlaceholder.init(payload: "Mail"))
         
         self.libraryPayloads.append(PayloadPlaceholder.init(payload: "Facebook"))
         self.libraryPayloads.append(PayloadPlaceholder.init(payload: "Twitter"))
+        self.libraryPayloads.append(PayloadPlaceholder.init(payload: "ABC"))
         
         self.reloadTableviews()
     }
@@ -60,24 +69,72 @@ class PayloadLibraryTableViews: NSObject {
         self.profilePayloads.sort(by: { $0.title < $1.title })
         
         // ---------------------------------------------------------------------
+        //  Verify that the "General" payload always is at the top of the profile payloads list
+        // ---------------------------------------------------------------------
+        if let generalPayloadPlaceholder = self.generalPayloadPlaceholder {
+            if let generalIndex = self.profilePayloads.index(of: generalPayloadPlaceholder) {
+                self.profilePayloads.remove(at: generalIndex)
+            }
+            self.profilePayloads.insert(generalPayloadPlaceholder, at: 0)
+        }
+        
+        // ---------------------------------------------------------------------
         //  Reload both table views
         // ---------------------------------------------------------------------
         self.profilePayloadsTableView.reloadData()
         self.libraryPayloadsTableView.reloadData()
         
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         //  Check which table view holds the current selection, and mark it selected
         //  This is different from - (void)selectPlaceholder which also updates editor etc.
-        // -------------------------------------------------------------------------
-        if self.profilePayloads.contains(where: {$0 == self.selectedPayloadPlaceholder }) {
-            
-        } else if self.libraryPayloads.contains(where: {$0 == self.selectedPayloadPlaceholder}) {
-            
+        // ---------------------------------------------------------------------
+        if let selectedPayloadPlaceholder = self.selectedPayloadPlaceholder {
+            if let index = self.profilePayloads.index(of: selectedPayloadPlaceholder) {
+                self.profilePayloadsTableView.selectRowIndexes(IndexSet(integer: index), byExtendingSelection: false)
+            } else if let index = self.libraryPayloads.index(of: selectedPayloadPlaceholder) {
+                self.profilePayloadsTableView.selectRowIndexes(IndexSet(integer: index), byExtendingSelection: false)
+            }
         }
     }
     
-    fileprivate func move(payloadPlaceholders: [PayloadPlaceholder], from: [PayloadPlaceholder], to: [PayloadPlaceholder]) {
+    fileprivate func move(payloadPlaceholders: [PayloadPlaceholder], from: TableViewTag, to:TableViewTag) {
         
+        // ---------------------------------------------------------------------
+        //  Set whether to enable or disable the payload
+        // ---------------------------------------------------------------------
+        let enable: Bool
+        if to == TableViewTag.libraryPayloads {
+            enable = false
+        } else if to == TableViewTag.profilePayloads {
+            enable = true
+        }
+        
+        // ---------------------------------------------------------------------
+        //  Loop through all placeholders and move them between the arrays
+        // ---------------------------------------------------------------------
+        for payloadPlaceholder in payloadPlaceholders {
+            if from == TableViewTag.libraryPayloads {
+                self.libraryPayloads = self.libraryPayloads.filter { $0.identifier != payloadPlaceholder.identifier }
+                self.profilePayloads.append(payloadPlaceholder)
+            } else if from == TableViewTag.profilePayloads {
+                self.profilePayloads = self.profilePayloads.filter { $0.identifier != payloadPlaceholder.identifier }
+                self.libraryPayloads.append(payloadPlaceholder)
+            }
+        }
+        
+        // FIXME: UPDATE ENABLED STATE ON PLACEHOLDER/SETTINGS
+        
+        // ---------------------------------------------------------------------
+        //  Check if library payloads is empty, then show "No Payloads" view
+        // ---------------------------------------------------------------------
+        if let librarySplitView = self.librarySplitView {
+            librarySplitView.noPayloads(show: self.libraryPayloads.isEmpty)
+        }
+        
+        // ---------------------------------------------------------------------
+        //  Reload both TableViews
+        // ---------------------------------------------------------------------
+        self.reloadTableviews()
     }
     
     fileprivate func select(payloadPlaceholder: PayloadPlaceholder, in: NSTableView) {
@@ -87,8 +144,20 @@ class PayloadLibraryTableViews: NSObject {
         // ---------------------------------------------------------------------
         self.selectedPayloadPlaceholder = payloadPlaceholder
         
-        // FIXME: Implement
-        Swift.print("Select: \(payloadPlaceholder)")
+        // ---------------------------------------------------------------------
+        //  Tell editor to show the selected payload
+        // ---------------------------------------------------------------------
+        if let editor = self.editor {
+            editor.select(payloadPlaceholder: payloadPlaceholder)
+        }
+        
+        // ---------------------------------------------------------------------
+        //  Tell window controller to update title
+        // ---------------------------------------------------------------------
+        if let window = self.profilePayloadsTableView.window,
+            let windowController = window.windowController as? ProfileEditorWindowController {
+            windowController.setTitle(string: payloadPlaceholder.title)
+        }
     }
     
     private func setupProfilePayloads() {
@@ -177,9 +246,9 @@ extension PayloadLibraryTableViews: NSTableViewDataSource {
         
         if tableView.tag == TableViewTag.profilePayloads.rawValue && rowIndexes.contains(0) {
             
-            // ---------------------------------------------------------------------
+            // -----------------------------------------------------------------
             //  Do not allow drag drop with General settings (at index 0)
-            // ---------------------------------------------------------------------
+            // -----------------------------------------------------------------
             return false
         }
         
@@ -213,9 +282,9 @@ extension PayloadLibraryTableViews: NSTableViewDataSource {
             do {
                 let payloadPlaceholders = try JSONDecoder().decode([PayloadPlaceholder].self, from: data)
                 if tableView.tag == TableViewTag.profilePayloads.rawValue {
-                    self.move(payloadPlaceholders: payloadPlaceholders, from: self.libraryPayloads, to: self.profilePayloads)
+                    self.move(payloadPlaceholders: payloadPlaceholders, from: TableViewTag.libraryPayloads, to: TableViewTag.profilePayloads)
                 } else if tableView.tag == TableViewTag.libraryPayloads.rawValue {
-                    self.move(payloadPlaceholders: payloadPlaceholders, from: self.profilePayloads, to: self.libraryPayloads)
+                    self.move(payloadPlaceholders: payloadPlaceholders, from: TableViewTag.profilePayloads, to: TableViewTag.libraryPayloads)
                 }
                 return true
             } catch {
@@ -279,7 +348,9 @@ extension PayloadLibraryTableViews: NSDraggingSource {
     }
 }
 
-/* Unused ?
+// -----------------------------------------------------------------------------
+//  Used by the "No Payloads" view
+// -----------------------------------------------------------------------------
 extension PayloadLibraryTableViews: NSDraggingDestination {
     func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
         Swift.print("draggingEntered")
@@ -287,18 +358,16 @@ extension PayloadLibraryTableViews: NSDraggingDestination {
         return NSDragOperation.copy
     }
     
-    // Is this neccessary?
     func prepareForDragOperation(_ sender: NSDraggingInfo) -> Bool {
         Swift.print("prepareForDragOperation")
         return true
     }
     
-    // Why is this only from profile to library?
     func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
         if let data = sender.draggingPasteboard().data(forType: .payload) {
             do {
                 let payloadPlaceholders = try JSONDecoder().decode([PayloadPlaceholder].self, from: data)
-                self.move(payloadPlaceholders: payloadPlaceholders, from: self.profilePayloads, to: self.libraryPayloads)
+                self.move(payloadPlaceholders: payloadPlaceholders, from: TableViewTag.profilePayloads, to: TableViewTag.libraryPayloads)
             } catch {
                 // TODO: Proper Logging
                 Swift.print("Could not decode dropped items")
@@ -307,4 +376,3 @@ extension PayloadLibraryTableViews: NSDraggingDestination {
         return false
     }
 }
- */

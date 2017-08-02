@@ -17,9 +17,9 @@ class PayloadLibrary: NSObject {
     
     let splitView: PayloadLibrarySplitView
     
-    init(profile: Profile) {
+    init(profile: Profile, editor: ProfileEditor) {
         
-        self.splitView = PayloadLibrarySplitView(profile: profile)
+        self.splitView = PayloadLibrarySplitView(profile: profile, editor: editor)
         
         super.init()
         

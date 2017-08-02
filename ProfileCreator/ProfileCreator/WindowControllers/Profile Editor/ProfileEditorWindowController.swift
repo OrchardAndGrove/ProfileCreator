@@ -105,6 +105,13 @@ public class ProfileEditorWindowController: NSWindowController {
         // ---------------------------------------------------------------------
         self.toolbar.delegate = nil
     }
+    
+    func setTitle(string: String) {
+        if let toolbarItemTitle = self.toolbarItemTitle {
+            toolbarItemTitle.selectionTitle = string
+            toolbarItemTitle.updateTitle()
+        }
+    }
 }
 
 // MARK: -

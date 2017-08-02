@@ -47,6 +47,7 @@ extension Notification.Name {
     static let didAddGroup = Notification.Name("didAddGroup")
     static let didAddProfile = Notification.Name("didAddProfile")
     static let didChangeProfileSelection = Notification.Name("didChangeProfileSelection")
+    static let didChangePayloadSelection = Notification.Name("didChangePayloadSelection")
     static let didRemoveProfiles = Notification.Name("didRemoveProfiles")
     static let didRemoveProfilesFromGroup = Notification.Name("didRemoveProfilesFromGroup")
     static let didSaveProfile = Notification.Name("didSaveProfile")
@@ -80,6 +81,7 @@ struct NotificationKey {
     static let identifiers = "Identifiers"
     static let indexSet = "IndexSet"
     static let parentTitle = "ParentTitle"
+    static let payloadPlaceholder = "PayloadPlaceholder"
 }
 
 struct PreferenceKey {

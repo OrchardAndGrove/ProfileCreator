@@ -101,6 +101,10 @@ class ProfileEditor: NSObject {
         self.tableView.reloadData()
     }
     
+    func select(payloadPlaceholder: PayloadPlaceholder) {
+        Swift.print("Selecting this placeholder in the editor: \(payloadPlaceholder.title)")
+    }
+    
     func updateKeyViewLoop(window: NSWindow) {
         
         var previousCellView: PayloadCellView? = nil

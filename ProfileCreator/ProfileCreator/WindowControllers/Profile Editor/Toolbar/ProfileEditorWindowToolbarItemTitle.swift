@@ -96,7 +96,7 @@ class ProfileEditorWindowToolbarItemTitle: NSView {
     
     func updateTitle() {
         if let profileTitle = profile.title {
-            self.textFieldTitle.stringValue = "\(profileTitle) \(self.selectionTitle ?? "")"
+            self.textFieldTitle.stringValue = "\(profileTitle): \(self.selectionTitle ?? "")"
         } else {
             self.textFieldTitle.stringValue = self.selectionTitle ?? ""
         }

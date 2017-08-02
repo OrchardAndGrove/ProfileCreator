@@ -13,14 +13,15 @@ struct PayloadLibraryNoPayloads {
     // MARK: -
     // MARK: Variables
     
-    let view = ViewWhite()
+    let view: ViewWhite
     let textField = NSTextField()
     
-    init() {
+    init(draggingDestination: NSDraggingDestination, draggingTypes: [NSPasteboard.PasteboardType]) {
         
         // ---------------------------------------------------------------------
         //  Setup Variables
         // ---------------------------------------------------------------------
+        self.view = ViewWhite(draggingDestination: draggingDestination, draggingTypes: draggingTypes)
         var constraints = [NSLayoutConstraint]()
         
         // ---------------------------------------------------------------------

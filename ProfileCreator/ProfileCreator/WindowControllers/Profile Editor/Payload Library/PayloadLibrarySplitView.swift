@@ -13,9 +13,8 @@ class PayloadLibrarySplitView: NSSplitView {
     // MARK: -
     // MARK: Variables
     
-    private let tableViews = PayloadLibraryTableViews()
-    private let noPayloads = PayloadLibraryNoPayloads()
-    private var noPayloadsHidden: Bool = true
+    private var tableViews: PayloadLibraryTableViews?
+    private var noPayloads: PayloadLibraryNoPayloads?
     private var noPayloadsConstraints = [NSLayoutConstraint]()
     
     fileprivate let libraryView = NSView()
@@ -35,12 +34,14 @@ class PayloadLibrarySplitView: NSSplitView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    convenience init(profile: Profile) {
+    convenience init(profile: Profile, editor: ProfileEditor) {
         self.init(frame: NSZeroRect)
         
         // ---------------------------------------------------------------------
         //  Setup Variables
         // ---------------------------------------------------------------------
+        self.tableViews = PayloadLibraryTableViews(editor: editor, splitView: self)
+        self.noPayloads = PayloadLibraryNoPayloads(draggingDestination: self.tableViews!, draggingTypes: [.payload])
         var constraints = [NSLayoutConstraint]()
         
         // ---------------------------------------------------------------------
@@ -67,7 +68,7 @@ class PayloadLibrarySplitView: NSSplitView {
         // ---------------------------------------------------------------------
         //  If library payloads is empty, need to show "No Profiles" view
         // ---------------------------------------------------------------------
-        if self.tableViews.libraryPayloads.isEmpty {
+        if self.tableViews!.libraryPayloads.isEmpty {
             self.noPayloads(show: true)
         }
     }
@@ -80,33 +81,40 @@ class PayloadLibrarySplitView: NSSplitView {
     // MARK: Instance Functions
     
     func noPayloads(show: Bool) {
-        
-        self.noPayloadsHidden = !show
+        guard let noPayloadsView = self.noPayloads?.view else {
+            // TODO: Proper Logging
+            return
+        }
         
         if show {
-            
-            // -----------------------------------------------------------------
-            //  Remove Library Payloads
-            // -----------------------------------------------------------------
-            self.tableViews.libraryPayloadsScrollView.removeFromSuperview()
-            
-            // -----------------------------------------------------------------
-            //  Insert No Payloads View and activate saved Constraints
-            // -----------------------------------------------------------------
-            self.libraryView.addSubview(self.noPayloads.view)
-            NSLayoutConstraint.activate(self.noPayloadsConstraints)
+            if !self.libraryView.subviews.contains(noPayloadsView) {
+                
+                // -----------------------------------------------------------------
+                //  Remove Library Payloads
+                // -----------------------------------------------------------------
+                self.tableViews?.libraryPayloadsScrollView.removeFromSuperview()
+                
+                // -----------------------------------------------------------------
+                //  Insert No Payloads View and activate saved Constraints
+                // -----------------------------------------------------------------
+                self.libraryView.addSubview(noPayloadsView)
+                NSLayoutConstraint.activate(self.noPayloadsConstraints)
+            }
         } else {
-            
-            // -----------------------------------------------------------------
-            //  Remove No Payloads View
-            // -----------------------------------------------------------------
-            self.noPayloads.view.removeFromSuperview()
-            
-            // -----------------------------------------------------------------
-            //  Insert Library Payloads and activate saved Constraints
-            // -----------------------------------------------------------------
-            self.libraryView.addSubview(self.tableViews.libraryPayloadsScrollView)
-            NSLayoutConstraint.activate(self.libraryPayloadsConstraints)
+            if let libraryPayloadsScrollView = self.tableViews?.libraryPayloadsScrollView,
+                !self.libraryView.subviews.contains(libraryPayloadsScrollView) {
+                
+                // -----------------------------------------------------------------
+                //  Remove No Payloads View
+                // -----------------------------------------------------------------
+                noPayloadsView.removeFromSuperview()
+                
+                // -----------------------------------------------------------------
+                //  Insert Library Payloads and activate saved Constraints
+                // -----------------------------------------------------------------
+                self.libraryView.addSubview(libraryPayloadsScrollView)
+                NSLayoutConstraint.activate(self.libraryPayloadsConstraints)
+            }
         }
     }
     
@@ -139,7 +147,9 @@ class PayloadLibrarySplitView: NSSplitView {
             // -----------------------------------------------------------------
             //  Uncollapse the split view
             // -----------------------------------------------------------------
-            self.setPosition(self.tableViews.libraryPayloadsScrollView.contentSize.height - 108.0, ofDividerAt: 0)
+            if let libraryPayloadsScrollView = self.tableViews?.libraryPayloadsScrollView {
+                self.setPosition(libraryPayloadsScrollView.contentSize.height - 108.0, ofDividerAt: 0)
+            }
         } else {
             
             // -----------------------------------------------------------------
@@ -159,171 +169,176 @@ class PayloadLibrarySplitView: NSSplitView {
     
     private func setupSplitViewProfilePayloads(constraints: inout [NSLayoutConstraint]) {
         
-        self.addSubview(self.tableViews.profilePayloadsScrollView)
-        self.setHoldingPriority(NSLayoutConstraint.Priority.defaultLow, forSubviewAt: 0)
-        
-        // ---------------------------------------------------------------------
-        //  Add constraints
-        // ---------------------------------------------------------------------
-        
-        // Height Min
-        constraints.append(NSLayoutConstraint(item: self.tableViews.profilePayloadsScrollView,
-                                              attribute: .height,
-                                              relatedBy: .greaterThanOrEqual,
-                                              toItem: nil,
-                                              attribute: .notAnAttribute,
-                                              multiplier: 1,
-                                              constant: 96))
+        if let profilePayloadsScrollView = self.tableViews?.profilePayloadsScrollView {
+            self.addSubview(profilePayloadsScrollView)
+            self.setHoldingPriority(NSLayoutConstraint.Priority.defaultLow, forSubviewAt: 0)
+            
+            // ---------------------------------------------------------------------
+            //  Add constraints
+            // ---------------------------------------------------------------------
+            
+            // Height Min
+            constraints.append(NSLayoutConstraint(item: profilePayloadsScrollView,
+                                                  attribute: .height,
+                                                  relatedBy: .greaterThanOrEqual,
+                                                  toItem: nil,
+                                                  attribute: .notAnAttribute,
+                                                  multiplier: 1,
+                                                  constant: 96))
+        }
     }
     
     private func setupSplitViewLibraryPayloads(constraints: inout [NSLayoutConstraint]) {
         
-        // ---------------------------------------------------------------------
-        //  Setup Library View
-        // ---------------------------------------------------------------------
-        self.libraryView.translatesAutoresizingMaskIntoConstraints = false
-        
-        // ---------------------------------------------------------------------
-        //  Add Menu to Library View
-        // ---------------------------------------------------------------------
-        self.libraryView.addSubview(self.libraryMenu.view)
-        
-        // ---------------------------------------------------------------------
-        //  Setup constraints for Menu
-        // ---------------------------------------------------------------------
-        // Height
-        self.libraryMenuConstraints.append(NSLayoutConstraint(item: self.libraryMenu.view,
-                                                              attribute: .height,
-                                                              relatedBy: .equal,
-                                                              toItem: nil,
-                                                              attribute: .notAnAttribute,
-                                                              multiplier: 1,
-                                                              constant: 27))
-        
-        // Top
-        self.libraryMenuConstraints.append(NSLayoutConstraint(item: self.libraryMenu.view,
-                                                              attribute: .top,
-                                                              relatedBy: .equal,
-                                                              toItem: self.libraryView,
-                                                              attribute: .top,
-                                                              multiplier: 1,
-                                                              constant: 0))
-        
-        // Leading
-        self.libraryMenuConstraints.append(NSLayoutConstraint(item: self.libraryMenu.view,
-                                                              attribute: .leading,
-                                                              relatedBy: .equal,
-                                                              toItem: self.libraryView,
-                                                              attribute: .leading,
-                                                              multiplier: 1,
-                                                              constant: 0))
-        
-        // Trailing
-        self.libraryMenuConstraints.append(NSLayoutConstraint(item: self.libraryMenu.view,
-                                                              attribute: .trailing,
-                                                              relatedBy: .equal,
-                                                              toItem: self.libraryView,
-                                                              attribute: .trailing,
-                                                              multiplier: 1,
-                                                              constant: 0))
-        
-        // ---------------------------------------------------------------------
-        //  Setup and add separator line between Menu and TableView
-        // ---------------------------------------------------------------------
-        self.libraryMenuSeparator.translatesAutoresizingMaskIntoConstraints = false
-        self.libraryMenuSeparator.boxType = .separator
-        self.libraryView.addSubview(self.libraryMenuSeparator)
-        
-        // ---------------------------------------------------------------------
-        //  Setup constraints for separator line
-        // ---------------------------------------------------------------------
-        // Top
-        self.libraryMenuConstraints.append(NSLayoutConstraint(item: self.libraryMenu.view,
-                                                              attribute: .bottom,
-                                                              relatedBy: .equal,
-                                                              toItem: self.libraryMenuSeparator,
-                                                              attribute: .top,
-                                                              multiplier: 1,
-                                                              constant: 0))
-        
-        constraints.append(contentsOf: self.libraryMenuConstraints)
-        
-        // Leading
-        constraints.append(NSLayoutConstraint(item: self.libraryMenuSeparator,
-                                              attribute: .leading,
-                                              relatedBy: .equal,
-                                              toItem: self.libraryView,
-                                              attribute: .leading,
-                                              multiplier: 1,
-                                              constant: 0))
-        
-        // Trailing
-        constraints.append(NSLayoutConstraint(item: self.libraryMenuSeparator,
-                                              attribute: .trailing,
-                                              relatedBy: .equal,
-                                              toItem: self.libraryView,
-                                              attribute: .trailing,
-                                              multiplier: 1,
-                                              constant: 0))
-        
-        // ---------------------------------------------------------------------
-        //  Add TableView to Library View
-        // ---------------------------------------------------------------------
-        self.libraryView.addSubview(self.tableViews.libraryPayloadsScrollView)
-        
-        
-        // ---------------------------------------------------------------------
-        //  Add constraints
-        // ---------------------------------------------------------------------
-        // Top
-        self.libraryPayloadsConstraints.append(NSLayoutConstraint(item: self.libraryMenuSeparator,
-                                                                  attribute: .bottom,
-                                                                  relatedBy: .equal,
-                                                                  toItem: self.tableViews.libraryPayloadsScrollView,
-                                                                  attribute: .top,
-                                                                  multiplier: 1,
-                                                                  constant: 0))
-        
-        // Height Min
-        self.libraryPayloadsConstraints.append(NSLayoutConstraint(item: self.tableViews.libraryPayloadsScrollView,
+        if let libraryPayloadsScrollView = self.tableViews?.libraryPayloadsScrollView {
+            
+            // ---------------------------------------------------------------------
+            //  Setup Library View
+            // ---------------------------------------------------------------------
+            self.libraryView.translatesAutoresizingMaskIntoConstraints = false
+            
+            // ---------------------------------------------------------------------
+            //  Add Menu to Library View
+            // ---------------------------------------------------------------------
+            self.libraryView.addSubview(self.libraryMenu.view)
+            
+            // ---------------------------------------------------------------------
+            //  Setup constraints for Menu
+            // ---------------------------------------------------------------------
+            // Height
+            self.libraryMenuConstraints.append(NSLayoutConstraint(item: self.libraryMenu.view,
                                                                   attribute: .height,
-                                                                  relatedBy: .greaterThanOrEqual,
+                                                                  relatedBy: .equal,
                                                                   toItem: nil,
                                                                   attribute: .notAnAttribute,
                                                                   multiplier: 1,
-                                                                  constant: 80))
-        
-        // Leading
-        self.libraryPayloadsConstraints.append(NSLayoutConstraint(item: self.tableViews.libraryPayloadsScrollView,
+                                                                  constant: 27))
+            
+            // Top
+            self.libraryMenuConstraints.append(NSLayoutConstraint(item: self.libraryMenu.view,
+                                                                  attribute: .top,
+                                                                  relatedBy: .equal,
+                                                                  toItem: self.libraryView,
+                                                                  attribute: .top,
+                                                                  multiplier: 1,
+                                                                  constant: 0))
+            
+            // Leading
+            self.libraryMenuConstraints.append(NSLayoutConstraint(item: self.libraryMenu.view,
                                                                   attribute: .leading,
                                                                   relatedBy: .equal,
                                                                   toItem: self.libraryView,
                                                                   attribute: .leading,
                                                                   multiplier: 1,
                                                                   constant: 0))
-        
-        // Trailing
-        self.libraryPayloadsConstraints.append(NSLayoutConstraint(item: self.tableViews.libraryPayloadsScrollView,
+            
+            // Trailing
+            self.libraryMenuConstraints.append(NSLayoutConstraint(item: self.libraryMenu.view,
                                                                   attribute: .trailing,
                                                                   relatedBy: .equal,
                                                                   toItem: self.libraryView,
                                                                   attribute: .trailing,
                                                                   multiplier: 1,
                                                                   constant: 0))
-        
-        // Bottom
-        self.libraryPayloadsConstraints.append(NSLayoutConstraint(item: self.tableViews.libraryPayloadsScrollView,
+            
+            // ---------------------------------------------------------------------
+            //  Setup and add separator line between Menu and TableView
+            // ---------------------------------------------------------------------
+            self.libraryMenuSeparator.translatesAutoresizingMaskIntoConstraints = false
+            self.libraryMenuSeparator.boxType = .separator
+            self.libraryView.addSubview(self.libraryMenuSeparator)
+            
+            // ---------------------------------------------------------------------
+            //  Setup constraints for separator line
+            // ---------------------------------------------------------------------
+            // Top
+            self.libraryMenuConstraints.append(NSLayoutConstraint(item: self.libraryMenu.view,
                                                                   attribute: .bottom,
                                                                   relatedBy: .equal,
-                                                                  toItem: self.libraryView,
-                                                                  attribute: .bottom,
+                                                                  toItem: self.libraryMenuSeparator,
+                                                                  attribute: .top,
                                                                   multiplier: 1,
                                                                   constant: 0))
-        
-        constraints.append(contentsOf: self.libraryPayloadsConstraints)
-        
-        self.addSubview(self.libraryView)
-        self.setHoldingPriority(NSLayoutConstraint.Priority.defaultLow, forSubviewAt: 1)
+            
+            constraints.append(contentsOf: self.libraryMenuConstraints)
+            
+            // Leading
+            constraints.append(NSLayoutConstraint(item: self.libraryMenuSeparator,
+                                                  attribute: .leading,
+                                                  relatedBy: .equal,
+                                                  toItem: self.libraryView,
+                                                  attribute: .leading,
+                                                  multiplier: 1,
+                                                  constant: 0))
+            
+            // Trailing
+            constraints.append(NSLayoutConstraint(item: self.libraryMenuSeparator,
+                                                  attribute: .trailing,
+                                                  relatedBy: .equal,
+                                                  toItem: self.libraryView,
+                                                  attribute: .trailing,
+                                                  multiplier: 1,
+                                                  constant: 0))
+            
+            // ---------------------------------------------------------------------
+            //  Add TableView to Library View
+            // ---------------------------------------------------------------------
+            self.libraryView.addSubview(libraryPayloadsScrollView)
+            
+            
+            // ---------------------------------------------------------------------
+            //  Add constraints
+            // ---------------------------------------------------------------------
+            // Top
+            self.libraryPayloadsConstraints.append(NSLayoutConstraint(item: self.libraryMenuSeparator,
+                                                                      attribute: .bottom,
+                                                                      relatedBy: .equal,
+                                                                      toItem: libraryPayloadsScrollView,
+                                                                      attribute: .top,
+                                                                      multiplier: 1,
+                                                                      constant: 0))
+            
+            // Height Min
+            self.libraryPayloadsConstraints.append(NSLayoutConstraint(item: libraryPayloadsScrollView,
+                                                                      attribute: .height,
+                                                                      relatedBy: .greaterThanOrEqual,
+                                                                      toItem: nil,
+                                                                      attribute: .notAnAttribute,
+                                                                      multiplier: 1,
+                                                                      constant: 80))
+            
+            // Leading
+            self.libraryPayloadsConstraints.append(NSLayoutConstraint(item: libraryPayloadsScrollView,
+                                                                      attribute: .leading,
+                                                                      relatedBy: .equal,
+                                                                      toItem: self.libraryView,
+                                                                      attribute: .leading,
+                                                                      multiplier: 1,
+                                                                      constant: 0))
+            
+            // Trailing
+            self.libraryPayloadsConstraints.append(NSLayoutConstraint(item: libraryPayloadsScrollView,
+                                                                      attribute: .trailing,
+                                                                      relatedBy: .equal,
+                                                                      toItem: self.libraryView,
+                                                                      attribute: .trailing,
+                                                                      multiplier: 1,
+                                                                      constant: 0))
+            
+            // Bottom
+            self.libraryPayloadsConstraints.append(NSLayoutConstraint(item: libraryPayloadsScrollView,
+                                                                      attribute: .bottom,
+                                                                      relatedBy: .equal,
+                                                                      toItem: self.libraryView,
+                                                                      attribute: .bottom,
+                                                                      multiplier: 1,
+                                                                      constant: 0))
+            
+            constraints.append(contentsOf: self.libraryPayloadsConstraints)
+            
+            self.addSubview(self.libraryView)
+            self.setHoldingPriority(NSLayoutConstraint.Priority.defaultLow, forSubviewAt: 1)
+        }
     }
     
     private func setupSplitViewNoPayloads(constraints: inout [NSLayoutConstraint]) {
@@ -332,50 +347,53 @@ class PayloadLibrarySplitView: NSSplitView {
         //  Add constraints
         // ---------------------------------------------------------------------
         
-        // Top
-        self.noPayloadsConstraints.append(NSLayoutConstraint(item: self.libraryMenuSeparator,
-                                                             attribute: .bottom,
-                                                             relatedBy: .equal,
-                                                             toItem: self.noPayloads.view,
-                                                             attribute: .top,
-                                                             multiplier: 1.0,
-                                                             constant: 0))
-        
-        // Height
-        self.noPayloadsConstraints.append(NSLayoutConstraint(item: self.noPayloads.view,
-                                                             attribute: .height,
-                                                             relatedBy: .greaterThanOrEqual,
-                                                             toItem: nil,
-                                                             attribute: .notAnAttribute,
-                                                             multiplier: 1.0,
-                                                             constant: 80))
-        
-        // Leading
-        self.noPayloadsConstraints.append(NSLayoutConstraint(item: self.noPayloads.view,
-                                                             attribute: .leading,
-                                                             relatedBy: .equal,
-                                                             toItem: self.libraryView,
-                                                             attribute: .leading,
-                                                             multiplier: 1,
-                                                             constant: 0))
-        
-        // Trailing
-        self.noPayloadsConstraints.append(NSLayoutConstraint(item: self.noPayloads.view,
-                                                             attribute: .trailing,
-                                                             relatedBy: .equal,
-                                                             toItem: self.libraryView,
-                                                             attribute: .trailing,
-                                                             multiplier: 1,
-                                                             constant: 0))
-        
-        // Bottom
-        self.noPayloadsConstraints.append(NSLayoutConstraint(item: self.noPayloads.view,
-                                                             attribute: .bottom,
-                                                             relatedBy: .equal,
-                                                             toItem: self.libraryView,
-                                                             attribute: .bottom,
-                                                             multiplier: 1,
-                                                             constant: 0))
+        if let noPayloadsView = self.noPayloads?.view {
+            
+            // Top
+            self.noPayloadsConstraints.append(NSLayoutConstraint(item: self.libraryMenuSeparator,
+                                                                 attribute: .bottom,
+                                                                 relatedBy: .equal,
+                                                                 toItem: noPayloadsView,
+                                                                 attribute: .top,
+                                                                 multiplier: 1.0,
+                                                                 constant: 0))
+            
+            // Height
+            self.noPayloadsConstraints.append(NSLayoutConstraint(item: noPayloadsView,
+                                                                 attribute: .height,
+                                                                 relatedBy: .greaterThanOrEqual,
+                                                                 toItem: nil,
+                                                                 attribute: .notAnAttribute,
+                                                                 multiplier: 1.0,
+                                                                 constant: 80))
+            
+            // Leading
+            self.noPayloadsConstraints.append(NSLayoutConstraint(item: noPayloadsView,
+                                                                 attribute: .leading,
+                                                                 relatedBy: .equal,
+                                                                 toItem: self.libraryView,
+                                                                 attribute: .leading,
+                                                                 multiplier: 1,
+                                                                 constant: 0))
+            
+            // Trailing
+            self.noPayloadsConstraints.append(NSLayoutConstraint(item: noPayloadsView,
+                                                                 attribute: .trailing,
+                                                                 relatedBy: .equal,
+                                                                 toItem: self.libraryView,
+                                                                 attribute: .trailing,
+                                                                 multiplier: 1,
+                                                                 constant: 0))
+            
+            // Bottom
+            self.noPayloadsConstraints.append(NSLayoutConstraint(item: noPayloadsView,
+                                                                 attribute: .bottom,
+                                                                 relatedBy: .equal,
+                                                                 toItem: self.libraryView,
+                                                                 attribute: .bottom,
+                                                                 multiplier: 1,
+                                                                 constant: 0))
+        }
     }
 }
 

@@ -52,10 +52,13 @@ class ProfileEditorSplitView: NSSplitView {
         // ---------------------------------------------------------------------
         //  Add subviews to splitview
         // ---------------------------------------------------------------------
-        self.library = PayloadLibrary(profile: profile)
-        setupSplitViewLibrary(constraints: &constraints)
-        
         self.editor = ProfileEditor(profile: profile)
+        self.library = PayloadLibrary(profile: profile, editor: self.editor!)
+        
+        // ---------------------------------------------------------------------
+        //  Add subviews to splitview
+        // ---------------------------------------------------------------------
+        setupSplitViewLibrary(constraints: &constraints)
         setupSplitViewEditor(constraints: &constraints)
         
         // ---------------------------------------------------------------------
