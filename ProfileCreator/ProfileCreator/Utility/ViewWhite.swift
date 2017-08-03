@@ -60,6 +60,7 @@ class ViewWhite: NSView {
     }
 }
 
+// FIXME: Test to draw a focus ring orund the view. Haven't really tried much yet, should fix.
 extension ViewWhite {
     
     override var acceptsFirstResponder: Bool {

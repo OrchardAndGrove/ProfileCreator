@@ -1,15 +1,15 @@
 //
-//  TableCellViewTextField.swift
+//  PayloadCellViewCheckbox.swift
 //  ProfileCreator
 //
-//  Created by Erik Berglund on 2017-07-25.
+//  Created by Erik Berglund on 2017-08-02.
 //  Copyright © 2017 Erik Berglund. All rights reserved.
 //
 
 import Cocoa
 
-class PayloadCellViewTextField: NSTableCellView, ProfileCreatorCellView, PayloadCellView {
-    
+class PayloadCellViewCheckbox: NSTableCellView, ProfileCreatorCellView, PayloadCellView, CheckboxCellView {
+
     // MARK: -
     // MARK: PayloadCellView Variables
     
@@ -24,10 +24,7 @@ class PayloadCellViewTextField: NSTableCellView, ProfileCreatorCellView, Payload
     // MARK: -
     // MARK: Instance Variables
     
-    var textFieldInput: NSTextField?
-    
-    // MARK: -
-    // MARK: Initialization
+    var checkbox: NSButton?
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -43,22 +40,22 @@ class PayloadCellViewTextField: NSTableCellView, ProfileCreatorCellView, Payload
         var constraints = [NSLayoutConstraint]()
         
         // ---------------------------------------------------------------------
-        //  Setup Static View Content
-        // ---------------------------------------------------------------------
-        self.textFieldTitle = EditorTextField.title(string: key, fontWeight: NSFont.Weight.bold.rawValue, leadingItem: nil, constraints: &constraints, cellView: self)
-        self.textFieldDescription = EditorTextField.description(string: key + "DESCRIPTION", constraints: &constraints, cellView: self)
-        
-        // ---------------------------------------------------------------------
         //  Setup Custom View Content
         // ---------------------------------------------------------------------
-        self.textFieldInput = EditorTextField.input(defaultString: "", placeholderString: "TextPlaceholder", constraints: &constraints, cellView: self)
-        setupTextFieldInput(constraints: &constraints)
+        self.checkbox = EditorCheckbox.noTitle(constraints: &constraints, cellView: self)
+        setupCheckbox(constraints: &constraints)
+        
+        // ---------------------------------------------------------------------
+        //  Setup Static View Content
+        // ---------------------------------------------------------------------
+        self.textFieldTitle = EditorTextField.title(string: key, fontWeight: NSFont.Weight.bold.rawValue, leadingItem: self.checkbox, constraints: &constraints, cellView: self)
+        self.textFieldDescription = EditorTextField.description(string: key + "DESCRIPTION", constraints: &constraints, cellView: self)
         
         // ---------------------------------------------------------------------
         //  Set text field input as the only keyView
         // ---------------------------------------------------------------------
-        self.leadingKeyView = self.textFieldInput
-        self.trailingKeyView = self.textFieldInput
+        self.leadingKeyView = self.checkbox
+        self.trailingKeyView = self.checkbox
         
         // ---------------------------------------------------------------------
         //  Add spacing to bottom
@@ -75,12 +72,16 @@ class PayloadCellViewTextField: NSTableCellView, ProfileCreatorCellView, Payload
         self.height += h
     }
     
+    func clicked(_ checkbox: NSButton) {
+        Swift.print("Checkbox Pressed!")
+    }
+    
     // MARK: -
     // MARK: Setup Layout Constraints
     
-    private func setupTextFieldInput(constraints: inout [NSLayoutConstraint]) {
+    private func setupCheckbox(constraints: inout [NSLayoutConstraint]) {
         
-        guard let textFieldInput = self.textFieldInput else {
+        guard let checkbox = self.checkbox else {
             // TODO: Proper Logging
             return
         }
@@ -88,50 +89,28 @@ class PayloadCellViewTextField: NSTableCellView, ProfileCreatorCellView, Payload
         // ---------------------------------------------------------------------
         //  Add TextField to TableCellView
         // ---------------------------------------------------------------------
-        self.addSubview(textFieldInput)
+        self.addSubview(checkbox)
         
         // ---------------------------------------------------------------------
         //  Add constraints
         // ---------------------------------------------------------------------
         
+        // Width
+        constraints.append(NSLayoutConstraint(item: checkbox,
+                                              attribute: .width,
+                                              relatedBy: .equal,
+                                              toItem: nil,
+                                              attribute: .notAnAttribute,
+                                              multiplier: 1.0,
+                                              constant: checkbox.intrinsicContentSize.width))
+        
         // Leading
-        constraints.append(NSLayoutConstraint(item: textFieldInput,
+        constraints.append(NSLayoutConstraint(item: checkbox,
                                               attribute: .leading,
                                               relatedBy: .equal,
                                               toItem: self,
                                               attribute: .leading,
                                               multiplier: 1.0,
-                                              constant: 8.0))
-        
-        // Trailing
-        constraints.append(NSLayoutConstraint(item: self,
-                                              attribute: .trailing,
-                                              relatedBy: .equal,
-                                              toItem: textFieldInput,
-                                              attribute: .trailing,
-                                              multiplier: 1.0,
-                                              constant: 8.0))
-        
-        // Top
-        constraints.append(NSLayoutConstraint(item: textFieldInput,
-                                              attribute: .top,
-                                              relatedBy: .equal,
-                                              toItem: self.textFieldDescription,
-                                              attribute: .bottom,
-                                              multiplier: 1.0,
-                                              constant: 7.0))
-        
-        self.updateHeight(7.0 + textFieldInput.intrinsicContentSize.height)
+                                              constant: 8))
     }
 }
-
-/*
-extension PayloadCellViewTextField: NSTextFieldDelegate {
-    
-    override func controlTextDidEndEditing(_ obj: Notification) {
-        Swift.print("nextKeyView: \(self.nextKeyView)")
-        Swift.print("previousKeyView: \(self.previousKeyView)")
-    }
-    
-}
- */

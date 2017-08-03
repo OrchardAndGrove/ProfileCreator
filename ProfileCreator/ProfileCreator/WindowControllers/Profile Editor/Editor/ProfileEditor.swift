@@ -84,6 +84,7 @@ class ProfileEditor: NSObject {
         // Only For Testing
         self.payloadCellViews.append(PayloadCellViewPadding(height: nil))
         self.payloadCellViews.append(PayloadCellViewTextField(key: "Test1", settings: [String : Any]()))
+        self.payloadCellViews.append(PayloadCellViewCheckbox(key: "Test1.5", settings: [String : Any]()))
         self.payloadCellViews.append(PayloadCellViewTextField(key: "Test2", settings: [String : Any]()))
         self.payloadCellViews.append(PayloadCellViewTextField(key: "Test3", settings: [String : Any]()))
         self.payloadCellViews.append(PayloadCellViewPadding(height: nil))

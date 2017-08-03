@@ -25,3 +25,7 @@ protocol PayloadCellView {
     func updateHeight(_ h: CGFloat)
     func addSubview(_ subview: NSView)
 }
+
+@objc protocol CheckboxCellView {
+    func clicked(_ checkbox: NSButton)
+}
