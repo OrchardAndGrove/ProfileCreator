@@ -94,7 +94,7 @@ class MainWindowTableViewController: NSObject, MainWindowOutlineViewSelectionDel
     
     func selected(item: OutlineViewChildItem, sender: Any?) {
         self.selectedProfileGroup = item
-        reloadTableView(updateSelection: false)
+        reloadTableView(updateSelection: (self.selectedProfileIdentitifers != nil) ? true : false)
     }
     
     func updated(item: OutlineViewChildItem, sender: Any?) {
