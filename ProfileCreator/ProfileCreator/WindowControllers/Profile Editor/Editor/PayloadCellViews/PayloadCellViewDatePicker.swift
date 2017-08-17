@@ -1,15 +1,15 @@
 //
-//  PayloadCellViewCheckbox.swift
+//  PayloadCellViewDatePicker.swift
 //  ProfileCreator
 //
-//  Created by Erik Berglund on 2017-08-02.
+//  Created by Erik Berglund on 2017-08-14.
 //  Copyright © 2017 Erik Berglund. All rights reserved.
 //
 
 import Cocoa
 
-class PayloadCellViewCheckbox: NSTableCellView, ProfileCreatorCellView, PayloadCellView, CheckboxCellView {
-
+class PayloadCellViewDatePicker: NSTableCellView, ProfileCreatorCellView, PayloadCellView, DatePickerCellView {
+    
     // MARK: -
     // MARK: PayloadCellView Variables
     
@@ -24,7 +24,8 @@ class PayloadCellViewCheckbox: NSTableCellView, ProfileCreatorCellView, PayloadC
     // MARK: -
     // MARK: Instance Variables
     
-    var checkbox: NSButton?
+    var datePicker: NSDatePicker?
+    var textFieldInterval: NSTextField?
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -38,24 +39,27 @@ class PayloadCellViewCheckbox: NSTableCellView, ProfileCreatorCellView, PayloadC
         //  Setup Variables
         // ---------------------------------------------------------------------
         var constraints = [NSLayoutConstraint]()
+
+        // ---------------------------------------------------------------------
+        //  Setup Static View Content
+        // ---------------------------------------------------------------------
+        self.textFieldTitle = EditorTextField.title(string: key, fontWeight: nil, leadingItem: nil, constraints: &constraints, cellView: self)
+        self.textFieldDescription = EditorTextField.description(string: key + "DESCRIPTION", constraints: &constraints, cellView: self)
         
         // ---------------------------------------------------------------------
         //  Setup Custom View Content
         // ---------------------------------------------------------------------
-        self.checkbox = EditorCheckbox.noTitle(constraints: &constraints, cellView: self)
-        setupCheckbox(constraints: &constraints)
+        self.datePicker = EditorDatePicker.picker(offsetDays: 0, offsetHours: 0, offsetMinutes: 0, showDate: true, showTime: true, constraints: &constraints, cellView: self)
+        setupDatePicker(constraints: &constraints)
         
-        // ---------------------------------------------------------------------
-        //  Setup Static View Content
-        // ---------------------------------------------------------------------
-        self.textFieldTitle = EditorTextField.title(string: key, fontWeight: nil, leadingItem: self.checkbox, constraints: &constraints, cellView: self)
-        self.textFieldDescription = EditorTextField.description(string: key + "DESCRIPTION", constraints: &constraints, cellView: self)
+        // FIXME: This should be read from settigns
+        
         
         // ---------------------------------------------------------------------
         //  Setup KeyView Loop Items
         // ---------------------------------------------------------------------
-        self.leadingKeyView = self.checkbox
-        self.trailingKeyView = self.checkbox
+        self.leadingKeyView = self.datePicker
+        self.trailingKeyView = self.datePicker
         
         // ---------------------------------------------------------------------
         //  Add spacing to bottom
@@ -73,47 +77,50 @@ class PayloadCellViewCheckbox: NSTableCellView, ProfileCreatorCellView, PayloadC
     }
     
     // MARK: -
-    // MARK: CheckboxCellView Functions
+    // MARK: DatePicker Actions
     
-    func clicked(_ checkbox: NSButton) {
-        Swift.print("Checkbox Pressed!")
+    internal func selectDate(_ datePicker: NSDatePicker) {
+        Swift.print("selectDate: \(datePicker)")
     }
     
     // MARK: -
     // MARK: Setup Layout Constraints
     
-    private func setupCheckbox(constraints: inout [NSLayoutConstraint]) {
+    private func setupDatePicker(constraints: inout [NSLayoutConstraint]) {
         
-        guard let checkbox = self.checkbox else {
+        guard let datePicker = self.datePicker else {
             // TODO: Proper Logging
             return
         }
         
         // ---------------------------------------------------------------------
-        //  Add Checkbox to TableCellView
+        //  Add TextField to TableCellView
         // ---------------------------------------------------------------------
-        self.addSubview(checkbox)
+        self.addSubview(datePicker)
         
         // ---------------------------------------------------------------------
         //  Add constraints
         // ---------------------------------------------------------------------
+        // Below
+        addConstraintsFor(item: datePicker, orientation: .below, constraints: &constraints, cellView: self)
+        self.updateHeight(datePicker.intrinsicContentSize.height)
         
         // Width
-        constraints.append(NSLayoutConstraint(item: checkbox,
+        constraints.append(NSLayoutConstraint(item: datePicker,
                                               attribute: .width,
                                               relatedBy: .equal,
                                               toItem: nil,
                                               attribute: .notAnAttribute,
                                               multiplier: 1.0,
-                                              constant: checkbox.intrinsicContentSize.width))
+                                              constant: datePicker.intrinsicContentSize.width))
         
         // Leading
-        constraints.append(NSLayoutConstraint(item: checkbox,
+        constraints.append(NSLayoutConstraint(item: datePicker,
                                               attribute: .leading,
                                               relatedBy: .equal,
                                               toItem: self,
                                               attribute: .leading,
                                               multiplier: 1.0,
-                                              constant: 8))
+                                              constant: 8.0))
     }
 }

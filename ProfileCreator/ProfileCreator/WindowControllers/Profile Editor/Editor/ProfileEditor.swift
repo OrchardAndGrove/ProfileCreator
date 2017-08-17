@@ -85,8 +85,13 @@ class ProfileEditor: NSObject {
         self.payloadCellViews.append(PayloadCellViewPadding(height: nil))
         self.payloadCellViews.append(PayloadCellViewTextField(key: "Test1", settings: [String : Any]()))
         self.payloadCellViews.append(PayloadCellViewCheckbox(key: "Test1.5", settings: [String : Any]()))
+        self.payloadCellViews.append(PayloadCellViewPopUpButton(key: "Test1.7", settings: [String : Any]()))
+        self.payloadCellViews.append(PayloadCellViewTextView(key: "Test5", settings: [String : Any]()))
+        self.payloadCellViews.append(PayloadCellViewHostPort(key: "Test1.7", settings: [String : Any]()))
         self.payloadCellViews.append(PayloadCellViewTextField(key: "Test2", settings: [String : Any]()))
         self.payloadCellViews.append(PayloadCellViewTextField(key: "Test3", settings: [String : Any]()))
+        
+        self.payloadCellViews.append(PayloadCellViewFile(key: "File", settings: [String : Any]()))
         self.payloadCellViews.append(PayloadCellViewPadding(height: nil))
         
         self.reloadTableView(force: true)
@@ -162,12 +167,44 @@ extension ProfileEditor: NSTableViewDelegate {
     }
 }
 
+// Sublcasses to enable FirstResponder and KeyView
+
+class PayloadButton: NSButton {
+    override var acceptsFirstResponder: Bool { return self.isEnabled }
+    override var canBecomeKeyView: Bool { return self.isEnabled }
+}
+
+class PayloadCheckbox: NSButton {
+    override var acceptsFirstResponder : Bool { return self.isEnabled }
+    override var canBecomeKeyView: Bool { return self.isEnabled }
+}
+
+class PayloadPopUpButton: NSPopUpButton {
+    override var acceptsFirstResponder : Bool { return self.isEnabled }
+    override var canBecomeKeyView: Bool { return self.isEnabled }
+}
+
 class PayloadTextField: NSTextField {
     override var acceptsFirstResponder : Bool { return self.isEditable }
     override var canBecomeKeyView: Bool { return self.isEditable }
+}
+
+class PayloadTextView: NSTextView {
+    override var acceptsFirstResponder : Bool { return self.isEditable }
+    override var canBecomeKeyView: Bool { return self.isEditable }
+    override func doCommand(by selector: Selector) {
+        if selector == #selector(insertTab(_:)) {
+            self.window?.selectNextKeyView(nil)
+        } else if selector == #selector(insertBacktab(_:)) {
+            self.window?.selectPreviousKeyView(nil)
+        } else {
+            super.doCommand(by: selector)
+        }
+    }
 }
 
 class ProfileEditorTableView: NSTableView {
     override var acceptsFirstResponder: Bool { return false }
     override var canBecomeKeyView: Bool { return false }
 }
+

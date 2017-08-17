@@ -29,3 +29,11 @@ protocol PayloadCellView {
 @objc protocol CheckboxCellView {
     func clicked(_ checkbox: NSButton)
 }
+
+@objc protocol PopUpButtonCellView {
+    func selected(_ popUpButton: NSPopUpButton)
+}
+
+@objc protocol DatePickerCellView {
+    func selectDate(_ datePicker: NSDatePicker)
+}

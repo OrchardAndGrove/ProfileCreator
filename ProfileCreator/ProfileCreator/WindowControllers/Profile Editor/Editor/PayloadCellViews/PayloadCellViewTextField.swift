@@ -24,7 +24,7 @@ class PayloadCellViewTextField: NSTableCellView, ProfileCreatorCellView, Payload
     // MARK: -
     // MARK: Instance Variables
     
-    var textFieldInput: NSTextField?
+    var textFieldInput: PayloadTextField?
     
     // MARK: -
     // MARK: Initialization
@@ -45,7 +45,7 @@ class PayloadCellViewTextField: NSTableCellView, ProfileCreatorCellView, Payload
         // ---------------------------------------------------------------------
         //  Setup Static View Content
         // ---------------------------------------------------------------------
-        self.textFieldTitle = EditorTextField.title(string: key, fontWeight: NSFont.Weight.bold.rawValue, leadingItem: nil, constraints: &constraints, cellView: self)
+        self.textFieldTitle = EditorTextField.title(string: key, fontWeight: nil, leadingItem: nil, constraints: &constraints, cellView: self)
         self.textFieldDescription = EditorTextField.description(string: key + "DESCRIPTION", constraints: &constraints, cellView: self)
         
         // ---------------------------------------------------------------------
@@ -55,7 +55,7 @@ class PayloadCellViewTextField: NSTableCellView, ProfileCreatorCellView, Payload
         setupTextFieldInput(constraints: &constraints)
         
         // ---------------------------------------------------------------------
-        //  Set text field input as the only keyView
+        //  Setup KeyView Loop Items
         // ---------------------------------------------------------------------
         self.leadingKeyView = self.textFieldInput
         self.trailingKeyView = self.textFieldInput
@@ -124,14 +124,3 @@ class PayloadCellViewTextField: NSTableCellView, ProfileCreatorCellView, Payload
         self.updateHeight(7.0 + textFieldInput.intrinsicContentSize.height)
     }
 }
-
-/*
-extension PayloadCellViewTextField: NSTextFieldDelegate {
-    
-    override func controlTextDidEndEditing(_ obj: Notification) {
-        Swift.print("nextKeyView: \(self.nextKeyView)")
-        Swift.print("previousKeyView: \(self.previousKeyView)")
-    }
-    
-}
- */

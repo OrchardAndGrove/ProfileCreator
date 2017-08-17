@@ -16,7 +16,7 @@ class EditorCheckbox {
         // ---------------------------------------------------------------------
         //  Create and setup Checkbox
         // ---------------------------------------------------------------------
-        let checkbox = NSButton()
+        let checkbox = PayloadCheckbox()
         checkbox.translatesAutoresizingMaskIntoConstraints = false
         checkbox.setButtonType(.switch)
         checkbox.action = #selector(cellView.clicked(_:))

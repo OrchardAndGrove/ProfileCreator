@@ -27,18 +27,18 @@ func addConstraintsFor(item: NSView, orientation: OrientationAttribute, constrai
 }
 
 fileprivate func addConstraintBelowFor(item: NSView, constraints: inout [NSLayoutConstraint], cellView: PayloadCellView) {
-    if cellView.textFieldDescription != nil {
+    if let textFieldDescription = cellView.textFieldDescription {
         constraints.append(NSLayoutConstraint(item: item,
                                               attribute: .top,
                                               relatedBy: .equal,
-                                              toItem: cellView.textFieldDescription,
+                                              toItem: textFieldDescription,
                                               attribute: .bottom,
                                               multiplier: 1.0,
                                               constant: 7.0))
         
         cellView.updateHeight(7.0 + item.intrinsicContentSize.height)
-    } else if cellView.textFieldTitle != nil {
-        constraints.append(NSLayoutConstraint(item: cellView.textFieldTitle!,
+    } else if let textFieldTitle = cellView.textFieldTitle {
+        constraints.append(NSLayoutConstraint(item: textFieldTitle,
                                               attribute: .bottom,
                                               relatedBy: .equal,
                                               toItem: item,

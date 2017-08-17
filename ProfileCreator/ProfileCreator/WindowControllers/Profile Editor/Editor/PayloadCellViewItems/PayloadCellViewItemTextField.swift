@@ -15,9 +15,9 @@ class EditorTextField {
                            cellView: PayloadCellView) -> NSTextField {
         
         // ---------------------------------------------------------------------
-        //  Create and setup text field
+        //  Create and setup TextField
         // ---------------------------------------------------------------------
-        let textField = PayloadTextField()
+        let textField = NSTextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.lineBreakMode = .byWordWrapping
         textField.isBordered = false
@@ -35,9 +35,9 @@ class EditorTextField {
         // ---------------------------------------------------------------------
         cellView.addSubview(textField)
         
-        // -------------------------------------------------------------------------
-        //  Setup Layout Constraings for text field
-        // -------------------------------------------------------------------------
+        // ---------------------------------------------------------------------
+        //  Setup Layout Constraings for TextField
+        // ---------------------------------------------------------------------
         if cellView.textFieldTitle != nil {
             
             // Top
@@ -88,7 +88,7 @@ class EditorTextField {
     class func input(defaultString: String?,
                      placeholderString: String?,
                      constraints: inout [NSLayoutConstraint],
-                     cellView: PayloadCellView) -> NSTextField {
+                     cellView: PayloadCellView) -> PayloadTextField {
         
         // -------------------------------------------------------------------------
         //  Create and setup text field
@@ -119,16 +119,17 @@ class EditorTextField {
         
     }
     
-    class func title(string: String?,
-                     fontWeight: CGFloat?,
-                     leadingItem: Any?,
+    class func label(string: String?,
+                     fontWeight: NSFont.Weight?,
+                     leadingItem: NSView?,
+                     trailingItem: NSView?,
                      constraints: inout [NSLayoutConstraint],
                      cellView: PayloadCellView) -> NSTextField {
         
         // -------------------------------------------------------------------------
         //  Create and setup text field
         // -------------------------------------------------------------------------
-        let textField = PayloadTextField()
+        let textField = NSTextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.lineBreakMode = .byWordWrapping
         textField.isBordered = false
@@ -137,7 +138,118 @@ class EditorTextField {
         textField.isEditable = false
         textField.isSelectable = false
         textField.textColor = NSColor.labelColor
-        textField.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .regular), weight: fontWeight.map { NSFont.Weight(rawValue: $0) } ?? NSFont.Weight.bold)
+        textField.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .regular), weight: fontWeight ?? NSFont.Weight.bold)
+        textField.preferredMaxLayoutWidth = editorTableViewColumnPayloadWidth
+        textField.stringValue = string ?? ""
+        
+        // -------------------------------------------------------------------------
+        //  Add text field to cell view
+        // -------------------------------------------------------------------------
+        cellView.addSubview(textField)
+        
+        // -------------------------------------------------------------------------
+        //  Setup Layout Constraings for text field
+        // -------------------------------------------------------------------------
+
+        if let leadingView = leadingItem {
+            
+            let leadingConstant: CGFloat
+            if leadingView is NSPopUpButton, leadingView is NSTextField {
+                leadingConstant = 6.0
+            } else {
+                leadingConstant = 2.0
+            }
+            
+            // Leading
+            constraints.append(NSLayoutConstraint(item: textField,
+                                                  attribute: .leading,
+                                                  relatedBy: .equal,
+                                                  toItem: leadingView,
+                                                  attribute: .trailing,
+                                                  multiplier: 1.0,
+                                                  constant: leadingConstant))
+            
+            // Baseline
+            constraints.append(NSLayoutConstraint(item: textField,
+                                                  attribute: .firstBaseline,
+                                                  relatedBy: .equal,
+                                                  toItem: leadingView,
+                                                  attribute: .firstBaseline,
+                                                  multiplier: 1.0,
+                                                  constant: 0.0))
+        } else {
+            
+            // Leading
+            constraints.append(NSLayoutConstraint(item: textField,
+                                                  attribute: .leading,
+                                                  relatedBy: .equal,
+                                                  toItem: cellView,
+                                                  attribute: .leading,
+                                                  multiplier: 1.0,
+                                                  constant: 8.0))
+        }
+        
+        if let trailingView = trailingItem {
+            
+            let trailingConstant: CGFloat
+            if trailingView is NSPopUpButton {
+                trailingConstant = 6.0
+            } else {
+                trailingConstant = 2.0
+            }
+            
+            // Trailing
+            constraints.append(NSLayoutConstraint(item: trailingView,
+                                                  attribute: .leading,
+                                                  relatedBy: .equal,
+                                                  toItem: textField,
+                                                  attribute: .trailing,
+                                                  multiplier: 1.0,
+                                                  constant: trailingConstant))
+            
+            // Baseline
+            constraints.append(NSLayoutConstraint(item: textField,
+                                                  attribute: .firstBaseline,
+                                                  relatedBy: .equal,
+                                                  toItem: trailingView,
+                                                  attribute: .firstBaseline,
+                                                  multiplier: 1.0,
+                                                  constant: 0.0))
+        } else {
+            
+            // Trailing
+            constraints.append(NSLayoutConstraint(item: textField,
+                                                  attribute: .trailing,
+                                                  relatedBy: .equal,
+                                                  toItem: cellView,
+                                                  attribute: .trailing,
+                                                  multiplier: 1.0,
+                                                  constant: 8.0))
+        }
+        
+        return textField
+        
+    }
+    
+    class func title(string: String?,
+                     fontWeight: NSFont.Weight?,
+                     leadingItem: NSView?,
+                     constraints: inout [NSLayoutConstraint],
+                     cellView: PayloadCellView) -> NSTextField {
+        
+        // -------------------------------------------------------------------------
+        //  Create and setup text field
+        // -------------------------------------------------------------------------
+        let textField = NSTextField()
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.lineBreakMode = .byWordWrapping
+        textField.isBordered = false
+        textField.isBezeled = false
+        textField.drawsBackground = false
+        textField.isEditable = false
+        textField.isSelectable = false
+        textField.textColor = NSColor.labelColor
+        textField.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .regular), weight: fontWeight ?? NSFont.Weight.bold)
         textField.preferredMaxLayoutWidth = editorTableViewColumnPayloadWidth
         textField.stringValue = string ?? ""
         
@@ -161,10 +273,10 @@ class EditorTextField {
         
         cellView.updateHeight(8.0 + textField.intrinsicContentSize.height)
         
-        if leadingItem != nil {
+        if let leadingView = leadingItem {
             
             let leadingConstant: CGFloat
-            if leadingItem is NSPopUpButton, leadingItem is NSTextField {
+            if leadingView is NSPopUpButton, leadingView is NSTextField {
                 leadingConstant = 6.0
             } else {
                 leadingConstant = 2.0
@@ -174,7 +286,7 @@ class EditorTextField {
             constraints.append(NSLayoutConstraint(item: textField,
                                                        attribute: .leading,
                                                        relatedBy: .equal,
-                                                       toItem: leadingItem,
+                                                       toItem: leadingView,
                                                        attribute: .trailing,
                                                        multiplier: 1.0,
                                                        constant: leadingConstant))
@@ -183,7 +295,7 @@ class EditorTextField {
             constraints.append(NSLayoutConstraint(item: textField,
                                                        attribute: .firstBaseline,
                                                        relatedBy: .equal,
-                                                       toItem: leadingItem,
+                                                       toItem: leadingView,
                                                        attribute: .firstBaseline,
                                                        multiplier: 1.0,
                                                        constant: 0.0))

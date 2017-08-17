@@ -26,3 +26,19 @@ extension Array {
         return elements
     }
 }
+
+extension Date {
+    func midnight() -> Date? {
+        if let sourceTimeZone = NSTimeZone(abbreviation: "GMT") {
+            let destinationTimeZone = NSTimeZone.system
+            let interval = TimeInterval(destinationTimeZone.secondsFromGMT(for: self) - sourceTimeZone.secondsFromGMT(for: self))
+            let dateInSystemTimeZone = Date(timeInterval: interval, since: self)
+            var components = Calendar.current.dateComponents([.year, .month, .day], from: dateInSystemTimeZone)
+            components.hour = 0
+            components.minute = 0
+            components.second = 0
+            return Calendar.current.date(from: components)
+        }
+        return self
+    }
+}
