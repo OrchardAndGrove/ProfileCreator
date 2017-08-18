@@ -382,6 +382,7 @@
 				5365F4821F0F4CFE0064C02A /* Window Controllers */,
 				5326D22C1F2E2C7000D93C67 /* Payload Controller */,
 				5365F4891F0F871F0064C02A /* Graphics */,
+				E314EC0A1F461AB000AB18C5 /* Frameworks */,
 			);
 			path = ProfileCreator;
 			sourceTree = "<group>";
@@ -419,6 +420,13 @@
 				530CD3D91F17793B0071E866 /* MainWindowTableViewItems.swift */,
 			);
 			name = "Profile List";
+			sourceTree = "<group>";
+		};
+		E314EC0A1F461AB000AB18C5 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
