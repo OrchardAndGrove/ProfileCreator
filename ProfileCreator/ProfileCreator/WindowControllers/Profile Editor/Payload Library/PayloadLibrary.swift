@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import ProfilePayloads
 
 class PayloadLibrary: NSObject {
     
@@ -27,6 +28,10 @@ class PayloadLibrary: NSObject {
         //  Setup Variables
         // ---------------------------------------------------------------------
         self.profile = profile
+        
+    }
+    
+    func placeholders(tag: LibraryTag) -> [PayloadPlaceholder]? {
         
     }
 }

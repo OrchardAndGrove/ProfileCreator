@@ -20,7 +20,6 @@
 		531852221F2295B000529E6B /* ProfileEditorSplitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 531852211F2295B000529E6B /* ProfileEditorSplitView.swift */; };
 		5326D2291F2DD2AC00D93C67 /* PayloadLibraryNoPayloadsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5326D2281F2DD2AC00D93C67 /* PayloadLibraryNoPayloadsView.swift */; };
 		5326D22B1F2DECED00D93C67 /* CoreExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5326D22A1F2DECED00D93C67 /* CoreExtensions.swift */; };
-		5326D22E1F2E2CAA00D93C67 /* PayloadPlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5326D22D1F2E2CAA00D93C67 /* PayloadPlaceholder.swift */; };
 		532917851F3257D100CD7175 /* PayloadCellViewCheckbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532917841F3257D100CD7175 /* PayloadCellViewCheckbox.swift */; };
 		532917891F32593800CD7175 /* PayloadCellViewItemCheckbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532917881F32593800CD7175 /* PayloadCellViewItemCheckbox.swift */; };
 		534732DB1F10C35500770446 /* MainWindowSplitView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 534732DA1F10C35500770446 /* MainWindowSplitView.swift */; };
@@ -70,12 +69,30 @@
 		E32767E81F3F736B00B4670C /* PayloadCellViewItemFileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32767E71F3F736B00B4670C /* PayloadCellViewItemFileView.swift */; };
 		E37C67AB1F415CDD00B3D4CB /* PayloadCellViewDatePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37C67AA1F415CDD00B3D4CB /* PayloadCellViewDatePicker.swift */; };
 		E37C67AD1F415D5D00B3D4CB /* PayloadCellViewItemDatePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37C67AC1F415D5D00B3D4CB /* PayloadCellViewItemDatePicker.swift */; };
+		E38D625E1F4723AA00123EFE /* ProfilePayloads.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E353066A1F47239000A2077A /* ProfilePayloads.framework */; };
 		E3C8D5401F3EEA3A0083DA5F /* PayloadCellViewItemPopUpButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C8D53F1F3EEA3A0083DA5F /* PayloadCellViewItemPopUpButton.swift */; };
 		E3C8D5421F3EED1E0083DA5F /* PayloadCellViewPopUpButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C8D5411F3EED1E0083DA5F /* PayloadCellViewPopUpButton.swift */; };
 		E3C8D5441F3EF82D0083DA5F /* PayloadCellViewHostPort.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C8D5431F3EF82D0083DA5F /* PayloadCellViewHostPort.swift */; };
 		E3C8D5481F3F31850083DA5F /* PayloadCellViewTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C8D5471F3F31850083DA5F /* PayloadCellViewTextView.swift */; };
 		E3C8D54A1F3F31CE0083DA5F /* PayloadCellViewItemTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C8D5491F3F31CE0083DA5F /* PayloadCellViewItemTextView.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		E35306691F47239000A2077A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E35306651F47239000A2077A /* ProfilePayloads.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = E314EBFF1F461A9B00AB18C5;
+			remoteInfo = ProfilePayloads;
+		};
+		E38D625B1F4723A400123EFE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E35306651F47239000A2077A /* ProfilePayloads.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = E314EBFE1F461A9B00AB18C5;
+			remoteInfo = ProfilePayloads;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		5309D1301F29BB1E007C9D01 /* PayloadCellViewItemTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PayloadCellViewItemTextField.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViewItems/PayloadCellViewItemTextField.swift"; sourceTree = "<group>"; };
@@ -91,7 +108,6 @@
 		531852211F2295B000529E6B /* ProfileEditorSplitView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ProfileEditorSplitView.swift; path = "WindowControllers/Profile Editor/ProfileEditorSplitView.swift"; sourceTree = "<group>"; };
 		5326D2281F2DD2AC00D93C67 /* PayloadLibraryNoPayloadsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PayloadLibraryNoPayloadsView.swift; path = "WindowControllers/Profile Editor/Payload Library/PayloadLibraryNoPayloadsView.swift"; sourceTree = "<group>"; };
 		5326D22A1F2DECED00D93C67 /* CoreExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CoreExtensions.swift; path = Utility/CoreExtensions.swift; sourceTree = "<group>"; };
-		5326D22D1F2E2CAA00D93C67 /* PayloadPlaceholder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PayloadPlaceholder.swift; path = "Payload Controller/PayloadPlaceholder.swift"; sourceTree = "<group>"; };
 		532917841F3257D100CD7175 /* PayloadCellViewCheckbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewCheckbox.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViewCheckbox.swift"; sourceTree = "<group>"; };
 		532917881F32593800CD7175 /* PayloadCellViewItemCheckbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewItemCheckbox.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViewItems/PayloadCellViewItemCheckbox.swift"; sourceTree = "<group>"; };
 		534732DA1F10C35500770446 /* MainWindowSplitView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowSplitView.swift; path = "WindowControllers/Main Window/MainWindowSplitView.swift"; sourceTree = "<group>"; };
@@ -141,6 +157,7 @@
 		53DF38761F11675F006DE5BE /* MainWindowTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowTableView.swift; path = "WindowControllers/Main Window/Profile List/MainWindowTableView.swift"; sourceTree = "<group>"; };
 		E32767E51F3F71B700B4670C /* PayloadCellViewFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewFile.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViewFile.swift"; sourceTree = "<group>"; };
 		E32767E71F3F736B00B4670C /* PayloadCellViewItemFileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewItemFileView.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViewItems/PayloadCellViewItemFileView.swift"; sourceTree = "<group>"; };
+		E35306651F47239000A2077A /* ProfilePayloads.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ProfilePayloads.xcodeproj; path = ../../ProfilePayloadsSwift/ProfilePayloads/ProfilePayloads.xcodeproj; sourceTree = "<group>"; };
 		E37C67AA1F415CDD00B3D4CB /* PayloadCellViewDatePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewDatePicker.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViewDatePicker.swift"; sourceTree = "<group>"; };
 		E37C67AC1F415D5D00B3D4CB /* PayloadCellViewItemDatePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewItemDatePicker.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViewItems/PayloadCellViewItemDatePicker.swift"; sourceTree = "<group>"; };
 		E3C8D53F1F3EEA3A0083DA5F /* PayloadCellViewItemPopUpButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewItemPopUpButton.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViewItems/PayloadCellViewItemPopUpButton.swift"; sourceTree = "<group>"; };
@@ -155,6 +172,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E38D625E1F4723AA00123EFE /* ProfilePayloads.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -206,14 +224,6 @@
 				538D2C4C1F1C970C00FF6051 /* PreferencesViewElements.swift */,
 			);
 			name = Preferences;
-			sourceTree = "<group>";
-		};
-		5326D22C1F2E2C7000D93C67 /* Payload Controller */ = {
-			isa = PBXGroup;
-			children = (
-				5326D22D1F2E2CAA00D93C67 /* PayloadPlaceholder.swift */,
-			);
-			name = "Payload Controller";
 			sourceTree = "<group>";
 		};
 		534732D81F10C2F100770446 /* Toolbar */ = {
@@ -380,7 +390,6 @@
 				536DA4921F12142100FB325E /* Utility */,
 				5309D3011F19E516002133A0 /* Profile */,
 				5365F4821F0F4CFE0064C02A /* Window Controllers */,
-				5326D22C1F2E2C7000D93C67 /* Payload Controller */,
 				5365F4891F0F871F0064C02A /* Graphics */,
 				E314EC0A1F461AB000AB18C5 /* Frameworks */,
 			);
@@ -425,8 +434,17 @@
 		E314EC0A1F461AB000AB18C5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E35306651F47239000A2077A /* ProfilePayloads.xcodeproj */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E35306661F47239000A2077A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E353066A1F47239000A2077A /* ProfilePayloads.framework */,
+			);
+			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -443,6 +461,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				E38D625C1F4723A400123EFE /* PBXTargetDependency */,
 			);
 			name = ProfileCreator;
 			productName = ProfileCreator;
@@ -478,12 +497,28 @@
 			mainGroup = 539832051F0EE15400C4792D;
 			productRefGroup = 5398320F1F0EE15400C4792D /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = E35306661F47239000A2077A /* Products */;
+					ProjectRef = E35306651F47239000A2077A /* ProfilePayloads.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				5398320D1F0EE15400C4792D /* ProfileCreator */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		E353066A1F47239000A2077A /* ProfilePayloads.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = ProfilePayloads.framework;
+			remoteRef = E35306691F47239000A2077A /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		5398320C1F0EE15400C4792D /* Resources */ = {
@@ -549,7 +584,6 @@
 				535CB4591F2B1E4100A746F6 /* PayloadLibraryTableViews.swift in Sources */,
 				5383C1931F2C8B5C004EBE9B /* PreferencesEditor.swift in Sources */,
 				539A164D1F26787A009CA7B6 /* ProfileEditor.swift in Sources */,
-				5326D22E1F2E2CAA00D93C67 /* PayloadPlaceholder.swift in Sources */,
 				538D2C4D1F1C970C00FF6051 /* PreferencesViewElements.swift in Sources */,
 				E3C8D54A1F3F31CE0083DA5F /* PayloadCellViewItemTextView.swift in Sources */,
 				5315400F1F127F280060011B /* MainWindowOutlineViewItems.swift in Sources */,
@@ -572,6 +606,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		E38D625C1F4723A400123EFE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ProfilePayloads;
+			targetProxy = E38D625B1F4723A400123EFE /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		539832171F0EE15400C4792D /* Main.storyboard */ = {
@@ -695,6 +737,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = Y7QFC8672N;
+				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/**";
 				INFOPLIST_FILE = ProfileCreator/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
@@ -711,6 +754,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = Y7QFC8672N;
+				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/**";
 				INFOPLIST_FILE = ProfileCreator/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
