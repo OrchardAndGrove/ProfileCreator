@@ -7,8 +7,9 @@
 //
 
 import Cocoa
+import ProfilePayloads
 
-class PayloadLibraryTableViews: NSObject {
+class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
     
     // MARK: -
     // MARK: Variables
@@ -23,6 +24,7 @@ class PayloadLibraryTableViews: NSObject {
     
     private let sortDescriptorTitle = NSSortDescriptor(key: "title", ascending: true)
     
+    private var selectedLibraryTag: LibraryTag?
     private var selectedPayloadPlaceholder: PayloadPlaceholder?
     private var generalPayloadPlaceholder: PayloadPlaceholder?
     
@@ -37,15 +39,6 @@ class PayloadLibraryTableViews: NSObject {
         
         self.setupProfilePayloads()
         self.setupLibraryPayloads()
-        
-        // Only For Testing
-        self.generalPayloadPlaceholder = PayloadPlaceholder.init(payload: "General")
-        self.profilePayloads.append(generalPayloadPlaceholder!)
-        self.profilePayloads.append(PayloadPlaceholder.init(payload: "Mail"))
-        
-        self.libraryPayloads.append(PayloadPlaceholder.init(payload: "Facebook"))
-        self.libraryPayloads.append(PayloadPlaceholder.init(payload: "Twitter"))
-        self.libraryPayloads.append(PayloadPlaceholder.init(payload: "ABC"))
         
         self.reloadTableviews()
     }
@@ -92,8 +85,36 @@ class PayloadLibraryTableViews: NSObject {
             if let index = self.profilePayloads.index(of: selectedPayloadPlaceholder) {
                 self.profilePayloadsTableView.selectRowIndexes(IndexSet(integer: index), byExtendingSelection: false)
             } else if let index = self.libraryPayloads.index(of: selectedPayloadPlaceholder) {
-                self.profilePayloadsTableView.selectRowIndexes(IndexSet(integer: index), byExtendingSelection: false)
+                self.libraryPayloadsTableView.selectRowIndexes(IndexSet(integer: index), byExtendingSelection: false)
             }
+        }
+    }
+    
+    func selectLibrary(tag: LibraryTag, sender: Any?) {
+        if self.selectedLibraryTag != tag {
+            self.selectedLibraryTag = tag
+            
+            self.libraryPayloads = self.placeholders(tag: tag) ?? [PayloadPlaceholder]()
+            
+            // FIXME: Here remove all items that already exist in profilePayloads, probably with a filter.
+            
+            if let librarySplitView = self.librarySplitView {
+                librarySplitView.noPayloads(show: self.libraryPayloads.isEmpty)
+            }
+            
+            self.reloadTableviews()
+        }
+    }
+    
+    private func placeholders(tag: LibraryTag) -> [PayloadPlaceholder]? {
+        switch tag {
+        case LibraryTag.appleDomains:
+            return ProfilePayloads.shared.manifestPlaceholders()
+        case LibraryTag.appleCollections:
+            return ProfilePayloads.shared.collectionPlaceholders()
+        case LibraryTag.developer:
+            // FIXME: Add Developer Payloads
+            return ProfilePayloads.shared.collectionPlaceholders()
         }
     }
     
@@ -114,10 +135,10 @@ class PayloadLibraryTableViews: NSObject {
         // ---------------------------------------------------------------------
         for payloadPlaceholder in payloadPlaceholders {
             if from == TableViewTag.libraryPayloads {
-                self.libraryPayloads = self.libraryPayloads.filter { $0.identifier != payloadPlaceholder.identifier }
+                self.libraryPayloads = self.libraryPayloads.filter { $0 != payloadPlaceholder }
                 self.profilePayloads.append(payloadPlaceholder)
             } else if from == TableViewTag.profilePayloads {
-                self.profilePayloads = self.profilePayloads.filter { $0.identifier != payloadPlaceholder.identifier }
+                self.profilePayloads = self.profilePayloads.filter { $0 != payloadPlaceholder }
                 self.libraryPayloads.append(payloadPlaceholder)
             }
         }
@@ -307,6 +328,7 @@ extension PayloadLibraryTableViews: NSTableViewDelegate {
     }
     
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
+        Swift.print("tableView.tag: \(tableView.tag)")
         if tableView.tag == TableViewTag.profilePayloads.rawValue {
             return PayloadLibraryCellViewProfile(payloadPlaceholder: self.profilePayloads[row])
         } else if tableView.tag == TableViewTag.libraryPayloads.rawValue {

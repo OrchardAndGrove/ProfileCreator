@@ -16,7 +16,7 @@ class ProfileEditorSplitView: NSSplitView {
     var editor: ProfileEditor?
     let editorView = NSView()
     
-    var library: PayloadLibrary?
+    var librarySplitView: PayloadLibrarySplitView?
     
     let libraryFilter = PayloadLibraryFilter()
     var libraryFilterConstraints = [NSLayoutConstraint]()
@@ -53,7 +53,7 @@ class ProfileEditorSplitView: NSSplitView {
         //  Add subviews to splitview
         // ---------------------------------------------------------------------
         self.editor = ProfileEditor(profile: profile)
-        self.library = PayloadLibrary(profile: profile, editor: self.editor!)
+        self.librarySplitView = PayloadLibrarySplitView(profile: profile, editor: self.editor!)
         
         // ---------------------------------------------------------------------
         //  Add subviews to splitview
@@ -96,7 +96,7 @@ class ProfileEditorSplitView: NSSplitView {
     
     private func setupLibraryMenu(view: NSView) {
         
-        guard let library = self.library else {
+        guard let librarySplitView = self.librarySplitView else {
             // TODO: Proper Logging
             return
         }
@@ -111,7 +111,7 @@ class ProfileEditorSplitView: NSSplitView {
                                                               constant: 27))
         
         // Top
-        self.libraryMenuConstraints.append(NSLayoutConstraint(item: library.splitView,
+        self.libraryMenuConstraints.append(NSLayoutConstraint(item: librarySplitView,
                                                               attribute: .bottom,
                                                               relatedBy: .equal,
                                                               toItem: view,
@@ -174,7 +174,7 @@ class ProfileEditorSplitView: NSSplitView {
     
     private func setupSplitViewLibrary(constraints: inout [NSLayoutConstraint]) {
         
-        guard let library = self.library else {
+        guard let librarySplitView = self.librarySplitView else {
             // TODO: Proper Logging
             return
         }
@@ -208,13 +208,13 @@ class ProfileEditorSplitView: NSSplitView {
         // ---------------------------------------------------------------------
         //  Add Library SplitView to Library View
         // ---------------------------------------------------------------------
-        self.libraryView.addSubview(library.splitView)
+        self.libraryView.addSubview(librarySplitView)
         
         // ---------------------------------------------------------------------
         //  Add constraints for Library SplitView
         // ---------------------------------------------------------------------
         // Top
-        constraints.append(NSLayoutConstraint(item: library.splitView,
+        constraints.append(NSLayoutConstraint(item: librarySplitView,
                                               attribute: .top,
                                               relatedBy: .equal,
                                               toItem: self.libraryView,
@@ -223,7 +223,7 @@ class ProfileEditorSplitView: NSSplitView {
                                               constant: 0))
         
         // Leading
-        constraints.append(NSLayoutConstraint(item: library.splitView,
+        constraints.append(NSLayoutConstraint(item: librarySplitView,
                                               attribute: .leading,
                                               relatedBy: .equal,
                                               toItem: self.libraryView,
@@ -232,7 +232,7 @@ class ProfileEditorSplitView: NSSplitView {
                                               constant: 0))
         
         // Trailing
-        constraints.append(NSLayoutConstraint(item: library.splitView,
+        constraints.append(NSLayoutConstraint(item: librarySplitView,
                                               attribute: .trailing,
                                               relatedBy: .equal,
                                               toItem: self.libraryView,
@@ -251,7 +251,7 @@ class ProfileEditorSplitView: NSSplitView {
         //  Add constraints for Library SplitView
         // ---------------------------------------------------------------------
         // Top
-        self.libraryFilterConstraints.append(NSLayoutConstraint(item: library.splitView,
+        self.libraryFilterConstraints.append(NSLayoutConstraint(item: librarySplitView,
                                                                 attribute: .bottom,
                                                                 relatedBy: .equal,
                                                                 toItem: self.libraryViewLine,

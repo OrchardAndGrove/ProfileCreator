@@ -7,6 +7,11 @@
 //
 
 import Cocoa
+import ProfilePayloads
+
+protocol PayloadLibrarySelectionDelegate: class {
+    func selectLibrary(tag: LibraryTag, sender: Any?)
+}
 
 class PayloadLibraryMenu: NSObject {
     
@@ -19,6 +24,8 @@ class PayloadLibraryMenu: NSObject {
     var buttonAppleCollections: NSButton?
     var buttonAppleDomains: NSButton?
     var buttonDeveloper: NSButton?
+    
+    weak var selectionDelegate: PayloadLibrarySelectionDelegate?
     
     override init() {
         super.init()
@@ -44,13 +51,6 @@ class PayloadLibraryMenu: NSObject {
         UserDefaults.standard.addObserver(self, forKeyPath: PreferenceKey.showPayloadLibraryAppleCollections, options: .new, context: nil)
         UserDefaults.standard.addObserver(self, forKeyPath: PreferenceKey.showPayloadLibraryAppleDomains, options: .new, context: nil)
         UserDefaults.standard.addObserver(self, forKeyPath: PreferenceKey.showPayloadLibraryDeveloper, options: .new, context: nil)
-        
-        // ---------------------------------------------------------------------
-        //  Select most left button
-        // ---------------------------------------------------------------------
-        if let button = self.buttons.first {
-            self.selectLibrary(button)
-        }
     }
     
     deinit {
@@ -83,11 +83,12 @@ class PayloadLibraryMenu: NSObject {
     // MARK: Button Action Functions
     
     @objc func selectLibrary(_ sender: NSButton) {
-        // FIXME: Tell selection delegate what library was selected
-        Swift.print("selectLibrary: \(button)")
-        sender.state = NSControl.StateValue.onState
-        for button in self.buttons {
-            if button != sender { button.state = NSControl.StateValue.offState }
+        if let selectLibrary = self.selectionDelegate?.selectLibrary, let libraryTag = LibraryTag(rawValue: sender.tag) {
+            selectLibrary(libraryTag, self)
+            sender.state = NSControl.StateValue.onState
+            for button in self.buttons {
+                if button != sender { button.state = NSControl.StateValue.offState }
+            }
         }
     }
     

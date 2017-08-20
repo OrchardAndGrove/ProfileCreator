@@ -19,7 +19,9 @@ enum TableViewTag: Int {
 }
 
 enum LibraryTag: Int {
-    case appleCollections, appleDomains, developer
+    case appleCollections = 1
+    case appleDomains = 2
+    case developer = 3
 }
 
 extension NSToolbarItem.Identifier {

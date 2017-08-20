@@ -42,6 +42,12 @@ class PayloadLibrarySplitView: NSSplitView {
         // ---------------------------------------------------------------------
         self.tableViews = PayloadLibraryTableViews(editor: editor, splitView: self)
         self.noPayloads = PayloadLibraryNoPayloads(draggingDestination: self.tableViews!, draggingTypes: [.payload])
+        
+        // ---------------------------------------------------------------------
+        //  Setup Delegate
+        // ---------------------------------------------------------------------
+        self.libraryMenu.selectionDelegate = self.tableViews
+        
         var constraints = [NSLayoutConstraint]()
         
         // ---------------------------------------------------------------------
@@ -70,6 +76,13 @@ class PayloadLibrarySplitView: NSSplitView {
         // ---------------------------------------------------------------------
         if self.tableViews!.libraryPayloads.isEmpty {
             self.noPayloads(show: true)
+        }
+        
+        // ---------------------------------------------------------------------
+        //  Select most left button in menu
+        // ---------------------------------------------------------------------
+        if let button = self.libraryMenu.buttons.first {
+            self.libraryMenu.selectLibrary(button)
         }
     }
     

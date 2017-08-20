@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import ProfilePayloads
 
 class ProfileEditor: NSObject {
     
@@ -20,6 +21,7 @@ class ProfileEditor: NSObject {
     fileprivate var editorWindow: NSWindow?
     
     private weak var profile: Profile?
+    private var selectedPayloadPlaceholder: PayloadPlaceholder?
     
     init(profile: Profile) {
         super.init()
@@ -108,7 +110,11 @@ class ProfileEditor: NSObject {
     }
     
     func select(payloadPlaceholder: PayloadPlaceholder) {
-        Swift.print("Selecting this placeholder in the editor: \(payloadPlaceholder.title)")
+        if self.selectedPayloadPlaceholder != payloadPlaceholder {
+            self.selectedPayloadPlaceholder = payloadPlaceholder
+            Swift.print("Selecting this placeholder in the editor: \(payloadPlaceholder.title)")
+            
+        }
     }
     
     func updateKeyViewLoop(window: NSWindow) {

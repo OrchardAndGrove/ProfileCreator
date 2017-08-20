@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import ProfilePayloads
 
 class PayloadLibraryCellViewProfile: NSTableCellView, PayloadLibraryCellView {
     

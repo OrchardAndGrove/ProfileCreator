@@ -94,8 +94,8 @@ public class ProfileEditorWindowController: NSWindowController {
         // Set the initial position of the library SplitView
         // NOTE: This has to be called twice, probably because of using AutoLayout.
         // ---------------------------------------------------------------------
-        self.splitView.library?.splitView.setPosition(250.0, ofDividerAt: 0)
-        self.splitView.library?.splitView.setPosition(250.0, ofDividerAt: 0)
+        self.splitView.librarySplitView?.setPosition(250.0, ofDividerAt: 0)
+        self.splitView.librarySplitView?.setPosition(250.0, ofDividerAt: 0)
     }
     
     deinit {
