@@ -15,7 +15,8 @@ let editorTableViewColumnPaddingWidth: CGFloat = 24.0
 let editorTableViewColumnPayloadWidth: CGFloat = 500.0
 
 enum TableViewTag: Int {
-    case profilePayloads, libraryPayloads
+    case profilePayloads
+    case libraryPayloads
 }
 
 enum LibraryTag: Int {

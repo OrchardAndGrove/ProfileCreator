@@ -1,15 +1,15 @@
 //
-//  PayloadCellViewHostPort.swift
+//  TableCellViewTextField.swift
 //  ProfileCreator
 //
-//  Created by Erik Berglund on 2017-08-12.
+//  Created by Erik Berglund on 2017-07-25.
 //  Copyright © 2017 Erik Berglund. All rights reserved.
 //
 
 import Cocoa
 import ProfilePayloads
 
-class PayloadCellViewHostPort: NSTableCellView, ProfileCreatorCellView, PayloadCellView {
+class PayloadCellViewTextFieldNumber: NSTableCellView, ProfileCreatorCellView, PayloadCellView {
     
     // MARK: -
     // MARK: PayloadCellView Variables
@@ -26,10 +26,12 @@ class PayloadCellViewHostPort: NSTableCellView, ProfileCreatorCellView, PayloadC
     // MARK: -
     // MARK: Instance Variables
     
-    var textFieldHost: PayloadTextField?
-    var textFieldPort: PayloadTextField?
-    var constraintPortTrailing: NSLayoutConstraint?
-    @objc var valuePort: NSNumber?
+    var textFieldInput: PayloadTextField?
+    var valueDefault: String?
+    @objc private var value: Any?
+    
+    // MARK: -
+    // MARK: Initialization
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -60,22 +62,22 @@ class PayloadCellViewHostPort: NSTableCellView, ProfileCreatorCellView, PayloadC
         // ---------------------------------------------------------------------
         //  Setup Custom View Content
         // ---------------------------------------------------------------------
-        self.textFieldHost = EditorTextField.input(defaultString: "", placeholderString: "Host", constraints: &constraints, cellView: self)
-        setupTextField(host: self.textFieldHost!, constraints: &constraints)
-        self.textFieldPort = EditorTextField.input(defaultString: "", placeholderString: "Port", constraints: &constraints, cellView: self)
-        setupTextField(port: self.textFieldPort!, constraints: &constraints)
-        _ = EditorTextField.label(string: ":", fontWeight: NSFont.Weight.regular, leadingItem: self.textFieldHost!, trailingItem: self.textFieldPort!, constraints: &constraints, cellView: self)
+        self.textFieldInput = EditorTextField.input(defaultString: "", placeholderString: "", constraints: &constraints, cellView: self)
+        setupTextFieldInput(constraints: &constraints)
         
         // ---------------------------------------------------------------------
-        //  Setup Constraints
+        //  Set Default Value
         // ---------------------------------------------------------------------
-        addConstraintsFor(item: self.textFieldHost!, orientation: .below, constraints: &constraints, cellView: self)
+        if let valueDefault = subkey.valueDefault as? String {
+            self.valueDefault = valueDefault
+            self.textFieldInput?.stringValue = valueDefault
+        }
         
         // ---------------------------------------------------------------------
         //  Setup KeyView Loop Items
         // ---------------------------------------------------------------------
-        self.leadingKeyView = self.textFieldHost
-        self.trailingKeyView = self.textFieldPort
+        self.leadingKeyView = self.textFieldInput
+        self.trailingKeyView = self.textFieldInput
         
         // ---------------------------------------------------------------------
         //  Add spacing to bottom
@@ -95,64 +97,83 @@ class PayloadCellViewHostPort: NSTableCellView, ProfileCreatorCellView, PayloadC
     // MARK: -
     // MARK: Setup Layout Constraints
     
-    private func setupTextField(host: NSTextField, constraints: inout [NSLayoutConstraint]) {
+    private func setupTextFieldInput(constraints: inout [NSLayoutConstraint]) {
         
         // ---------------------------------------------------------------------
         //  Add TextField to TableCellView
         // ---------------------------------------------------------------------
-        self.addSubview(host)
-        
-        // ---------------------------------------------------------------------
-        //  Add constraints
-        // ---------------------------------------------------------------------
-        // Leading
-        constraints.append(NSLayoutConstraint(item: host,
-                                              attribute: .leading,
-                                              relatedBy: .equal,
-                                              toItem: self,
-                                              attribute: .leading,
-                                              multiplier: 1.0,
-                                              constant: 8.0))
-    }
-    
-    private func setupTextField(port: NSTextField, constraints: inout [NSLayoutConstraint]) {
+        guard let textFieldInput = self.textFieldInput else { return }
+        self.addSubview(textFieldInput)
         
         // ---------------------------------------------------------------------
         //  Add Number Formatter to TextField
         // ---------------------------------------------------------------------
         let numberFormatter = NumberFormatter()
         numberFormatter.numberStyle = .none
-        numberFormatter.minimum = 1
-        numberFormatter.maximum = 65535
-        port.formatter = numberFormatter
-        port.bind(.value, to: self, withKeyPath: "valuePort", options: [NSBindingOption.nullPlaceholder: "Port", NSBindingOption.continuouslyUpdatesValue: true])
+        
+        if let valueMax = self.subkey?.valueMax as? NSNumber {
+            numberFormatter.maximum = valueMax
+        } else { numberFormatter.maximum = Int.max as NSNumber }
+        
+        if let valueMin = self.subkey?.valueMin as? NSNumber {
+            numberFormatter.minimum = valueMin
+        } else { numberFormatter.minimum = Int.min as NSNumber }
+        
+        textFieldInput.formatter = numberFormatter
+        textFieldInput.bind(.value, to: self, withKeyPath: "value", options: [NSBindingOption.nullPlaceholder: "", NSBindingOption.continuouslyUpdatesValue: true])
         
         // ---------------------------------------------------------------------
-        //  Add TextField to TableCellView
+        //  Get TextField Number Maximum Width
         // ---------------------------------------------------------------------
-        self.addSubview(port)
+        var valueMaxWidth: CGFloat = 0
+        if let valueMaxString = numberFormatter.maximum?.stringValue {
+            textFieldInput.stringValue = valueMaxString
+            textFieldInput.sizeToFit()
+            valueMaxWidth = NSWidth(textFieldInput.frame)
+            textFieldInput.stringValue = ""
+        }
         
         // ---------------------------------------------------------------------
         //  Add constraints
         // ---------------------------------------------------------------------
-        // Width (fixed to fit 5 characters: 49)
-        constraints.append(NSLayoutConstraint(item: port,
+        if 0 < valueMaxWidth, valueMaxWidth < (editorTableViewColumnPayloadWidth - 16.0) {
+            // Width
+            constraints.append(NSLayoutConstraint(item: textFieldInput,
                                               attribute: .width,
                                               relatedBy: .equal,
                                               toItem: nil,
                                               attribute: .notAnAttribute,
                                               multiplier: 1.0,
-                                              constant: 49.0))
+                                              constant: valueMaxWidth))
+        } else {
+            // Trailing
+            constraints.append(NSLayoutConstraint(item: self,
+                                                  attribute: .trailing,
+                                                  relatedBy: .equal,
+                                                  toItem: textFieldInput,
+                                                  attribute: .trailing,
+                                                  multiplier: 1.0,
+                                                  constant: 8.0))
+        }
         
-        // Trailing
-        self.constraintPortTrailing = NSLayoutConstraint(item: self,
-                                                         attribute: .trailing,
-                                                         relatedBy: .equal,
-                                                         toItem: port,
-                                                         attribute: .trailing,
-                                                         multiplier: 1.0,
-                                                         constant: 8.0)
+        // Leading
+        constraints.append(NSLayoutConstraint(item: textFieldInput,
+                                              attribute: .leading,
+                                              relatedBy: .equal,
+                                              toItem: self,
+                                              attribute: .leading,
+                                              multiplier: 1.0,
+                                              constant: 8.0))
         
-        constraints.append(self.constraintPortTrailing!)
+        // Top
+        constraints.append(NSLayoutConstraint(item: textFieldInput,
+                                              attribute: .top,
+                                              relatedBy: .equal,
+                                              toItem: self.textFieldDescription,
+                                              attribute: .bottom,
+                                              multiplier: 1.0,
+                                              constant: 7.0))
+        
+        self.updateHeight(7.0 + textFieldInput.intrinsicContentSize.height)
     }
 }

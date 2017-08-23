@@ -175,10 +175,11 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         // ---------------------------------------------------------------------
         //  Tell window controller to update title
         // ---------------------------------------------------------------------
-        if let window = self.profilePayloadsTableView.window,
-            let windowController = window.windowController as? ProfileEditorWindowController {
-            windowController.setTitle(string: payloadPlaceholder.title)
-        }
+        // FIXME: Remove this and It's traces. The title should always be the profile name.
+        //if let window = self.profilePayloadsTableView.window,
+        //    let windowController = window.windowController as? ProfileEditorWindowController {
+        //    windowController.setTitle(string: payloadPlaceholder.title)
+        //}
     }
     
     private func setupProfilePayloads() {
@@ -328,7 +329,6 @@ extension PayloadLibraryTableViews: NSTableViewDelegate {
     }
     
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-        Swift.print("tableView.tag: \(tableView.tag)")
         if tableView.tag == TableViewTag.profilePayloads.rawValue {
             return PayloadLibraryCellViewProfile(payloadPlaceholder: self.profilePayloads[row])
         } else if tableView.tag == TableViewTag.libraryPayloads.rawValue {

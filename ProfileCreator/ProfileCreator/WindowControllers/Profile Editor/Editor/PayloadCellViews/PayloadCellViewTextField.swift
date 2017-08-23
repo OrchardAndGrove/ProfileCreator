@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import ProfilePayloads
 
 class PayloadCellViewTextField: NSTableCellView, ProfileCreatorCellView, PayloadCellView {
     
@@ -16,6 +17,7 @@ class PayloadCellViewTextField: NSTableCellView, ProfileCreatorCellView, Payload
     var height: CGFloat = 0.0
     var row = -1
     
+    weak var subkey: PayloadSourceSubkey?
     var textFieldTitle: NSTextField?
     var textFieldDescription: NSTextField?
     var leadingKeyView: NSView?
@@ -25,6 +27,7 @@ class PayloadCellViewTextField: NSTableCellView, ProfileCreatorCellView, Payload
     // MARK: Instance Variables
     
     var textFieldInput: PayloadTextField?
+    var valueDefault: String?
     
     // MARK: -
     // MARK: Initialization
@@ -33,7 +36,9 @@ class PayloadCellViewTextField: NSTableCellView, ProfileCreatorCellView, Payload
         fatalError("init(coder:) has not been implemented")
     }
     
-    required init(key: String, settings: Dictionary<String , Any>) {
+    required init(subkey: PayloadSourceSubkey, settings: Dictionary<String, Any>) {
+        
+        self.subkey = subkey
         
         super.init(frame: NSZeroRect)
         
@@ -45,14 +50,27 @@ class PayloadCellViewTextField: NSTableCellView, ProfileCreatorCellView, Payload
         // ---------------------------------------------------------------------
         //  Setup Static View Content
         // ---------------------------------------------------------------------
-        self.textFieldTitle = EditorTextField.title(string: key, fontWeight: nil, leadingItem: nil, constraints: &constraints, cellView: self)
-        self.textFieldDescription = EditorTextField.description(string: key + "DESCRIPTION", constraints: &constraints, cellView: self)
+        if let title = subkey.title {
+            self.textFieldTitle = EditorTextField.title(string: title, fontWeight: nil, leadingItem: nil, constraints: &constraints, cellView: self)
+        }
+        
+        if let description = subkey.description {
+            self.textFieldDescription = EditorTextField.description(string: description, constraints: &constraints, cellView: self)
+        }
         
         // ---------------------------------------------------------------------
         //  Setup Custom View Content
         // ---------------------------------------------------------------------
-        self.textFieldInput = EditorTextField.input(defaultString: "", placeholderString: "TextPlaceholder", constraints: &constraints, cellView: self)
+        self.textFieldInput = EditorTextField.input(defaultString: "", placeholderString: "", constraints: &constraints, cellView: self)
         setupTextFieldInput(constraints: &constraints)
+        
+        // ---------------------------------------------------------------------
+        //  Set Default Value
+        // ---------------------------------------------------------------------
+        if let valueDefault = subkey.valueDefault as? String {
+            self.valueDefault = valueDefault
+            self.textFieldInput?.stringValue = valueDefault
+        }
         
         // ---------------------------------------------------------------------
         //  Setup KeyView Loop Items
@@ -80,14 +98,10 @@ class PayloadCellViewTextField: NSTableCellView, ProfileCreatorCellView, Payload
     
     private func setupTextFieldInput(constraints: inout [NSLayoutConstraint]) {
         
-        guard let textFieldInput = self.textFieldInput else {
-            // TODO: Proper Logging
-            return
-        }
-        
         // ---------------------------------------------------------------------
         //  Add TextField to TableCellView
         // ---------------------------------------------------------------------
+        guard let textFieldInput = self.textFieldInput else { return }
         self.addSubview(textFieldInput)
         
         // ---------------------------------------------------------------------

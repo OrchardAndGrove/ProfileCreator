@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import ProfilePayloads
 
 class PayloadCellViewFile: NSTableCellView, ProfileCreatorCellView, PayloadCellView {
     
@@ -16,6 +17,7 @@ class PayloadCellViewFile: NSTableCellView, ProfileCreatorCellView, PayloadCellV
     var height: CGFloat = 0.0
     var row = -1
     
+    weak var subkey: PayloadSourceSubkey?
     var textFieldTitle: NSTextField?
     var textFieldDescription: NSTextField?
     var leadingKeyView: NSView?
@@ -32,7 +34,9 @@ class PayloadCellViewFile: NSTableCellView, ProfileCreatorCellView, PayloadCellV
         fatalError("init(coder:) has not been implemented")
     }
     
-    required init(key: String, settings: Dictionary<String , Any>) {
+    required init(subkey: PayloadSourceSubkey, settings: Dictionary<String, Any>) {
+        
+        self.subkey = subkey
         
         super.init(frame: NSZeroRect)
         
@@ -44,8 +48,13 @@ class PayloadCellViewFile: NSTableCellView, ProfileCreatorCellView, PayloadCellV
         // ---------------------------------------------------------------------
         //  Setup Static View Content
         // ---------------------------------------------------------------------
-        self.textFieldTitle = EditorTextField.title(string: key, fontWeight: nil, leadingItem: nil, constraints: &constraints, cellView: self)
-        self.textFieldDescription = EditorTextField.description(string: key + "DESCRIPTION", constraints: &constraints, cellView: self)
+        if let title = subkey.title {
+            self.textFieldTitle = EditorTextField.title(string: title, fontWeight: nil, leadingItem: nil, constraints: &constraints, cellView: self)
+        }
+        
+        if let description = subkey.description {
+            self.textFieldDescription = EditorTextField.description(string: description, constraints: &constraints, cellView: self)
+        }
         
         // ---------------------------------------------------------------------
         //  Setup Custom View Content
@@ -135,10 +144,7 @@ class PayloadCellViewFile: NSTableCellView, ProfileCreatorCellView, PayloadCellV
     
     private func setupButtonAdd(constraints: inout [NSLayoutConstraint]) {
         
-        guard let fileView = self.fileView else {
-            // TODO: Proper Logging
-            return
-        }
+        guard let fileView = self.fileView else { return }
         
         self.buttonAdd.translatesAutoresizingMaskIntoConstraints = false
         self.buttonAdd.bezelStyle = .rounded

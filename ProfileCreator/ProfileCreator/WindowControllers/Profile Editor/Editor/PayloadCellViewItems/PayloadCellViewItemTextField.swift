@@ -124,7 +124,7 @@ class EditorTextField {
                      leadingItem: NSView?,
                      trailingItem: NSView?,
                      constraints: inout [NSLayoutConstraint],
-                     cellView: PayloadCellView) -> NSTextField {
+                     cellView: ProfileCreatorCellView) -> NSTextField {
         
         // -------------------------------------------------------------------------
         //  Create and setup text field

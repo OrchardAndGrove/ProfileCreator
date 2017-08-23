@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import ProfilePayloads
 
 class PayloadCellViewTextView: NSTableCellView, ProfileCreatorCellView, PayloadCellView {
     
@@ -16,6 +17,7 @@ class PayloadCellViewTextView: NSTableCellView, ProfileCreatorCellView, PayloadC
     var height: CGFloat = 0.0
     var row = -1
     
+    weak var subkey: PayloadSourceSubkey?
     var textFieldTitle: NSTextField?
     var textFieldDescription: NSTextField?
     var leadingKeyView: NSView?
@@ -24,6 +26,7 @@ class PayloadCellViewTextView: NSTableCellView, ProfileCreatorCellView, PayloadC
     // MARK: -
     // MARK: Instance Variables
     
+    var valueDefault: String?
     var scrollView: NSScrollView?
     var textView: NSTextView?
     
@@ -34,7 +37,9 @@ class PayloadCellViewTextView: NSTableCellView, ProfileCreatorCellView, PayloadC
         fatalError("init(coder:) has not been implemented")
     }
     
-    required init(key: String, settings: Dictionary<String , Any>) {
+    required init(subkey: PayloadSourceSubkey, settings: Dictionary<String, Any>) {
+       
+        self.subkey = subkey
         
         super.init(frame: NSZeroRect)
         
@@ -46,13 +51,18 @@ class PayloadCellViewTextView: NSTableCellView, ProfileCreatorCellView, PayloadC
         // ---------------------------------------------------------------------
         //  Setup Static View Content
         // ---------------------------------------------------------------------
-        self.textFieldTitle = EditorTextField.title(string: key, fontWeight: nil, leadingItem: nil, constraints: &constraints, cellView: self)
-        self.textFieldDescription = EditorTextField.description(string: key + "DESCRIPTION", constraints: &constraints, cellView: self)
+        if let title = subkey.title {
+            self.textFieldTitle = EditorTextField.title(string: title, fontWeight: nil, leadingItem: nil, constraints: &constraints, cellView: self)
+        }
+        
+        if let description = subkey.description {
+            self.textFieldDescription = EditorTextField.description(string: description, constraints: &constraints, cellView: self)
+        }
         
         // ---------------------------------------------------------------------
         //  Setup Custom View Content
         // ---------------------------------------------------------------------
-        self.scrollView = EditorTextView.scrollView(string: key, visibleRows: 4, constraints: &constraints, cellView: self)
+        self.scrollView = EditorTextView.scrollView(string: "", visibleRows: 4, constraints: &constraints, cellView: self)
         self.textView = self.scrollView?.documentView as? NSTextView
         setupScrollView(constraints: &constraints)
         
@@ -60,6 +70,14 @@ class PayloadCellViewTextView: NSTableCellView, ProfileCreatorCellView, PayloadC
         //  Setup Constraints
         // ---------------------------------------------------------------------
         addConstraintsFor(item: self.scrollView!, orientation: .below, constraints: &constraints, cellView: self)
+        
+        // ---------------------------------------------------------------------
+        //  Set Default Value
+        // ---------------------------------------------------------------------
+        if let valueDefault = subkey.valueDefault as? String {
+            self.valueDefault = valueDefault
+            self.textView?.string = valueDefault
+        }
         
         // ---------------------------------------------------------------------
         //  Setup KeyView Loop Items
@@ -87,14 +105,10 @@ class PayloadCellViewTextView: NSTableCellView, ProfileCreatorCellView, PayloadC
     
     private func setupScrollView(constraints: inout [NSLayoutConstraint]) {
         
-        guard let scrollView = self.scrollView else {
-            // TODO: Proper Logging
-            return
-        }
-        
         // ---------------------------------------------------------------------
         //  Add TextField to TableCellView
         // ---------------------------------------------------------------------
+        guard let scrollView = self.scrollView else { return }
         self.addSubview(scrollView)
         
         // ---------------------------------------------------------------------

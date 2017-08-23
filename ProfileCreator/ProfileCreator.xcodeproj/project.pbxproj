@@ -48,7 +48,7 @@
 		5383C19D1F2C9592004EBE9B /* LibraryCellViewItemImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5383C19C1F2C9592004EBE9B /* LibraryCellViewItemImageView.swift */; };
 		5383C19F1F2C9AC3004EBE9B /* LibraryCellViewItemButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5383C19E1F2C9AC3004EBE9B /* LibraryCellViewItemButton.swift */; };
 		5383C1A11F2C9EE1004EBE9B /* LibraryCellViewItemTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5383C1A01F2C9EE1004EBE9B /* LibraryCellViewItemTextField.swift */; };
-		5383C1A41F2D0B7C004EBE9B /* PayloadCellViewPadding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5383C1A31F2D0B7C004EBE9B /* PayloadCellViewPadding.swift */; };
+		5383C1A41F2D0B7C004EBE9B /* PayloadCellViewTitle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5383C1A31F2D0B7C004EBE9B /* PayloadCellViewTitle.swift */; };
 		538D2C471F1BC73800FF6051 /* PreferencesGeneral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 538D2C461F1BC73800FF6051 /* PreferencesGeneral.swift */; };
 		538D2C491F1BCB2500FF6051 /* PreferencesProfileDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 538D2C481F1BCB2500FF6051 /* PreferencesProfileDefaults.swift */; };
 		538D2C4D1F1C970C00FF6051 /* PreferencesViewElements.swift in Sources */ = {isa = PBXBuildFile; fileRef = 538D2C4C1F1C970C00FF6051 /* PreferencesViewElements.swift */; };
@@ -64,8 +64,12 @@
 		53DADB4E1F1382B40045CB3F /* SidebarFolder.icns in Resources */ = {isa = PBXBuildFile; fileRef = 53DADB4D1F1382B40045CB3F /* SidebarFolder.icns */; };
 		53DADB501F13ACF90045CB3F /* AppResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DADB4F1F13ACF90045CB3F /* AppResources.swift */; };
 		53DF38771F11675F006DE5BE /* MainWindowTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DF38761F11675F006DE5BE /* MainWindowTableView.swift */; };
+		E30667981F4B2457000C6424 /* PayloadCellViewPadding.swift in Sources */ = {isa = PBXBuildFile; fileRef = E30667971F4B2457000C6424 /* PayloadCellViewPadding.swift */; };
+		E31FA8D21F4D59DE00F6B6BD /* PayloadCellViewTextFieldNumber.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31FA8D11F4D59DE00F6B6BD /* PayloadCellViewTextFieldNumber.swift */; };
 		E32767E61F3F71B700B4670C /* PayloadCellViewFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32767E51F3F71B700B4670C /* PayloadCellViewFile.swift */; };
 		E32767E81F3F736B00B4670C /* PayloadCellViewItemFileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32767E71F3F736B00B4670C /* PayloadCellViewItemFileView.swift */; };
+		E3505C951F4AB82B00FC39AD /* ProfilePayloads.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E39287151F4A27DE005383CC /* ProfilePayloads.framework */; };
+		E3505C961F4AB82B00FC39AD /* ProfilePayloads.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E39287151F4A27DE005383CC /* ProfilePayloads.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E37C67AB1F415CDD00B3D4CB /* PayloadCellViewDatePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37C67AA1F415CDD00B3D4CB /* PayloadCellViewDatePicker.swift */; };
 		E37C67AD1F415D5D00B3D4CB /* PayloadCellViewItemDatePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37C67AC1F415D5D00B3D4CB /* PayloadCellViewItemDatePicker.swift */; };
 		E39287111F49BB01005383CC /* PayloadCellViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = E39287101F49BB01005383CC /* PayloadCellViews.swift */; };
@@ -75,6 +79,20 @@
 		E3C8D5481F3F31850083DA5F /* PayloadCellViewTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C8D5471F3F31850083DA5F /* PayloadCellViewTextView.swift */; };
 		E3C8D54A1F3F31CE0083DA5F /* PayloadCellViewItemTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C8D5491F3F31CE0083DA5F /* PayloadCellViewItemTextView.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		E3505C971F4AB82B00FC39AD /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				E3505C961F4AB82B00FC39AD /* ProfilePayloads.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		5309D1301F29BB1E007C9D01 /* PayloadCellViewItemTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PayloadCellViewItemTextField.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViewItems/PayloadCellViewItemTextField.swift"; sourceTree = "<group>"; };
@@ -118,7 +136,7 @@
 		5383C19C1F2C9592004EBE9B /* LibraryCellViewItemImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LibraryCellViewItemImageView.swift; path = "WindowControllers/Profile Editor/Payload Library/PayloadLibraryCellViewItems/LibraryCellViewItemImageView.swift"; sourceTree = "<group>"; };
 		5383C19E1F2C9AC3004EBE9B /* LibraryCellViewItemButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LibraryCellViewItemButton.swift; path = "WindowControllers/Profile Editor/Payload Library/PayloadLibraryCellViewItems/LibraryCellViewItemButton.swift"; sourceTree = "<group>"; };
 		5383C1A01F2C9EE1004EBE9B /* LibraryCellViewItemTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LibraryCellViewItemTextField.swift; path = "WindowControllers/Profile Editor/Payload Library/PayloadLibraryCellViewItems/LibraryCellViewItemTextField.swift"; sourceTree = "<group>"; };
-		5383C1A31F2D0B7C004EBE9B /* PayloadCellViewPadding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PayloadCellViewPadding.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViewPadding.swift"; sourceTree = "<group>"; };
+		5383C1A31F2D0B7C004EBE9B /* PayloadCellViewTitle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PayloadCellViewTitle.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViewTitle.swift"; sourceTree = "<group>"; };
 		538D2C461F1BC73800FF6051 /* PreferencesGeneral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PreferencesGeneral.swift; path = WindowControllers/Preferences/PreferencesGeneral.swift; sourceTree = "<group>"; };
 		538D2C481F1BCB2500FF6051 /* PreferencesProfileDefaults.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PreferencesProfileDefaults.swift; path = WindowControllers/Preferences/PreferencesProfileDefaults.swift; sourceTree = "<group>"; };
 		538D2C4C1F1C970C00FF6051 /* PreferencesViewElements.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PreferencesViewElements.swift; path = WindowControllers/Preferences/PreferencesViewElements.swift; sourceTree = "<group>"; };
@@ -136,11 +154,14 @@
 		53DADB4D1F1382B40045CB3F /* SidebarFolder.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = SidebarFolder.icns; path = Graphics/Icons/SidebarFolder.icns; sourceTree = "<group>"; };
 		53DADB4F1F13ACF90045CB3F /* AppResources.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppResources.swift; path = Utility/AppResources.swift; sourceTree = "<group>"; };
 		53DF38761F11675F006DE5BE /* MainWindowTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowTableView.swift; path = "WindowControllers/Main Window/Profile List/MainWindowTableView.swift"; sourceTree = "<group>"; };
+		E30667971F4B2457000C6424 /* PayloadCellViewPadding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PayloadCellViewPadding.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViewPadding.swift"; sourceTree = "<group>"; };
+		E31FA8D11F4D59DE00F6B6BD /* PayloadCellViewTextFieldNumber.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PayloadCellViewTextFieldNumber.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViewTextFieldNumber.swift"; sourceTree = "<group>"; };
 		E32767E51F3F71B700B4670C /* PayloadCellViewFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewFile.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViewFile.swift"; sourceTree = "<group>"; };
 		E32767E71F3F736B00B4670C /* PayloadCellViewItemFileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewItemFileView.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViewItems/PayloadCellViewItemFileView.swift"; sourceTree = "<group>"; };
 		E37C67AA1F415CDD00B3D4CB /* PayloadCellViewDatePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewDatePicker.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViewDatePicker.swift"; sourceTree = "<group>"; };
 		E37C67AC1F415D5D00B3D4CB /* PayloadCellViewItemDatePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewItemDatePicker.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViewItems/PayloadCellViewItemDatePicker.swift"; sourceTree = "<group>"; };
 		E39287101F49BB01005383CC /* PayloadCellViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViews.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViews.swift"; sourceTree = "<group>"; };
+		E39287151F4A27DE005383CC /* ProfilePayloads.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ProfilePayloads.framework; path = Frameworks/ProfilePayloads.framework; sourceTree = "<group>"; };
 		E3C8D53F1F3EEA3A0083DA5F /* PayloadCellViewItemPopUpButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewItemPopUpButton.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViewItems/PayloadCellViewItemPopUpButton.swift"; sourceTree = "<group>"; };
 		E3C8D5411F3EED1E0083DA5F /* PayloadCellViewPopUpButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewPopUpButton.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViewPopUpButton.swift"; sourceTree = "<group>"; };
 		E3C8D5431F3EF82D0083DA5F /* PayloadCellViewHostPort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewHostPort.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViewHostPort.swift"; sourceTree = "<group>"; };
@@ -153,6 +174,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E3505C951F4AB82B00FC39AD /* ProfilePayloads.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -394,10 +416,12 @@
 				E37C67AA1F415CDD00B3D4CB /* PayloadCellViewDatePicker.swift */,
 				E32767E51F3F71B700B4670C /* PayloadCellViewFile.swift */,
 				E3C8D5431F3EF82D0083DA5F /* PayloadCellViewHostPort.swift */,
-				5383C1A31F2D0B7C004EBE9B /* PayloadCellViewPadding.swift */,
+				E30667971F4B2457000C6424 /* PayloadCellViewPadding.swift */,
 				E3C8D5411F3EED1E0083DA5F /* PayloadCellViewPopUpButton.swift */,
 				53C4B35E1F27D06000457CB5 /* PayloadCellViewTextField.swift */,
+				E31FA8D11F4D59DE00F6B6BD /* PayloadCellViewTextFieldNumber.swift */,
 				E3C8D5471F3F31850083DA5F /* PayloadCellViewTextView.swift */,
+				5383C1A31F2D0B7C004EBE9B /* PayloadCellViewTitle.swift */,
 			);
 			name = PayloadCellViews;
 			sourceTree = "<group>";
@@ -414,6 +438,7 @@
 		E314EC0A1F461AB000AB18C5 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				E39287151F4A27DE005383CC /* ProfilePayloads.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -428,6 +453,7 @@
 				5398320A1F0EE15400C4792D /* Sources */,
 				5398320B1F0EE15400C4792D /* Frameworks */,
 				5398320C1F0EE15400C4792D /* Resources */,
+				E3505C971F4AB82B00FC39AD /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -508,6 +534,7 @@
 				E37C67AB1F415CDD00B3D4CB /* PayloadCellViewDatePicker.swift in Sources */,
 				5309D30A1F1AB287002133A0 /* Preferences.swift in Sources */,
 				E3C8D5401F3EEA3A0083DA5F /* PayloadCellViewItemPopUpButton.swift in Sources */,
+				E31FA8D21F4D59DE00F6B6BD /* PayloadCellViewTextFieldNumber.swift in Sources */,
 				53C4B3611F27D0B300457CB5 /* PayloadCellView.swift in Sources */,
 				535CB45D1F2B97A600A746F6 /* PayloadLibraryMenu.swift in Sources */,
 				531852221F2295B000529E6B /* ProfileEditorSplitView.swift in Sources */,
@@ -518,7 +545,8 @@
 				5326D2291F2DD2AC00D93C67 /* PayloadLibraryNoPayloadsView.swift in Sources */,
 				538D2C491F1BCB2500FF6051 /* PreferencesProfileDefaults.swift in Sources */,
 				536554DC1F248CA4000543A3 /* Error.swift in Sources */,
-				5383C1A41F2D0B7C004EBE9B /* PayloadCellViewPadding.swift in Sources */,
+				5383C1A41F2D0B7C004EBE9B /* PayloadCellViewTitle.swift in Sources */,
+				E30667981F4B2457000C6424 /* PayloadCellViewPadding.swift in Sources */,
 				53DADB4C1F137A110045CB3F /* MainWindowLibrary.swift in Sources */,
 				5383C19A1F2C91AF004EBE9B /* PayloadLibraryCellViewLibrary.swift in Sources */,
 				E39287111F49BB01005383CC /* PayloadCellViews.swift in Sources */,
@@ -683,7 +711,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = Y7QFC8672N;
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/**";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SRCROOT)/ProfileCreator/Frameworks/**",
+					"$(PROJECT_DIR)/ProfileCreator/Frameworks",
+				);
 				INFOPLIST_FILE = ProfileCreator/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
@@ -700,7 +731,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = Y7QFC8672N;
-				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/**";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SRCROOT)/ProfileCreator/Frameworks/**",
+					"$(PROJECT_DIR)/ProfileCreator/Frameworks",
+				);
 				INFOPLIST_FILE = ProfileCreator/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;

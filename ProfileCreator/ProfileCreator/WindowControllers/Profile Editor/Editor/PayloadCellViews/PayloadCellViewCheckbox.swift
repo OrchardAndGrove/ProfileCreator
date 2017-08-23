@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import ProfilePayloads
 
 class PayloadCellViewCheckbox: NSTableCellView, ProfileCreatorCellView, PayloadCellView, CheckboxCellView {
 
@@ -16,6 +17,7 @@ class PayloadCellViewCheckbox: NSTableCellView, ProfileCreatorCellView, PayloadC
     var height: CGFloat = 0.0
     var row = -1
     
+    weak var subkey: PayloadSourceSubkey?
     var textFieldTitle: NSTextField?
     var textFieldDescription: NSTextField?
     var leadingKeyView: NSView?
@@ -25,12 +27,15 @@ class PayloadCellViewCheckbox: NSTableCellView, ProfileCreatorCellView, PayloadC
     // MARK: Instance Variables
     
     var checkbox: NSButton?
+    var valueDefault: Bool = false
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    required init(key: String, settings: Dictionary<String , Any>) {
+    required init(subkey: PayloadSourceSubkey, settings: Dictionary<String, Any>) {
+        
+        self.subkey = subkey
         
         super.init(frame: NSZeroRect)
         
@@ -48,8 +53,21 @@ class PayloadCellViewCheckbox: NSTableCellView, ProfileCreatorCellView, PayloadC
         // ---------------------------------------------------------------------
         //  Setup Static View Content
         // ---------------------------------------------------------------------
-        self.textFieldTitle = EditorTextField.title(string: key, fontWeight: nil, leadingItem: self.checkbox, constraints: &constraints, cellView: self)
-        self.textFieldDescription = EditorTextField.description(string: key + "DESCRIPTION", constraints: &constraints, cellView: self)
+        if let title = subkey.title {
+            self.textFieldTitle = EditorTextField.title(string: title, fontWeight: nil, leadingItem: self.checkbox, constraints: &constraints, cellView: self)
+        }
+        
+        if let description = subkey.description {
+            self.textFieldDescription = EditorTextField.description(string: description, constraints: &constraints, cellView: self)
+        }
+        
+        // ---------------------------------------------------------------------
+        //  Set Default Value
+        // ---------------------------------------------------------------------
+        if let valueDefault = subkey.valueDefault as? Bool {
+            self.valueDefault = valueDefault
+            self.checkbox?.state = valueDefault ? .onState : .offState
+        }
         
         // ---------------------------------------------------------------------
         //  Setup KeyView Loop Items
@@ -84,14 +102,10 @@ class PayloadCellViewCheckbox: NSTableCellView, ProfileCreatorCellView, PayloadC
     
     private func setupCheckbox(constraints: inout [NSLayoutConstraint]) {
         
-        guard let checkbox = self.checkbox else {
-            // TODO: Proper Logging
-            return
-        }
-        
         // ---------------------------------------------------------------------
         //  Add Checkbox to TableCellView
         // ---------------------------------------------------------------------
+        guard let checkbox = self.checkbox else { return }
         self.addSubview(checkbox)
         
         // ---------------------------------------------------------------------

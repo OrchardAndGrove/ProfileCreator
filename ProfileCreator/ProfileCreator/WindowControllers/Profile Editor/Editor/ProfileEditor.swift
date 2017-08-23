@@ -17,7 +17,9 @@ class ProfileEditor: NSObject {
     private let tableView = ProfileEditorTableView()
     public let scrollView = NSScrollView()
     
-    fileprivate var payloadCellViews = [NSTableCellView]()
+    private let payloadCellViews = PayloadCellViews()
+    
+    fileprivate var cellViews = [NSTableCellView]()
     fileprivate var editorWindow: NSWindow?
     
     private weak var profile: Profile?
@@ -83,19 +85,6 @@ class ProfileEditor: NSObject {
         self.scrollView.documentView = self.tableView
         // self.scrollView.autoresizesSubviews = true
         
-        // Only For Testing
-        self.payloadCellViews.append(PayloadCellViewPadding(height: nil))
-        self.payloadCellViews.append(PayloadCellViewTextField(key: "Test1", settings: [String : Any]()))
-        self.payloadCellViews.append(PayloadCellViewCheckbox(key: "Test1.5", settings: [String : Any]()))
-        self.payloadCellViews.append(PayloadCellViewPopUpButton(key: "Test1.7", settings: [String : Any]()))
-        self.payloadCellViews.append(PayloadCellViewTextView(key: "Test5", settings: [String : Any]()))
-        self.payloadCellViews.append(PayloadCellViewHostPort(key: "Test1.7", settings: [String : Any]()))
-        self.payloadCellViews.append(PayloadCellViewTextField(key: "Test2", settings: [String : Any]()))
-        self.payloadCellViews.append(PayloadCellViewTextField(key: "Test3", settings: [String : Any]()))
-        
-        self.payloadCellViews.append(PayloadCellViewFile(key: "File", settings: [String : Any]()))
-        self.payloadCellViews.append(PayloadCellViewPadding(height: nil))
-        
         self.reloadTableView(force: true)
     }
     
@@ -114,6 +103,11 @@ class ProfileEditor: NSObject {
             self.selectedPayloadPlaceholder = payloadPlaceholder
             Swift.print("Selecting this placeholder in the editor: \(payloadPlaceholder.title)")
             
+            // FIXME: Apply current settings here (like hidden)
+            self.cellViews = payloadCellViews.cellViews(payloadPlaceholder: payloadPlaceholder)
+            
+            // FIXME: Why Force?
+            self.reloadTableView(force: true)
         }
     }
     
@@ -122,7 +116,7 @@ class ProfileEditor: NSObject {
         var previousCellView: PayloadCellView? = nil
         var firstCellView: PayloadCellView? = nil
         
-        for (index, cellView) in self.payloadCellViews.enumerated() {
+        for (index, cellView) in self.cellViews.enumerated() {
             guard let payloadCellView = cellView as? PayloadCellView else { continue }
             
             if payloadCellView.leadingKeyView != nil {
@@ -135,7 +129,7 @@ class ProfileEditor: NSObject {
                 }
                 previousCellView = payloadCellView
                 
-                if self.payloadCellViews.count == index + 1  {
+                if self.cellViews.count == index + 1  {
                     tableView.nextKeyView = firstCellView?.leadingKeyView
                     payloadCellView.trailingKeyView!.nextKeyView = tableView
                     // Swift.print("previousCellView.trailingKeyView!.nextKeyView: \(String(describing: payloadCellView.trailingKeyView!.nextKeyView))")
@@ -151,13 +145,13 @@ class ProfileEditor: NSObject {
 
 extension ProfileEditor: NSTableViewDataSource {
     func numberOfRows(in tableView: NSTableView) -> Int {
-        return self.payloadCellViews.count
+        return self.cellViews.count
     }
 }
 
 extension ProfileEditor: NSTableViewDelegate {
     func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
-        if let cellView = self.payloadCellViews[row] as? ProfileCreatorCellView {
+        if let cellView = self.cellViews[row] as? ProfileCreatorCellView {
             return cellView.height
         }
         return 1
@@ -167,7 +161,7 @@ extension ProfileEditor: NSTableViewDelegate {
         if tableColumn?.identifier == .tableColumnPayload {
             // FIXME: Should only be needed once and NOT here
             self.updateKeyViewLoop(window: tableView.window!)
-            return self.payloadCellViews[row]
+            return self.cellViews[row]
         }
         return nil
     }

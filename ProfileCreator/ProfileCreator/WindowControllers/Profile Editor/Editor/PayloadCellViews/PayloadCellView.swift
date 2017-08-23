@@ -7,20 +7,23 @@
 //
 
 import Cocoa
+import ProfilePayloads
 
 protocol ProfileCreatorCellView {
     var height: CGFloat { get set }
+    func addSubview(_ subview: NSView)
 }
 
-protocol PayloadCellView {
+protocol PayloadCellView: class {
     var row: Int { get set }
     
+    weak var subkey: PayloadSourceSubkey? { get }
     var textFieldTitle: NSTextField? { get set }
     var textFieldDescription: NSTextField? { get set }
     var leadingKeyView: NSView? { get set }
     var trailingKeyView: NSView? { get set }
     
-    init(key: String, settings: Dictionary<String , Any>)
+    init(subkey: PayloadSourceSubkey, settings: Dictionary<String , Any>)
     
     func updateHeight(_ h: CGFloat)
     func addSubview(_ subview: NSView)

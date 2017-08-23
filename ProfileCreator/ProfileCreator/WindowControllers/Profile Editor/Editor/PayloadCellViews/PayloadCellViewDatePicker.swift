@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import ProfilePayloads
 
 class PayloadCellViewDatePicker: NSTableCellView, ProfileCreatorCellView, PayloadCellView, DatePickerCellView {
     
@@ -16,6 +17,7 @@ class PayloadCellViewDatePicker: NSTableCellView, ProfileCreatorCellView, Payloa
     var height: CGFloat = 0.0
     var row = -1
     
+    weak var subkey: PayloadSourceSubkey?
     var textFieldTitle: NSTextField?
     var textFieldDescription: NSTextField?
     var leadingKeyView: NSView?
@@ -31,7 +33,9 @@ class PayloadCellViewDatePicker: NSTableCellView, ProfileCreatorCellView, Payloa
         fatalError("init(coder:) has not been implemented")
     }
     
-    required init(key: String, settings: Dictionary<String , Any>) {
+    required init(subkey: PayloadSourceSubkey, settings: Dictionary<String, Any>) {
+        
+        self.subkey = subkey
         
         super.init(frame: NSZeroRect)
         
@@ -43,8 +47,13 @@ class PayloadCellViewDatePicker: NSTableCellView, ProfileCreatorCellView, Payloa
         // ---------------------------------------------------------------------
         //  Setup Static View Content
         // ---------------------------------------------------------------------
-        self.textFieldTitle = EditorTextField.title(string: key, fontWeight: nil, leadingItem: nil, constraints: &constraints, cellView: self)
-        self.textFieldDescription = EditorTextField.description(string: key + "DESCRIPTION", constraints: &constraints, cellView: self)
+        if let title = subkey.title {
+            self.textFieldTitle = EditorTextField.title(string: title, fontWeight: nil, leadingItem: nil, constraints: &constraints, cellView: self)
+        }
+        
+        if let description = subkey.description {
+            self.textFieldDescription = EditorTextField.description(string: description, constraints: &constraints, cellView: self)
+        }
         
         // ---------------------------------------------------------------------
         //  Setup Custom View Content
@@ -88,14 +97,10 @@ class PayloadCellViewDatePicker: NSTableCellView, ProfileCreatorCellView, Payloa
     
     private func setupDatePicker(constraints: inout [NSLayoutConstraint]) {
         
-        guard let datePicker = self.datePicker else {
-            // TODO: Proper Logging
-            return
-        }
-        
         // ---------------------------------------------------------------------
         //  Add TextField to TableCellView
         // ---------------------------------------------------------------------
+        guard let datePicker = self.datePicker else { return }
         self.addSubview(datePicker)
         
         // ---------------------------------------------------------------------
