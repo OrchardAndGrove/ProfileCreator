@@ -65,6 +65,7 @@
 		53DADB501F13ACF90045CB3F /* AppResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DADB4F1F13ACF90045CB3F /* AppResources.swift */; };
 		53DF38771F11675F006DE5BE /* MainWindowTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DF38761F11675F006DE5BE /* MainWindowTableView.swift */; };
 		E30667981F4B2457000C6424 /* PayloadCellViewPadding.swift in Sources */ = {isa = PBXBuildFile; fileRef = E30667971F4B2457000C6424 /* PayloadCellViewPadding.swift */; };
+		E30B64051F4DCB3800240427 /* PayloadCellViewItemTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E30B64041F4DCB3800240427 /* PayloadCellViewItemTableView.swift */; };
 		E31FA8D21F4D59DE00F6B6BD /* PayloadCellViewTextFieldNumber.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31FA8D11F4D59DE00F6B6BD /* PayloadCellViewTextFieldNumber.swift */; };
 		E32767E61F3F71B700B4670C /* PayloadCellViewFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32767E51F3F71B700B4670C /* PayloadCellViewFile.swift */; };
 		E32767E81F3F736B00B4670C /* PayloadCellViewItemFileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32767E71F3F736B00B4670C /* PayloadCellViewItemFileView.swift */; };
@@ -73,6 +74,7 @@
 		E37C67AB1F415CDD00B3D4CB /* PayloadCellViewDatePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37C67AA1F415CDD00B3D4CB /* PayloadCellViewDatePicker.swift */; };
 		E37C67AD1F415D5D00B3D4CB /* PayloadCellViewItemDatePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37C67AC1F415D5D00B3D4CB /* PayloadCellViewItemDatePicker.swift */; };
 		E39287111F49BB01005383CC /* PayloadCellViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = E39287101F49BB01005383CC /* PayloadCellViews.swift */; };
+		E3BFD6701F4DC8E9001120DB /* PayloadCellViewTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3BFD66F1F4DC8E9001120DB /* PayloadCellViewTableView.swift */; };
 		E3C8D5401F3EEA3A0083DA5F /* PayloadCellViewItemPopUpButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C8D53F1F3EEA3A0083DA5F /* PayloadCellViewItemPopUpButton.swift */; };
 		E3C8D5421F3EED1E0083DA5F /* PayloadCellViewPopUpButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C8D5411F3EED1E0083DA5F /* PayloadCellViewPopUpButton.swift */; };
 		E3C8D5441F3EF82D0083DA5F /* PayloadCellViewHostPort.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C8D5431F3EF82D0083DA5F /* PayloadCellViewHostPort.swift */; };
@@ -155,6 +157,7 @@
 		53DADB4F1F13ACF90045CB3F /* AppResources.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppResources.swift; path = Utility/AppResources.swift; sourceTree = "<group>"; };
 		53DF38761F11675F006DE5BE /* MainWindowTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowTableView.swift; path = "WindowControllers/Main Window/Profile List/MainWindowTableView.swift"; sourceTree = "<group>"; };
 		E30667971F4B2457000C6424 /* PayloadCellViewPadding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PayloadCellViewPadding.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViewPadding.swift"; sourceTree = "<group>"; };
+		E30B64041F4DCB3800240427 /* PayloadCellViewItemTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PayloadCellViewItemTableView.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViewItems/PayloadCellViewItemTableView.swift"; sourceTree = "<group>"; };
 		E31FA8D11F4D59DE00F6B6BD /* PayloadCellViewTextFieldNumber.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PayloadCellViewTextFieldNumber.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViewTextFieldNumber.swift"; sourceTree = "<group>"; };
 		E32767E51F3F71B700B4670C /* PayloadCellViewFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewFile.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViewFile.swift"; sourceTree = "<group>"; };
 		E32767E71F3F736B00B4670C /* PayloadCellViewItemFileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewItemFileView.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViewItems/PayloadCellViewItemFileView.swift"; sourceTree = "<group>"; };
@@ -162,6 +165,7 @@
 		E37C67AC1F415D5D00B3D4CB /* PayloadCellViewItemDatePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewItemDatePicker.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViewItems/PayloadCellViewItemDatePicker.swift"; sourceTree = "<group>"; };
 		E39287101F49BB01005383CC /* PayloadCellViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViews.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViews.swift"; sourceTree = "<group>"; };
 		E39287151F4A27DE005383CC /* ProfilePayloads.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ProfilePayloads.framework; path = Frameworks/ProfilePayloads.framework; sourceTree = "<group>"; };
+		E3BFD66F1F4DC8E9001120DB /* PayloadCellViewTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PayloadCellViewTableView.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViewTableView.swift"; sourceTree = "<group>"; };
 		E3C8D53F1F3EEA3A0083DA5F /* PayloadCellViewItemPopUpButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewItemPopUpButton.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViewItems/PayloadCellViewItemPopUpButton.swift"; sourceTree = "<group>"; };
 		E3C8D5411F3EED1E0083DA5F /* PayloadCellViewPopUpButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewPopUpButton.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViewPopUpButton.swift"; sourceTree = "<group>"; };
 		E3C8D5431F3EF82D0083DA5F /* PayloadCellViewHostPort.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewHostPort.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViewHostPort.swift"; sourceTree = "<group>"; };
@@ -189,6 +193,7 @@
 				E37C67AC1F415D5D00B3D4CB /* PayloadCellViewItemDatePicker.swift */,
 				E32767E71F3F736B00B4670C /* PayloadCellViewItemFileView.swift */,
 				E3C8D53F1F3EEA3A0083DA5F /* PayloadCellViewItemPopUpButton.swift */,
+				E30B64041F4DCB3800240427 /* PayloadCellViewItemTableView.swift */,
 				5309D1301F29BB1E007C9D01 /* PayloadCellViewItemTextField.swift */,
 				E3C8D5491F3F31CE0083DA5F /* PayloadCellViewItemTextView.swift */,
 			);
@@ -418,6 +423,7 @@
 				E3C8D5431F3EF82D0083DA5F /* PayloadCellViewHostPort.swift */,
 				E30667971F4B2457000C6424 /* PayloadCellViewPadding.swift */,
 				E3C8D5411F3EED1E0083DA5F /* PayloadCellViewPopUpButton.swift */,
+				E3BFD66F1F4DC8E9001120DB /* PayloadCellViewTableView.swift */,
 				53C4B35E1F27D06000457CB5 /* PayloadCellViewTextField.swift */,
 				E31FA8D11F4D59DE00F6B6BD /* PayloadCellViewTextFieldNumber.swift */,
 				E3C8D5471F3F31850083DA5F /* PayloadCellViewTextView.swift */,
@@ -548,6 +554,7 @@
 				5383C1A41F2D0B7C004EBE9B /* PayloadCellViewTitle.swift in Sources */,
 				E30667981F4B2457000C6424 /* PayloadCellViewPadding.swift in Sources */,
 				53DADB4C1F137A110045CB3F /* MainWindowLibrary.swift in Sources */,
+				E30B64051F4DCB3800240427 /* PayloadCellViewItemTableView.swift in Sources */,
 				5383C19A1F2C91AF004EBE9B /* PayloadLibraryCellViewLibrary.swift in Sources */,
 				E39287111F49BB01005383CC /* PayloadCellViews.swift in Sources */,
 				536DA4911F1213AE00FB325E /* MainWindowWelcomeView.swift in Sources */,
@@ -574,6 +581,7 @@
 				53C4B35F1F27D06000457CB5 /* PayloadCellViewTextField.swift in Sources */,
 				53DF38771F11675F006DE5BE /* MainWindowTableView.swift in Sources */,
 				538D2C471F1BC73800FF6051 /* PreferencesGeneral.swift in Sources */,
+				E3BFD6701F4DC8E9001120DB /* PayloadCellViewTableView.swift in Sources */,
 				530CD3DA1F17793B0071E866 /* MainWindowTableViewItems.swift in Sources */,
 				532917891F32593800CD7175 /* PayloadCellViewItemCheckbox.swift in Sources */,
 				5370780D1F232DAA00570090 /* ProfileEditorWindowToolbarItemTitle.swift in Sources */,

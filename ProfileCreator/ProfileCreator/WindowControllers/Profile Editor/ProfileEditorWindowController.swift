@@ -96,6 +96,11 @@ public class ProfileEditorWindowController: NSWindowController {
         // ---------------------------------------------------------------------
         self.splitView.librarySplitView?.setPosition(250.0, ofDividerAt: 0)
         self.splitView.librarySplitView?.setPosition(250.0, ofDividerAt: 0)
+        
+        // ---------------------------------------------------------------------
+        // Set the initial position of the main SplitView
+        // ---------------------------------------------------------------------
+        self.splitView.setPosition(190.0, ofDividerAt: 0)
     }
     
     deinit {

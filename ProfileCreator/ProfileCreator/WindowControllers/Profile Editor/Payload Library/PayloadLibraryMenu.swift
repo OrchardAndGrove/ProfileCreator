@@ -85,9 +85,9 @@ class PayloadLibraryMenu: NSObject {
     @objc func selectLibrary(_ sender: NSButton) {
         if let selectLibrary = self.selectionDelegate?.selectLibrary, let libraryTag = LibraryTag(rawValue: sender.tag) {
             selectLibrary(libraryTag, self)
-            sender.state = NSControl.StateValue.onState
+            sender.state = .on
             for button in self.buttons {
-                if button != sender { button.state = NSControl.StateValue.offState }
+                if button != sender { button.state = .off }
             }
         }
     }

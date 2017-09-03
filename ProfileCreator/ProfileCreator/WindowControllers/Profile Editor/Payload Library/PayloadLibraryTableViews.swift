@@ -291,11 +291,11 @@ extension PayloadLibraryTableViews: NSTableViewDataSource {
     }
     
     func tableView(_ tableView: NSTableView, validateDrop info: NSDraggingInfo, proposedRow row: Int, proposedDropOperation dropOperation: NSTableView.DropOperation) -> NSDragOperation {
-        if let infoSource = info.draggingSource() as? NSTableView, tableView == infoSource || dropOperation == NSTableView.DropOperation.on {
+        if let infoSource = info.draggingSource() as? NSTableView, tableView == infoSource || dropOperation == .on {
             return NSDragOperation(rawValue: 0)
         } else {
-            tableView.setDropRow(-1, dropOperation: NSTableView.DropOperation.on)
-            return NSDragOperation.copy
+            tableView.setDropRow(-1, dropOperation: .on)
+            return .copy
         }
     }
     

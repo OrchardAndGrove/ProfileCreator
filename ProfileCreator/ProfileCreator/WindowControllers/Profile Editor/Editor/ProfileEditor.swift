@@ -81,7 +81,7 @@ class ProfileEditor: NSObject {
         //  Setup ScrollView and add TableView as Document View
         // ---------------------------------------------------------------------
         self.scrollView.translatesAutoresizingMaskIntoConstraints = false
-        self.scrollView.hasVerticalScroller = true
+        //self.scrollView.hasVerticalScroller = true
         self.scrollView.documentView = self.tableView
         // self.scrollView.autoresizesSubviews = true
         

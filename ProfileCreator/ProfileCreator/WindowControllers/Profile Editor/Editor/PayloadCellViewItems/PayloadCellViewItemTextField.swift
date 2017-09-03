@@ -74,10 +74,10 @@ class EditorTextField {
                                                    constant: 8.0))
         
         // Trailing
-        constraints.append(NSLayoutConstraint(item: textField,
+        constraints.append(NSLayoutConstraint(item: cellView,
                                                    attribute: .trailing,
                                                    relatedBy: .equal,
-                                                   toItem: cellView,
+                                                   toItem: textField,
                                                    attribute: .trailing,
                                                    multiplier: 1.0,
                                                    constant: 8.0))
@@ -218,10 +218,10 @@ class EditorTextField {
         } else {
             
             // Trailing
-            constraints.append(NSLayoutConstraint(item: textField,
+            constraints.append(NSLayoutConstraint(item: cellView,
                                                   attribute: .trailing,
                                                   relatedBy: .equal,
-                                                  toItem: cellView,
+                                                  toItem: textField,
                                                   attribute: .trailing,
                                                   multiplier: 1.0,
                                                   constant: 8.0))
@@ -312,10 +312,10 @@ class EditorTextField {
         }
         
         // Trailing
-        constraints.append(NSLayoutConstraint(item: textField,
+        constraints.append(NSLayoutConstraint(item: cellView,
                                                    attribute: .trailing,
                                                    relatedBy: .equal,
-                                                   toItem: cellView,
+                                                   toItem: textField,
                                                    attribute: .trailing,
                                                    multiplier: 1.0,
                                                    constant: 8.0))

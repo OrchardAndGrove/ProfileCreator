@@ -40,3 +40,7 @@ protocol PayloadCellView: class {
 @objc protocol DatePickerCellView {
     func selectDate(_ datePicker: NSDatePicker)
 }
+
+@objc protocol TableViewCellView: class, NSTableViewDelegate, NSTableViewDataSource, NSTextFieldDelegate {
+    
+}

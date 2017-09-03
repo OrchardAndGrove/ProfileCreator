@@ -40,10 +40,10 @@ class PayloadCellViews {
             }
         }
         
-        if !cellViews.isEmpty {
+        //if !cellViews.isEmpty {
             cellViews.insert(PayloadCellViewTitle(payloadSource: payloadPlaceholder.payloadSource), at: 0)
             cellViews.insert(PayloadCellViewPadding(), at: cellViews.count)
-        }
+        //}
         
         return cellViews
     }
@@ -54,7 +54,14 @@ class PayloadCellViews {
     }
     
     func cellView(manifestSubkey: PayloadManifestSubkey) -> NSTableCellView? {
+        
+        // FIXME: Currently just ignore the static payload keys that normally aren't changed.
+        //        This should be added as a setting
+        if manifestSubkeysIgnored.contains(manifestSubkey.key) { return nil }
+        
         switch manifestSubkey.type {
+        case .array:
+            return PayloadCellViewTableView(subkey: manifestSubkey, settings: Dictionary<String, Any>())
         case .string:
             return PayloadCellViewTextField(subkey: manifestSubkey, settings: Dictionary<String, Any>())
         case .bool:

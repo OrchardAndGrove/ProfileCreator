@@ -113,11 +113,15 @@ class PayloadCellViewTextFieldNumber: NSTableCellView, ProfileCreatorCellView, P
         
         if let valueMax = self.subkey?.valueMax as? NSNumber {
             numberFormatter.maximum = valueMax
-        } else { numberFormatter.maximum = Int.max as NSNumber }
+        } else {
+            numberFormatter.maximum = Int.max as NSNumber
+        }
         
         if let valueMin = self.subkey?.valueMin as? NSNumber {
             numberFormatter.minimum = valueMin
-        } else { numberFormatter.minimum = Int.min as NSNumber }
+        } else {
+            numberFormatter.minimum = Int.min as NSNumber
+        }
         
         textFieldInput.formatter = numberFormatter
         textFieldInput.bind(.value, to: self, withKeyPath: "value", options: [NSBindingOption.nullPlaceholder: "", NSBindingOption.continuouslyUpdatesValue: true])

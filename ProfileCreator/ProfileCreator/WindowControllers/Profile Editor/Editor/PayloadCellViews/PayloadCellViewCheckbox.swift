@@ -66,7 +66,7 @@ class PayloadCellViewCheckbox: NSTableCellView, ProfileCreatorCellView, PayloadC
         // ---------------------------------------------------------------------
         if let valueDefault = subkey.valueDefault as? Bool {
             self.valueDefault = valueDefault
-            self.checkbox?.state = valueDefault ? .onState : .offState
+            self.checkbox?.state = valueDefault ? .on : .off
         }
         
         // ---------------------------------------------------------------------

@@ -140,7 +140,7 @@ public func addHeader(title: String,
         // ---------------------------------------------------------------------
         //  Create and add vertical separator
         // ---------------------------------------------------------------------
-        let separator = NSBox(frame: NSRect(x: 250.0, y: 15.0, width: preferencesWindowWidth - (20.0 + 20.0), height: 250.0))
+        let separator = NSBox(frame: NSRect(x: 250.0, y: 15.0, width: preferencesWindowWidth - (20.0 * 2), height: 250.0))
         separator.translatesAutoresizingMaskIntoConstraints = false
         separator.boxType = .separator
         toView.addSubview(separator)

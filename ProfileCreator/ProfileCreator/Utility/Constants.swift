@@ -14,6 +14,8 @@ let preferencesIndent: CGFloat = 40.0
 let editorTableViewColumnPaddingWidth: CGFloat = 24.0
 let editorTableViewColumnPayloadWidth: CGFloat = 500.0
 
+let manifestSubkeysIgnored = ["PayloadDescription", "PayloadDisplayName", "PayloadIdentifier", "PayloadType", "PayloadUUID", "PayloadVersion", "PayloadOrganization"]
+
 enum TableViewTag: Int {
     case profilePayloads
     case libraryPayloads

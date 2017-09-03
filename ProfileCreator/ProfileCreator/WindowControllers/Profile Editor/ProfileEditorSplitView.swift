@@ -161,7 +161,6 @@ class ProfileEditorSplitView: NSSplitView {
         // ---------------------------------------------------------------------
         //  Add constraints
         // ---------------------------------------------------------------------
-        
         // Width
         constraints.append(NSLayoutConstraint(item: editor.scrollView,
                                               attribute: .width,
@@ -169,7 +168,7 @@ class ProfileEditorSplitView: NSSplitView {
                                               toItem: nil,
                                               attribute: .notAnAttribute,
                                               multiplier: 1,
-                                              constant: 550))
+                                              constant: (editorTableViewColumnPayloadWidth + (editorTableViewColumnPaddingWidth * 2))))
     }
     
     private func setupSplitViewLibrary(constraints: inout [NSLayoutConstraint]) {
