@@ -68,6 +68,8 @@ class PayloadCellViews {
             return PayloadCellViewCheckbox(subkey: manifestSubkey, settings: Dictionary<String, Any>())
         case .integer:
             return PayloadCellViewTextFieldNumber(subkey: manifestSubkey, settings: Dictionary<String, Any>())
+        case .data:
+            return PayloadCellViewFile(subkey: manifestSubkey, settings: Dictionary<String, Any>())
         default:
             Swift.print("FIXME: Unknown Manifest Type: \(manifestSubkey.type)")
         }

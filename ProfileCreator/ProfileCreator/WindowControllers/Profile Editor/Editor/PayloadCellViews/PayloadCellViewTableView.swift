@@ -263,13 +263,17 @@ extension PayloadCellViewTableView: NSTableViewDataSource {
 
 extension PayloadCellViewTableView: NSTableViewDelegate {
     
-    func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat { return 21.0 }
+    func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
+        return 21.0
+    }
     
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         if let tableViewColumn = self.tableViewColumns.first(where: {$0.key == tableColumn?.title}) {
             Swift.print("tableViewColumnvalueDefault: \(String(describing: tableViewColumn.valueDefault))")
             if tableViewColumn.type == .string {
                 return EditorTableViewCellViewTextField(cellView: self, key: tableViewColumn.key, stringValue: "Test", placeholderString: "Placeholder", row: row)
+            } else if tableViewColumn.type == .bool {
+                return EditorTableViewCellViewCheckbox(cellView: self, key: tableViewColumn.key, value: true, row: row)
             } else {
                 Swift.print("Unknown tableViewColumn.type: \(tableViewColumn.type)")
             }

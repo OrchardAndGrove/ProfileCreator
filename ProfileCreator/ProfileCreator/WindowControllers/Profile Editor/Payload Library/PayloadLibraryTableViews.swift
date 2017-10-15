@@ -251,7 +251,6 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         self.libraryPayloadsScrollView.hasVerticalScroller = false // FIXME: TRUE When added ios-style scrollers
         // self.profilePayloadsScrollView.autoresizesSubviews = true
     }
-    
 }
 
 extension PayloadLibraryTableViews: NSTableViewDataSource {

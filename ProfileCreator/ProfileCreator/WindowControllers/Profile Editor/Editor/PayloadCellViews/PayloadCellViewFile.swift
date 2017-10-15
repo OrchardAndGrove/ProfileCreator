@@ -132,8 +132,8 @@ class PayloadCellViewFile: NSTableCellView, ProfileCreatorCellView, PayloadCellV
         
         if let window = button.window {
             openPanel.beginSheetModal(for: window) { (response) in
-                if response == NSApplication.ModalResponse.OK {
-                    Swift.print("Add Files: \(String(describing: openPanel.urls.first))")
+                if response == .OK {
+                    Swift.print("Add Files To Settings: \(String(describing: openPanel.urls.first))")
                 }
             }
         }

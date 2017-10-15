@@ -173,3 +173,118 @@ class EditorTableViewCellViewTextField: NSTableCellView {
         self.textField = textField
     }
 }
+
+class EditorTableViewCellViewCheckbox: NSTableCellView {
+    
+    // MARK: -
+    // MARK: Variables
+    
+    let checkbox = NSButton()
+    
+    // MARK: -
+    // MARK: Initialization
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    required init(cellView: TableViewCellView, key: String, value: Bool, row: Int) {
+        
+        super.init(frame: NSZeroRect)
+        
+        self.checkbox.translatesAutoresizingMaskIntoConstraints = false
+        self.checkbox.setButtonType(.switch)
+        self.checkbox.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .regular))
+        self.checkbox.state = (value) ? .on : .off
+        self.checkbox.title = ""
+        self.addSubview(self.checkbox)
+        
+        // ---------------------------------------------------------------------
+        //  Setup Variables
+        // ---------------------------------------------------------------------
+        var constraints = [NSLayoutConstraint]()
+        
+        // CenterX
+        constraints.append(NSLayoutConstraint(item: self.checkbox,
+                                              attribute: .centerX,
+                                              relatedBy: .equal,
+                                              toItem: self,
+                                              attribute: .centerX,
+                                              multiplier: 1.0,
+                                              constant: 0.0))
+        
+        // CenterY
+        constraints.append(NSLayoutConstraint(item: self.checkbox,
+                                              attribute: .centerY,
+                                              relatedBy: .equal,
+                                              toItem: self,
+                                              attribute: .centerY,
+                                              multiplier: 1.0,
+                                              constant: 0.0))
+        
+        // ---------------------------------------------------------------------
+        //  Activate Layout Constraints
+        // ---------------------------------------------------------------------
+        NSLayoutConstraint.activate(constraints)
+        
+        Swift.print("Height: \(checkbox.intrinsicContentSize.height)")
+    }
+}
+
+class EditorTableViewCellViewPopUpButton: NSTableCellView {
+    
+    // MARK: -
+    // MARK: Variables
+    
+    let checkbox = NSButton()
+    
+    // MARK: -
+    // MARK: Initialization
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    required init(cellView: TableViewCellView, key: String, value: Bool, row: Int) {
+        
+        super.init(frame: NSZeroRect)
+        
+        self.checkbox.translatesAutoresizingMaskIntoConstraints = false
+        self.checkbox.setButtonType(.switch)
+        self.checkbox.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .regular))
+        self.checkbox.state = (value) ? .on : .off
+        self.checkbox.title = ""
+        self.addSubview(self.checkbox)
+        
+        // ---------------------------------------------------------------------
+        //  Setup Variables
+        // ---------------------------------------------------------------------
+        var constraints = [NSLayoutConstraint]()
+        
+        // CenterX
+        constraints.append(NSLayoutConstraint(item: self.checkbox,
+                                              attribute: .centerX,
+                                              relatedBy: .equal,
+                                              toItem: self,
+                                              attribute: .centerX,
+                                              multiplier: 1.0,
+                                              constant: 0.0))
+        
+        // CenterY
+        constraints.append(NSLayoutConstraint(item: self.checkbox,
+                                              attribute: .centerY,
+                                              relatedBy: .equal,
+                                              toItem: self,
+                                              attribute: .centerY,
+                                              multiplier: 1.0,
+                                              constant: 0.0))
+        
+        // ---------------------------------------------------------------------
+        //  Activate Layout Constraints
+        // ---------------------------------------------------------------------
+        NSLayoutConstraint.activate(constraints)
+        
+        Swift.print("Height: \(checkbox.intrinsicContentSize.height)")
+    }
+}
+

@@ -80,7 +80,7 @@ class MainWindowLibrary: NSObject, OutlineViewParentItem, NSTextFieldDelegate {
         // ---------------------------------------------------------------------
         for groupURL in groupURLs {
             do {
-                let groupData = try Data.init(contentsOf: groupURL)
+                let groupData = try Data(contentsOf: groupURL)
                 let groupDict = try PropertyListSerialization.propertyList(from: groupData, options: [], format: nil) as! [String : Any]
                 if !groupDict.isEmpty {
                     if let title = groupDict[SettingsKey.title] as? String {
