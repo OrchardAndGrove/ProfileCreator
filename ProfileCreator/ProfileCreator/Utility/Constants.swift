@@ -22,9 +22,10 @@ enum TableViewTag: Int {
 }
 
 enum LibraryTag: Int {
-    case appleCollections = 1
-    case appleDomains = 2
-    case developer = 3
+    case appleCollections
+    case appleDomains
+    case applications
+    case developer
 }
 
 extension NSToolbarItem.Identifier {
@@ -95,6 +96,7 @@ struct PreferenceKey {
     static let showGroupIcons = "ShowGroupIcons"
     static let showPayloadLibraryAppleCollections = "ShowPayloadLibraryAppleCollections"
     static let showPayloadLibraryAppleDomains = "ShowPayloadLibraryAppleDomains"
+    static let showPayloadLibraryApplications = "ShowPayloadLibraryApplications"
     static let showPayloadLibraryDeveloper = "ShowPayloadLibraryDeveloper"
 }
 

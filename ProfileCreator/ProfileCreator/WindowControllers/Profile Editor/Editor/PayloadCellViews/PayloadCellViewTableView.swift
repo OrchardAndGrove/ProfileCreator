@@ -130,7 +130,7 @@ class PayloadCellViewTableView: NSTableCellView, ProfileCreatorCellView, Payload
             if tableViewColumn.type == .string {
                 newRow[tableViewColumn.key] = tableViewColumn.valueDefault ?? ""
             } else {
-                Swift.print("Unknown tableViewColumn.type: \(tableViewColumn.type)")
+                Swift.print("\(#function) - Unknown tableViewColumn.type: \(tableViewColumn.type)")
             }
         }
         
@@ -269,16 +269,22 @@ extension PayloadCellViewTableView: NSTableViewDelegate {
     
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         if let tableViewColumn = self.tableViewColumns.first(where: {$0.key == tableColumn?.title}) {
-            Swift.print("tableViewColumnvalueDefault: \(String(describing: tableViewColumn.valueDefault))")
+            // FIXME: Testing Print
+            // Swift.print("tableViewColumnvalueDefault: \(String(describing: tableViewColumn.valueDefault))")
+            Swift.print("\(#function) - Checking tableViewColumn.type: \(tableViewColumn.type)")
             if tableViewColumn.type == .string {
                 return EditorTableViewCellViewTextField(cellView: self, key: tableViewColumn.key, stringValue: "Test", placeholderString: "Placeholder", row: row)
             } else if tableViewColumn.type == .bool {
                 return EditorTableViewCellViewCheckbox(cellView: self, key: tableViewColumn.key, value: true, row: row)
+            } else if tableViewColumn.type == .array, let titles = tableViewColumn.valueDefault as? [String] {
+                return EditorTableViewCellViewPopUpButton(cellView: self, key: tableViewColumn.key, titles: titles, row: row)
+            } else if tableViewColumn.type == .integer {
+                return EditorTableViewCellViewTextFieldNumber(cellView: self, key: tableViewColumn.key, value: NSNumber(value: 1), placeholderValue: NSNumber(value: 10), type: tableViewColumn.type, row: row)
             } else {
-                Swift.print("Unknown tableViewColumn.type: \(tableViewColumn.type)")
+                Swift.print("\(#function) - Unknown tableViewColumn.type: \(tableViewColumn.type)")
             }
         } else {
-            Swift.print("Found no table view column matching title: \(String(describing: tableColumn?.title))")
+            Swift.print("\(#function) - Found no table view column matching title: \(String(describing: tableColumn?.title))")
         }
         return nil
     }

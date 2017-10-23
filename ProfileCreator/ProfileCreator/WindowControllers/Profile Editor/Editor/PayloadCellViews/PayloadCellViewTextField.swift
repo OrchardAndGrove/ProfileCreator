@@ -73,6 +73,13 @@ class PayloadCellViewTextField: NSTableCellView, ProfileCreatorCellView, Payload
         }
         
         // ---------------------------------------------------------------------
+        //  Set Placeholder Value
+        // ---------------------------------------------------------------------
+        if let valuePlaceholder = subkey.valuePlaceholder as? String {
+            self.textFieldInput?.placeholderString = valuePlaceholder
+        }
+        
+        // ---------------------------------------------------------------------
         //  Setup KeyView Loop Items
         // ---------------------------------------------------------------------
         self.leadingKeyView = self.textFieldInput

@@ -108,11 +108,13 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
     
     private func placeholders(tag: LibraryTag) -> [PayloadPlaceholder]? {
         switch tag {
-        case LibraryTag.appleDomains:
+        case .appleDomains:
             return ProfilePayloads.shared.manifestPlaceholders()
-        case LibraryTag.appleCollections:
+        case .appleCollections:
             return ProfilePayloads.shared.collectionPlaceholders()
-        case LibraryTag.developer:
+        case .applications:
+            return ProfilePayloads.shared.applicationPlaceholders()
+        case .developer:
             // FIXME: Add Developer Payloads
             return ProfilePayloads.shared.collectionPlaceholders()
         }

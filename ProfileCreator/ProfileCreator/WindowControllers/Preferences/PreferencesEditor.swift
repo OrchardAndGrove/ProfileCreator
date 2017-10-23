@@ -85,6 +85,13 @@ class PreferencesEditorView: NSView {
                                   height: &frameHeight,
                                   constraints: &constraints)
         
+        lastSubview = addCheckbox(title: "Show Applications",
+                                  keyPath: PreferenceKey.showPayloadLibraryApplications,
+                                  toView: self,
+                                  lastSubview: lastSubview,
+                                  height: &frameHeight,
+                                  constraints: &constraints)
+        
         lastSubview = addCheckbox(title: "Show Developer",
                                   keyPath: PreferenceKey.showPayloadLibraryDeveloper,
                                   toView: self,
@@ -97,14 +104,13 @@ class PreferencesEditorView: NSView {
         // ---------------------------------------------------------------------
         
         // Bottom
-        constraints.append(NSLayoutConstraint(
-            item: self,
-            attribute: .bottom,
-            relatedBy: .equal,
-            toItem: lastSubview,
-            attribute: .bottom,
-            multiplier: 1,
-            constant: 20))
+        constraints.append(NSLayoutConstraint(item: self,
+                                              attribute: .bottom,
+                                              relatedBy: .equal,
+                                              toItem: lastSubview,
+                                              attribute: .bottom,
+                                              multiplier: 1,
+                                              constant: 20))
         
         frameHeight = frameHeight + 20.0
         

@@ -18,6 +18,13 @@ class PayloadCellViews {
         var cellViews = allCellViews[payloadPlaceholder.domain] ?? [NSTableCellView]()
         if cellViews.isEmpty {
             switch payloadPlaceholder.payloadSourceType {
+            case .application:
+                if let payloadApplication = payloadPlaceholder.payloadSource as? PayloadApplication, let payloadSubkeys = payloadApplication.subkeys as? [PayloadApplicationSubkey] {
+                    for subkey in payloadSubkeys {
+                        if let cellView = cellView(applicationSubkey: subkey) { cellViews.append(cellView) }
+                    }
+                }
+                break
             case .collection:
                 if let payloadCollection = payloadPlaceholder.payloadSource as? PayloadCollection, let payloadSubkeys = payloadCollection.subkeys as? [PayloadCollectionSubkey] {
                     for subkey in payloadSubkeys {
@@ -46,6 +53,31 @@ class PayloadCellViews {
         //}
         
         return cellViews
+    }
+    
+    // FIXME: Again, should just sublcass and do most of the work on a single class here
+    
+    func cellView(applicationSubkey: PayloadApplicationSubkey) -> NSTableCellView? {
+        
+        // FIXME: Currently just ignore the static payload keys that normally aren't changed.
+        //        This should be added as a setting
+        if manifestSubkeysIgnored.contains(applicationSubkey.key) { return nil }
+        
+        switch applicationSubkey.type {
+        case .array:
+            return PayloadCellViewTableView(subkey: applicationSubkey, settings: Dictionary<String, Any>())
+        case .string:
+            return PayloadCellViewTextField(subkey: applicationSubkey, settings: Dictionary<String, Any>())
+        case .bool:
+            return PayloadCellViewCheckbox(subkey: applicationSubkey, settings: Dictionary<String, Any>())
+        case .integer:
+            return PayloadCellViewTextFieldNumber(subkey: applicationSubkey, settings: Dictionary<String, Any>())
+        case .data:
+            return PayloadCellViewFile(subkey: applicationSubkey, settings: Dictionary<String, Any>())
+        default:
+            Swift.print("FIXME: Unknown Manifest Type: \(applicationSubkey.type)")
+        }
+        return nil
     }
     
     func cellView(collectionSubkey: PayloadCollectionSubkey) -> NSTableCellView? {
