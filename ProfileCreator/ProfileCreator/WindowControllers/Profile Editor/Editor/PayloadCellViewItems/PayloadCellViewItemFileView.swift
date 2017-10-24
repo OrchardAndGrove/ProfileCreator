@@ -341,7 +341,7 @@ class FileView: NSView {
     override func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
         if sender.draggingPasteboard().pasteboardItems?.count == 1 && self .containsAcceptedURL(pasteboard: sender.draggingPasteboard()) {
             if let urls = sender.draggingPasteboard().readObjects(forClasses: [NSURL.self], options: nil) {
-                Swift.print("URLS: \(urls)")
+                Swift.print("Class: \(self.self), Function: \(#function), URLS: \(urls)")
             }
             return true
         }

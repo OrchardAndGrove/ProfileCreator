@@ -311,7 +311,7 @@ extension PayloadLibraryTableViews: NSTableViewDataSource {
                 return true
             } catch {
                 // TODO: Proper Logging
-                Swift.print("Could not decode dropped items")
+                Swift.print("Class: \(self.self), Function: \(#function), Could not decode dropped items")
             }
         }
         return false
@@ -375,13 +375,13 @@ extension PayloadLibraryTableViews: NSDraggingSource {
 // -----------------------------------------------------------------------------
 extension PayloadLibraryTableViews: NSDraggingDestination {
     func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
-        Swift.print("draggingEntered")
+        Swift.print("Class: \(self.self), Function: \(#function), draggingEntered")
         // FIXME - Here forcing a focus ring would fit, haven't looked into how to yet.
         return NSDragOperation.copy
     }
     
     func prepareForDragOperation(_ sender: NSDraggingInfo) -> Bool {
-        Swift.print("prepareForDragOperation")
+        Swift.print("Class: \(self.self), Function: \(#function), prepareForDragOperation")
         return true
     }
     
@@ -392,7 +392,7 @@ extension PayloadLibraryTableViews: NSDraggingDestination {
                 self.move(payloadPlaceholders: payloadPlaceholders, from: TableViewTag.profilePayloads, to: TableViewTag.libraryPayloads)
             } catch {
                 // TODO: Proper Logging
-                Swift.print("Could not decode dropped items")
+                Swift.print("Class: \(self.self), Function: \(#function), Could not decode dropped items")
             }
         }
         return false

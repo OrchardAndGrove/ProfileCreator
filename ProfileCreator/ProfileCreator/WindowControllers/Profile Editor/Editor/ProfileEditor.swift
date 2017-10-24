@@ -101,7 +101,7 @@ class ProfileEditor: NSObject {
     func select(payloadPlaceholder: PayloadPlaceholder) {
         if self.selectedPayloadPlaceholder != payloadPlaceholder {
             self.selectedPayloadPlaceholder = payloadPlaceholder
-            Swift.print("Selecting this placeholder in the editor: \(payloadPlaceholder.title)")
+            Swift.print("Class: \(self.self), Function: \(#function), Selecting this placeholder in the editor: \(payloadPlaceholder.title)")
             
             // FIXME: Apply current settings here (like hidden)
             self.cellViews = payloadCellViews.cellViews(payloadPlaceholder: payloadPlaceholder)
@@ -122,8 +122,6 @@ class ProfileEditor: NSObject {
             if payloadCellView.leadingKeyView != nil {
                 if let previous = previousCellView {
                     previous.trailingKeyView!.nextKeyView = payloadCellView.leadingKeyView
-                    
-                    // Swift.print("nextKeyView: \(String(describing: previous.trailingKeyView!.nextKeyView))")
                 } else {
                     firstCellView = payloadCellView
                 }
@@ -132,7 +130,6 @@ class ProfileEditor: NSObject {
                 if self.cellViews.count == index + 1  {
                     tableView.nextKeyView = firstCellView?.leadingKeyView
                     payloadCellView.trailingKeyView!.nextKeyView = tableView
-                    // Swift.print("previousCellView.trailingKeyView!.nextKeyView: \(String(describing: payloadCellView.trailingKeyView!.nextKeyView))")
                 }
             }
         }

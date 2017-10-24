@@ -90,7 +90,7 @@ class PayloadCellViewPopUpButton: NSTableCellView, ProfileCreatorCellView, Paylo
     // MARK: PopUpButton Functions
     
     func selected(_ popUpButton: NSPopUpButton) {
-        Swift.print("selected: \(String(describing: popUpButton.titleOfSelectedItem))")
+        Swift.print("Class: \(self.self), Function: \(#function), selected: \(String(describing: popUpButton.titleOfSelectedItem))")
     }
     
     // MARK: -

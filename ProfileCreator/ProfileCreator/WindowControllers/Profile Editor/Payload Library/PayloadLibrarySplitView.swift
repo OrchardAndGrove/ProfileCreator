@@ -135,7 +135,7 @@ class PayloadLibrarySplitView: NSSplitView {
         
         guard let editorSplitView = self.superview?.superview as? ProfileEditorSplitView else {
             // TODO: Proper Logging
-            Swift.print("Could not get ProfileEditorSplitView from: \(String(describing: self.superview))")
+            Swift.print("Class: \(self.self), Function: \(#function), Could not get ProfileEditorSplitView from: \(String(describing: self.superview))")
             return
         }
         

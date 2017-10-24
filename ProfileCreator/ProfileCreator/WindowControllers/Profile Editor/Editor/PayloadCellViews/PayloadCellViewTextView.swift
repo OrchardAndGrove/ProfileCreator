@@ -138,17 +138,16 @@ class PayloadCellViewTextView: NSTableCellView, ProfileCreatorCellView, PayloadC
 extension PayloadCellViewTextView: NSTextViewDelegate {
     
     func textDidChange(_ notification: Notification) {
-        Swift.print("textDidChange: \(notification)")
+        Swift.print("Class: \(self.self), Function: \(#function), textDidChange: \(notification)")
     }
     
     func textDidEndEditing(_ notification: Notification) {
-        Swift.print("textDidEndEditing: \(notification)")
+        Swift.print("Class: \(self.self), Function: \(#function), textDidEndEditing: \(notification)")
     }
     
     /*
     func textView(_ textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
         if commandSelector == #selector(insertTab(_:)) {
-            Swift.print("textView.window: \(textView.window)")
             textView.window?.selectNextKeyView(nil)
             return true
         }

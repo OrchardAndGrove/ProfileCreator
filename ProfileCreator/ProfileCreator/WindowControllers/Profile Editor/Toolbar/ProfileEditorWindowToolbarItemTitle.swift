@@ -111,7 +111,7 @@ class ProfileEditorWindowToolbarItemTitle: NSView {
     // MARK: Notification Functions
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        Swift.print("observeValueforKeyPath: \(String(describing: keyPath))")
+        Swift.print("Class: \(self.self), Function: \(#function), observeValueforKeyPath: \(String(describing: keyPath))")
     }
     
     // MARK: -

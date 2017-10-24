@@ -89,7 +89,7 @@ class PayloadCellViewDatePicker: NSTableCellView, ProfileCreatorCellView, Payloa
     // MARK: DatePicker Actions
     
     internal func selectDate(_ datePicker: NSDatePicker) {
-        Swift.print("selectDate: \(datePicker)")
+        Swift.print("Class: \(self.self), Function: \(#function), selectDate: \(datePicker)")
     }
     
     // MARK: -

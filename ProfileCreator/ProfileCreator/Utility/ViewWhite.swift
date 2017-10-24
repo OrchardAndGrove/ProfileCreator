@@ -64,12 +64,12 @@ class ViewWhite: NSView {
 extension ViewWhite {
     
     override var acceptsFirstResponder: Bool {
-        Swift.print("acceptsFirstResponder")
+        Swift.print("Class: \(self.self), Function: \(#function), acceptsFirstResponder")
         return true
     }
     
     override func drawFocusRingMask() {
-        Swift.print("drawFocusRingMask")
+        Swift.print("Class: \(self.self), Function: \(#function), drawFocusRingMask")
         return __NSRectFill( self.bounds )
     }
     

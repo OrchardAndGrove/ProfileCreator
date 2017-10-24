@@ -66,7 +66,7 @@ class MainWindowLibrary: NSObject, OutlineViewParentItem, NSTextFieldDelegate {
         do {
             groupURLs = try FileManager.default.contentsOfDirectory(at: groupFolderURL, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
         } catch {
-            print("Function: \(#function), Error: \(error)")
+            Swift.print("Class: \(self.self), Function: \(#function), Error: \(error)")
             return
         }
         
@@ -102,7 +102,7 @@ class MainWindowLibrary: NSObject, OutlineViewParentItem, NSTextFieldDelegate {
                     }
                 }
             } catch {
-                print("Function: \(#function), Error: \(error)")
+                Swift.print("Class: \(self.self), Function: \(#function), Error: \(error)")
             }
         }
     }
@@ -120,7 +120,7 @@ class MainWindowLibrary: NSObject, OutlineViewParentItem, NSTextFieldDelegate {
             self.children.append(group)
             NotificationCenter.default.post(name: .didAddGroup, object: self, userInfo: [SettingsKey.group : group])
         } else {
-            Swift.print("error: \(String(describing: error))")
+            Swift.print("Class: \(self.self), Function: \(#function), Error: \(String(describing: error))")
         }
     }
     
@@ -278,7 +278,7 @@ class MainWindowLibraryGroup: NSObject, OutlineViewChildItem {
                     profileIdentifierStrings.append(identifier.uuidString)
                 }
             } else {
-                Swift.print("No profile found with identifier: \(identifier)")
+                Swift.print("Class: \(self.self), Function: \(#function), No profile found with identifier: \(identifier)")
             }
         }
         
@@ -339,7 +339,7 @@ class MainWindowLibraryGroup: NSObject, OutlineViewChildItem {
         let (success, error) = writeToDisk(title: self.title)
         if !success {
             // TODO: Proper logging
-            Swift.print("error: \(String(describing: error))")
+            Swift.print("Class: \(self.self), Function: \(#function), Error: \(String(describing: error))")
         }
     }
     
@@ -367,7 +367,7 @@ class MainWindowLibraryGroup: NSObject, OutlineViewChildItem {
             let (success, error) = writeToDisk(title: self.title)
             if !success {
                 // TODO: Proper logging
-                Swift.print("error: \(String(describing: error))")
+                Swift.print("Class: \(self.self), Function: \(#function), Error: \(String(describing: error))")
             }
             
             // -----------------------------------------------------------------
@@ -407,7 +407,7 @@ class MainWindowLibraryGroup: NSObject, OutlineViewChildItem {
             let (success, error) = writeToDisk(title: self.title)
             if !success {
                 // TODO: Proper logging
-                Swift.print("error: \(String(describing: error))")
+                Swift.print("Class: \(self.self), Function: \(#function), Error: \(String(describing: error))")
             }
             
             // -----------------------------------------------------------------
@@ -462,7 +462,7 @@ class MainWindowLibraryGroup: NSObject, OutlineViewChildItem {
                 self.title = string
             } else {
                 // TODO: Proper logging
-                Swift.print("error: \(String(describing: error))")
+                Swift.print("Class: \(self.self), Function: \(#function), Error: \(String(describing: error))")
             }
         }
         self.isEditing = false

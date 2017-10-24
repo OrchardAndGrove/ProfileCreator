@@ -76,6 +76,6 @@ class PayloadLibraryCellViewLibrary: NSTableCellView, PayloadLibraryCellView {
     }
     
     func togglePayload(_ button: NSButton?) {
-        Swift.print("toggle: \(String(describing: button))")
+        Swift.print("Class: \(self.self), Function: \(#function), togglePayload: \(String(describing: button))")
     }
 }

@@ -86,7 +86,7 @@ class ProfileController: NSDocumentController {
                     NotificationCenter.default.post(name: .didRemoveProfiles, object: self, userInfo: [NotificationKey.identifiers: [ identifier ],
                                                                                                        NotificationKey.indexSet : IndexSet()])
                 } else {
-                    print("Function: \(#function), Error: \(String(describing: error))")
+                    Swift.print("Class: \(self.self), Function: \(#function), Error: \(String(describing: error))")
                 }
             }
         }
@@ -105,12 +105,12 @@ class ProfileController: NSDocumentController {
                 NotificationCenter.default.post(name: .didAddProfile, object: self, userInfo: [NotificationKey.identifier : profile.identifier])
             }
         } catch {
-            Swift.print("ERROR")
+            Swift.print("Class: \(self.self), Function: \(#function), UnknownError")
         }
     }
     
     @objc func removeProfile(_ notification: Notification?) {
-        Swift.print("removeProfile: \(String(describing: notification))")
+        Swift.print("Class: \(self.self), Function: \(#function), removeProfile: \(String(describing: notification))")
     }
     
     // MARK: -
@@ -139,7 +139,7 @@ class ProfileController: NSDocumentController {
                 // -------------------------------------------------------------
                 removedIdentifiers.append(identifier)
             } else {
-                print("Function: \(#function), Error: \(String(describing: error))")
+                Swift.print("Class: \(self.self), Function: \(#function), Error: \(String(describing: error))")
             }
         }
         
@@ -209,7 +209,7 @@ class ProfileController: NSDocumentController {
         do {
             profileURLs = try FileManager.default.contentsOfDirectory(at: profileFolderURL, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
         } catch {
-            print("Function: \(#function), Error: \(error)")
+            Swift.print("Class: \(self.self), Function: \(#function), Error: \(error)")
             return
         }
         
@@ -236,7 +236,7 @@ class ProfileController: NSDocumentController {
                 guard let profile = document as? Profile, !self.profiles.contains(where: { $0.identifier == profile.identifier }) else {
                     
                     // TODO: Proper logging
-                    Swift.print("A Profile with the identifier: xxx already exist!")
+                    Swift.print("Class: \(self.self), Function: \(#function), A Profile with the identifier: \((document as? Profile)?.identifier) already exist!")
                     return
                 }
                 self.profiles.insert(profile)
@@ -246,7 +246,7 @@ class ProfileController: NSDocumentController {
                 // -------------------------------------------------------------
                 NotificationCenter.default.post(name: .didAddProfile, object: self, userInfo: [NotificationKey.identifier : profile.identifier])
             } catch {
-                print("Function: \(#function), Error: \(error)")
+                Swift.print("Class: \(self.self), Function: \(#function), Error: \(error)")
             }
         }
     }

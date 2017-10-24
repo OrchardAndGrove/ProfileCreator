@@ -189,7 +189,7 @@ class MainWindowOutlineViewController: NSObject {
                     }
                 } else {
                     // TODO: Proper logging
-                    Swift.print("error: \(String(describing: error))")
+                    Swift.print("Class: \(self.self), Function: \(#function), Error: \(String(describing: error))")
                 }
             }
             
@@ -342,7 +342,7 @@ extension MainWindowOutlineViewController: NSOutlineViewDataSource {
             }
         } catch {
             // TODO: Proper Logging
-            Swift.print("Could not decode dropped items")
+            Swift.print("Class: \(self.self), Function: \(#function), Could not decode dropped items")
         }
         return false
     }

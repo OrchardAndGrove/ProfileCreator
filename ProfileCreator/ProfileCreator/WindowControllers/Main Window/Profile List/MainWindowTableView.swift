@@ -113,7 +113,7 @@ class MainWindowTableViewController: NSObject, MainWindowOutlineViewSelectionDel
             profile.edit()
         } else {
             // TODO: Proper logging
-            Swift.print("Found no identifier!")
+            Swift.print("Class: \(self.self), Function: \(#function), Found no identifier!")
         }
     }
     
@@ -142,7 +142,7 @@ class MainWindowTableViewController: NSObject, MainWindowOutlineViewSelectionDel
     }
     
     @objc func exportProfile(_ notification: NSNotification?) {
-        Swift.print("exportProfile")
+        Swift.print("Class: \(self.self), Function: \(#function), exportProfile")
     }
     
     @objc func didSaveProfile(_ notification: NSNotification?) {
@@ -285,7 +285,7 @@ extension MainWindowTableViewController: NSTableViewDataSource {
                 draggingInfo.numberOfValidItemsForDrop = profileIdentifiers.count
             } catch {
                 // TODO: Proper Logging
-                Swift.print("Could not decode dropped items")
+                Swift.print("Class: \(self.self), Function: \(#function), Could not decode dropped items")
             }
         }
     }
@@ -329,7 +329,7 @@ extension MainWindowTableViewController: NSTableViewDataSource {
                 reloadTableView()
             } catch {
                 // TODO: Proper Logging
-                Swift.print("Could not decode dropped items")
+                Swift.print("Class: \(self.self), Function: \(#function), Could not decode dropped items")
             }
         }
     }
@@ -425,7 +425,6 @@ class MainWindowTableView: NSTableView {
          
          if let clickedView = self.rowView(atRow: self.clickedProfileRow, makeIfNecessary: false) {
          clickedView.focusRingType = .exterior
-         Swift.print("clickedView: \(clickedView)")
          }
          */
         

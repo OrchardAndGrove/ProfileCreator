@@ -108,7 +108,7 @@ class PayloadCellViewFile: NSTableCellView, ProfileCreatorCellView, PayloadCellV
     // MARK: Button Actions
     
     @objc private func selectFile(_ button: NSButton) {
-        Swift.print("selectFile: \(button)")
+        Swift.print("Class: \(self.self), Function: \(#function), selectFile: \(button)")
         
         // ---------------------------------------------------------------------
         //  Get open dialog allowed file types
@@ -133,7 +133,7 @@ class PayloadCellViewFile: NSTableCellView, ProfileCreatorCellView, PayloadCellV
         if let window = button.window {
             openPanel.beginSheetModal(for: window) { (response) in
                 if response == .OK {
-                    Swift.print("Add Files To Settings: \(String(describing: openPanel.urls.first))")
+                    Swift.print("Class: \(self.self), Function: \(#function), Add Files To Settings: \(String(describing: openPanel.urls.first))")
                 }
             }
         }

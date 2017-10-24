@@ -191,7 +191,7 @@ class MainWindowToolbarItemExportButton: NSButton {
     }
     
     @objc func exportProfile(menuItem: NSMenuItem?) {
-        Swift.print("Export Profile: \(String(describing: menuItem))")
+        Swift.print("Class: \(self.self), Function: \(#function), Export Profile: \(String(describing: menuItem))")
     }
     
     // MARK: -

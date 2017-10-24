@@ -274,9 +274,7 @@ extension NSSplitView {
     func restoreAutoSavePositions() {
         
         let key = String(format: "NSSplitView Subview Frames %@", self.autosaveName! as CVarArg)
-        Swift.print("key: \(key)")
         let subViewFrames = UserDefaults.standard.array(forKey: key)
-        Swift.print("subViewFrames: \(String(describing: subViewFrames))")
         guard subViewFrames != nil else { return }
         
         for (i, frame) in (subViewFrames?.enumerated())! {
@@ -290,29 +288,23 @@ extension NSSplitView {
                 
                 // Manage the 'hidden state' per view
                 let hidden = NSString(string:components[4].lowercased()).boolValue
-                Swift.print("hidden: \(hidden)")
                 let subView = self.subviews[i]
                 //subView.isHidden = hidden
                 
                 // Set height (horizontal) or width (vertical)
                 if self.isVertical {
-                    Swift.print("vert")
-                    Swift.print("components[2]: \(components[2])")
                     if let width = Float(components[2]) {
-                        Swift.print("width: \(width)")
-                        Swift.print("subView.frame.size.height: \(subView.frame.size.height)")
                         position = position + CGFloat(width)
                         //subView.setFrameSize(NSSize.init(width: position, height: subView.frame.size.height))
                     }
                 } else {
                     if let height = Float(components[3]) {
-                        Swift.print("height: \(height)")
                         position = CGFloat(height)
                         //subView.setFrameSize(NSSize.init(width: subView.frame.size.width , height:position ))
                     }
                 }
                 
-                Swift.print("Set position: \(position) of divider: \(i)")
+                Swift.print("Class: \(self.self), Function: \(#function), Set position: \(position) of divider: \(i)")
                 setPosition(position, ofDividerAt: i)
             }
         }

@@ -94,7 +94,7 @@ class PayloadCellViewCheckbox: NSTableCellView, ProfileCreatorCellView, PayloadC
     // MARK: CheckboxCellView Functions
     
     func clicked(_ checkbox: NSButton) {
-        Swift.print("Checkbox Pressed!")
+        Swift.print("Class: \(self.self), Function: \(#function), Checkbox Pressed!")
     }
     
     // MARK: -

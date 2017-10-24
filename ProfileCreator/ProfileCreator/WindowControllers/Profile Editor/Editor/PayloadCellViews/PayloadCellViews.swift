@@ -42,7 +42,7 @@ class PayloadCellViews {
                 }
                 break
             case .preference:
-                Swift.print("Preferences")
+                Swift.print("Class: \(self.self), Function: \(#function), Preferences")
                 break
             }
         }
@@ -75,13 +75,13 @@ class PayloadCellViews {
         case .data:
             return PayloadCellViewFile(subkey: applicationSubkey, settings: Dictionary<String, Any>())
         default:
-            Swift.print("FIXME: Unknown Manifest Type: \(applicationSubkey.type)")
+            Swift.print("Class: \(self.self), Function: \(#function), Unknown Manifest Type: \(applicationSubkey.type)")
         }
         return nil
     }
     
     func cellView(collectionSubkey: PayloadCollectionSubkey) -> NSTableCellView? {
-        Swift.print("Adding PayloadCollectionSubkey: \(collectionSubkey)")
+        Swift.print("Class: \(self.self), Function: \(#function), Adding PayloadCollectionSubkey: \(collectionSubkey)")
         return nil
     }
     
@@ -103,7 +103,7 @@ class PayloadCellViews {
         case .data:
             return PayloadCellViewFile(subkey: manifestSubkey, settings: Dictionary<String, Any>())
         default:
-            Swift.print("FIXME: Unknown Manifest Type: \(manifestSubkey.type)")
+            Swift.print("Class: \(self.self), Function: \(#function), Unknown Manifest Type: \(manifestSubkey.type)")
         }
         return nil
     }

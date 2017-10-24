@@ -19,7 +19,7 @@ func applicationFolder(_ folder: Folder) -> URL? {
             let userApplicationSupport = try FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
             return userApplicationSupport.appendingPathComponent("ProfileCreator", isDirectory: true)
         } catch {
-            print("Function: \(#function), Error: \(error)")
+            Swift.print("Function: \(#function), Error: \(error)")
         }
         break
     case Folder.profiles:

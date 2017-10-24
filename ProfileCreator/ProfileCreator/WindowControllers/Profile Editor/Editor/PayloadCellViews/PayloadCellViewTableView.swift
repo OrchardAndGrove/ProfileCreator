@@ -129,7 +129,7 @@ class PayloadCellViewTableView: NSTableCellView, ProfileCreatorCellView, Payload
             if tableViewColumn.type == .string {
                 newRow[tableViewColumn.key] = tableViewColumn.valueDefault ?? ""
             } else {
-                Swift.print("\(#function) - Unknown tableViewColumn.type: \(tableViewColumn.type)")
+                Swift.print("Class: \(self.self), Function: \(#function), Unknown tableViewColumn.type: \(tableViewColumn.type)")
             }
         }
         
@@ -180,11 +180,11 @@ class PayloadCellViewTableView: NSTableCellView, ProfileCreatorCellView, Payload
                     self.tableView?.headerView = nil
                 }
             } else {
-                Swift.print("Type is: \(tableViewSubkey.type), need to implement this!")
+                Swift.print("Class: \(self.self), Function: \(#function), Type is: \(tableViewSubkey.type), need to implement this!")
             }
         } else {
-            Swift.print("Subkey count is: \(subkey.subkeys.count)")
-            Swift.print("Unsure how to handle this, please investigate")
+            Swift.print("Class: \(self.self), Function: \(#function), Subkey count is: \(subkey.subkeys.count)")
+            Swift.print("Class: \(self.self), Function: \(#function), Unsure how to handle this, please investigate")
         }
     }
     
@@ -204,10 +204,10 @@ class PayloadCellViewTableView: NSTableCellView, ProfileCreatorCellView, Payload
                 return
         }
         
-        Swift.print("controlTextDidChange: \(string)")
-        Swift.print("textField: \(textField)")
-        Swift.print("row: \(textField.tag)")
-        Swift.print("key: \(String(describing: textField.identifier?.rawValue))")
+        Swift.print("Class: \(self.self), Function: \(#function), controlTextDidChange: \(string)")
+        Swift.print("Class: \(self.self), Function: \(#function), textField: \(textField)")
+        Swift.print("Class: \(self.self), Function: \(#function), row: \(textField.tag)")
+        Swift.print("Class: \(self.self), Function: \(#function), key: \(String(describing: textField.identifier?.rawValue))")
     }
     
     // MARK: -
@@ -268,9 +268,7 @@ extension PayloadCellViewTableView: NSTableViewDelegate {
     
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         if let tableViewColumn = self.tableViewColumns.first(where: {$0.key == tableColumn?.title}) {
-            // FIXME: Testing Print
-            // Swift.print("tableViewColumnvalueDefault: \(String(describing: tableViewColumn.valueDefault))")
-            Swift.print("\(#function) - Checking tableViewColumn.type: \(tableViewColumn.type)")
+            Swift.print("Class: \(self.self), Function: \(#function), Checking tableViewColumn.type: \(tableViewColumn.type)")
             if tableViewColumn.type == .string {
                 return EditorTableViewCellViewTextField(cellView: self, key: tableViewColumn.key, stringValue: "Test", placeholderString: "Placeholder", row: row)
             } else if tableViewColumn.type == .bool {
@@ -280,10 +278,10 @@ extension PayloadCellViewTableView: NSTableViewDelegate {
             } else if tableViewColumn.type == .integer {
                 return EditorTableViewCellViewTextFieldNumber(cellView: self, key: tableViewColumn.key, value: NSNumber(value: 1), placeholderValue: NSNumber(value: 10), type: tableViewColumn.type, row: row)
             } else {
-                Swift.print("\(#function) - Unknown tableViewColumn.type: \(tableViewColumn.type)")
+                Swift.print("Class: \(self.self), Function: \(#function), Unknown tableViewColumn.type: \(tableViewColumn.type)")
             }
         } else {
-            Swift.print("\(#function) - Found no table view column matching title: \(String(describing: tableColumn?.title))")
+            Swift.print("Class: \(self.self), Function: \(#function), Found no table view column matching title: \(String(describing: tableColumn?.title))")
         }
         return nil
     }

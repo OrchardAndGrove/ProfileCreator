@@ -48,7 +48,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // ---------------------------------------------------------------------
         guard let defaultSettingsURL = Bundle.main.url(forResource: "Defaults", withExtension: "plist") else {
             // TODO: Proper logging
-            print("No Defaults file found!")
+            Swift.print("Class: \(self.self), Function: \(#function), No Defaults file found!")
             return
         }
         

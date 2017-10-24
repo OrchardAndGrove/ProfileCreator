@@ -85,9 +85,9 @@ public class Profile: NSDocument {
             
             // TODO: Proper Logging
             if saveError != nil {
-                Swift.print("Save Successful!")
+                Swift.print("Class: \(self.self), Function: \(#function), Save Successful!")
             } else {
-                Swift.print("Function: \(#function), Error: \(String(describing: saveError))")
+                Swift.print("Class: \(self.self), Function: \(#function), Error: \(String(describing: saveError))")
             }
         }
     }
@@ -100,7 +100,6 @@ public class Profile: NSDocument {
         }
         
         if let profileDict = self.saveDict() {
-            // Swift.print("profileDict: \(profileDict)")
             do {
                 let profileData = try PropertyListSerialization.data(fromPropertyList: profileDict, format: .xml, options: 0)
                 return profileData
@@ -121,7 +120,6 @@ public class Profile: NSDocument {
         
         do {
             if let profileDict = try PropertyListSerialization.propertyList(from: data, options: [], format: nil) as? [String : Any] {
-                // Swift.print("profileDict: \(profileDict)")
                 guard let identifierString = profileDict[SettingsKey.identifier] as? String,
                     let identifier = UUID(uuidString: identifierString) else {
                         // TODO: Proper Error
