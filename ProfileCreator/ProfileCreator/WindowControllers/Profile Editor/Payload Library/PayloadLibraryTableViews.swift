@@ -95,7 +95,6 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
             self.selectedLibraryTag = tag
             
             self.libraryPayloads = self.placeholders(tag: tag) ?? [PayloadPlaceholder]()
-            
             // FIXME: Here remove all items that already exist in profilePayloads, probably with a filter.
             
             if let librarySplitView = self.librarySplitView {

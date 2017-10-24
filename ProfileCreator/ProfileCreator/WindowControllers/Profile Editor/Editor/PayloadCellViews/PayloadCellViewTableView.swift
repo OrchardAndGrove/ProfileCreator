@@ -106,7 +106,6 @@ class PayloadCellViewTableView: NSTableCellView, ProfileCreatorCellView, Payload
     // MARK: Button Actions
     
     @objc private func clicked(_ segmentedControl: NSSegmentedControl) {
-        
         if segmentedControl.selectedSegment == 0 { // Add
             self.addRow()
         } else if segmentedControl.selectedSegment == 1 { // Remove
@@ -219,7 +218,7 @@ class PayloadCellViewTableView: NSTableCellView, ProfileCreatorCellView, Payload
         guard let scrollView = self.scrollView else { return }
         
         self.buttonAddRemove.translatesAutoresizingMaskIntoConstraints = false
-        self.buttonAddRemove.segmentStyle = .smallSquare
+        self.buttonAddRemove.segmentStyle = .roundRect
         self.buttonAddRemove.segmentCount = 2
         self.buttonAddRemove.trackingMode = .momentary
         self.buttonAddRemove.setImage(NSImage(named: .addTemplate), forSegment: 0)
@@ -237,7 +236,7 @@ class PayloadCellViewTableView: NSTableCellView, ProfileCreatorCellView, Payload
                                               toItem: scrollView,
                                               attribute: .bottom,
                                               multiplier: 1.0,
-                                              constant: -1.0))
+                                              constant: 8.0))
         
         self.updateHeight((8 + self.buttonAddRemove.intrinsicContentSize.height))
         
