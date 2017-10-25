@@ -146,7 +146,8 @@ public class Profile: NSDocument {
     // MARK: Public Functions
     
     public func defaultPayloadSettings() -> Dictionary<String, Any> {
-        var payloadSettings = Dictionary<String, Any>()
+        let payloadSettings = Dictionary<String, Any>()
+        // Here Read from the preferences
         return payloadSettings
     }
     

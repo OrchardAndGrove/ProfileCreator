@@ -55,56 +55,49 @@ class PayloadCellViews {
         return cellViews
     }
     
-    // FIXME: Again, should just sublcass and do most of the work on a single class here
-    
-    func cellView(applicationSubkey: PayloadApplicationSubkey) -> NSTableCellView? {
+    func cellView(subkey: PayloadSourceSubkey) -> NSTableCellView? {
         
         // FIXME: Currently just ignore the static payload keys that normally aren't changed.
         //        This should be added as a setting
-        if manifestSubkeysIgnored.contains(applicationSubkey.key) { return nil }
+        if manifestSubkeysIgnored.contains(subkey.key) { return nil }
         
-        switch applicationSubkey.type {
+        // If both range min and max are specified, and the range isn't more that 19, then use a popUpButton instead
+        Swift.print("rangeList: \(subkey.rangeList)")
+        if let rangeList = subkey.rangeList, rangeList.count <= 20 {
+            return PayloadCellViewPopUpButton(subkey: subkey, settings: Dictionary<String, Any>())
+        }
+        
+        switch subkey.type {
         case .array:
-            return PayloadCellViewTableView(subkey: applicationSubkey, settings: Dictionary<String, Any>())
+            return PayloadCellViewTableView(subkey: subkey, settings: Dictionary<String, Any>())
         case .string:
-            return PayloadCellViewTextField(subkey: applicationSubkey, settings: Dictionary<String, Any>())
+            return PayloadCellViewTextField(subkey: subkey, settings: Dictionary<String, Any>())
         case .bool:
-            return PayloadCellViewCheckbox(subkey: applicationSubkey, settings: Dictionary<String, Any>())
+            return PayloadCellViewCheckbox(subkey: subkey, settings: Dictionary<String, Any>())
         case .integer:
-            return PayloadCellViewTextFieldNumber(subkey: applicationSubkey, settings: Dictionary<String, Any>())
+            return PayloadCellViewTextFieldNumber(subkey: subkey, settings: Dictionary<String, Any>())
         case .data:
-            return PayloadCellViewFile(subkey: applicationSubkey, settings: Dictionary<String, Any>())
+            return PayloadCellViewFile(subkey: subkey, settings: Dictionary<String, Any>())
         default:
-            Swift.print("Class: \(self.self), Function: \(#function), Unknown Manifest Type: \(applicationSubkey.type)")
+            Swift.print("Class: \(self.self), Function: \(#function), Unknown Manifest Type: \(subkey.type)")
         }
         return nil
+    }
+    
+    // FIXME: Create overrides that catch specific scenarios, should be called
+    
+    func cellView(applicationSubkey: PayloadApplicationSubkey) -> NSTableCellView? {
+        //Swift.print("Class: \(self.self), Function: \(#function), Adding PayloadCollectionSubkey: \(applicationSubkey)")
+        return self.cellView(subkey: applicationSubkey)
     }
     
     func cellView(collectionSubkey: PayloadCollectionSubkey) -> NSTableCellView? {
-        Swift.print("Class: \(self.self), Function: \(#function), Adding PayloadCollectionSubkey: \(collectionSubkey)")
-        return nil
+        //Swift.print("Class: \(self.self), Function: \(#function), Adding PayloadCollectionSubkey: \(collectionSubkey)")
+        return self.cellView(subkey: collectionSubkey)
     }
     
     func cellView(manifestSubkey: PayloadManifestSubkey) -> NSTableCellView? {
-        
-        // FIXME: Currently just ignore the static payload keys that normally aren't changed.
-        //        This should be added as a setting
-        if manifestSubkeysIgnored.contains(manifestSubkey.key) { return nil }
-        
-        switch manifestSubkey.type {
-        case .array:
-            return PayloadCellViewTableView(subkey: manifestSubkey, settings: Dictionary<String, Any>())
-        case .string:
-            return PayloadCellViewTextField(subkey: manifestSubkey, settings: Dictionary<String, Any>())
-        case .bool:
-            return PayloadCellViewCheckbox(subkey: manifestSubkey, settings: Dictionary<String, Any>())
-        case .integer:
-            return PayloadCellViewTextFieldNumber(subkey: manifestSubkey, settings: Dictionary<String, Any>())
-        case .data:
-            return PayloadCellViewFile(subkey: manifestSubkey, settings: Dictionary<String, Any>())
-        default:
-            Swift.print("Class: \(self.self), Function: \(#function), Unknown Manifest Type: \(manifestSubkey.type)")
-        }
-        return nil
+        //Swift.print("Class: \(self.self), Function: \(#function), Adding PayloadCollectionSubkey: \(manifestSubkey)")
+        return self.cellView(subkey: manifestSubkey)
     }
 }

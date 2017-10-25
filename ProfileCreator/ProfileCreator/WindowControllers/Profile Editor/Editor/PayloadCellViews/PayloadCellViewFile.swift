@@ -113,8 +113,8 @@ class PayloadCellViewFile: NSTableCellView, ProfileCreatorCellView, PayloadCellV
         // ---------------------------------------------------------------------
         //  Get open dialog allowed file types
         // ---------------------------------------------------------------------
-        // FIXME: Read these from the current settings
-        var allowedFileTypes = [String]()
+        // FIXME: Read these from the collection manifest
+        let allowedFileTypes = [String]()
         
         // ---------------------------------------------------------------------
         //  Setup open dialog

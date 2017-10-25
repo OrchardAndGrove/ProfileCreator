@@ -124,7 +124,7 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         // ---------------------------------------------------------------------
         //  Set whether to enable or disable the payload
         // ---------------------------------------------------------------------
-        let enable: Bool
+        var enable: Bool = false
         if to == TableViewTag.libraryPayloads {
             enable = false
         } else if to == TableViewTag.profilePayloads {
@@ -145,6 +145,7 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         }
         
         // FIXME: UPDATE ENABLED STATE ON PLACEHOLDER/SETTINGS
+        Swift.print("Class: \(self.self), Function: \(#function), Enable: \(enable)")
         
         // ---------------------------------------------------------------------
         //  Check if library payloads is empty, then show "No Payloads" view

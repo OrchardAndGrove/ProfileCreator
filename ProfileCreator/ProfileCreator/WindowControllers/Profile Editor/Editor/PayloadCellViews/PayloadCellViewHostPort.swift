@@ -64,7 +64,7 @@ class PayloadCellViewHostPort: NSTableCellView, ProfileCreatorCellView, PayloadC
         setupTextField(host: self.textFieldHost!, constraints: &constraints)
         self.textFieldPort = EditorTextField.input(defaultString: "", placeholderString: "Port", constraints: &constraints, cellView: self)
         setupTextField(port: self.textFieldPort!, constraints: &constraints)
-        _ = EditorTextField.label(string: ":", fontWeight: NSFont.Weight.regular, leadingItem: self.textFieldHost!, trailingItem: self.textFieldPort!, constraints: &constraints, cellView: self)
+        _ = EditorTextField.label(string: ":", fontWeight: NSFont.Weight.regular, leadingItem: self.textFieldHost!, leadingConstant: nil, trailingItem: self.textFieldPort!, constraints: &constraints, cellView: self)
         
         // ---------------------------------------------------------------------
         //  Setup Constraints

@@ -122,6 +122,7 @@ class EditorTextField {
     class func label(string: String?,
                      fontWeight: NSFont.Weight?,
                      leadingItem: NSView?,
+                     leadingConstant: CGFloat?,
                      trailingItem: NSView?,
                      constraints: inout [NSLayoutConstraint],
                      cellView: ProfileCreatorCellView) -> NSTextField {
@@ -153,11 +154,11 @@ class EditorTextField {
 
         if let leadingView = leadingItem {
             
-            let leadingConstant: CGFloat
+            let leadingConstantValue: CGFloat
             if leadingView is NSPopUpButton, leadingView is NSTextField {
-                leadingConstant = 6.0
+                leadingConstantValue = 6.0
             } else {
-                leadingConstant = 2.0
+                leadingConstantValue = 2.0
             }
             
             // Leading
@@ -167,7 +168,7 @@ class EditorTextField {
                                                   toItem: leadingView,
                                                   attribute: .trailing,
                                                   multiplier: 1.0,
-                                                  constant: leadingConstant))
+                                                  constant: leadingConstant ?? leadingConstantValue))
             
             // Baseline
             constraints.append(NSLayoutConstraint(item: textField,

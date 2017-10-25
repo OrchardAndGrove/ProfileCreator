@@ -20,6 +20,7 @@ class PayloadCellViewTextFieldNumber: NSTableCellView, ProfileCreatorCellView, P
     weak var subkey: PayloadSourceSubkey?
     var textFieldTitle: NSTextField?
     var textFieldDescription: NSTextField?
+    var textFieldMinMax: NSTextField?
     var leadingKeyView: NSView?
     var trailingKeyView: NSView?
     
@@ -64,6 +65,29 @@ class PayloadCellViewTextFieldNumber: NSTableCellView, ProfileCreatorCellView, P
         // ---------------------------------------------------------------------
         self.textFieldInput = EditorTextField.input(defaultString: "", placeholderString: "", constraints: &constraints, cellView: self)
         setupTextFieldInput(constraints: &constraints)
+        
+        // If a min and/or max value is set, then show that trailing the input field
+        var rangeString = ""
+        if let rangeMin = subkey.rangeMin {
+            rangeString.append("\(String(describing: rangeMin))")
+        }
+        
+        if let rangeMax = subkey.rangeMax {
+            if rangeString.isEmpty {
+                rangeString.append("< ")
+            } else {
+                rangeString = "\(rangeString) - "
+            }
+            
+            rangeString.append("\(String(describing: rangeMax))")
+        } else if !rangeString.isEmpty {
+            rangeString.append(" <")
+        }
+        
+        if !rangeString.isEmpty {
+            self.textFieldMinMax = EditorTextField.label(string: "(\(rangeString))", fontWeight: NSFont.Weight.regular, leadingItem: self.textFieldInput, leadingConstant: 7.0, trailingItem: nil, constraints: &constraints, cellView: self)
+            setupTextFieldMinMax(constraints: &constraints)
+        }
         
         // ---------------------------------------------------------------------
         //  Set Default Value
@@ -111,14 +135,14 @@ class PayloadCellViewTextFieldNumber: NSTableCellView, ProfileCreatorCellView, P
         let numberFormatter = NumberFormatter()
         numberFormatter.numberStyle = .none
         
-        if let valueMax = self.subkey?.valueMax as? NSNumber {
-            numberFormatter.maximum = valueMax
+        if let rangeMax = self.subkey?.rangeMax as? NSNumber {
+            numberFormatter.maximum = rangeMax
         } else {
             numberFormatter.maximum = Int.max as NSNumber
         }
         
-        if let valueMin = self.subkey?.valueMin as? NSNumber {
-            numberFormatter.minimum = valueMin
+        if let rangeMin = self.subkey?.rangeMin as? NSNumber {
+            numberFormatter.minimum = rangeMin
         } else {
             numberFormatter.minimum = Int.min as NSNumber
         }
@@ -133,7 +157,7 @@ class PayloadCellViewTextFieldNumber: NSTableCellView, ProfileCreatorCellView, P
         if let valueMaxString = numberFormatter.maximum?.stringValue {
             textFieldInput.stringValue = valueMaxString
             textFieldInput.sizeToFit()
-            valueMaxWidth = NSWidth(textFieldInput.frame)
+            valueMaxWidth = NSWidth(textFieldInput.frame) + 2.0
             textFieldInput.stringValue = ""
         }
         
@@ -179,5 +203,15 @@ class PayloadCellViewTextFieldNumber: NSTableCellView, ProfileCreatorCellView, P
                                               constant: 7.0))
         
         self.updateHeight(7.0 + textFieldInput.intrinsicContentSize.height)
+    }
+    
+    private func setupTextFieldMinMax(constraints: inout [NSLayoutConstraint]) {
+        
+        // ---------------------------------------------------------------------
+        //  Add TextField to TableCellView
+        // ---------------------------------------------------------------------
+        guard let textFieldMinMax = self.textFieldMinMax else { return }
+        
+        textFieldMinMax.textColor = NSColor.secondaryLabelColor
     }
 }

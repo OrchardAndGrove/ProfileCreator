@@ -27,6 +27,7 @@ class PayloadCellViewPopUpButton: NSTableCellView, ProfileCreatorCellView, Paylo
     // MARK: Instance Variables
     
     var popUpButton: NSPopUpButton?
+    var valueDefault: Any?
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -46,7 +47,13 @@ class PayloadCellViewPopUpButton: NSTableCellView, ProfileCreatorCellView, Paylo
         // ---------------------------------------------------------------------
         //  Setup Custom View Content
         // ---------------------------------------------------------------------
-        self.popUpButton = EditorPopUpButton.withTitles(titles: ["Test1", "Test2"], constraints: &constraints, cellView: self)
+        var titles = [String]()
+        if let rangeList = subkey.rangeList {
+            for value in rangeList {
+                titles.append(String(describing: value))
+            }
+        }
+        self.popUpButton = EditorPopUpButton.withTitles(titles: titles, constraints: &constraints, cellView: self)
         setupPopUpButton(constraints: &constraints)
         
         // ---------------------------------------------------------------------
@@ -64,6 +71,17 @@ class PayloadCellViewPopUpButton: NSTableCellView, ProfileCreatorCellView, Paylo
         //  Setup Constraints
         // ---------------------------------------------------------------------
         addConstraintsFor(item: self.popUpButton!, orientation: .below, constraints: &constraints, cellView: self)
+        
+        // ---------------------------------------------------------------------
+        //  Set Default Value
+        // ---------------------------------------------------------------------
+        if let valueDefault = subkey.valueDefault {
+            self.valueDefault = valueDefault
+            let valueTitle = String(describing: valueDefault)
+            if self.popUpButton!.itemTitles.contains(valueTitle) {
+                self.popUpButton!.selectItem(withTitle: valueTitle)
+            }
+        }
         
         // ---------------------------------------------------------------------
         //  Setup KeyView Loop Items

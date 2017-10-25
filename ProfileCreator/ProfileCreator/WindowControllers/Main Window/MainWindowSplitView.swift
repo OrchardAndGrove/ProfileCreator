@@ -287,8 +287,8 @@ extension NSSplitView {
                 var position: CGFloat = 0.0
                 
                 // Manage the 'hidden state' per view
-                let hidden = NSString(string:components[4].lowercased()).boolValue
-                let subView = self.subviews[i]
+                // let hidden = NSString(string:components[4].lowercased()).boolValue
+                // let subView = self.subviews[i]
                 //subView.isHidden = hidden
                 
                 // Set height (horizontal) or width (vertical)

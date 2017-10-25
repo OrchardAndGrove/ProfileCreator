@@ -236,7 +236,7 @@ class ProfileController: NSDocumentController {
                 guard let profile = document as? Profile, !self.profiles.contains(where: { $0.identifier == profile.identifier }) else {
                     
                     // TODO: Proper logging
-                    Swift.print("Class: \(self.self), Function: \(#function), A Profile with the identifier: \((document as? Profile)?.identifier) already exist!")
+                    Swift.print("Class: \(self.self), Function: \(#function), A Profile with the identifier: \(String(describing: (document as? Profile)?.identifier)) already exist!")
                     return
                 }
                 self.profiles.insert(profile)

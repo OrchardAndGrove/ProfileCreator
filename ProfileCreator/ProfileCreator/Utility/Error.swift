@@ -17,8 +17,8 @@ public enum ProfileCreatorError: Int {
     
     func userInfo() -> [String : String] {
         var localizedDescription: String = ""
-        var localizedFailureReasonError: String = ""
-        var localizedRecoverySuggestionError: String = ""
+        let localizedFailureReasonError: String = "" // Unused
+        let localizedRecoverySuggestionError: String = "" // Unused
         
         switch self {
         case .unknown:
