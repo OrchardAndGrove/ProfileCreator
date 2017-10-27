@@ -1,33 +1,22 @@
 //
-//  PayloadCellViewCheckbox.swift
+//  PayloadCellViewEnable.swift
 //  ProfileCreator
 //
-//  Created by Erik Berglund on 2017-08-02.
+//  Created by Erik Berglund on 2017-10-27.
 //  Copyright © 2017 Erik Berglund. All rights reserved.
 //
 
 import Cocoa
 import ProfilePayloads
 
-class PayloadCellViewCheckbox: NSTableCellView, ProfileCreatorCellView, PayloadCellView, CheckboxCellView {
-
-    // MARK: -
-    // MARK: PayloadCellView Variables
-    
-    var height: CGFloat = 0.0
-    var row = -1
+class PayloadCellViewEnable: NSTableCellView, CheckboxCellView {
     
     weak var subkey: PayloadSourceSubkey?
-    var textFieldTitle: NSTextField?
-    var textFieldDescription: NSTextField?
-    var leadingKeyView: NSView?
-    var trailingKeyView: NSView?
     
     // MARK: -
     // MARK: Instance Variables
     
     var checkbox: NSButton?
-    var valueDefault: Bool = false
     
     // MARK: -
     // MARK: Initialization
@@ -54,43 +43,9 @@ class PayloadCellViewCheckbox: NSTableCellView, ProfileCreatorCellView, PayloadC
         setupCheckbox(constraints: &constraints)
         
         // ---------------------------------------------------------------------
-        //  Setup Static View Content
-        // ---------------------------------------------------------------------
-        if let title = subkey.title {
-            self.textFieldTitle = EditorTextField.title(string: title, fontWeight: nil, leadingItem: self.checkbox, constraints: &constraints, cellView: self)
-        }
-        
-        if let description = subkey.description {
-            self.textFieldDescription = EditorTextField.description(string: description, constraints: &constraints, cellView: self)
-        }
-        
-        // ---------------------------------------------------------------------
-        //  Set Default Value
-        // ---------------------------------------------------------------------
-        if let valueDefault = subkey.valueDefault as? Bool {
-            self.valueDefault = valueDefault
-            self.checkbox?.state = valueDefault ? .on : .off
-        }
-        
-        // ---------------------------------------------------------------------
-        //  Setup KeyView Loop Items
-        // ---------------------------------------------------------------------
-        self.leadingKeyView = self.checkbox
-        self.trailingKeyView = self.checkbox
-        
-        // ---------------------------------------------------------------------
-        //  Add spacing to bottom
-        // ---------------------------------------------------------------------
-        self.updateHeight(3.0)
-        
-        // ---------------------------------------------------------------------
         //  Activate Layout Constraints
         // ---------------------------------------------------------------------
         NSLayoutConstraint.activate(constraints)
-    }
-    
-    func updateHeight(_ h: CGFloat) {
-        self.height += h
     }
     
     // MARK: -
@@ -105,32 +60,41 @@ class PayloadCellViewCheckbox: NSTableCellView, ProfileCreatorCellView, PayloadC
     
     private func setupCheckbox(constraints: inout [NSLayoutConstraint]) {
         
+        guard
+            let checkbox = self.checkbox,
+            let subkey = self.subkey else { return }
+        
         // ---------------------------------------------------------------------
         //  Add Checkbox to TableCellView
         // ---------------------------------------------------------------------
-        guard let checkbox = self.checkbox else { return }
         self.addSubview(checkbox)
         
         // ---------------------------------------------------------------------
         //  Add constraints
         // ---------------------------------------------------------------------
+        var topConstant: CGFloat = 10.6
         
-        // Width
-        constraints.append(NSLayoutConstraint(item: checkbox,
-                                              attribute: .width,
-                                              relatedBy: .equal,
-                                              toItem: nil,
-                                              attribute: .notAnAttribute,
-                                              multiplier: 1.0,
-                                              constant: checkbox.intrinsicContentSize.width))
+        if subkey.type == .bool {
+            topConstant = 11.25
+        }
         
-        // Leading
+        
+        // Top
         constraints.append(NSLayoutConstraint(item: checkbox,
-                                              attribute: .leading,
+                                              attribute: .top,
                                               relatedBy: .equal,
                                               toItem: self,
-                                              attribute: .leading,
+                                              attribute: .top,
                                               multiplier: 1.0,
-                                              constant: 8))
+                                              constant: topConstant))
+        
+        // Center X
+        constraints.append(NSLayoutConstraint(item: checkbox,
+                                              attribute: .centerX,
+                                              relatedBy: .equal,
+                                              toItem: self,
+                                              attribute: .centerX,
+                                              multiplier: 1.0,
+                                              constant: 0))
     }
 }

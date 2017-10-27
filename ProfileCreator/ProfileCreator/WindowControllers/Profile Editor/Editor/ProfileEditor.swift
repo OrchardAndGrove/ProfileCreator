@@ -15,7 +15,10 @@ class ProfileEditor: NSObject {
     // MARK: Variables
     
     private let tableView = ProfileEditorTableView()
-    public let scrollView = NSScrollView()
+    private let headerView = ProfileEditorHeaderView()
+    private let scrollView = NSScrollView()
+    private let separator = NSBox(frame: NSZeroRect)
+    public let editorView = NSView()
     
     private let payloadCellViews = PayloadCellViews()
     
@@ -32,59 +35,25 @@ class ProfileEditor: NSObject {
         //  Setup Variables
         // ---------------------------------------------------------------------
         self.profile = profile
+        self.headerView.profileEditor = self
+        var constraints = [NSLayoutConstraint]()
         
         // ---------------------------------------------------------------------
-        //  Setup TableView
+        //  Setup EditorView
         // ---------------------------------------------------------------------
-        self.tableView.translatesAutoresizingMaskIntoConstraints = false
-        self.tableView.floatsGroupRows = false
-        self.tableView.rowSizeStyle = .default
-        self.tableView.headerView = nil
-        self.tableView.dataSource = self
-        self.tableView.delegate = self
-        self.tableView.target = self
-        self.tableView.allowsMultipleSelection = true
-        self.tableView.selectionHighlightStyle = .none
-        self.tableView.columnAutoresizingStyle = .uniformColumnAutoresizingStyle
-        self.tableView.sizeLastColumnToFit()
-        self.tableView.refusesFirstResponder = true
+        self.setupEditorView(constraints: &constraints)
+        self.setupHeaderView(constraints: &constraints)
+        self.setupSeparator(constraints: &constraints)
+        self.setupTableView(constraints: &constraints)
         
         // ---------------------------------------------------------------------
-        //  Add TableColumn Padding Leading
+        //  Activate layout constraints
         // ---------------------------------------------------------------------
-        let tableColumnPaddingLeading = NSTableColumn(identifier: .tableColumnPaddingLeading)
-        tableColumnPaddingLeading.isEditable = false
-        tableColumnPaddingLeading.width = editorTableViewColumnPaddingWidth
-        tableColumnPaddingLeading.minWidth = editorTableViewColumnPaddingWidth
-        self.tableView.addTableColumn(tableColumnPaddingLeading)
+        NSLayoutConstraint.activate(constraints)
         
         // ---------------------------------------------------------------------
-        //  Add TableColumn Payload
+        //  Reload the TableView
         // ---------------------------------------------------------------------
-        let tableColumnPayload = NSTableColumn(identifier: .tableColumnPayload)
-        tableColumnPayload.isEditable = false
-        tableColumnPayload.width = editorTableViewColumnPayloadWidth
-        tableColumnPayload.minWidth = editorTableViewColumnPayloadWidth
-        tableColumnPayload.maxWidth = editorTableViewColumnPayloadWidth
-        self.tableView.addTableColumn(tableColumnPayload)
-        
-        // ---------------------------------------------------------------------
-        //  Add TableColumn Padding Trailing
-        // ---------------------------------------------------------------------
-        let tableColumnPaddingTrailing = NSTableColumn(identifier: .tableColumnPaddingTrailing)
-        tableColumnPaddingTrailing.isEditable = false
-        tableColumnPaddingTrailing.width = editorTableViewColumnPaddingWidth
-        tableColumnPaddingTrailing.minWidth = editorTableViewColumnPaddingWidth
-        self.tableView.addTableColumn(tableColumnPaddingTrailing)
-        
-        // ---------------------------------------------------------------------
-        //  Setup ScrollView and add TableView as Document View
-        // ---------------------------------------------------------------------
-        self.scrollView.translatesAutoresizingMaskIntoConstraints = false
-        //self.scrollView.hasVerticalScroller = true
-        self.scrollView.documentView = self.tableView
-        // self.scrollView.autoresizesSubviews = true
-        
         self.reloadTableView(force: true)
     }
     
@@ -102,6 +71,8 @@ class ProfileEditor: NSObject {
         if self.selectedPayloadPlaceholder != payloadPlaceholder {
             self.selectedPayloadPlaceholder = payloadPlaceholder
             Swift.print("Class: \(self.self), Function: \(#function), Selecting this placeholder in the editor: \(payloadPlaceholder.title)")
+            
+            self.headerView.select(payloadPlaceholder: payloadPlaceholder)
             
             // FIXME: Apply current settings here (like hidden)
             self.cellViews = payloadCellViews.cellViews(payloadPlaceholder: payloadPlaceholder)
@@ -138,6 +109,198 @@ class ProfileEditor: NSObject {
             window.initialFirstResponder = firstCellView as? NSView
         }
     }
+    
+    // MARK: -
+    // MARK: Setup Layout Constraints
+    
+    private func setupEditorView(constraints: inout [NSLayoutConstraint]) {
+        self.editorView.translatesAutoresizingMaskIntoConstraints = false
+    }
+    
+    private func setupHeaderView(constraints: inout [NSLayoutConstraint]) {
+        
+        // ---------------------------------------------------------------------
+        //  Add and setup Header View
+        // ---------------------------------------------------------------------
+        self.editorView.addSubview(self.headerView.headerView)
+        
+        // ---------------------------------------------------------------------
+        //  Add constraints
+        // ---------------------------------------------------------------------
+        // Top
+        constraints.append(NSLayoutConstraint(item: self.headerView.headerView,
+                                              attribute: .top,
+                                              relatedBy: .equal,
+                                              toItem: self.editorView,
+                                              attribute: .top,
+                                              multiplier: 1.0,
+                                              constant: 30.0))
+        
+        // Leading
+        constraints.append(NSLayoutConstraint(item: self.headerView.headerView,
+                                              attribute: .leading,
+                                              relatedBy: .equal,
+                                              toItem: self.editorView,
+                                              attribute: .leading,
+                                              multiplier: 1.0,
+                                              constant: 0.0))
+        
+        // Trailing
+        constraints.append(NSLayoutConstraint(item: self.editorView,
+                                              attribute: .trailing,
+                                              relatedBy: .equal,
+                                              toItem: self.headerView.headerView,
+                                              attribute: .trailing,
+                                              multiplier: 1.0,
+                                              constant: 0.0))
+    }
+    
+    private func setupSeparator(constraints: inout [NSLayoutConstraint]) {
+        self.separator.translatesAutoresizingMaskIntoConstraints = false
+        self.separator.boxType = .separator
+        
+        // ---------------------------------------------------------------------
+        //  Add TextField to TableCellView
+        // ---------------------------------------------------------------------
+        self.editorView.addSubview(self.separator)
+        
+        // ---------------------------------------------------------------------
+        //  Add Constraints
+        // ---------------------------------------------------------------------
+        
+        // Top
+        constraints.append(NSLayoutConstraint(item: self.separator,
+                                              attribute: .top,
+                                              relatedBy: .equal,
+                                              toItem: self.headerView.headerView,
+                                              attribute: .bottom,
+                                              multiplier: 1,
+                                              constant: 0.0))
+        
+        // Leading
+        constraints.append(NSLayoutConstraint(item: self.separator,
+                                              attribute: .leading,
+                                              relatedBy: .equal,
+                                              toItem: self.editorView,
+                                              attribute: .leading,
+                                              multiplier: 1,
+                                              constant: 20.0))
+        
+        // Trailing
+        constraints.append(NSLayoutConstraint(item: self.editorView,
+                                              attribute: .trailing,
+                                              relatedBy: .equal,
+                                              toItem: self.separator,
+                                              attribute: .trailing,
+                                              multiplier: 1,
+                                              constant: 20.0))
+        
+    }
+    
+    private func setupTableView(constraints: inout [NSLayoutConstraint]) {
+        self.tableView.translatesAutoresizingMaskIntoConstraints = false
+        self.tableView.floatsGroupRows = false
+        self.tableView.rowSizeStyle = .default
+        self.tableView.headerView = nil
+        self.tableView.dataSource = self
+        self.tableView.delegate = self
+        self.tableView.target = self
+        self.tableView.allowsMultipleSelection = true
+        self.tableView.selectionHighlightStyle = .none
+        self.tableView.columnAutoresizingStyle = .uniformColumnAutoresizingStyle
+        self.tableView.sizeLastColumnToFit()
+        self.tableView.refusesFirstResponder = true
+        
+        // ---------------------------------------------------------------------
+        //  Add TableColumn Padding Leading
+        // ---------------------------------------------------------------------
+        let tableColumnPaddingLeading = NSTableColumn(identifier: .tableColumnPaddingLeading)
+        tableColumnPaddingLeading.isEditable = false
+        tableColumnPaddingLeading.width = editorTableViewColumnPaddingWidth
+        tableColumnPaddingLeading.minWidth = editorTableViewColumnPaddingWidth
+        self.tableView.addTableColumn(tableColumnPaddingLeading)
+        
+        // ---------------------------------------------------------------------
+        //  Add TableColumn Enable
+        // ---------------------------------------------------------------------
+        let tableColumnPayloadEnable = NSTableColumn(identifier: .tableColumnPayloadEnable)
+        tableColumnPayloadEnable.isEditable = false
+        tableColumnPayloadEnable.width = 20.0
+        tableColumnPayloadEnable.minWidth = 20.0
+        tableColumnPayloadEnable.maxWidth = 20.0
+        self.tableView.addTableColumn(tableColumnPayloadEnable)
+        
+        // ---------------------------------------------------------------------
+        //  Add TableColumn Payload
+        // ---------------------------------------------------------------------
+        let tableColumnPayload = NSTableColumn(identifier: .tableColumnPayload)
+        tableColumnPayload.isEditable = false
+        tableColumnPayload.width = editorTableViewColumnPayloadWidth
+        tableColumnPayload.minWidth = editorTableViewColumnPayloadWidth
+        tableColumnPayload.maxWidth = editorTableViewColumnPayloadWidth
+        self.tableView.addTableColumn(tableColumnPayload)
+        
+        // ---------------------------------------------------------------------
+        //  Add TableColumn Padding Trailing
+        // ---------------------------------------------------------------------
+        let tableColumnPaddingTrailing = NSTableColumn(identifier: .tableColumnPaddingTrailing)
+        tableColumnPaddingTrailing.isEditable = false
+        tableColumnPaddingTrailing.width = editorTableViewColumnPaddingWidth
+        tableColumnPaddingTrailing.minWidth = editorTableViewColumnPaddingWidth
+        self.tableView.addTableColumn(tableColumnPaddingTrailing)
+        
+        // ---------------------------------------------------------------------
+        //  Setup ScrollView and add TableView as Document View
+        // ---------------------------------------------------------------------
+        self.scrollView.translatesAutoresizingMaskIntoConstraints = false
+        //self.scrollView.hasVerticalScroller = true
+        self.scrollView.documentView = self.tableView
+        // self.scrollView.autoresizesSubviews = true
+        
+        // ---------------------------------------------------------------------
+        //  Add and setup ScrollView
+        // ---------------------------------------------------------------------
+        self.editorView.addSubview(self.scrollView)
+        
+        // ---------------------------------------------------------------------
+        //  Add constraints
+        // ---------------------------------------------------------------------
+        // Top
+        constraints.append(NSLayoutConstraint(item: self.scrollView,
+                                              attribute: .top,
+                                              relatedBy: .equal,
+                                              toItem: self.separator,
+                                              attribute: .bottom,
+                                              multiplier: 1.0,
+                                              constant: 0.0))
+        
+        // Leading
+        constraints.append(NSLayoutConstraint(item: self.scrollView,
+                                              attribute: .leading,
+                                              relatedBy: .equal,
+                                              toItem: self.editorView,
+                                              attribute: .leading,
+                                              multiplier: 1.0,
+                                              constant: 0.0))
+        
+        // Trailing
+        constraints.append(NSLayoutConstraint(item: self.editorView,
+                                              attribute: .trailing,
+                                              relatedBy: .equal,
+                                              toItem: self.scrollView,
+                                              attribute: .trailing,
+                                              multiplier: 1.0,
+                                              constant: 0.0))
+        
+        // Bottom
+        constraints.append(NSLayoutConstraint(item: self.scrollView,
+                                              attribute: .bottom,
+                                              relatedBy: .equal,
+                                              toItem: self.editorView,
+                                              attribute: .bottom,
+                                              multiplier: 1.0,
+                                              constant: 0.0))
+    }
 }
 
 extension ProfileEditor: NSTableViewDataSource {
@@ -159,6 +322,10 @@ extension ProfileEditor: NSTableViewDelegate {
             // FIXME: Should only be needed once and NOT here
             self.updateKeyViewLoop(window: tableView.window!)
             return self.cellViews[row]
+        } else if tableColumn?.identifier == .tableColumnPayloadEnable {
+            if let cellView = self.cellViews[row] as? PayloadCellView, let subkey = cellView.subkey {
+                return PayloadCellViewEnable.init(subkey: subkey, settings: Dictionary<String, Any>())
+            }
         }
         return nil
     }

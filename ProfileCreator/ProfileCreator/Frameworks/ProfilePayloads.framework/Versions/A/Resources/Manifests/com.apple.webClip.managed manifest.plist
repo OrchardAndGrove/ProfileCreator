@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>pfm_description</key>
+	<string>Use this section to define web clips</string>
+	<key>pfm_title</key>
+	<string>Web Clips</string>
+	<key>pfm_format_version</key>
+	<integer>1</integer>
+	<key>pfm_version</key>
+	<integer>1</integer>
+	<key>pfm_domain</key>
+	<string>com.apple.webClip.managed</string>
+	<key>pfm_subkeys</key>
+	<array>
+		<dict>
+			<key>pfm_name</key>
+			<string>PayloadDescription</string>
+			<key>pfm_title</key>
+			<string>Payload Description</string>
+			<key>pfm_description</key>
+			<string>Description of the payload</string>
+			<key>pfm_type</key>
+			<string>string</string>
+			<key>pfm_default</key>
+			<string>Configures settings for a web clip</string>
+		</dict>
+		<dict>
+			<key>pfm_name</key>
+			<string>PayloadDisplayName</string>
+			<key>pfm_title</key>
+			<string>Payload Display Name</string>
+			<key>pfm_description</key>
+			<string>Name of the payload</string>
+			<key>pfm_type</key>
+			<string>string</string>
+			<key>pfm_default</key>
+			<string>Web Clip</string>
+			<key>pfm_require</key>
+			<string>always</string>
+		</dict>
+		<dict>
+			<key>pfm_name</key>
+			<string>PayloadIdentifier</string>
+			<key>pfm_title</key>
+			<string>Payload Identifier</string>
+			<key>pfm_description</key>
+			<string>A unique identifier for the payload, dot-delimited.  Usually root PayloadIdentifier+subidentifier</string>
+			<key>pfm_type</key>
+			<string>string</string>
+			<key>pfm_default</key>
+			<string>com.apple.webClip.managed</string>
+			<key>pfm_require</key>
+			<string>always</string>
+		</dict>
+		<dict>
+			<key>pfm_name</key>
+			<string>PayloadType</string>
+			<key>pfm_title</key>
+			<string>Payload Type</string>
+			<key>pfm_description</key>
+			<string>The type of the payload, a reverse dns string</string>
+			<key>pfm_type</key>
+			<string>string</string>
+			<key>pfm_default</key>
+			<string>com.apple.webClip.managed</string>
+			<key>pfm_require</key>
+			<string>always</string>
+		</dict>
+		<dict>
+			<key>pfm_name</key>
+			<string>PayloadUUID</string>
+			<key>pfm_title</key>
+			<string>Payload UUID</string>
+			<key>pfm_description</key>
+			<string>Unique identifier for the payload (format 01234567-89AB-CDEF-0123-456789ABCDEF)</string>
+			<key>pfm_type</key>
+			<string>string</string>
+			<key>pfm_default</key>
+			<string></string>
+			<key>pfm_require</key>
+			<string>always</string>
+			<key>pfm_format</key>
+			<string>^[0-9A-Za-z]{8}-[0-9A-Za-z]{4}-[0-9A-Za-z]{4}-[0-9A-Za-z]{4}-[0-9A-Za-z]{12}$</string>
+		</dict>
+		<dict>
+			<key>pfm_name</key>
+			<string>PayloadVersion</string>
+			<key>pfm_title</key>
+			<string>Payload Version</string>
+			<key>pfm_description</key>
+			<string>The version of the whole configuration profile.</string>
+			<key>pfm_type</key>
+			<string>integer</string>
+			<key>pfm_default</key>
+			<integer>1</integer>
+			<key>pfm_require</key>
+			<string>always</string>
+		</dict>
+		<dict>
+			<key>pfm_name</key>
+			<string>PayloadOrganization</string>
+			<key>pfm_title</key>
+			<string>Payload Organization</string>
+			<key>pfm_description</key>
+			<string>This value describes the issuing organization of the profile, as displayed to the user</string>
+			<key>pfm_type</key>
+			<string>string</string>
+		</dict>
+		<dict>
+			<key>pfm_name</key>
+			<string>URL</string>
+			<key>pfm_title</key>
+			<string>URL</string>
+			<key>pfm_description</key>
+			<string>The URL that the web clip should open when clicked. The URL must begin with HTTP or HTTPS</string>
+			<key>pfm_type</key>
+			<string>string</string>
+			<key>pfm_require</key>
+			<string>always</string>
+		</dict>
+		<dict>
+			<key>pfm_name</key>
+			<string>Label</string>
+			<key>pfm_title</key>
+			<string>Label</string>
+			<key>pfm_description</key>
+			<string>The name of the Web Clip as displayed on the Home screen</string>
+			<key>pfm_type</key>
+			<string>string</string>
+			<key>pfm_require</key>
+			<string>always</string>
+		</dict>
+		<dict>
+			<key>pfm_name</key>
+			<string>Icon</string>
+			<key>pfm_title</key>
+			<string>Icon</string>
+			<key>pfm_description</key>
+			<string>A PNG icon to be shown on the Home screen. Should be 59 x 60 pixels. If not specified a white square will be shown</string>
+			<key>pfm_type</key>
+			<string>data</string>
+			<key>pfm_range_max</key>
+			<integer>1468006</integer>
+		</dict>
+		<dict>
+			<key>pfm_name</key>
+			<string>IsRemovable</string>
+			<key>pfm_title</key>
+			<string>Removable</string>
+			<key>pfm_description</key>
+			<string>If not set, the user cannot remove the Web Clip, but it will be removed if the profile is deleted</string>
+			<key>pfm_type</key>
+			<string>boolean</string>
+			<key>pfm_default</key>
+			<true/>
+		</dict>
+		<dict>
+			<key>pfm_name</key>
+			<string>FullScreen</string>
+			<key>pfm_title</key>
+			<string>Full Screen</string>
+			<key>pfm_description</key>
+			<string>Launch the Web Clip as a full-screen web app</string>
+			<key>pfm_type</key>
+			<string>boolean</string>
+			<key>pfm_default</key>
+			<false/>
+		</dict>
+		<dict>
+			<key>pfm_name</key>
+			<string>Precomposed</string>
+			<key>pfm_title</key>
+			<string>Precomposed Icon</string>
+			<key>pfm_description</key>
+			<string>Prevent SpringBoard from adding &quot;shine&quot; to the icon</string>
+			<key>pfm_type</key>
+			<string>boolean</string>
+			<key>pfm_default</key>
+			<false/>
+		</dict>
+	</array>
+</dict>
+</plist>

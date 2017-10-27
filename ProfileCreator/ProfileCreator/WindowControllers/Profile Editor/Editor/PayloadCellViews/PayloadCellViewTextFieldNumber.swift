@@ -212,6 +212,6 @@ class PayloadCellViewTextFieldNumber: NSTableCellView, ProfileCreatorCellView, P
         // ---------------------------------------------------------------------
         guard let textFieldMinMax = self.textFieldMinMax else { return }
         
-        textFieldMinMax.textColor = NSColor.secondaryLabelColor
+        textFieldMinMax.textColor = NSColor.controlShadowColor
     }
 }

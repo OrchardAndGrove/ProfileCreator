@@ -45,6 +45,7 @@ extension NSUserInterfaceItemIdentifier {
     static let tableColumnLibraryPayloads = NSUserInterfaceItemIdentifier("tableColumnLibraryPayloads")
     static let tableColumnMainWindowOutlineView = NSUserInterfaceItemIdentifier("tableColumnMainWindowOutlineView")
     static let tableColumnPayload = NSUserInterfaceItemIdentifier("tableColumnPayload")
+    static let tableColumnPayloadEnable = NSUserInterfaceItemIdentifier("tableColumnPayloadEnable")
 }
 
 extension Notification.Name {

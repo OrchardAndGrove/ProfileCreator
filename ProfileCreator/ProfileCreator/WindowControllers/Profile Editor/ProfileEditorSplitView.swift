@@ -155,14 +155,14 @@ class ProfileEditorSplitView: NSSplitView {
             return
         }
         
-        self.addSubview(editor.scrollView)
+        self.addSubview(editor.editorView)
         self.setHoldingPriority(NSLayoutConstraint.Priority.defaultLow, forSubviewAt: 1)
         
         // ---------------------------------------------------------------------
         //  Add constraints
         // ---------------------------------------------------------------------
         // Width
-        constraints.append(NSLayoutConstraint(item: editor.scrollView,
+        constraints.append(NSLayoutConstraint(item: editor.editorView,
                                               attribute: .width,
                                               relatedBy: .greaterThanOrEqual,
                                               toItem: nil,

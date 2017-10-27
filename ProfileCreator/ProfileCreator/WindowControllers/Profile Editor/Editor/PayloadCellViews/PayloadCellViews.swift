@@ -47,10 +47,10 @@ class PayloadCellViews {
             }
         }
         
-        //if !cellViews.isEmpty {
-            cellViews.insert(PayloadCellViewTitle(payloadSource: payloadPlaceholder.payloadSource), at: 0)
+        if !cellViews.isEmpty {
+            cellViews.insert(PayloadCellViewPadding(), at: 0)
             cellViews.insert(PayloadCellViewPadding(), at: cellViews.count)
-        //}
+        }
         
         return cellViews
     }
@@ -62,7 +62,6 @@ class PayloadCellViews {
         if manifestSubkeysIgnored.contains(subkey.key) { return nil }
         
         // If both range min and max are specified, and the range isn't more that 19, then use a popUpButton instead
-        Swift.print("rangeList: \(subkey.rangeList)")
         if let rangeList = subkey.rangeList, rangeList.count <= 20 {
             return PayloadCellViewPopUpButton(subkey: subkey, settings: Dictionary<String, Any>())
         }
