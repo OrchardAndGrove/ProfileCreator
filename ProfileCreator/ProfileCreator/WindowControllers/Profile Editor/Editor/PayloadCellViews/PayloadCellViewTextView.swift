@@ -9,7 +9,7 @@
 import Cocoa
 import ProfilePayloads
 
-class PayloadCellViewTextView: NSTableCellView, ProfileCreatorCellView, PayloadCellView {
+class PayloadCellViewTextView: NSTableCellView, ProfileCreatorCellView, PayloadCellView, NSTextFieldDelegate {
     
     // MARK: -
     // MARK: PayloadCellView Variables
@@ -18,6 +18,8 @@ class PayloadCellViewTextView: NSTableCellView, ProfileCreatorCellView, PayloadC
     var row = -1
     
     weak var subkey: PayloadSourceSubkey?
+    weak var editor: ProfileEditor?
+    
     var textFieldTitle: NSTextField?
     var textFieldDescription: NSTextField?
     var leadingKeyView: NSView?
@@ -30,6 +32,9 @@ class PayloadCellViewTextView: NSTableCellView, ProfileCreatorCellView, PayloadC
     var scrollView: NSScrollView?
     var textView: NSTextView?
     
+    var isEditing: Bool = false
+    var valueBeginEditing: String?
+    
     // MARK: -
     // MARK: Initialization
     
@@ -37,9 +42,10 @@ class PayloadCellViewTextView: NSTableCellView, ProfileCreatorCellView, PayloadC
         fatalError("init(coder:) has not been implemented")
     }
     
-    required init(subkey: PayloadSourceSubkey, settings: Dictionary<String, Any>) {
+    required init(subkey: PayloadSourceSubkey, editor: ProfileEditor, settings: Dictionary<String, Any>) {
        
         self.subkey = subkey
+        self.editor = editor
         
         super.init(frame: NSZeroRect)
         
@@ -98,6 +104,34 @@ class PayloadCellViewTextView: NSTableCellView, ProfileCreatorCellView, PayloadC
     
     func updateHeight(_ h: CGFloat) {
         self.height += h
+    }
+    
+    // MARK: -
+    // MARK: NSControl Functions
+    
+    internal override func controlTextDidBeginEditing(_ obj: Notification) {
+        self.isEditing = true
+        if
+            let userInfo = obj.userInfo,
+            let fieldEditor = userInfo["NSFieldEditor"] as? NSTextView,
+            let originalString = fieldEditor.textStorage?.string {
+            self.valueBeginEditing = originalString
+        }
+    }
+    
+    internal override func controlTextDidEndEditing(_ obj: Notification) {
+        
+        guard let subkey = self.subkey else { return }
+        
+        if
+            isEditing,
+            let userInfo = obj.userInfo,
+            let fieldEditor = userInfo["NSFieldEditor"] as? NSTextView,
+            let newString = fieldEditor.textStorage?.string,
+            newString != self.valueBeginEditing {
+            self.editor?.updatePayloadSettings(value: newString, subkey: subkey)
+        }
+        self.isEditing = false
     }
     
     // MARK: -

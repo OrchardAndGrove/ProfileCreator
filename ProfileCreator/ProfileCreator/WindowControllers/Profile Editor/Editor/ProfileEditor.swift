@@ -22,6 +22,9 @@ class ProfileEditor: NSObject {
     
     private let payloadCellViews = PayloadCellViews()
     
+    private var firstCellView: NSView?
+    private var selectedCellView: NSView?
+    
     fileprivate var cellViews = [NSTableCellView]()
     fileprivate var editorWindow: NSWindow?
     
@@ -63,8 +66,22 @@ class ProfileEditor: NSObject {
     }
     
     func reloadTableView(force: Bool = false) {
-        // TODO: Implement
+        
+        guard let window = self.tableView.window else { return }
+        
+        Swift.print("window.firstResponder: \(window.firstResponder?.nextResponder)")
+        
+        var firstResponder = window.firstResponder
+
+        Swift.print("Current First Responder")
+        
         self.tableView.reloadData()
+    }
+    
+    func updatePayloadSettings(value: Any?, subkey: PayloadSourceSubkey) {
+        self.profile?.updatePayloadSettings(value: value, subkey: subkey, updateComplete: { (successful, error) in
+            Swift.print("Settings Changed with status: \(successful)")
+        })
     }
     
     func select(payloadPlaceholder: PayloadPlaceholder) {
@@ -75,7 +92,7 @@ class ProfileEditor: NSObject {
             self.headerView.select(payloadPlaceholder: payloadPlaceholder)
             
             // FIXME: Apply current settings here (like hidden)
-            self.cellViews = payloadCellViews.cellViews(payloadPlaceholder: payloadPlaceholder)
+            self.cellViews = self.payloadCellViews.cellViews(payloadPlaceholder: payloadPlaceholder, profileEditor: self)
             
             // FIXME: Why Force?
             self.reloadTableView(force: true)
@@ -83,7 +100,7 @@ class ProfileEditor: NSObject {
     }
     
     func updateKeyViewLoop(window: NSWindow) {
-        
+        Swift.print("Updating KeyViewLoop!")
         var previousCellView: PayloadCellView? = nil
         var firstCellView: PayloadCellView? = nil
         
@@ -107,6 +124,7 @@ class ProfileEditor: NSObject {
         
         if firstCellView != nil {
             window.initialFirstResponder = firstCellView as? NSView
+            self.firstCellView = firstCellView as? NSView
         }
     }
     
@@ -324,7 +342,7 @@ extension ProfileEditor: NSTableViewDelegate {
             return self.cellViews[row]
         } else if tableColumn?.identifier == .tableColumnPayloadEnable {
             if let cellView = self.cellViews[row] as? PayloadCellView, let subkey = cellView.subkey {
-                return PayloadCellViewEnable.init(subkey: subkey, settings: Dictionary<String, Any>())
+                return PayloadCellViewEnable(subkey: subkey, editor: self, settings: Dictionary<String, Any>())
             }
         }
         return nil

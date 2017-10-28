@@ -12,6 +12,7 @@ import ProfilePayloads
 class PayloadCellViewEnable: NSTableCellView, CheckboxCellView {
     
     weak var subkey: PayloadSourceSubkey?
+    weak var editor: ProfileEditor?
     
     // MARK: -
     // MARK: Instance Variables
@@ -25,9 +26,10 @@ class PayloadCellViewEnable: NSTableCellView, CheckboxCellView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    required init(subkey: PayloadSourceSubkey, settings: Dictionary<String, Any>) {
+    required init(subkey: PayloadSourceSubkey, editor: ProfileEditor, settings: Dictionary<String, Any>) {
         
         self.subkey = subkey
+        self.editor = editor
         
         super.init(frame: NSZeroRect)
         

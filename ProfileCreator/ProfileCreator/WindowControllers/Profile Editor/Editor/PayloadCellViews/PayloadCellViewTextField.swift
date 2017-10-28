@@ -9,7 +9,7 @@
 import Cocoa
 import ProfilePayloads
 
-class PayloadCellViewTextField: NSTableCellView, ProfileCreatorCellView, PayloadCellView {
+class PayloadCellViewTextField: NSTableCellView, ProfileCreatorCellView, PayloadCellView, NSTextFieldDelegate {
     
     // MARK: -
     // MARK: PayloadCellView Variables
@@ -18,6 +18,8 @@ class PayloadCellViewTextField: NSTableCellView, ProfileCreatorCellView, Payload
     var row = -1
     
     weak var subkey: PayloadSourceSubkey?
+    weak var editor: ProfileEditor?
+    
     var textFieldTitle: NSTextField?
     var textFieldDescription: NSTextField?
     var leadingKeyView: NSView?
@@ -29,6 +31,9 @@ class PayloadCellViewTextField: NSTableCellView, ProfileCreatorCellView, Payload
     var textFieldInput: PayloadTextField?
     var valueDefault: String?
     
+    var isEditing: Bool = false
+    var valueBeginEditing: String?
+    
     // MARK: -
     // MARK: Initialization
     
@@ -36,9 +41,10 @@ class PayloadCellViewTextField: NSTableCellView, ProfileCreatorCellView, Payload
         fatalError("init(coder:) has not been implemented")
     }
     
-    required init(subkey: PayloadSourceSubkey, settings: Dictionary<String, Any>) {
+    required init(subkey: PayloadSourceSubkey, editor: ProfileEditor, settings: Dictionary<String, Any>) {
         
         self.subkey = subkey
+        self.editor = editor
         
         super.init(frame: NSZeroRect)
         
@@ -101,6 +107,34 @@ class PayloadCellViewTextField: NSTableCellView, ProfileCreatorCellView, Payload
     }
     
     // MARK: -
+    // MARK: NSControl Functions
+    
+    internal override func controlTextDidBeginEditing(_ obj: Notification) {
+        self.isEditing = true
+        if
+            let userInfo = obj.userInfo,
+            let fieldEditor = userInfo["NSFieldEditor"] as? NSTextView,
+            let originalString = fieldEditor.textStorage?.string {
+            self.valueBeginEditing = originalString
+        }
+    }
+    
+    internal override func controlTextDidEndEditing(_ obj: Notification) {
+        
+        guard let subkey = self.subkey else { return }
+        
+        if
+            isEditing,
+            let userInfo = obj.userInfo,
+            let fieldEditor = userInfo["NSFieldEditor"] as? NSTextView,
+            let newString = fieldEditor.textStorage?.string,
+            newString != self.valueBeginEditing {
+            self.editor?.updatePayloadSettings(value: newString, subkey: subkey)
+        }
+        self.isEditing = false
+    }
+    
+    // MARK: -
     // MARK: Setup Layout Constraints
     
     private func setupTextFieldInput(constraints: inout [NSLayoutConstraint]) {
@@ -109,6 +143,7 @@ class PayloadCellViewTextField: NSTableCellView, ProfileCreatorCellView, Payload
         //  Add TextField to TableCellView
         // ---------------------------------------------------------------------
         guard let textFieldInput = self.textFieldInput else { return }
+        textFieldInput.target = self
         self.addSubview(textFieldInput)
         
         // ---------------------------------------------------------------------

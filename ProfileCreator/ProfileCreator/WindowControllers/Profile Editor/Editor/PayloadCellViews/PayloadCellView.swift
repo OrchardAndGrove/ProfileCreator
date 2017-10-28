@@ -18,12 +18,14 @@ protocol PayloadCellView: class {
     var row: Int { get set }
     
     weak var subkey: PayloadSourceSubkey? { get }
+    weak var editor: ProfileEditor? { get }
+    
     var textFieldTitle: NSTextField? { get set }
     var textFieldDescription: NSTextField? { get set }
     var leadingKeyView: NSView? { get set }
     var trailingKeyView: NSView? { get set }
     
-    init(subkey: PayloadSourceSubkey, settings: Dictionary<String , Any>)
+    init(subkey: PayloadSourceSubkey, editor: ProfileEditor, settings: Dictionary<String , Any>)
     
     func updateHeight(_ h: CGFloat)
     func addSubview(_ subview: NSView)

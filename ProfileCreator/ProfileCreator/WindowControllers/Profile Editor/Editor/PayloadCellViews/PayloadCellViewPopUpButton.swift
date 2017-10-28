@@ -18,6 +18,8 @@ class PayloadCellViewPopUpButton: NSTableCellView, ProfileCreatorCellView, Paylo
     var row = -1
     
     weak var subkey: PayloadSourceSubkey?
+    weak var editor: ProfileEditor?
+    
     var textFieldTitle: NSTextField?
     var textFieldDescription: NSTextField?
     var leadingKeyView: NSView?
@@ -29,13 +31,17 @@ class PayloadCellViewPopUpButton: NSTableCellView, ProfileCreatorCellView, Paylo
     var popUpButton: NSPopUpButton?
     var valueDefault: Any?
     
+    // MARK: -
+    // MARK: Initialization
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-     required init(subkey: PayloadSourceSubkey, settings: Dictionary<String, Any>) {
+    required init(subkey: PayloadSourceSubkey, editor: ProfileEditor, settings: Dictionary<String, Any>) {
         
         self.subkey = subkey
+        self.editor = editor
         
         super.init(frame: NSZeroRect)
         

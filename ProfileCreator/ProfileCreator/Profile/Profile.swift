@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import ProfilePayloads
 
 public class Profile: NSDocument {
     
@@ -144,6 +145,12 @@ public class Profile: NSDocument {
     
     // MARK: -
     // MARK: Public Functions
+    
+    public func updatePayloadSettings(value: Any?, subkey: PayloadSourceSubkey, updateComplete: @escaping (Bool, Error?) -> ()) {
+        Swift.print("Updating settings for: \(subkey.title)")
+        Swift.print("New Value: \(value)")
+        updateComplete(true, nil)
+    }
     
     public func defaultPayloadSettings() -> Dictionary<String, Any> {
         let payloadSettings = Dictionary<String, Any>()

@@ -453,7 +453,8 @@ class MainWindowLibraryGroup: NSObject, OutlineViewChildItem {
         // ---------------------------------------------------------------------
         //  Get current text in the text field
         // ---------------------------------------------------------------------
-        if let userInfo = notification.userInfo,
+        if
+            let userInfo = notification.userInfo,
             let fieldEditor = userInfo["NSFieldEditor"] as? NSTextView,
             let string = fieldEditor.textStorage?.string,
             !string.isEmpty {

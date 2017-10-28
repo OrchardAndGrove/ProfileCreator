@@ -18,6 +18,8 @@ class PayloadCellViewTableView: NSTableCellView, ProfileCreatorCellView, Payload
     var row = -1
     
     weak var subkey: PayloadSourceSubkey?
+    weak var editor: ProfileEditor?
+    
     var textFieldTitle: NSTextField?
     var textFieldDescription: NSTextField?
     var leadingKeyView: NSView?
@@ -40,9 +42,10 @@ class PayloadCellViewTableView: NSTableCellView, ProfileCreatorCellView, Payload
         fatalError("init(coder:) has not been implemented")
     }
     
-    required init(subkey: PayloadSourceSubkey, settings: Dictionary<String, Any>) {
+    required init(subkey: PayloadSourceSubkey, editor: ProfileEditor, settings: Dictionary<String, Any>) {
         
         self.subkey = subkey
+        self.editor = editor
         
         super.init(frame: NSZeroRect)
         

@@ -18,6 +18,8 @@ class PayloadCellViewCheckbox: NSTableCellView, ProfileCreatorCellView, PayloadC
     var row = -1
     
     weak var subkey: PayloadSourceSubkey?
+    weak var editor: ProfileEditor?
+    
     var textFieldTitle: NSTextField?
     var textFieldDescription: NSTextField?
     var leadingKeyView: NSView?
@@ -36,9 +38,10 @@ class PayloadCellViewCheckbox: NSTableCellView, ProfileCreatorCellView, PayloadC
         fatalError("init(coder:) has not been implemented")
     }
     
-    required init(subkey: PayloadSourceSubkey, settings: Dictionary<String, Any>) {
+    required init(subkey: PayloadSourceSubkey, editor: ProfileEditor, settings: Dictionary<String, Any>) {
         
         self.subkey = subkey
+        self.editor = editor
         
         super.init(frame: NSZeroRect)
         
@@ -97,7 +100,8 @@ class PayloadCellViewCheckbox: NSTableCellView, ProfileCreatorCellView, PayloadC
     // MARK: CheckboxCellView Functions
     
     func clicked(_ checkbox: NSButton) {
-        Swift.print("Class: \(self.self), Function: \(#function), Checkbox Pressed!")
+        guard let subkey = self.subkey else { return }
+        self.editor?.updatePayloadSettings(value: checkbox.state == .on ? true : false, subkey: subkey)
     }
     
     // MARK: -

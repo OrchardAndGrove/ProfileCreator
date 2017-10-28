@@ -9,7 +9,7 @@
 import Cocoa
 import ProfilePayloads
 
-class PayloadCellViewHostPort: NSTableCellView, ProfileCreatorCellView, PayloadCellView {
+class PayloadCellViewHostPort: NSTableCellView, ProfileCreatorCellView, PayloadCellView, NSTextFieldDelegate {
     
     // MARK: -
     // MARK: PayloadCellView Variables
@@ -18,6 +18,8 @@ class PayloadCellViewHostPort: NSTableCellView, ProfileCreatorCellView, PayloadC
     var row = -1
     
     weak var subkey: PayloadSourceSubkey?
+    weak var editor: ProfileEditor?
+    
     var textFieldTitle: NSTextField?
     var textFieldDescription: NSTextField?
     var leadingKeyView: NSView?
@@ -31,13 +33,22 @@ class PayloadCellViewHostPort: NSTableCellView, ProfileCreatorCellView, PayloadC
     var constraintPortTrailing: NSLayoutConstraint?
     @objc var valuePort: NSNumber?
     
+    var isEditingHost: Bool = false
+    var isEditingPort: Bool = false
+    var valueBeginEditingHost: String?
+    var valueBeginEditingPort: String?
+    
+    // MARK: -
+    // MARK: Initialization
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    required init(subkey: PayloadSourceSubkey, settings: Dictionary<String, Any>) {
+    required init(subkey: PayloadSourceSubkey, editor: ProfileEditor, settings: Dictionary<String, Any>) {
         
         self.subkey = subkey
+        self.editor = editor
         
         super.init(frame: NSZeroRect)
         
@@ -90,6 +101,55 @@ class PayloadCellViewHostPort: NSTableCellView, ProfileCreatorCellView, PayloadC
     
     func updateHeight(_ h: CGFloat) {
         self.height += h
+    }
+    
+    // MARK: -
+    // MARK: NSControl Functions
+    
+    internal override func controlTextDidBeginEditing(_ obj: Notification) {
+        
+        guard
+            let textField = obj.object as? NSTextField,
+            let userInfo = obj.userInfo,
+            let fieldEditor = userInfo["NSFieldEditor"] as? NSTextView,
+            let originalString = fieldEditor.textStorage?.string else {
+                return
+        }
+        
+        if textField == self.textFieldHost {
+            self.isEditingHost = true
+            self.valueBeginEditingHost = originalString
+        } else if textField == self.textFieldPort {
+            self.isEditingPort = true
+            self.valueBeginEditingPort = originalString
+        }
+    }
+    
+    internal override func controlTextDidEndEditing(_ obj: Notification) {
+        
+        if !isEditingHost && !isEditingPort { return }
+        
+        guard
+            let textField = obj.object as? NSTextField,
+            let subkey = self.subkey,
+            let userInfo = obj.userInfo,
+            let fieldEditor = userInfo["NSFieldEditor"] as? NSTextView,
+            let newString = fieldEditor.textStorage?.string else {
+                if isEditingHost {
+                    self.isEditingHost = false
+                } else if isEditingPort {
+                    self.isEditingPort = false
+                }
+                return
+        }
+        
+        if textField == self.textFieldHost, newString != self.valueBeginEditingHost {
+            self.editor?.updatePayloadSettings(value: newString, subkey: subkey)
+            self.isEditingHost = false
+        } else if textField == self.textFieldPort, newString != self.valueBeginEditingPort {
+            self.editor?.updatePayloadSettings(value: newString, subkey: subkey)
+            self.isEditingPort = false
+        }
     }
     
     // MARK: -
