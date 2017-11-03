@@ -15,13 +15,17 @@ public class Profile: NSDocument {
     // MARK: Variables
     
     // General Settings
+    public var uuid: UUID
     public var identifier: UUID
     @objc public var title: String?
-    public var payloadSettings: Dictionary<String, Any>?
+    
+    public var payloadSettings: Dictionary<String, Any>
+    private var savedPayloadSettings: Dictionary<String, Any>
+    
     public var profilePayloads: String? // Change to payloads framework class. Unsure if it should be used like this.
     
     // View Settings
-    public var viewSettings: Dictionary<String, Any>?
+    public var viewSettings: Dictionary<String, Any>
     public var scope: String? // Change to scope enum
     public var distribution: String? // Change to distribution enum
     public var sign = false
@@ -39,6 +43,10 @@ public class Profile: NSDocument {
     init(title: String?, identifier: UUID?, payloadSettings: Dictionary<String, Any>?, viewSettings: Dictionary<String, Any>?) {
 
         self.identifier = identifier ?? UUID()
+        self.savedPayloadSettings = payloadSettings ?? Profile.defaultPayloadSettings()
+        self.payloadSettings = self.savedPayloadSettings
+        self.uuid = identifier ?? UUID()
+        self.viewSettings = viewSettings ?? Profile.defaultViewSettings()
         
         // ---------------------------------------------------------------------
         //  Initialize Self
@@ -49,8 +57,6 @@ public class Profile: NSDocument {
         //  Initialize General Settings
         // ---------------------------------------------------------------------
         self.title = title ?? StringConstant.defaultProfileName
-        self.payloadSettings = payloadSettings ?? self.defaultPayloadSettings()
-        self.viewSettings = viewSettings
         
         // ---------------------------------------------------------------------
         //  Initialize View Settings
@@ -68,8 +74,9 @@ public class Profile: NSDocument {
         // ---------------------------------------------------------------------
         return [SettingsKey.title : self.title ?? StringConstant.defaultProfileName,
                 SettingsKey.identifier : self.identifier.uuidString,
-                SettingsKey.payloadSettings : self.payloadSettings ?? Dictionary<String, Any>(),
-                SettingsKey.viewSettings : self.viewSettings ?? Dictionary<String, Any>()]
+                SettingsKey.sign : self.sign,
+                SettingsKey.payloadSettings : self.payloadSettings,
+                SettingsKey.viewSettings : self.viewSettings]
         
     }
     
@@ -146,16 +153,63 @@ public class Profile: NSDocument {
     // MARK: -
     // MARK: Public Functions
     
-    public func updatePayloadSettings(value: Any?, subkey: PayloadSourceSubkey, updateComplete: @escaping (Bool, Error?) -> ()) {
-        Swift.print("Updating settings for: \(subkey.title)")
-        Swift.print("New Value: \(value)")
+    public func updateViewSettings(value: Any?, key: String, subkey: PayloadSourceSubkey, updateComplete: @escaping (Bool, Error?) -> ()) {
+        
+        // ---------------------------------------------------------------------
+        //  Get the current domain settings or create an empty set if they doesn't exist
+        // ---------------------------------------------------------------------
+        var domainSettings = self.viewSettings[subkey.domain] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
+        
+        // ---------------------------------------------------------------------
+        //  Set the current key settings or create an empty set if the doesn't exist
+        // ---------------------------------------------------------------------
+        var keySettings = domainSettings[subkey.keyPath] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
+        
+        // ---------------------------------------------------------------------
+        //  Set the new value
+        // ---------------------------------------------------------------------
+        keySettings[key] = value
+        
+        // ---------------------------------------------------------------------
+        //  Save the the changes to the current settings
+        // ---------------------------------------------------------------------
+        domainSettings[subkey.keyPath] = keySettings
+        self.viewSettings[subkey.domain] = domainSettings
+        
         updateComplete(true, nil)
     }
     
-    public func defaultPayloadSettings() -> Dictionary<String, Any> {
+    public func updatePayloadSettings(value: Any?, subkey: PayloadSourceSubkey, updateComplete: @escaping (Bool, Error?) -> ()) {
+        
+        // ---------------------------------------------------------------------
+        //  Get the current domain settings or create an empty set if they doesn't exist
+        // ---------------------------------------------------------------------
+        var domainSettings = self.payloadSettings[subkey.domain] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
+        
+        // ---------------------------------------------------------------------
+        //  Set the new value
+        // ---------------------------------------------------------------------
+        domainSettings[subkey.keyPath] = value
+
+        // ---------------------------------------------------------------------
+        //  Save the the changes to the current settings
+        // ---------------------------------------------------------------------
+        self.payloadSettings[subkey.domain] = domainSettings
+        
+        // ---------------------------------------------------------------------
+        //  Using closure for the option of a longer save time if needed in the future for more checking etc.
+        // ---------------------------------------------------------------------
+        updateComplete(true, nil)
+    }
+    
+    class func defaultPayloadSettings() -> Dictionary<String, Any> {
         let payloadSettings = Dictionary<String, Any>()
-        // Here Read from the preferences
         return payloadSettings
+    }
+    
+    class func defaultViewSettings() -> Dictionary<String, Any> {
+        let viewSettings = Dictionary<String, Any>()
+        return viewSettings
     }
     
     public func edit() {

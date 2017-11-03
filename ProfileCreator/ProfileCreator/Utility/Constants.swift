@@ -111,6 +111,8 @@ struct SettingsKey {
     static let identifier = "Identifier"
     static let identifiers = "Identifiers"
     static let payloadSettings = "PayloadSettings"
+    static let sign = "Sign"
     static let title = "Title"
     static let viewSettings = "ViewSettings"
+    static let value = "Value"
 }

@@ -54,7 +54,8 @@ class PayloadCellViewEnable: NSTableCellView, CheckboxCellView {
     // MARK: CheckboxCellView Functions
     
     func clicked(_ checkbox: NSButton) {
-        Swift.print("Class: \(self.self), Function: \(#function), Checkbox Pressed!")
+        guard let subkey = self.subkey else { return }
+        self.editor?.updateViewSettings(value: checkbox.state == .on ? false : true, key: "Enabled", subkey: subkey)
     }
     
     // MARK: -
@@ -77,7 +78,7 @@ class PayloadCellViewEnable: NSTableCellView, CheckboxCellView {
         var topConstant: CGFloat = 10.6
         
         if subkey.type == .bool {
-            topConstant = 11.25
+            topConstant = 11.29
         }
         
         

@@ -82,6 +82,25 @@ class PayloadCellViewTextView: NSTableCellView, ProfileCreatorCellView, PayloadC
         // ---------------------------------------------------------------------
         if let valueDefault = subkey.valueDefault as? String {
             self.valueDefault = valueDefault
+        }
+        
+        // ---------------------------------------------------------------------
+        //  Set Placeholder Value
+        // ---------------------------------------------------------------------
+        if let valuePlaceholder = subkey.valuePlaceholder as? String {
+            self.textView?.string = valuePlaceholder
+        } else if subkey.require == .always {
+            self.textView?.string = NSLocalizedString("Required", comment: "")
+        }
+        
+        // ---------------------------------------------------------------------
+        //  Set Value
+        // ---------------------------------------------------------------------
+        if
+            let domainSettings = settings[subkey.domain] as? Dictionary<String, Any>,
+            let value = domainSettings[subkey.keyPath] as? String {
+            self.textView?.string = value
+        } else if let valueDefault = self.valueDefault {
             self.textView?.string = valueDefault
         }
         

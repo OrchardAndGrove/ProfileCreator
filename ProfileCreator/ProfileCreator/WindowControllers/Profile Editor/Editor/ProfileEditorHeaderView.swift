@@ -68,7 +68,6 @@ class ProfileEditorHeaderView: NSObject {
     func select(payloadPlaceholder: PayloadPlaceholder) {
         if self.selectedPayloadPlaceholder != payloadPlaceholder {
             self.selectedPayloadPlaceholder = payloadPlaceholder
-            Swift.print("Class: \(self.self), Function: \(#function), Selecting this placeholder in the header: \(payloadPlaceholder.title)")
             
             guard let layoutConstraintHeight = self.layoutConstraintHeight else {
                 Swift.print("Class: \(self.self), Function: \(#function), layoutConstraintHeight is not set")
@@ -80,7 +79,6 @@ class ProfileEditorHeaderView: NSObject {
             self.updateHeight(self.textFieldTitleTopIndent + self.textFieldTitle.intrinsicContentSize.height)
             
             self.textFieldDescription.stringValue = payloadPlaceholder.description
-            Swift.print("self.textFieldDescription.intrinsicContentSize.height: \(self.textFieldDescription.intrinsicContentSize.height)")
             if 0 < self.textFieldDescription.intrinsicContentSize.height {
                 self.updateHeight(self.textFieldDescriptionTopIndent + self.textFieldDescription.intrinsicContentSize.height)
             }

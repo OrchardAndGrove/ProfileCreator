@@ -61,22 +61,25 @@ class PayloadCellViews {
         //        This should be added as a setting
         if manifestSubkeysIgnored.contains(subkey.key) { return nil }
         
+        // Get the current settings, should be better handled if an error getting the settings is presented
+        let payloadSettings = profileEditor.profile?.payloadSettings ?? Dictionary<String, Any>()
+        
         // If both range min and max are specified, and the range isn't more that 19, then use a popUpButton instead
         if let rangeList = subkey.rangeList, rangeList.count <= 20 {
-            return PayloadCellViewPopUpButton(subkey: subkey, editor: profileEditor, settings: Dictionary<String, Any>())
+            return PayloadCellViewPopUpButton(subkey: subkey, editor: profileEditor, settings: payloadSettings)
         }
         
         switch subkey.type {
         case .array:
-            return PayloadCellViewTableView(subkey: subkey, editor: profileEditor, settings: Dictionary<String, Any>())
+            return PayloadCellViewTableView(subkey: subkey, editor: profileEditor, settings: payloadSettings)
         case .string:
-            return PayloadCellViewTextField(subkey: subkey, editor: profileEditor, settings: Dictionary<String, Any>())
+            return PayloadCellViewTextField(subkey: subkey, editor: profileEditor, settings: payloadSettings)
         case .bool:
-            return PayloadCellViewCheckbox(subkey: subkey, editor: profileEditor, settings: Dictionary<String, Any>())
+            return PayloadCellViewCheckbox(subkey: subkey, editor: profileEditor, settings: payloadSettings)
         case .integer:
-            return PayloadCellViewTextFieldNumber(subkey: subkey, editor: profileEditor, settings: Dictionary<String, Any>())
+            return PayloadCellViewTextFieldNumber(subkey: subkey, editor: profileEditor, settings: payloadSettings)
         case .data:
-            return PayloadCellViewFile(subkey: subkey, editor: profileEditor, settings: Dictionary<String, Any>())
+            return PayloadCellViewFile(subkey: subkey, editor: profileEditor, settings: payloadSettings)
         default:
             Swift.print("Class: \(self.self), Function: \(#function), Unknown Manifest Type: \(subkey.type)")
         }

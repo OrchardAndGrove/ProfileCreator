@@ -100,6 +100,25 @@ class PayloadCellViewTextFieldNumber: NSTableCellView, ProfileCreatorCellView, P
         // ---------------------------------------------------------------------
         if let valueDefault = subkey.valueDefault as? String {
             self.valueDefault = valueDefault
+        }
+        
+        // ---------------------------------------------------------------------
+        //  Set Placeholder Value
+        // ---------------------------------------------------------------------
+        if let valuePlaceholder = subkey.valuePlaceholder as? String {
+            self.textFieldInput?.placeholderString = valuePlaceholder
+        } else if subkey.require == .always {
+            self.textFieldInput?.placeholderString = NSLocalizedString("Required", comment: "")
+        }
+        
+        // ---------------------------------------------------------------------
+        //  Set Value
+        // ---------------------------------------------------------------------
+        if
+            let domainSettings = settings[subkey.domain] as? Dictionary<String, Any>,
+            let value = domainSettings[subkey.keyPath] as? String {
+            self.textFieldInput?.stringValue = value
+        } else if let valueDefault = self.valueDefault {
             self.textFieldInput?.stringValue = valueDefault
         }
         

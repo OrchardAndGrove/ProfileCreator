@@ -28,7 +28,7 @@ class ProfileEditor: NSObject {
     fileprivate var cellViews = [NSTableCellView]()
     fileprivate var editorWindow: NSWindow?
     
-    private weak var profile: Profile?
+    public weak var profile: Profile?
     private var selectedPayloadPlaceholder: PayloadPlaceholder?
     
     init(profile: Profile) {
@@ -66,7 +66,7 @@ class ProfileEditor: NSObject {
     }
     
     func reloadTableView(force: Bool = false) {
-        
+        /*
         guard let window = self.tableView.window else { return }
         
         Swift.print("window.firstResponder: \(window.firstResponder?.nextResponder)")
@@ -74,13 +74,19 @@ class ProfileEditor: NSObject {
         var firstResponder = window.firstResponder
 
         Swift.print("Current First Responder")
-        
+        */
         self.tableView.reloadData()
+    }
+    
+    func updateViewSettings(value: Any?, key: String, subkey: PayloadSourceSubkey) {
+        self.profile?.updateViewSettings(value: value, key: key, subkey: subkey, updateComplete: { (successful, error) in
+            Swift.print("ViewSettings Changed with status: \(successful)")
+        })
     }
     
     func updatePayloadSettings(value: Any?, subkey: PayloadSourceSubkey) {
         self.profile?.updatePayloadSettings(value: value, subkey: subkey, updateComplete: { (successful, error) in
-            Swift.print("Settings Changed with status: \(successful)")
+            Swift.print("PayloadSettings Changed with status: \(successful)")
         })
     }
     
@@ -100,7 +106,6 @@ class ProfileEditor: NSObject {
     }
     
     func updateKeyViewLoop(window: NSWindow) {
-        Swift.print("Updating KeyViewLoop!")
         var previousCellView: PayloadCellView? = nil
         var firstCellView: PayloadCellView? = nil
         

@@ -83,6 +83,18 @@ class PayloadCellViewPopUpButton: NSTableCellView, ProfileCreatorCellView, Paylo
         // ---------------------------------------------------------------------
         if let valueDefault = subkey.valueDefault {
             self.valueDefault = valueDefault
+        }
+        
+        // ---------------------------------------------------------------------
+        //  Set Value
+        // ---------------------------------------------------------------------
+        if
+            let domainSettings = settings[subkey.domain] as? Dictionary<String, Any>,
+            let value = domainSettings[subkey.keyPath] as? String {
+            if self.popUpButton!.itemTitles.contains(value) {
+                self.popUpButton!.selectItem(withTitle: value)
+            }
+        } else if let valueDefault = self.valueDefault {
             let valueTitle = String(describing: valueDefault)
             if self.popUpButton!.itemTitles.contains(valueTitle) {
                 self.popUpButton!.selectItem(withTitle: valueTitle)
@@ -114,7 +126,12 @@ class PayloadCellViewPopUpButton: NSTableCellView, ProfileCreatorCellView, Paylo
     // MARK: PopUpButton Functions
     
     func selected(_ popUpButton: NSPopUpButton) {
-        Swift.print("Class: \(self.self), Function: \(#function), selected: \(String(describing: popUpButton.titleOfSelectedItem))")
+        
+        guard
+            let subkey = self.subkey,
+            let selectedTitle = popUpButton.titleOfSelectedItem  else { return }
+        
+        self.editor?.updatePayloadSettings(value: selectedTitle, subkey: subkey)
     }
     
     // MARK: -

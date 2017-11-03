@@ -31,6 +31,8 @@ class PayloadCellViewDatePicker: NSTableCellView, ProfileCreatorCellView, Payloa
     var datePicker: NSDatePicker?
     var textFieldInterval: NSTextField?
     
+    var valueDefault: Date?
+    
     // MARK: -
     // MARK: Initialization
     
@@ -67,8 +69,23 @@ class PayloadCellViewDatePicker: NSTableCellView, ProfileCreatorCellView, Payloa
         self.datePicker = EditorDatePicker.picker(offsetDays: 0, offsetHours: 0, offsetMinutes: 0, showDate: true, showTime: true, constraints: &constraints, cellView: self)
         setupDatePicker(constraints: &constraints)
         
-        // FIXME: This should be read from settigns
+        // ---------------------------------------------------------------------
+        //  Set Default Value
+        // ---------------------------------------------------------------------
+        if let valueDefault = subkey.valueDefault as? Date {
+            self.valueDefault = valueDefault
+        }
         
+        // ---------------------------------------------------------------------
+        //  Set Value
+        // ---------------------------------------------------------------------
+        if
+            let domainSettings = settings[subkey.domain] as? Dictionary<String, Any>,
+            let value = domainSettings[subkey.keyPath] as? Date {
+            self.datePicker?.dateValue = value
+        } else if let valueDefault = self.valueDefault {
+            self.datePicker?.dateValue = valueDefault
+        }
         
         // ---------------------------------------------------------------------
         //  Setup KeyView Loop Items
