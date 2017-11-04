@@ -53,7 +53,7 @@ class PayloadCellViewTitle: NSTableCellView, ProfileCreatorCellView {
             self.setupTextField(title: self.textFieldTitle!, constraints: &constraints)
         }
         
-        if !payloadSource.descriptionString.isEmpty {
+        if !payloadSource.description.isEmpty {
             self.textFieldDescription = NSTextField()
             self.textFieldDescription?.translatesAutoresizingMaskIntoConstraints = false
             self.textFieldDescription?.lineBreakMode = .byWordWrapping
@@ -64,7 +64,7 @@ class PayloadCellViewTitle: NSTableCellView, ProfileCreatorCellView {
             self.textFieldDescription?.isSelectable = false
             self.textFieldDescription?.textColor = NSColor.labelColor
             self.textFieldDescription?.preferredMaxLayoutWidth = editorTableViewColumnPayloadWidth
-            self.textFieldDescription?.stringValue = payloadSource.descriptionString
+            self.textFieldDescription?.stringValue = payloadSource.description
             self.textFieldDescription?.alignment = .center
             self.textFieldDescription?.font = NSFont.systemFont(ofSize: 17, weight: NSFont.Weight.ultraLight)
             self.setupTextField(description: self.textFieldDescription!, constraints: &constraints)

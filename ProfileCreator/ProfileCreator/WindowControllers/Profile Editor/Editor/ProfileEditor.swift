@@ -80,19 +80,20 @@ class ProfileEditor: NSObject {
     
     func updateViewSettings(value: Any?, key: String, subkey: PayloadSourceSubkey) {
         self.profile?.updateViewSettings(value: value, key: key, subkey: subkey, updateComplete: { (successful, error) in
-            Swift.print("ViewSettings Changed with status: \(successful)")
+            Swift.print("Class: \(self.self), Function: \(#function), ViewSettings Changed with status: \(successful)")
         })
     }
     
     func updatePayloadSettings(value: Any?, subkey: PayloadSourceSubkey) {
         self.profile?.updatePayloadSettings(value: value, subkey: subkey, updateComplete: { (successful, error) in
-            Swift.print("PayloadSettings Changed with status: \(successful)")
+            Swift.print("Class: \(self.self), Function: \(#function), PayloadSettings Changed with status: \(successful)")
         })
     }
     
     func select(payloadPlaceholder: PayloadPlaceholder) {
         if self.selectedPayloadPlaceholder != payloadPlaceholder {
             self.selectedPayloadPlaceholder = payloadPlaceholder
+            
             Swift.print("Class: \(self.self), Function: \(#function), Selecting this placeholder in the editor: \(payloadPlaceholder.title)")
             
             self.headerView.select(payloadPlaceholder: payloadPlaceholder)
