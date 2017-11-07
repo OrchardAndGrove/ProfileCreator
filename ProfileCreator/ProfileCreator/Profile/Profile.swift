@@ -153,6 +153,39 @@ public class Profile: NSDocument {
     // MARK: -
     // MARK: Public Functions
     
+    public func payloadTypeSettings(type: PayloadSourceType) -> Dictionary<String, Any> {
+        return self.payloadSettings[String(type.rawValue)] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
+    }
+    
+    public func setPayloadTypeSettings(settings: Dictionary<String, Any>, type: PayloadSourceType) {
+        self.payloadSettings[String(type.rawValue)] = settings
+    }
+    
+    public func updatePayloadSelection(selected: Bool, payloadSource: PayloadSource, updateComplete: @escaping (Bool, Error?) -> ()) {
+        
+        // ---------------------------------------------------------------------
+        //  Get the current domain settings or create an empty set if they doesn't exist
+        // ---------------------------------------------------------------------
+        var typeSettings = self.payloadTypeSettings(type: payloadSource.type)
+        var domainSettings = typeSettings[payloadSource.domain] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
+        
+        // ---------------------------------------------------------------------
+        //  Set the new value
+        // ---------------------------------------------------------------------
+        domainSettings[SettingsKey.enabled] = selected
+        typeSettings[payloadSource.domain] = domainSettings
+        
+        // ---------------------------------------------------------------------
+        //  Save the the changes to the current settings
+        // ---------------------------------------------------------------------
+        self.setPayloadTypeSettings(settings: typeSettings, type: payloadSource.type)
+        
+        // ---------------------------------------------------------------------
+        //  Using closure for the option of a longer save time if needed in the future for more checking etc.
+        // ---------------------------------------------------------------------
+        updateComplete(true, nil)
+    }
+    
     public func updateViewSettings(value: Any?, key: String, subkey: PayloadSourceSubkey, updateComplete: @escaping (Bool, Error?) -> ()) {
         
         // ---------------------------------------------------------------------
@@ -184,17 +217,19 @@ public class Profile: NSDocument {
         // ---------------------------------------------------------------------
         //  Get the current domain settings or create an empty set if they doesn't exist
         // ---------------------------------------------------------------------
-        var domainSettings = self.payloadSettings[subkey.domain] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
+        var typeSettings = self.payloadTypeSettings(type: subkey.payloadSourceType)
+        var domainSettings = typeSettings[subkey.domain] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
         
         // ---------------------------------------------------------------------
         //  Set the new value
         // ---------------------------------------------------------------------
         domainSettings[subkey.keyPath] = value
-
+        typeSettings[subkey.domain] = domainSettings
+        
         // ---------------------------------------------------------------------
         //  Save the the changes to the current settings
         // ---------------------------------------------------------------------
-        self.payloadSettings[subkey.domain] = domainSettings
+        self.setPayloadTypeSettings(settings: typeSettings, type: subkey.payloadSourceType)
         
         // ---------------------------------------------------------------------
         //  Using closure for the option of a longer save time if needed in the future for more checking etc.

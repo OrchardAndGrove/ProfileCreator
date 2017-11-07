@@ -55,7 +55,7 @@ class PayloadCellViewEnable: NSTableCellView, CheckboxCellView {
     
     func clicked(_ checkbox: NSButton) {
         guard let subkey = self.subkey else { return }
-        self.editor?.updateViewSettings(value: checkbox.state == .on ? false : true, key: "Enabled", subkey: subkey)
+        self.editor?.updateViewSettings(value: checkbox.state == .on ? false : true, key: SettingsKey.enabled, subkey: subkey)
     }
     
     // MARK: -

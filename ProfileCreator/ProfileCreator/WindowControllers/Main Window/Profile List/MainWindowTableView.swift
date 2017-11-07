@@ -444,6 +444,16 @@ class MainWindowTableView: NSTableView {
         menu.addItem(menuItemRename)
         
         // ---------------------------------------------------------------------
+        //  Add item: "Show In Finder"
+        // ---------------------------------------------------------------------
+        let menuItemShowInFinder = NSMenuItem()
+        menuItemShowInFinder.title = NSLocalizedString("Show In Finder", comment: "")
+        menuItemShowInFinder.isEnabled = true
+        menuItemShowInFinder.target = self
+        menuItemShowInFinder.action = #selector(showInFinder(_:))
+        menu.addItem(menuItemShowInFinder)
+        
+        // ---------------------------------------------------------------------
         //  Add item: "Delete"
         // ---------------------------------------------------------------------
         var deleteString: String
@@ -482,6 +492,15 @@ class MainWindowTableView: NSTableView {
         if let clickedIdentifier = self.clickedProfile,
             let profile = ProfileController.sharedInstance.profile(withIdentifier: clickedIdentifier) {
             profile.edit()
+        }
+    }
+    
+    @objc func showInFinder(_ sender: NSTableView?) {
+        if
+            let clickedIdentifier = self.clickedProfile,
+            let profile = ProfileController.sharedInstance.profile(withIdentifier: clickedIdentifier),
+            let profileURL = profile.fileURL {
+                NSWorkspace.shared.activateFileViewerSelecting([profileURL])
         }
     }
     

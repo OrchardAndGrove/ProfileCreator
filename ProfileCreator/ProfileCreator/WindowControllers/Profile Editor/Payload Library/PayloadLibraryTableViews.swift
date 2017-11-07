@@ -108,14 +108,15 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
     private func placeholders(tag: LibraryTag) -> [PayloadPlaceholder]? {
         switch tag {
         case .appleDomains:
-            return ProfilePayloads.shared.manifestPlaceholders()
+            if let manifestPlaceholders = ProfilePayloads.shared.manifestPlaceholders() {
+                return Array(Set(manifestPlaceholders).subtracting(self.profilePayloads))
+            } else { return nil }
         case .appleCollections:
             return ProfilePayloads.shared.collectionPlaceholders()
         case .applications:
             return ProfilePayloads.shared.applicationPlaceholders()
         case .developer:
-            // FIXME: Add Developer Payloads
-            return ProfilePayloads.shared.collectionPlaceholders()
+            return ProfilePayloads.shared.developerPlaceholders()
         }
     }
     
@@ -124,11 +125,11 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         // ---------------------------------------------------------------------
         //  Set whether to enable or disable the payload
         // ---------------------------------------------------------------------
-        var enable: Bool = false
+        var selected: Bool = false
         if to == TableViewTag.libraryPayloads {
-            enable = false
+            selected = false
         } else if to == TableViewTag.profilePayloads {
-            enable = true
+            selected = true
         }
         
         // ---------------------------------------------------------------------
@@ -144,8 +145,12 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
             }
         }
         
-        // FIXME: UPDATE ENABLED STATE ON PLACEHOLDER/SETTINGS
-        Swift.print("Class: \(self.self), Function: \(#function), Enable: \(enable)")
+        // ---------------------------------------------------------------------
+        //  Update the Enabled state for the payload domain
+        // ---------------------------------------------------------------------
+        for placeholder in payloadPlaceholders {
+            self.editor?.updatePayloadSelection(selected: selected, payloadSource: placeholder.payloadSource)
+        }
         
         // ---------------------------------------------------------------------
         //  Check if library payloads is empty, then show "No Payloads" view
@@ -216,7 +221,39 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         self.profilePayloadsScrollView.translatesAutoresizingMaskIntoConstraints = false
         self.profilePayloadsScrollView.documentView = self.profilePayloadsTableView
         self.profilePayloadsScrollView.hasVerticalScroller = false // FIXME: TRUE When added ios-style scrollers
-        // self.profilePayloadsScrollView.autoresizesSubviews = true
+        
+        // ---------------------------------------------------------------------
+        //  Add all selected placeholders to the profile placeholders array
+        // ---------------------------------------------------------------------
+        if let profile = self.editor?.profile {
+            for (typeRawValue, typeSettingsDict) in profile.payloadSettings {
+                
+                // ---------------------------------------------------------------------
+                //  Verify we got a valid type and a non empty settings dict
+                // ---------------------------------------------------------------------
+                guard
+                    let typeInt = Int(typeRawValue),
+                    let type = PayloadSourceType(rawValue: typeInt),
+                    let typeSettings = typeSettingsDict as? Dictionary<String, Any> else {
+                        continue
+                }
+                
+                // ---------------------------------------------------------------------
+                //  Loop through all domains and settings for the current type, add all enabled
+                // ---------------------------------------------------------------------
+                for (domain, payloadSettings) in typeSettings {
+                    if
+                        let settings = payloadSettings as? Dictionary<String, Any>,
+                        settings[SettingsKey.enabled] as? Bool == true {
+                        if
+                            let payload = ProfilePayloads.shared.payloadSource(domain: domain, type: type),
+                            let payloadPlaceholder = payload.placeholder {
+                            self.profilePayloads.append(payloadPlaceholder)
+                        }
+                    }
+                }
+            }
+        }
     }
     
     private func setupLibraryPayloads() {

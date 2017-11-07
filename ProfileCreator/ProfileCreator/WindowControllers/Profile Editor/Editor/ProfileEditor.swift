@@ -78,6 +78,12 @@ class ProfileEditor: NSObject {
         self.tableView.reloadData()
     }
     
+    func updatePayloadSelection(selected: Bool, payloadSource: PayloadSource) {
+        self.profile?.updatePayloadSelection(selected: selected, payloadSource: payloadSource, updateComplete: { (successful, error) in
+            Swift.print("Class: \(self.self), Function: \(#function), SelectionSettings Changed with status: \(successful)")
+        })
+    }
+    
     func updateViewSettings(value: Any?, key: String, subkey: PayloadSourceSubkey) {
         self.profile?.updateViewSettings(value: value, key: key, subkey: subkey, updateComplete: { (successful, error) in
             Swift.print("Class: \(self.self), Function: \(#function), ViewSettings Changed with status: \(successful)")

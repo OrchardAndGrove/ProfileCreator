@@ -14,7 +14,13 @@ let preferencesIndent: CGFloat = 40.0
 let editorTableViewColumnPaddingWidth: CGFloat = 24.0
 let editorTableViewColumnPayloadWidth: CGFloat = 500.0
 
-let manifestSubkeysIgnored = ["PayloadDescription", "PayloadDisplayName", "PayloadIdentifier", "PayloadType", "PayloadUUID", "PayloadVersion", "PayloadOrganization"]
+let manifestSubkeysIgnored = ["PayloadDescription",
+                              "PayloadDisplayName",
+                              "PayloadIdentifier",
+                              "PayloadType",
+                              "PayloadUUID",
+                              "PayloadVersion",
+                              "PayloadOrganization"]
 
 enum TableViewTag: Int {
     case profilePayloads
@@ -106,11 +112,13 @@ struct SidebarGroupTitle {
     static let library = "Library"
 }
 
-struct SettingsKey {
+public struct SettingsKey {
+    static let enabled = "Enabled"
     static let group = "Group"
     static let identifier = "Identifier"
     static let identifiers = "Identifiers"
     static let payloadSettings = "PayloadSettings"
+    static let selected = "Selected"
     static let sign = "Sign"
     static let title = "Title"
     static let viewSettings = "ViewSettings"
