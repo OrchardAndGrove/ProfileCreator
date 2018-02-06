@@ -118,6 +118,10 @@ class PayloadCellViewTextField: NSTableCellView, ProfileCreatorCellView, Payload
         self.height += h
     }
     
+    func enable(_ enable: Bool) {
+        Swift.print("enable: \(enable)")
+    }
+    
     // MARK: -
     // MARK: NSControl Functions
     

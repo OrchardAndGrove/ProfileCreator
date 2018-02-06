@@ -98,7 +98,8 @@ struct NotificationKey {
 }
 
 struct PreferenceKey {
-    static let organization = ""
+    static let defaultOrganization = "DefaultOrganization"
+    static let defaultOrganizationIdentifier = "DefaultOrganizationIdentifier"
     static let showProfileCount = "ShowProfileCount"
     static let showGroupIcons = "ShowGroupIcons"
     static let showPayloadLibraryAppleCollections = "ShowPayloadLibraryAppleCollections"

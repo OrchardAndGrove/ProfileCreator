@@ -35,34 +35,31 @@ public func addCheckbox(title: String,
     // -------------------------------------------------------------------------
     
     // Top
-    constraints.append(NSLayoutConstraint(
-        item: checkbox,
-        attribute: .top,
-        relatedBy: .equal,
-        toItem: lastSubview ?? toView,
-        attribute: (lastSubview != nil) ? .bottom : .top,
-        multiplier: 1,
-        constant: 8))
+    constraints.append(NSLayoutConstraint(item: checkbox,
+                                          attribute: .top,
+                                          relatedBy: .equal,
+                                          toItem: lastSubview ?? toView,
+                                          attribute: (lastSubview != nil) ? .bottom : .top,
+                                          multiplier: 1,
+                                          constant: 8))
     
     // Leading
-    constraints.append(NSLayoutConstraint(
-        item: checkbox,
-        attribute: .leading,
-        relatedBy: .equal,
-        toItem: toView,
-        attribute: .leading,
-        multiplier: 1,
-        constant: preferencesIndent))
+    constraints.append(NSLayoutConstraint(item: checkbox,
+                                          attribute: .leading,
+                                          relatedBy: .equal,
+                                          toItem: toView,
+                                          attribute: .leading,
+                                          multiplier: 1,
+                                          constant: preferencesIndent))
     
     // Trailing
-    constraints.append(NSLayoutConstraint(
-        item: toView,
-        attribute: .trailing,
-        relatedBy: .equal,
-        toItem: checkbox,
-        attribute: .trailing,
-        multiplier: 1,
-        constant: 20))
+    constraints.append(NSLayoutConstraint(item: toView,
+                                          attribute: .trailing,
+                                          relatedBy: .equal,
+                                          toItem: checkbox,
+                                          attribute: .trailing,
+                                          multiplier: 1,
+                                          constant: 20))
     
     // -------------------------------------------------------------------------
     //  Update height value
@@ -101,34 +98,31 @@ public func addHeader(title: String,
     // -------------------------------------------------------------------------
     
     // Top
-    constraints.append(NSLayoutConstraint(
-        item: textFieldTitle,
-        attribute: .top,
-        relatedBy: .equal,
-        toItem: lastSubview ?? toView,
-        attribute: (lastSubview != nil) ? .bottom : .top,
-        multiplier: 1,
-        constant: 20))
+    constraints.append(NSLayoutConstraint(item: textFieldTitle,
+                                          attribute: .top,
+                                          relatedBy: .equal,
+                                          toItem: lastSubview ?? toView,
+                                          attribute: (lastSubview != nil) ? .bottom : .top,
+                                          multiplier: 1,
+                                          constant: 20))
     
     // Leading
-    constraints.append(NSLayoutConstraint(
-        item: textFieldTitle,
-        attribute: .leading,
-        relatedBy: .equal,
-        toItem: toView,
-        attribute: .leading,
-        multiplier: 1,
-        constant: 20))
+    constraints.append(NSLayoutConstraint(item: textFieldTitle,
+                                          attribute: .leading,
+                                          relatedBy: .equal,
+                                          toItem: toView,
+                                          attribute: .leading,
+                                          multiplier: 1,
+                                          constant: 20))
     
     // Trailing
-    constraints.append(NSLayoutConstraint(
-        item: toView,
-        attribute: .trailing,
-        relatedBy: .equal,
-        toItem: textFieldTitle,
-        attribute: .trailing,
-        multiplier: 1,
-        constant: 20))
+    constraints.append(NSLayoutConstraint(item: toView,
+                                          attribute: .trailing,
+                                          relatedBy: .equal,
+                                          toItem: textFieldTitle,
+                                          attribute: .trailing,
+                                          multiplier: 1,
+                                          constant: 20))
     
     // -------------------------------------------------------------------------
     //  Update height value
@@ -150,34 +144,31 @@ public func addHeader(title: String,
         // ---------------------------------------------------------------------
         
         // Top
-        constraints.append(NSLayoutConstraint(
-            item: separator,
-            attribute: .top,
-            relatedBy: .equal,
-            toItem: textFieldTitle,
-            attribute: .bottom,
-            multiplier: 1,
-            constant: 8))
+        constraints.append(NSLayoutConstraint(item: separator,
+                                              attribute: .top,
+                                              relatedBy: .equal,
+                                              toItem: textFieldTitle,
+                                              attribute: .bottom,
+                                              multiplier: 1,
+                                              constant: 8))
         
         // Leading
-        constraints.append(NSLayoutConstraint(
-            item: separator,
-            attribute: .leading,
-            relatedBy: .equal,
-            toItem: toView,
-            attribute: .leading,
-            multiplier: 1,
-            constant: 20))
+        constraints.append(NSLayoutConstraint(item: separator,
+                                              attribute: .leading,
+                                              relatedBy: .equal,
+                                              toItem: toView,
+                                              attribute: .leading,
+                                              multiplier: 1,
+                                              constant: 20))
         
         // Trailing
-        constraints.append(NSLayoutConstraint(
-            item: toView,
-            attribute: .trailing,
-            relatedBy: .equal,
-            toItem: separator,
-            attribute: .trailing,
-            multiplier: 1,
-            constant: 20))
+        constraints.append(NSLayoutConstraint(item: toView,
+                                              attribute: .trailing,
+                                              relatedBy: .equal,
+                                              toItem: separator,
+                                              attribute: .trailing,
+                                              multiplier: 1,
+                                              constant: 20))
         
         // ---------------------------------------------------------------------
         //  Update height value
@@ -188,4 +179,72 @@ public func addHeader(title: String,
     } else {
         return textFieldTitle
     }
+}
+
+public func addTextField(placeholderValue: String,
+                         keyPath: String,
+                         toView: NSView,
+                         lastSubview: NSView?,
+                         height: inout CGFloat,
+                         constraints: inout [NSLayoutConstraint]) -> NSView? {
+    
+    // -------------------------------------------------------------------------
+    //  Create and add TextField
+    // -------------------------------------------------------------------------
+    let textField = NSTextField()
+    textField.translatesAutoresizingMaskIntoConstraints = false
+    textField.lineBreakMode = .byTruncatingTail
+    textField.isBordered = true
+    textField.isBezeled = true
+    textField.bezelStyle = .squareBezel
+    textField.drawsBackground = false
+    textField.isEditable = true
+    textField.isSelectable = true
+    textField.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .regular))
+    textField.textColor = NSColor.labelColor
+    textField.alignment = .left
+    textField.placeholderString = placeholderValue
+    toView.addSubview(textField)
+    
+    // ---------------------------------------------------------------------
+    //  Bind TextField to keyPath
+    // ---------------------------------------------------------------------
+    textField.bind(NSBindingName.value, to: UserDefaults.standard, withKeyPath: keyPath, options: [NSBindingOption.continuouslyUpdatesValue: true, NSBindingOption.nullPlaceholder: placeholderValue])
+    
+    // -------------------------------------------------------------------------
+    //  Add Constraints
+    // -------------------------------------------------------------------------
+    // Top
+    constraints.append(NSLayoutConstraint(item: textField,
+                                          attribute: .top,
+                                          relatedBy: .equal,
+                                          toItem: lastSubview ?? toView,
+                                          attribute: (lastSubview != nil) ? .bottom : .top,
+                                          multiplier: 1,
+                                          constant: 8))
+    
+    // Leading
+    constraints.append(NSLayoutConstraint(item: textField,
+                                          attribute: .leading,
+                                          relatedBy: .equal,
+                                          toItem: toView,
+                                          attribute: .leading,
+                                          multiplier: 1,
+                                          constant: preferencesIndent))
+    
+    // Trailing
+    constraints.append(NSLayoutConstraint(item: toView,
+                                          attribute: .trailing,
+                                          relatedBy: .equal,
+                                          toItem: textField,
+                                          attribute: .trailing,
+                                          multiplier: 1,
+                                          constant: 20))
+    
+    // -------------------------------------------------------------------------
+    //  Update height value
+    // -------------------------------------------------------------------------
+    height = height + 20.0 + textField.intrinsicContentSize.height
+    
+    return textField
 }

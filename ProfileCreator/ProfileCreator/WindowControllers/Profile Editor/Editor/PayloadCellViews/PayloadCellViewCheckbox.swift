@@ -106,6 +106,11 @@ class PayloadCellViewCheckbox: NSTableCellView, ProfileCreatorCellView, PayloadC
         self.height += h
     }
     
+    func enable(_ enable: Bool) {
+        Swift.print("enable: \(enable)")
+        self.checkbox?.isEnabled = enable
+    }
+    
     // MARK: -
     // MARK: CheckboxCellView Functions
     

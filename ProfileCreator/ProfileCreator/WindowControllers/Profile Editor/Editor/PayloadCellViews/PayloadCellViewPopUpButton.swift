@@ -122,6 +122,10 @@ class PayloadCellViewPopUpButton: NSTableCellView, ProfileCreatorCellView, Paylo
         self.height += h
     }
     
+    func enable(_ enable: Bool) {
+        Swift.print("enable: \(enable)")
+    }
+    
     // MARK: -
     // MARK: PopUpButton Functions
     

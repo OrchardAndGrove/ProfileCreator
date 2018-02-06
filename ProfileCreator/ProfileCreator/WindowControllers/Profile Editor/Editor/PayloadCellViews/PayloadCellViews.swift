@@ -66,7 +66,7 @@ class PayloadCellViews {
         
         // Get the current settings, should be better handled if an error getting the settings is presented
         let typeSettings = profile.payloadTypeSettings(type: subkey.payloadSourceType)
-        
+                
         // If both range min and max are specified, and the range isn't more that 19, then use a popUpButton instead
         if let rangeList = subkey.rangeList, rangeList.count <= 20 {
             return PayloadCellViewPopUpButton(subkey: subkey, editor: profileEditor, settings: typeSettings)

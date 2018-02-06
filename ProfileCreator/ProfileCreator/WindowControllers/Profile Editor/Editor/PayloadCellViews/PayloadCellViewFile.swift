@@ -95,6 +95,10 @@ class PayloadCellViewFile: NSTableCellView, ProfileCreatorCellView, PayloadCellV
         self.height += h
     }
     
+    func enable(_ enable: Bool) {
+        Swift.print("enable: \(enable)")
+    }
+    
     // MARK: -
     // MARK: Private Functions
     private func showPrompt(_ show: Bool) {

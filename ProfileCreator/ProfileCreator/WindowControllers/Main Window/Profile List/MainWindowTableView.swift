@@ -109,8 +109,10 @@ class MainWindowTableViewController: NSObject, MainWindowOutlineViewSelectionDel
     // MARK: TableView Actions
     
     @objc func editProfile(tableView: NSTableView) {
-        if 0 <= self.tableView.clickedRow, let identifier = self.profileIdentifier(atRow: self.tableView.clickedRow), let profile = ProfileController.sharedInstance.profile(withIdentifier: identifier) {
-            profile.edit()
+        if
+            0 <= self.tableView.clickedRow,
+            let identifier = self.profileIdentifier(atRow: self.tableView.clickedRow) {
+            ProfileController.sharedInstance.editProfile(withIdentifier: identifier)
         } else {
             // TODO: Proper logging
             Swift.print("Class: \(self.self), Function: \(#function), Found no identifier!")
@@ -142,7 +144,9 @@ class MainWindowTableViewController: NSObject, MainWindowOutlineViewSelectionDel
     }
     
     @objc func exportProfile(_ notification: NSNotification?) {
-        Swift.print("Class: \(self.self), Function: \(#function), exportProfile")
+        if let identifiers = self.profileIdentifiers(atRowIndexes: self.tableView.selectedRowIndexes) {
+            ProfileController.sharedInstance.exportProfiles(withIdentifiers: identifiers)
+        }
     }
     
     @objc func didSaveProfile(_ notification: NSNotification?) {
@@ -260,6 +264,13 @@ class MainWindowTableViewController: NSObject, MainWindowOutlineViewSelectionDel
     func profileIdentifier(atRow: Int) -> UUID? {
         if let selectedProfileGroup = self.selectedProfileGroup, atRow < selectedProfileGroup.profileIdentifiers.count {
             return selectedProfileGroup.profileIdentifiers[atRow]
+        }
+        return nil
+    }
+    
+    func profileIdentifiers(atRowIndexes: IndexSet) -> [UUID]? {
+        if let selectedProfileGroup = self.selectedProfileGroup {
+            return selectedProfileGroup.profileIdentifiers.objectsAtIndexes(indexes: atRowIndexes)
         }
         return nil
     }

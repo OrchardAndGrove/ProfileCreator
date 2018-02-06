@@ -67,14 +67,14 @@ class ProfileEditor: NSObject {
     
     func reloadTableView(force: Bool = false) {
         /*
-        guard let window = self.tableView.window else { return }
-        
-        Swift.print("window.firstResponder: \(window.firstResponder?.nextResponder)")
-        
-        var firstResponder = window.firstResponder
-
-        Swift.print("Current First Responder")
-        */
+         guard let window = self.tableView.window else { return }
+         
+         Swift.print("window.firstResponder: \(window.firstResponder?.nextResponder)")
+         
+         var firstResponder = window.firstResponder
+         
+         Swift.print("Current First Responder")
+         */
         self.tableView.reloadData()
     }
     
@@ -86,6 +86,7 @@ class ProfileEditor: NSObject {
     
     func updateViewSettings(value: Any?, key: String, subkey: PayloadSourceSubkey) {
         self.profile?.updateViewSettings(value: value, key: key, subkey: subkey, updateComplete: { (successful, error) in
+            if successful { self.reloadTableView(force: true) }
             Swift.print("Class: \(self.self), Function: \(#function), ViewSettings Changed with status: \(successful)")
         })
     }
@@ -347,14 +348,53 @@ extension ProfileEditor: NSTableViewDelegate {
         return 1
     }
     
+    func tableView(_ tableView: NSTableView, didAdd rowView: NSTableRowView, forRow row: Int) {
+        
+        // If the row is the first or last, get the view settings for the row below and abore respectively
+        var rowNumber: Int
+        if row == 0 {
+            rowNumber = row + 1
+        } else if row == (self.cellViews.count - 1) {
+            rowNumber = row - 1
+        } else {
+            rowNumber = row
+        }
+
+        // Get the cell view and subkey for the row
+        guard
+            let cellView = self.cellViews[rowNumber] as? PayloadCellView,
+            let subkey = cellView.subkey else { return }
+        
+        // Get and set all view settings
+        var enabled = false
+        if
+            let viewTypeSettings = self.profile?.payloadViewTypeSettings(type: subkey.payloadSourceType),
+            let domainViewSettings = viewTypeSettings[subkey.domain] as? Dictionary<String, Any>,
+            let viewSettings = domainViewSettings[subkey.keyPath] as? Dictionary<String, Any> {
+            
+            // Enabled
+            if let isEnabled = viewSettings[SettingsKey.enabled] as? Bool {
+                enabled = isEnabled
+            }
+        }
+        
+        // This is weird as it's "reversed", should maybe change the wording or the
+        if !enabled {
+            rowView.backgroundColor = NSColor.quaternaryLabelColor
+        }
+        
+        cellView.enable(enabled)
+        
+    }
+    
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         if tableColumn?.identifier == .tableColumnPayload {
             // FIXME: Should only be needed once and NOT here
             self.updateKeyViewLoop(window: tableView.window!)
             return self.cellViews[row]
         } else if tableColumn?.identifier == .tableColumnPayloadEnable {
-            if let cellView = self.cellViews[row] as? PayloadCellView, let subkey = cellView.subkey {
-                return PayloadCellViewEnable(subkey: subkey, editor: self, settings: Dictionary<String, Any>())
+            if let cellView = self.cellViews[row] as? PayloadCellView, let subkey = cellView.subkey, let viewSettings = self.profile?.payloadViewTypeSettings(type: subkey.payloadSourceType) {
+                return PayloadCellViewEnable(subkey: subkey, editor: self, settings: viewSettings)
             }
         }
         return nil

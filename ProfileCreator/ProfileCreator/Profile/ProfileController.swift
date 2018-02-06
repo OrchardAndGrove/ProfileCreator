@@ -27,8 +27,6 @@ class ProfileController: NSDocumentController {
     override init() {
         super.init()
         
-        
-        
         // ---------------------------------------------------------------------
         //  Load all saved profiles from disk
         // ---------------------------------------------------------------------
@@ -122,6 +120,33 @@ class ProfileController: NSDocumentController {
     
     public func profile(withIdentifier: UUID) -> Profile? {
         return self.profiles.first(where: {$0.identifier == withIdentifier})
+    }
+    
+    public func profiles(withIdentifiers: [UUID]) -> [Profile]? {
+        return self.profiles.filter({ withIdentifiers.contains($0.identifier) })
+    }
+    
+    public func editProfile(withIdentifier: UUID) {
+        if let profile = self.profile(withIdentifier: withIdentifier) {
+            profile.edit()
+        }
+    }
+    
+    public func exportProfile(withIdentifier: UUID) {
+        if let profile = self.profile(withIdentifier: withIdentifier) {
+            Swift.print("Exporting Profile: \(profile.title ?? "")")
+        }
+    }
+    
+    public func exportProfiles(withIdentifiers: [UUID]) {
+        if let profiles = self.profiles(withIdentifiers: withIdentifiers) {
+            Swift.print("Exporting Profiles: \(profiles)")
+            for profile in profiles {
+                ProfileExport.export(profile: profile, completionHandler: { (error) in
+                    Swift.print("Exported with error: \(String(describing: error))")
+                })
+            }
+        }
     }
     
     public func removeProfiles(atIndexes: IndexSet, withIdentifiers: [UUID]) {

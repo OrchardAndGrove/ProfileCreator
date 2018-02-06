@@ -108,6 +108,10 @@ class PayloadCellViewDatePicker: NSTableCellView, ProfileCreatorCellView, Payloa
         self.height += h
     }
     
+    func enable(_ enable: Bool) {
+        Swift.print("enable: \(enable)")
+    }
+    
     // MARK: -
     // MARK: DatePicker Actions
     

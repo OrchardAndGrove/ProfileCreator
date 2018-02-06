@@ -69,6 +69,20 @@ class PreferencesProfileDefaultsView: NSView {
                                 height: &frameHeight,
                                 constraints: &constraints)
         
+        lastSubview = addTextField(placeholderValue: "Pretendco",
+                                   keyPath: PreferenceKey.defaultOrganization,
+                                   toView: self,
+                                   lastSubview: lastSubview,
+                                   height: &frameHeight,
+                                   constraints: &constraints)
+        
+        lastSubview = addTextField(placeholderValue: "com.pretendco",
+                                   keyPath: PreferenceKey.defaultOrganizationIdentifier,
+                                   toView: self,
+                                   lastSubview: lastSubview,
+                                   height: &frameHeight,
+                                   constraints: &constraints)
+        
         // ---------------------------------------------------------------------
         //  Add constraints to last view
         // ---------------------------------------------------------------------

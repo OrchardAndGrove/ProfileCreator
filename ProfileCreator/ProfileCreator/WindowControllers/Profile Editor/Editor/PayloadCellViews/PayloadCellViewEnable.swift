@@ -45,6 +45,16 @@ class PayloadCellViewEnable: NSTableCellView, CheckboxCellView {
         setupCheckbox(constraints: &constraints)
         
         // ---------------------------------------------------------------------
+        //  Set Value
+        // ---------------------------------------------------------------------
+        if
+            let domainSettings = settings[subkey.domain] as? Dictionary<String, Any>,
+            let viewSettings = domainSettings[subkey.keyPath] as? Dictionary<String, Any>,
+            let value = viewSettings[SettingsKey.enabled] as? Bool {
+            self.checkbox?.state = value ? .on : .off
+        }
+        
+        // ---------------------------------------------------------------------
         //  Activate Layout Constraints
         // ---------------------------------------------------------------------
         NSLayoutConstraint.activate(constraints)
@@ -55,7 +65,7 @@ class PayloadCellViewEnable: NSTableCellView, CheckboxCellView {
     
     func clicked(_ checkbox: NSButton) {
         guard let subkey = self.subkey else { return }
-        self.editor?.updateViewSettings(value: checkbox.state == .on ? false : true, key: SettingsKey.enabled, subkey: subkey)
+        self.editor?.updateViewSettings(value: checkbox.state == .on ? true : false, key: SettingsKey.enabled, subkey: subkey)
     }
     
     // MARK: -
