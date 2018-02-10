@@ -153,22 +153,6 @@ public class Profile: NSDocument {
     // MARK: -
     // MARK: Public Functions
     
-    public func payloadTypeSettings(type: PayloadSourceType) -> Dictionary<String, Any> {
-        return self.payloadSettings[String(type.rawValue)] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
-    }
-    
-    public func setPayloadTypeSettings(settings: Dictionary<String, Any>, type: PayloadSourceType) {
-        self.payloadSettings[String(type.rawValue)] = settings
-    }
-    
-    public func payloadViewTypeSettings(type: PayloadSourceType) -> Dictionary<String, Any> {
-        return self.viewSettings[String(type.rawValue)] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
-    }
-    
-    public func setPayloadViewTypeSettings(settings: Dictionary<String, Any>, type: PayloadSourceType) {
-        self.viewSettings[String(type.rawValue)] = settings
-    }
-    
     public func updatePayloadSelection(selected: Bool, payloadSource: PayloadSource, updateComplete: @escaping (Bool, Error?) -> ()) {
         
         // ---------------------------------------------------------------------
@@ -194,92 +178,15 @@ public class Profile: NSDocument {
         updateComplete(true, nil)
     }
     
-    public func updateViewSettings(value: Any?, key: String, subkey: PayloadSourceSubkey, updateComplete: @escaping (Bool, Error?) -> ()) {
-        
-        // ---------------------------------------------------------------------
-        //  Get the current domain settings or create an empty set if they doesn't exist
-        // ---------------------------------------------------------------------
-        var typeSettings = self.payloadViewTypeSettings(type: subkey.payloadSourceType)
-        var domainSettings = typeSettings[subkey.domain] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
-        
-        // ---------------------------------------------------------------------
-        //  Set the current key settings or create an empty set if the doesn't exist
-        // ---------------------------------------------------------------------
-        var keySettings = domainSettings[subkey.keyPath] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
-        
-        // ---------------------------------------------------------------------
-        //  Set the new value
-        // ---------------------------------------------------------------------
-        Swift.print("Setting key: \(key) value: \(String(describing: value))")
-        keySettings[key] = value
-        domainSettings[subkey.keyPath] = keySettings
-        typeSettings[subkey.domain] = domainSettings
-        
-        // ---------------------------------------------------------------------
-        //  Save the the changes to the current settings
-        // ---------------------------------------------------------------------
-        self.setPayloadViewTypeSettings(settings: typeSettings, type: subkey.payloadSourceType)
-        
-        updateComplete(true, nil)
-    }
-    
-    public func updatePayloadSettings(value: Any?, subkey: PayloadSourceSubkey, updateComplete: @escaping (Bool, Error?) -> ()) {
-        
-        // ---------------------------------------------------------------------
-        //  Get the current domain settings or create an empty set if they doesn't exist
-        // ---------------------------------------------------------------------
-        var typeSettings = self.payloadTypeSettings(type: subkey.payloadSourceType)
-        var domainSettings = typeSettings[subkey.domain] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
-        
-        // ---------------------------------------------------------------------
-        //  Set the new value
-        // ---------------------------------------------------------------------
-        domainSettings[subkey.keyPath] = value
-        
-        // ---------------------------------------------------------------------
-        //  Verify the domain has the required settings
-        // ---------------------------------------------------------------------
-        self.updateDomainSettings(&domainSettings)
-        
-        // ---------------------------------------------------------------------
-        //
-        // ---------------------------------------------------------------------
-        typeSettings[subkey.domain] = domainSettings
-        
-        // ---------------------------------------------------------------------
-        //  Save the the changes to the current settings
-        // ---------------------------------------------------------------------
-        self.setPayloadTypeSettings(settings: typeSettings, type: subkey.payloadSourceType)
-        
-        // ---------------------------------------------------------------------
-        //  Using closure for the option of a longer save time if needed in the future for more checking etc.
-        // ---------------------------------------------------------------------
-        updateComplete(true, nil)
-    }
-    
     public func updateDomainSettings(_ domainSettings: inout Dictionary<String, Any>) {
         
         // Verify PayloadUUID
-        if domainSettings[PayloadKey.payloadUUID] == nil {
-            domainSettings[PayloadKey.payloadUUID] = UUID().uuidString
-        }
+        if domainSettings[PayloadKey.payloadUUID] == nil { domainSettings[PayloadKey.payloadUUID] = UUID().uuidString }
         
         // Verify PayloadVersion
-        if domainSettings[PayloadKey.payloadVersion] == nil {
-            domainSettings[PayloadKey.payloadVersion] = 1
-        }
+        if domainSettings[PayloadKey.payloadVersion] == nil { domainSettings[PayloadKey.payloadVersion] = 1 }
         
         Swift.print("Domain Settings: \(domainSettings)")
-    }
-    
-    class func defaultPayloadSettings() -> Dictionary<String, Any> {
-        let payloadSettings = Dictionary<String, Any>()
-        return payloadSettings
-    }
-    
-    class func defaultViewSettings() -> Dictionary<String, Any> {
-        let viewSettings = Dictionary<String, Any>()
-        return viewSettings
     }
     
     public func edit() {
@@ -290,7 +197,7 @@ public class Profile: NSDocument {
             windowController = ProfileEditorWindowController(profile: self)
             self.addWindowController(windowController)
         }
-
+        
         windowController.window?.makeKeyAndOrderFront(self)
     }
     
@@ -320,5 +227,110 @@ public class Profile: NSDocument {
         // TODO: Update title and displayname in settings
         
         self.title = title
+    }
+    
+    // MARK: -
+    // MARK: View Settings
+    
+    class func defaultViewSettings() -> Dictionary<String, Any> {
+        let viewSettings = Dictionary<String, Any>()
+        return viewSettings
+    }
+    
+    public func payloadViewTypeSettings(type: PayloadSourceType) -> Dictionary<String, Any> {
+        return self.viewSettings[String(type.rawValue)] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
+    }
+    
+    public func setPayloadViewTypeSettings(settings: Dictionary<String, Any>, type: PayloadSourceType) {
+        self.viewSettings[String(type.rawValue)] = settings
+    }
+    
+    public func updateViewSettings(value: Any?, key: String, subkey: PayloadSourceSubkey, updateComplete: @escaping (Bool, Error?) -> ()) {
+        self.updateViewSettings(value: value, key: key, keyPath: subkey.keyPath, domain: subkey.domain, type: subkey.payloadSourceType, updateComplete: updateComplete)
+    }
+    
+    public func updateViewSettings(value: Any?, key: String, keyPath: String?, domain: String, type: PayloadSourceType, updateComplete: @escaping (Bool, Error?) -> ()) {
+        
+        // ---------------------------------------------------------------------
+        //  Get the current domain settings or create an empty set if they doesn't exist
+        // ---------------------------------------------------------------------
+        var typeSettings = self.payloadViewTypeSettings(type: type)
+        var domainSettings = typeSettings[domain] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
+        
+        // ---------------------------------------------------------------------
+        //  Set the new value
+        // ---------------------------------------------------------------------
+        if let payloadKeyPath = keyPath {
+            var keySettings = domainSettings[payloadKeyPath] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
+            keySettings[key] = value
+            domainSettings[payloadKeyPath] = keySettings
+            typeSettings[domain] = domainSettings
+        } else {
+            domainSettings[key] = value
+            typeSettings[domain] = domainSettings
+        }
+        
+        // ---------------------------------------------------------------------
+        //  Save the the changes to the current settings
+        // ---------------------------------------------------------------------
+        self.setPayloadViewTypeSettings(settings: typeSettings, type: type)
+        
+        updateComplete(true, nil)
+    }
+
+    // MARK: -
+    // MARK: Payload Settings
+    
+    class func defaultPayloadSettings() -> Dictionary<String, Any> {
+        var payloadSettings = Dictionary<String, Any>()
+        payloadSettings[PayloadKey.payloadVersion] = 1
+        payloadSettings[PayloadKey.payloadUUID] = UUID().uuidString
+        return payloadSettings
+    }
+    
+    public func payloadTypeSettings(type: PayloadSourceType) -> Dictionary<String, Any> {
+        return self.payloadSettings[String(type.rawValue)] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
+    }
+    
+    public func setPayloadTypeSettings(settings: Dictionary<String, Any>, type: PayloadSourceType) {
+        self.payloadSettings[String(type.rawValue)] = settings
+    }
+    
+    public func updatePayloadSettings(value: Any?, subkey: PayloadSourceSubkey, updateComplete: @escaping (Bool, Error?) -> ()) {
+        self.updatePayloadSettings(value: value, key: subkey.keyPath, domain: subkey.domain, type: subkey.payloadSourceType, updateComplete: updateComplete)
+    }
+    
+    public func updatePayloadSettings(value: Any?, key: String, domain: String, type: PayloadSourceType, updateComplete: @escaping (Bool, Error?) -> ()) {
+        
+        // ---------------------------------------------------------------------
+        //  Get the current domain settings or create an empty set if they doesn't exist
+        // ---------------------------------------------------------------------
+        var typeSettings = self.payloadTypeSettings(type: type)
+        var domainSettings = typeSettings[domain] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
+        
+        // ---------------------------------------------------------------------
+        //  Set the new value
+        // ---------------------------------------------------------------------
+        domainSettings[key] = value
+        
+        // ---------------------------------------------------------------------
+        //  Verify the domain has the required settings
+        // ---------------------------------------------------------------------
+        self.updateDomainSettings(&domainSettings)
+        
+        // ---------------------------------------------------------------------
+        //
+        // ---------------------------------------------------------------------
+        typeSettings[domain] = domainSettings
+        
+        // ---------------------------------------------------------------------
+        //  Save the the changes to the current settings
+        // ---------------------------------------------------------------------
+        self.setPayloadTypeSettings(settings: typeSettings, type: type)
+        
+        // ---------------------------------------------------------------------
+        //  Using closure for the option of a longer save time if needed in the future for more checking etc.
+        // ---------------------------------------------------------------------
+        updateComplete(true, nil)
     }
 }

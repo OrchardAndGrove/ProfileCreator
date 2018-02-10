@@ -40,6 +40,7 @@ class ProfileExport {
             }
         }
         
+        // NOTE: Only for testing
         if FileManager.default.fileExists(atPath: "/Users/eriber2/Desktop/test.mobileconfig") {
             do {
                 try FileManager.default.removeItem(atPath: "/Users/eriber2/Desktop/test.mobileconfig")
@@ -82,7 +83,7 @@ class ProfileExport {
             profileContent[PayloadKey.payloadOrganization] = defaultOrganization
         }
         
-        // PayloadRemovalDisallowed
+        // profileContent[PayloadKey.payloadRemovalDisallowed] = false // PayloadRemovalDisallowed
         // Check if supervised
         
         profileContent[PayloadKey.payloadScope] = PayloadScope.user
@@ -92,7 +93,7 @@ class ProfileExport {
     
     class func payloadContent(profile: Profile, completionHandler: (_ payloadContent: [Dictionary<String, Any>], _ error: Error?) -> Void) {
         
-        var payloadContent = Dictionary<String, Any>()
+        var allPayloadContent = [Dictionary<String, Any>]()
         
         for (typeRawValue, typeSettingsDict) in profile.payloadSettings {
             
@@ -110,6 +111,9 @@ class ProfileExport {
             //  Loop through all domains and settings for the current type
             // ---------------------------------------------------------------------
             for (domain, domainSettings) in typeSettings {
+                
+                var payloadContent = Dictionary<String, Any>()
+                
                 if let payloadSource = ProfilePayloads.shared.payloadSource(domain: domain, type: type) {
                     
                     // ---------------------------------------------------------------------
@@ -118,14 +122,72 @@ class ProfileExport {
                     let viewTypeSettings = profile.payloadViewTypeSettings(type: type)
                     let viewDomainSettings = viewTypeSettings[domain] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
                     
+                    // ---------------------------------------------------------------------
+                    //  Export the current domain
+                    // ---------------------------------------------------------------------
                     self.export(subkeys: payloadSource.subkeys, domainSettings: domainSettings, typeSettings: typeSettings, viewDomainSettings: viewDomainSettings, viewTypeSettings: viewTypeSettings, payloadContent: &payloadContent)
+                    
+                    // ---------------------------------------------------------------------
+                    //  Update the payload version (and hash) if anything has changed
+                    // ---------------------------------------------------------------------
+                    self.updatePayloadVersion(profile: profile, type: type, domain: domain, viewDomainSettings: viewDomainSettings, payloadContent: &payloadContent)
+                    
                 } else {
                     Swift.print("Failed to get a payloadSource for domain: \(domain) of type: \(type)")
                 }
+                
+                // ---------------------------------------------------------------------
+                //  If payload is not empty, add to all payloads
+                // ---------------------------------------------------------------------
+                if !payloadContent.isEmpty { allPayloadContent.append(payloadContent) }
             }
         }
         
-        completionHandler([payloadContent], nil)
+        completionHandler(allPayloadContent, nil)
+    }
+    
+    class func updatePayloadVersion(profile: Profile, type: PayloadSourceType, domain: String, viewDomainSettings: Dictionary<String, Any>, payloadContent: inout Dictionary<String, Any>) {
+        
+        // ---------------------------------------------------------------------
+        //  Get the current payload hash
+        // ---------------------------------------------------------------------
+        let payloadData = NSKeyedArchiver.archivedData(withRootObject: payloadContent)
+        let payloadHash = payloadData.hashValue
+        
+        // ---------------------------------------------------------------------
+        //  Get the last payload hash and version
+        // ---------------------------------------------------------------------
+        let lastPayloadHash = viewDomainSettings[SettingsKey.hash] as? Int ?? -1
+        let lastPayloadVersion = payloadContent[PayloadKey.payloadVersion] as? Int ?? 1
+        
+        if lastPayloadHash == -1 {
+            
+            // ---------------------------------------------------------------------
+            //  Update Payload Hash
+            // ---------------------------------------------------------------------
+            profile.updateViewSettings(value: payloadHash, key: SettingsKey.hash, keyPath: nil, domain: domain, type: type, updateComplete: { (success, error) in
+                if success { profile.save(self) }
+            })
+        } else if payloadHash != lastPayloadHash {
+            
+            // ---------------------------------------------------------------------
+            //  Update Payload Version
+            // ---------------------------------------------------------------------
+            let newPayloadVersion = lastPayloadVersion + 1
+            payloadContent[PayloadKey.payloadVersion] = newPayloadVersion
+            profile.updatePayloadSettings(value: newPayloadVersion, key: PayloadKey.payloadVersion, domain: domain, type: type, updateComplete: { (success, error) in
+                if success { profile.save(self) }
+            })
+            
+            // ---------------------------------------------------------------------
+            //  Update Payload Hash
+            // ---------------------------------------------------------------------
+            let newPayloadData = NSKeyedArchiver.archivedData(withRootObject: payloadContent)
+            let newPayloadHash = newPayloadData.hashValue
+            profile.updateViewSettings(value: newPayloadHash, key: SettingsKey.hash, keyPath: nil, domain: domain, type: type, updateComplete: { (success, error) in
+                if success { profile.save(self) }
+            })
+        }
     }
     
     class func export(subkeys: [PayloadSourceSubkey], domainSettings: Dictionary<String, Any>, typeSettings: Dictionary<String, Any>, viewDomainSettings: Dictionary<String, Any>, viewTypeSettings: Dictionary<String, Any>, payloadContent: inout Dictionary<String, Any>) {

@@ -381,6 +381,7 @@
 			children = (
 				539832101F0EE15400C4792D /* ProfileCreator */,
 				5398320F1F0EE15400C4792D /* Products */,
+				E3036610202EE4FA0051040D /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -400,6 +401,7 @@
 				539832171F0EE15400C4792D /* Main.storyboard */,
 				5398321A1F0EE15400C4792D /* Info.plist */,
 				539592611F102DEE005090B3 /* Defaults.plist */,
+				E303660D202EE47C0051040D /* Extensions */,
 				536DA4921F12142100FB325E /* Utility */,
 				5309D3011F19E516002133A0 /* Profile */,
 				5365F4821F0F4CFE0064C02A /* Window Controllers */,
@@ -448,6 +450,20 @@
 				530CD3D91F17793B0071E866 /* MainWindowTableViewItems.swift */,
 			);
 			name = "Profile List";
+			sourceTree = "<group>";
+		};
+		E303660D202EE47C0051040D /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Extensions;
+			sourceTree = "<group>";
+		};
+		E3036610202EE4FA0051040D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		E314EC0A1F461AB000AB18C5 /* Frameworks */ = {
@@ -737,6 +753,10 @@
 				);
 				INFOPLIST_FILE = ProfileCreator/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SDKROOT)/usr/lib/system",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.erikberglund.ProfileCreator;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -757,6 +777,10 @@
 				);
 				INFOPLIST_FILE = ProfileCreator/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(SDKROOT)/usr/lib/system",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = com.github.erikberglund.ProfileCreator;
 				PRODUCT_NAME = "$(TARGET_NAME)";

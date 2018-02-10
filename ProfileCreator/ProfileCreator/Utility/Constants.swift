@@ -115,6 +115,7 @@ struct SidebarGroupTitle {
 
 public struct SettingsKey {
     static let enabled = "Enabled"
+    static let hash = "Hash"
     static let group = "Group"
     static let identifier = "Identifier"
     static let identifiers = "Identifiers"
