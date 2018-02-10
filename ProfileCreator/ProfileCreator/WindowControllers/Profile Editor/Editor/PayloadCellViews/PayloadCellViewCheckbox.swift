@@ -54,7 +54,7 @@ class PayloadCellViewCheckbox: NSTableCellView, ProfileCreatorCellView, PayloadC
         //  Setup Custom View Content
         // ---------------------------------------------------------------------
         self.checkbox = EditorCheckbox.noTitle(constraints: &constraints, cellView: self)
-        setupCheckbox(constraints: &constraints)
+        self.setupCheckbox(constraints: &constraints)
         
         // ---------------------------------------------------------------------
         //  Setup Static View Content
@@ -107,7 +107,6 @@ class PayloadCellViewCheckbox: NSTableCellView, ProfileCreatorCellView, PayloadC
     }
     
     func enable(_ enable: Bool) {
-        Swift.print("enable: \(enable)")
         self.checkbox?.isEnabled = enable
     }
     

@@ -55,6 +55,13 @@ class PayloadCellViewEnable: NSTableCellView, CheckboxCellView {
         }
         
         // ---------------------------------------------------------------------
+        //  Set Required
+        // ---------------------------------------------------------------------
+        if subkey.require == .always {
+            self.checkbox?.isHidden = true
+        }
+        
+        // ---------------------------------------------------------------------
         //  Activate Layout Constraints
         // ---------------------------------------------------------------------
         NSLayoutConstraint.activate(constraints)

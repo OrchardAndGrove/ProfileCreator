@@ -135,6 +135,8 @@ class ProfileEditor: NSObject {
             }
         }
         
+        Swift.print("window: \(window)")
+        Swift.print("firstCellViewWindow: \(firstCellView?.leadingKeyView?.window)")
         if firstCellView != nil {
             window.initialFirstResponder = firstCellView as? NSView
             self.firstCellView = firstCellView as? NSView
@@ -367,7 +369,9 @@ extension ProfileEditor: NSTableViewDelegate {
         
         // Get and set all view settings
         var enabled = false
-        if
+        if subkey.require == .always {
+            enabled = true
+        } else if
             let viewTypeSettings = self.profile?.payloadViewTypeSettings(type: subkey.payloadSourceType),
             let domainViewSettings = viewTypeSettings[subkey.domain] as? Dictionary<String, Any>,
             let viewSettings = domainViewSettings[subkey.keyPath] as? Dictionary<String, Any> {
@@ -384,13 +388,14 @@ extension ProfileEditor: NSTableViewDelegate {
         }
         
         cellView.enable(enabled)
-        
     }
     
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         if tableColumn?.identifier == .tableColumnPayload {
-            // FIXME: Should only be needed once and NOT here
-            self.updateKeyViewLoop(window: tableView.window!)
+            // FIXME: Should maybe not be done here
+            if self.cellViews.count == row + 1 {
+                self.updateKeyViewLoop(window: tableView.window!)
+            }
             return self.cellViews[row]
         } else if tableColumn?.identifier == .tableColumnPayloadEnable {
             if let cellView = self.cellViews[row] as? PayloadCellView, let subkey = cellView.subkey, let viewSettings = self.profile?.payloadViewTypeSettings(type: subkey.payloadSourceType) {

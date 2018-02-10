@@ -40,6 +40,16 @@ class ProfileExport {
             }
         }
         
+        if FileManager.default.fileExists(atPath: "/Users/eriber2/Desktop/test.mobileconfig") {
+            do {
+                try FileManager.default.removeItem(atPath: "/Users/eriber2/Desktop/test.mobileconfig")
+            } catch let error {
+                Swift.print("Failed to remove test file")
+                completionHandler(error)
+                return
+            }
+        }
+        
         Swift.print("Finished Profile: \(profileContentExported)")
         if !NSDictionary(dictionary: profileContentExported).write(toFile: "/Users/eriber2/Desktop/test.mobileconfig", atomically: true) {
             Swift.print("Failed to write")
@@ -47,7 +57,7 @@ class ProfileExport {
         
         completionHandler(nil)
     }
-
+    
     
     class func profileContent(profile: Profile, completionHandler: (_ profileContent: Dictionary<String, Any>, _ error: Error?) -> Void) {
         
@@ -101,7 +111,14 @@ class ProfileExport {
             // ---------------------------------------------------------------------
             for (domain, domainSettings) in typeSettings {
                 if let payloadSource = ProfilePayloads.shared.payloadSource(domain: domain, type: type) {
-                    self.export(subkeys: payloadSource.subkeys, domainSettings: domainSettings, typeSettings: typeSettings, payloadContent: &payloadContent)
+                    
+                    // ---------------------------------------------------------------------
+                    //  Get the view settings for the current domain
+                    // ---------------------------------------------------------------------
+                    let viewTypeSettings = profile.payloadViewTypeSettings(type: type)
+                    let viewDomainSettings = viewTypeSettings[domain] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
+                    
+                    self.export(subkeys: payloadSource.subkeys, domainSettings: domainSettings, typeSettings: typeSettings, viewDomainSettings: viewDomainSettings, viewTypeSettings: viewTypeSettings, payloadContent: &payloadContent)
                 } else {
                     Swift.print("Failed to get a payloadSource for domain: \(domain) of type: \(type)")
                 }
@@ -111,7 +128,7 @@ class ProfileExport {
         completionHandler([payloadContent], nil)
     }
     
-    class func export(subkeys: [PayloadSourceSubkey], domainSettings: Dictionary<String, Any>, typeSettings: Dictionary<String, Any>, payloadContent: inout Dictionary<String, Any>) {
+    class func export(subkeys: [PayloadSourceSubkey], domainSettings: Dictionary<String, Any>, typeSettings: Dictionary<String, Any>, viewDomainSettings: Dictionary<String, Any>, viewTypeSettings: Dictionary<String, Any>, payloadContent: inout Dictionary<String, Any>) {
         for subkey in subkeys {
             
             // Verify that this subkey should be exported
@@ -120,31 +137,48 @@ class ProfileExport {
                 continue
             }
             
-            // Inintialize the value
-            var value: Any?
-            
-            if let userValue = domainSettings[subkey.keyPath] {
-                if PayloadUtility.valueType(value: userValue) == subkey.type {
-                    value = userValue
-                } else {
-                    Swift.print("User value did not match value type: \(PayloadUtility.valueType(value: userValue)) != \(subkey.type)")
+            // Get and set all view settings
+            var enabled = false
+            if subkey.require == .always {
+                enabled = true
+            } else if
+                let viewSettings = viewDomainSettings[subkey.keyPath] as? Dictionary<String, Any> {
+                
+                // Enabled
+                if let isEnabled = viewSettings[SettingsKey.enabled] as? Bool {
+                    enabled = isEnabled
                 }
             }
             
-            // If no user value was found, get default value or use an empty value
-            if value == nil {
-                value = subkey.valueDefault ?? PayloadUtility.emptyValue(valueType: subkey.type)
+            // Only export enabled payloads
+            if enabled {
+                
+                // Inintialize the value
+                var value: Any?
+                
+                if let userValue = domainSettings[subkey.keyPath] {
+                    if PayloadUtility.valueType(value: userValue) == subkey.type {
+                        value = userValue
+                    } else {
+                        Swift.print("User value did not match value type: \(PayloadUtility.valueType(value: userValue)) != \(subkey.type)")
+                    }
+                }
+                
+                // If no user value was found, get default value or use an empty value
+                if value == nil {
+                    value = subkey.valueDefault ?? PayloadUtility.emptyValue(valueType: subkey.type)
+                }
+                
+                if let keyValue = value {
+                    Swift.print("Setting: \(subkey.key) = \(keyValue)")
+                    payloadContent[subkey.key] = keyValue
+                } else {
+                    Swift.print("ERROR: NO VALUE!")
+                }
             }
             
-            if let keyValue = value {
-                Swift.print("Setting: \(subkey.key) = \(keyValue)")
-                payloadContent[subkey.key] = keyValue
-            } else {
-                Swift.print("ERROR: NO VALUE!")
-            }
-            
-            // Continue throuch all subkeys
-            if !subkey.subkeys.isEmpty { self.export(subkeys: subkey.subkeys, domainSettings: domainSettings, typeSettings: typeSettings, payloadContent: &payloadContent) }
+            // Continue through all subkeys
+            if !subkey.subkeys.isEmpty { self.export(subkeys: subkey.subkeys, domainSettings: domainSettings, typeSettings: typeSettings, viewDomainSettings: viewDomainSettings, viewTypeSettings: viewTypeSettings, payloadContent: &payloadContent) }
         }
     }
     

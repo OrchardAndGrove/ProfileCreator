@@ -67,7 +67,7 @@ class PayloadCellViewDatePicker: NSTableCellView, ProfileCreatorCellView, Payloa
         //  Setup Custom View Content
         // ---------------------------------------------------------------------
         self.datePicker = EditorDatePicker.picker(offsetDays: 0, offsetHours: 0, offsetMinutes: 0, showDate: true, showTime: true, constraints: &constraints, cellView: self)
-        setupDatePicker(constraints: &constraints)
+        self.setupDatePicker(constraints: &constraints)
         
         // ---------------------------------------------------------------------
         //  Set Default Value
