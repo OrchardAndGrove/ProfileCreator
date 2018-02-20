@@ -17,7 +17,7 @@ public class Profile: NSDocument {
     // General Settings
     public var uuid: UUID
     public var identifier: UUID
-    @objc public var title: String
+    @objc public dynamic var title: String = ""
     
     private var savedSettings = Dictionary<String, Any>()
     
@@ -128,8 +128,6 @@ public class Profile: NSDocument {
         // ---------------------------------------------------------------------
         //  Check that all current settings match those on disk
         // ---------------------------------------------------------------------
-        Swift.print("self.savedSettings: \(self.savedSettings)")
-        Swift.print("self.saveDict(): \(self.saveDict())")
         return self.savedSettings == self.saveDict()
     }
     
@@ -146,6 +144,18 @@ public class Profile: NSDocument {
             
             // TODO: Proper Logging
             if saveError == nil {
+                
+                // Check if profile name was updated
+                if
+                    let title = self.getPayloadSetting(key: PayloadKey.payloadDisplayName, domain: ManifestDomain.general, type: .manifest) as? String,
+                    let savedTitle = self.getSavedPayloadSetting(key: PayloadKey.payloadDisplayName, domain: ManifestDomain.general, type: .manifest) as? String,
+                    savedTitle != title {
+                    
+                    // -----------------------------------------------------------------
+                    //  Post notification that this profile was renamed
+                    // -----------------------------------------------------------------
+                    NotificationCenter.default.post(name: .didRenameProfile, object: self, userInfo: [NotificationKey.identifier : self.identifier])
+                }
                 self.savedSettings = self.saveDict()
                 Swift.print("Class: \(self.self), Function: \(#function), Save Successful!")
             } else {
@@ -204,8 +214,8 @@ public class Profile: NSDocument {
     // MARK: Public Functions
     
     func restoreSavedSettings(identifier: UUID, savedSettings: Dictionary<String, Any>?) {
-        Swift.print("restoreSavedSettings for: \(identifier)")
         let settingsDict = savedSettings ?? self.savedSettings
+        self.savedSettings = settingsDict
         self.identifier = identifier
         self.payloadSettings = settingsDict[SettingsKey.payloadSettings] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
         self.viewSettings = settingsDict[SettingsKey.viewSettings] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
@@ -392,6 +402,7 @@ public class Profile: NSDocument {
         self.updatePayloadSettings(value: value, key: subkey.keyPath, domain: subkey.domain, type: subkey.payloadSourceType, updateComplete: updateComplete)
     }
     
+    // For getting the currently in memory value
     func getPayloadSetting(key: String, domain: String, type: PayloadSourceType) -> Any? {
         var typeSettings = self.payloadTypeSettings(type: type)
         var domainSettings = typeSettings[domain] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
@@ -430,14 +441,27 @@ public class Profile: NSDocument {
         //  If this is the payload name setting, then update the profile title
         // ---------------------------------------------------------------------
         if key == PayloadKey.payloadDisplayName, type == .manifest, let title = value as? String {
-            Swift.print("Setting title: \(self.title)")
             self.title = title
-            Swift.print("Setting title AFTER: \(self.title)")
         }
         
         // ---------------------------------------------------------------------
         //  Using closure for the option of a longer save time if needed in the future for more checking etc.
         // ---------------------------------------------------------------------
         updateComplete(true, nil)
+    }
+    
+    // MARK: -
+    // MARK: Saved Settings
+    
+    func savedPayloadTypeSettings(type: PayloadSourceType) -> Dictionary<String, Any> {
+        let savedPayloadSettings = self.savedSettings[SettingsKey.payloadSettings] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
+        return savedPayloadSettings[String(type.rawValue)] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
+    }
+    
+    // For getting the currently saved on disk value
+    func getSavedPayloadSetting(key: String, domain: String, type: PayloadSourceType) -> Any? {
+        var typeSettings = self.savedPayloadTypeSettings(type: type)
+        var domainSettings = typeSettings[domain] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
+        return domainSettings[key]
     }
 }

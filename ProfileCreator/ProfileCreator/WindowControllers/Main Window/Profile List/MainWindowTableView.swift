@@ -79,12 +79,14 @@ class MainWindowTableViewController: NSObject, MainWindowOutlineViewSelectionDel
         //  Setup Notification Observers
         // ---------------------------------------------------------------------
         NotificationCenter.default.addObserver(self, selector: #selector(didRemoveProfilesFromGroup(_:)), name: .didRemoveProfilesFromGroup, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(didRenameProfile(_:)), name: .didRenameProfile, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(didSaveProfile(_:)), name: .didSaveProfile, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(exportProfile(_:)), name: .exportProfile, object: nil)
     }
     
     deinit {
         NotificationCenter.default.removeObserver(self, name: .didRemoveProfilesFromGroup, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .didRenameProfile, object: nil)
         NotificationCenter.default.removeObserver(self, name: .didSaveProfile, object: nil)
         NotificationCenter.default.removeObserver(self, name: .exportProfile, object: nil)
     }
@@ -103,7 +105,6 @@ class MainWindowTableViewController: NSObject, MainWindowOutlineViewSelectionDel
             reloadTableView()
         }
     }
-    
     
     // MARK: -
     // MARK: TableView Actions
@@ -151,6 +152,17 @@ class MainWindowTableViewController: NSObject, MainWindowOutlineViewSelectionDel
     
     @objc func didSaveProfile(_ notification: NSNotification?) {
         reloadTableView()
+    }
+    
+    @objc func didRenameProfile(_ notification: NSNotification?) {
+        if
+            let userInfo = notification?.userInfo,
+            let profileIdentifier = userInfo[NotificationKey.identifier] as? UUID,
+            let groupProfileIdentifiers = self.selectedProfileGroup?.profileIdentifiers,
+            groupProfileIdentifiers.contains(profileIdentifier) {
+            self.reloadTableView()
+            Swift.print("It's Currently Showing!!! Did Rename: \(profileIdentifier)")
+        }
     }
     
     // -------------------------------------------------------------------------
@@ -511,7 +523,7 @@ class MainWindowTableView: NSTableView {
             let clickedIdentifier = self.clickedProfile,
             let profile = ProfileController.sharedInstance.profile(withIdentifier: clickedIdentifier),
             let profileURL = profile.fileURL {
-                NSWorkspace.shared.activateFileViewerSelecting([profileURL])
+            NSWorkspace.shared.activateFileViewerSelecting([profileURL])
         }
     }
     

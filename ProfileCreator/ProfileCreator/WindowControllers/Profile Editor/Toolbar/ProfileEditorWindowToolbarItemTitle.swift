@@ -34,7 +34,7 @@ class ProfileEditorWindowToolbarItemTitle: NSView {
         //  Setup Variables
         // ---------------------------------------------------------------------
         self.profile = profile
-        self.profileTitleSelector = NSStringFromSelector(#selector(setter: profile.title))
+        self.profileTitleSelector = NSStringFromSelector(#selector(getter: profile.title))
         var constraints = [NSLayoutConstraint]()
         
         // ---------------------------------------------------------------------
@@ -86,7 +86,6 @@ class ProfileEditorWindowToolbarItemTitle: NSView {
         // ---------------------------------------------------------------------
         //  Setup key/value observer for the profile title
         // ---------------------------------------------------------------------
-        Swift.print("self.profileTitleSelector: \(self.profileTitleSelector)")
         self.profile?.addObserver(self, forKeyPath: self.profileTitleSelector, options: .new, context: nil)
     }
     
@@ -98,11 +97,9 @@ class ProfileEditorWindowToolbarItemTitle: NSView {
     // MARK: Instance Functions
     
     func updateTitle() {
-        if let profile = self.profile {
-            self.textFieldTitle.stringValue = "\(profile.title): \(self.selectionTitle ?? "")"
-        } else {
-            self.textFieldTitle.stringValue = self.selectionTitle ?? ""
-        }
+        guard let profile = self.profile else { return }
+        
+        self.textFieldTitle.stringValue = profile.title
         
         let frame = NSRect(x: 0.0, y: 0.0, width: self.textFieldTitle.intrinsicContentSize.width, height: self.toolbarItemHeight)
         self.toolbarItem?.minSize = frame.size
@@ -114,10 +111,7 @@ class ProfileEditorWindowToolbarItemTitle: NSView {
     // MARK: Notification Functions
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        Swift.print("Class: \(self.self), Function: \(#function), observeValueforKeyPath: \(String(describing: keyPath))")
-        if keyPath == self.profileTitleSelector, let title = change?[.newKey] as? String {
-            self.textFieldTitle.stringValue = title
-        }
+        if keyPath == self.profileTitleSelector { self.updateTitle() }
     }
     
     // MARK: -

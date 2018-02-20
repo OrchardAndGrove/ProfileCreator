@@ -20,7 +20,6 @@ class ProfileEditor: NSObject {
     let separator = NSBox(frame: NSZeroRect)
     let settings: ProfileEditorSettings
     
-    
     let editorColumnEnableSelector: String
     let editorShowDisabledSelector: String
     let editorShowHiddenSelector: String
@@ -44,10 +43,10 @@ class ProfileEditor: NSObject {
     
     init(profile: Profile) {
         
-        self.editorColumnEnableSelector = NSStringFromSelector(#selector(getter: self.profile?.editorColumnEnable))
+        self.editorColumnEnableSelector = NSStringFromSelector(#selector(getter: profile.editorColumnEnable))
         self.editorShowDisabledSelector = NSStringFromSelector(#selector(getter: profile.editorShowDisabled))
-        self.editorShowHiddenSelector = NSStringFromSelector(#selector(getter: self.profile?.editorShowHidden))
-        self.editorShowSupervisedSelector = NSStringFromSelector(#selector(getter: self.profile?.editorShowSupervised))
+        self.editorShowHiddenSelector = NSStringFromSelector(#selector(getter: profile.editorShowHidden))
+        self.editorShowSupervisedSelector = NSStringFromSelector(#selector(getter: profile.editorShowSupervised))
         
         self.settings = ProfileEditorSettings(profile: profile)
         

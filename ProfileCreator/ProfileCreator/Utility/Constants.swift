@@ -70,6 +70,7 @@ extension Notification.Name {
     static let didAddProfile = Notification.Name("didAddProfile")
     static let didChangeProfileSelection = Notification.Name("didChangeProfileSelection")
     static let didChangePayloadSelection = Notification.Name("didChangePayloadSelection")
+    static let didRenameProfile = Notification.Name("didRenameProfileName")
     static let didRemoveProfiles = Notification.Name("didRemoveProfiles")
     static let didRemoveProfilesFromGroup = Notification.Name("didRemoveProfilesFromGroup")
     static let didSaveProfile = Notification.Name("didSaveProfile")
