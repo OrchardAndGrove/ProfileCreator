@@ -40,6 +40,8 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         self.setupProfilePayloads()
         self.setupLibraryPayloads()
         
+        self.reloadTableviews()
+        
         // ---------------------------------------------------------------------
         //  Add and enable the general settings
         // ---------------------------------------------------------------------
@@ -47,10 +49,13 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
             let payloadManifestGeneral = ProfilePayloads.shared.manifest(domain: ManifestDomain.general),
             let payloadPlaceholderGeneral = payloadManifestGeneral.placeholder {
             self.generalPayloadPlaceholder = payloadPlaceholderGeneral
+            
+            // Add the "Selected" state to the general settings
             editor.updatePayloadSelection(selected: true, payloadSource: payloadManifestGeneral)
+            
+            // Select the general settings in the editor
+            self.select(payloadPlaceholder: payloadPlaceholderGeneral, in: self.profilePayloadsTableView)
         }
-        
-        self.reloadTableviews()
     }
     
     deinit {

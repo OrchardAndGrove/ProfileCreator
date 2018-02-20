@@ -135,6 +135,7 @@ class ProfileEditor: NSObject {
     }
     
     func select(payloadPlaceholder: PayloadPlaceholder) {
+        Swift.print("select(payloadPlaceholder: \(payloadPlaceholder)")
         if self.selectedPayloadPlaceholder != payloadPlaceholder {
             self.selectedPayloadPlaceholder = payloadPlaceholder
             

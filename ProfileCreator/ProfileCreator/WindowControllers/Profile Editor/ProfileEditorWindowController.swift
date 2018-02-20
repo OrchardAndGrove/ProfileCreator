@@ -184,7 +184,6 @@ extension ProfileEditorWindowController: NSWindowDelegate {
                                                                             if success {
                                                                                 self.profile.save(operationType: .saveOperation, completionHandler: { (saveError) in
                                                                                     if saveError == nil {
-                                                                                        self.profile.title = newProfileName
                                                                                         self.performSelector(onMainThread: #selector(self.windowClose), with: self, waitUntilDone: false)
                                                                                         Swift.print("Class: \(self.self), Function: \(#function), Save Successful!")
                                                                                     } else {

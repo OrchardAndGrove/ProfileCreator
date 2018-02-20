@@ -141,22 +141,8 @@ public class Profile: NSDocument {
     
     override public func save(_ sender: Any?) {
         self.save(operationType: .saveOperation) { saveError in
-            
             // TODO: Proper Logging
             if saveError == nil {
-                
-                // Check if profile name was updated
-                if
-                    let title = self.getPayloadSetting(key: PayloadKey.payloadDisplayName, domain: ManifestDomain.general, type: .manifest) as? String,
-                    let savedTitle = self.getSavedPayloadSetting(key: PayloadKey.payloadDisplayName, domain: ManifestDomain.general, type: .manifest) as? String,
-                    savedTitle != title {
-                    
-                    // -----------------------------------------------------------------
-                    //  Post notification that this profile was renamed
-                    // -----------------------------------------------------------------
-                    NotificationCenter.default.post(name: .didRenameProfile, object: self, userInfo: [NotificationKey.identifier : self.identifier])
-                }
-                self.savedSettings = self.saveDict()
                 Swift.print("Class: \(self.self), Function: \(#function), Save Successful!")
             } else {
                 Swift.print("Class: \(self.self), Function: \(#function), Error: \(String(describing: saveError))")
@@ -290,7 +276,21 @@ public class Profile: NSDocument {
         // ---------------------------------------------------------------------
         //  Call the NSDocument save function
         // ---------------------------------------------------------------------
-        super.save(to: saveURL, ofType: TypeName.profile, for: operationType, completionHandler: completionHandler)
+        super.save(to: saveURL, ofType: TypeName.profile, for: operationType) { (saveError) in
+            if saveError == nil {
+                if let title = self.getPayloadSetting(key: PayloadKey.payloadDisplayName, domain: ManifestDomain.general, type: .manifest) as? String,
+                let savedTitle = self.getSavedPayloadSetting(key: PayloadKey.payloadDisplayName, domain: ManifestDomain.general, type: .manifest) as? String,
+                savedTitle != title {
+                    
+                    // -----------------------------------------------------------------
+                    //  Post notification that this profile was renamed
+                    // -----------------------------------------------------------------
+                    NotificationCenter.default.post(name: .didRenameProfile, object: self, userInfo: [NotificationKey.identifier : self.identifier])
+                }
+                self.savedSettings = self.saveDict()
+                completionHandler(nil)
+            } else { completionHandler(saveError) }
+        }
     }
     
     func update(title: String) {
@@ -376,17 +376,23 @@ public class Profile: NSDocument {
     
     class func defaultPayloadSettings(uuid: UUID) -> Dictionary<String, Any> {
         
-        let defaultOrganization = UserDefaults.standard.string(forKey: PreferenceKey.defaultOrganizationIdentifier) ?? "com.profilecreator"
-        let defaultIdentifier = defaultOrganization + ".\(uuid.uuidString)"
+        let defaultOrganizationName = UserDefaults.standard.string(forKey: PreferenceKey.defaultOrganization) ?? "ProfileCreator"
+        
+        let defaultOrganizationIdentifier = UserDefaults.standard.string(forKey: PreferenceKey.defaultOrganizationIdentifier) ?? "com.profilecreator"
+        let defaultIdentifier = defaultOrganizationIdentifier + ".\(uuid.uuidString)"
         
         let payloadDomainSettings: Dictionary<String, Any> = [
             PayloadKey.payloadVersion : 1,
             PayloadKey.payloadUUID : uuid.uuidString,
-            PayloadKey.payloadIdentifier : defaultIdentifier
+            PayloadKey.payloadIdentifier : defaultIdentifier,
+            PayloadKey.payloadOrganization : defaultOrganizationName,
+            PayloadKey.payloadDisplayName : StringConstant.defaultProfileName
         ]
+        
         let payloadTypeSettings: Dictionary<String, Any> = [
             ManifestDomain.general : payloadDomainSettings
         ]
+        
         return [String(PayloadSourceType.manifest.rawValue) : payloadTypeSettings]
     }
     
@@ -441,6 +447,7 @@ public class Profile: NSDocument {
         //  If this is the payload name setting, then update the profile title
         // ---------------------------------------------------------------------
         if key == PayloadKey.payloadDisplayName, type == .manifest, let title = value as? String {
+            Swift.print("Setting the title!")
             self.title = title
         }
         
