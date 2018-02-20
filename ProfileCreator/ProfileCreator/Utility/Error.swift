@@ -7,8 +7,14 @@
 //
 
 import Foundation
+import ProfilePayloads
 
 let ProfileCreatorErrorDomain = Bundle.main.bundleIdentifier ?? "com.github.erikberglund.ProfileCreator"
+
+enum ProfileExportError: Error {
+    case noPayloadSource(forDomain: String, ofType: PayloadSourceType)
+    case invalid(value: Any?, forKey: String, inDomain: String, ofType: PayloadSourceType)
+}
 
 public enum ProfileCreatorError: Int {
     

@@ -178,7 +178,7 @@ extension ProfileEditorWindowController: NSWindowDelegate {
                                     switch response {
                                     case .alertFirstButtonReturn:
                                         self.profile.updatePayloadSettings(value: newProfileName,
-                                                                           key: "PayloadDisplayName",
+                                                                           key: "PayloadDisplayName", // Somehow I cannot use the PayloadKey.payloadDisplayName here
                                                                            domain: ManifestDomain.general,
                                                                            type: .manifest, updateComplete: { (success, error) in
                                                                             if success {
@@ -192,13 +192,12 @@ extension ProfileEditorWindowController: NSWindowDelegate {
                                                                                 })
                                                                             }
                                         })
-                                        Swift.print("Save & Clsoe with the name: \(newProfileName)")
                                     case .alertSecondButtonReturn:
                                         self.performSelector(onMainThread: #selector(self.windowClose), with: self, waitUntilDone: false)
                                     case .alertThirdButtonReturn:
                                         Swift.print("Cancel")
                                     default:
-                                        Swift.print("Unknown")
+                                        Swift.print("Unknown Return")
                                     }
                 })
                 

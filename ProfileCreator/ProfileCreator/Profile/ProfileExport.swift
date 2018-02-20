@@ -14,30 +14,14 @@ class ProfileExport {
     class func export(profile: Profile, completionHandler: @escaping (_ error: Error?) -> Void) {
         
         var profileContentExported = Dictionary<String, Any>()
-        self.profileContent(profile: profile) { (profileContent, error) in
-            Swift.print("This is the Profile Content: \(profileContent)")
-            
-            // Verify the content was exported correctly, No error
-            if profileContent.isEmpty || error != nil {
-                completionHandler(error)
-                return
-            } else {
-                profileContentExported = profileContent
-                Swift.print("Profile Content Export Complete")
-            }
-        }
         
-        self.payloadContent(profile: profile) { (payloadContent, error) in
-            Swift.print("This is the Payload Content: \(payloadContent)")
-            
-            // Verify the content was exported correctly, No error
-            if payloadContent.isEmpty || error != nil {
-                completionHandler(error)
-                return
-            } else {
-                profileContentExported["PayloadContent"] = payloadContent
-                Swift.print("Payload Content Export Complete")
-            }
+        do {
+            profileContentExported = try self.profileContent(profile: profile)
+            profileContentExported[PayloadKey.payloadContent] = try self.payloadContent(profile: profile)
+        } catch let error {
+            Swift.print("Profile Export Error: \(error)")
+            completionHandler(error)
+            return
         }
         
         // NOTE: Only for testing
@@ -60,38 +44,85 @@ class ProfileExport {
     }
     
     
-    class func profileContent(profile: Profile, completionHandler: (_ profileContent: Dictionary<String, Any>, _ error: Error?) -> Void) {
+    class func profileContent(profile: Profile) throws -> Dictionary<String, Any> {
         
         var profileContent = Dictionary<String, Any>()
         
-        // Static
-        profileContent[PayloadKey.payloadType] = "Configuration" // Currently the only supported value is "Configuration"
-        profileContent[PayloadKey.payloadVersion] = 1 // Version of the profile format, currently the only supported value is 1
-        
-        // Required
-        // If a unique identifier is required, have that as a setting maybe and check it here.
-        profileContent[PayloadKey.payloadIdentifier] = UserDefaults.standard.string(forKey: PreferenceKey.defaultOrganizationIdentifier) ?? "com.profilecreator.\(profile.uuid.uuidString)"
-        profileContent[PayloadKey.payloadUUID] = profile.uuid.uuidString
-        
-        // Optional
-        profileContent[PayloadKey.payloadDescription] = "Placeholder Description"
-        profileContent[PayloadKey.payloadDisplayName] = "Placeholder Display Name"
-        //profileContent[PayloadKey.payloadExpirationDate] = Date() // Optional. A date on which a profile is considered to have expired and can be updated over the air. This key is only used if the profile is delivered via over-the-air profile delivery.
-        
-        // PayloadOrganization
-        if let defaultOrganization = UserDefaults.standard.string(forKey: PreferenceKey.defaultOrganization) {
-            profileContent[PayloadKey.payloadOrganization] = defaultOrganization
+        if let payloadSource = ProfilePayloads.shared.payloadSource(domain: ManifestDomain.general, type: .manifest) {
+            
+            // ---------------------------------------------------------------------
+            //  Get the type settings for the current domain
+            // ---------------------------------------------------------------------
+            let typeSettings = profile.payloadTypeSettings(type: .manifest)
+            let domainSettings = typeSettings[ManifestDomain.general] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
+            
+            // ---------------------------------------------------------------------
+            //  Get the view settings for the current domain
+            // ---------------------------------------------------------------------
+            let viewTypeSettings = profile.payloadViewTypeSettings(type: .manifest)
+            let viewDomainSettings = viewTypeSettings[ManifestDomain.general] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
+            
+            // ---------------------------------------------------------------------
+            //  Export the general domain
+            // ---------------------------------------------------------------------
+            self.export(subkeys: payloadSource.subkeys,
+                        domainSettings: domainSettings,
+                        typeSettings: typeSettings,
+                        viewDomainSettings: viewDomainSettings,
+                        viewTypeSettings: viewTypeSettings,
+                        payloadContent: &profileContent)
+        } else {
+            throw ProfileExportError.noPayloadSource(forDomain: ManifestDomain.general, ofType: .manifest)
         }
         
-        // profileContent[PayloadKey.payloadRemovalDisallowed] = false // PayloadRemovalDisallowed
-        // Check if supervised
+        // ---------------------------------------------------------------------
+        //  Verify Required Settings
+        // ---------------------------------------------------------------------
         
-        profileContent[PayloadKey.payloadScope] = PayloadScope.user
+        // PayloadType
+        // ---------------------------------------------------------------------
+        // Currently the only supported value is "Configuration"
+        guard let payloadType = profileContent[PayloadKey.payloadType] as? String, payloadType == "Configuration" else {
+            throw ProfileExportError.invalid(value: profileContent[PayloadKey.payloadType],
+                                             forKey: PayloadKey.payloadType,
+                                             inDomain: ManifestDomain.general,
+                                             ofType: .manifest)
+        }
         
-        completionHandler(profileContent, nil)
+        // PayloadVersion
+        // ---------------------------------------------------------------------
+        // Version of the profile format, currently the only supported value is 1
+        guard let payloadVersion = profileContent[PayloadKey.payloadVersion] as? Int, payloadVersion == 1 else {
+            throw ProfileExportError.invalid(value: profileContent[PayloadKey.payloadVersion],
+                                             forKey: PayloadKey.payloadVersion,
+                                             inDomain: ManifestDomain.general,
+                                             ofType: .manifest)
+        }
+        
+        // PayloadIdentifier
+        // ---------------------------------------------------------------------
+        // A non-empty identifier has to be set
+        guard let payloadIdentifier = profileContent[PayloadKey.payloadIdentifier] as? String, !payloadIdentifier.isEmpty else {
+            throw ProfileExportError.invalid(value: profileContent[PayloadKey.payloadIdentifier],
+                                             forKey: PayloadKey.payloadIdentifier,
+                                             inDomain: ManifestDomain.general,
+                                             ofType: .manifest)
+        }
+        
+        // PayloadUUID
+        // ---------------------------------------------------------------------
+        // A non-empty UUID has to be set
+        guard let payloadUUID = profileContent[PayloadKey.payloadUUID] as? String, !payloadUUID.isEmpty else {
+            throw ProfileExportError.invalid(value: profileContent[PayloadKey.payloadUUID],
+                                             forKey: PayloadKey.payloadUUID,
+                                             inDomain: ManifestDomain.general,
+                                             ofType: .manifest)
+        }
+        
+        return profileContent
     }
     
-    class func payloadContent(profile: Profile, completionHandler: (_ payloadContent: [Dictionary<String, Any>], _ error: Error?) -> Void) {
+    class func payloadContent(profile: Profile) throws -> [Dictionary<String, Any>] {
         
         var allPayloadContent = [Dictionary<String, Any>]()
         
@@ -111,6 +142,9 @@ class ProfileExport {
             //  Loop through all domains and settings for the current type
             // ---------------------------------------------------------------------
             for (domain, domainSettings) in typeSettings {
+                
+                // Ignore the General settings of type "Manifest"
+                if type == .manifest, domain == ManifestDomain.general { continue }
                 
                 var payloadContent = Dictionary<String, Any>()
                 
@@ -143,7 +177,7 @@ class ProfileExport {
             }
         }
         
-        completionHandler(allPayloadContent, nil)
+        return allPayloadContent
     }
     
     class func updatePayloadVersion(profile: Profile, type: PayloadSourceType, domain: String, viewDomainSettings: Dictionary<String, Any>, payloadContent: inout Dictionary<String, Any>) {
@@ -219,10 +253,10 @@ class ProfileExport {
                 var value: Any?
                 
                 if let userValue = domainSettings[subkey.keyPath] {
-                    if PayloadUtility.valueType(value: userValue) == subkey.type {
+                    if PayloadUtility.valueType(value: userValue, type: subkey.type) == subkey.type {
                         value = userValue
                     } else {
-                        Swift.print("User value did not match value type: \(PayloadUtility.valueType(value: userValue)) != \(subkey.type)")
+                        Swift.print("User value: \(userValue) did not match value type: \(PayloadUtility.valueType(value: userValue)) != \(subkey.type) for key: \(subkey.key)")
                     }
                 }
                 

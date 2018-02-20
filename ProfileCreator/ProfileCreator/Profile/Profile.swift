@@ -396,6 +396,11 @@ public class Profile: NSDocument {
         return [String(PayloadSourceType.manifest.rawValue) : payloadTypeSettings]
     }
     
+    func payloadDomainSettings(domain: String, type: PayloadSourceType) -> Dictionary<String, Any> {
+        let payloadTypeSettings = self.payloadTypeSettings(type: type)
+        return payloadTypeSettings[domain] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
+    }
+    
     func payloadTypeSettings(type: PayloadSourceType) -> Dictionary<String, Any> {
         return self.payloadSettings[String(type.rawValue)] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
     }
