@@ -101,7 +101,8 @@ extension MainWindowController: NSToolbarDelegate {
     }
     
     func toolbarItem(identifier: NSToolbarItem.Identifier) -> NSToolbarItem? {
-        if identifier == .mainWindowAdd {
+        switch identifier {
+        case .mainWindowAdd:
             if self.toolbarItemAdd == nil {
                 self.toolbarItemAdd = MainWindowToolbarItemAdd()
             }
@@ -109,7 +110,7 @@ extension MainWindowController: NSToolbarDelegate {
             if let toolbarView = self.toolbarItemAdd {
                 return toolbarView.toolbarItem
             }
-        } else if identifier == .mainWindowExport {
+        case .mainWindowExport:
             if self.toolbarItemExport == nil {
                 self.toolbarItemExport = MainWindowToolbarItemExport()
             }
@@ -117,6 +118,8 @@ extension MainWindowController: NSToolbarDelegate {
             if let toolbarView = self.toolbarItemExport {
                 return toolbarView.toolbarItem
             }
+        default:
+            Swift.print("Unknown Toolbar Identifier: \(identifier)")
         }
         return nil
     }

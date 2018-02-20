@@ -8,12 +8,12 @@
 
 import Cocoa
 
-class PreferencesEditor: PreferencesItem {
+class PreferencesLibrary: PreferencesItem {
     
     // MARK: -
     // MARK: Variables
     
-    let identifier: NSToolbarItem.Identifier = .preferencesEditor
+    let identifier: NSToolbarItem.Identifier = .preferencesLibrary
     let toolbarItem: NSToolbarItem
     let view: NSView
     
@@ -27,7 +27,7 @@ class PreferencesEditor: PreferencesItem {
         // ---------------------------------------------------------------------
         self.toolbarItem = NSToolbarItem(itemIdentifier: identifier)
         self.toolbarItem.image = NSImage(named: NSImage.Name.preferencesGeneral)
-        self.toolbarItem.label = NSLocalizedString("Editor", comment: "")
+        self.toolbarItem.label = NSLocalizedString("Library", comment: "")
         self.toolbarItem.paletteLabel = self.toolbarItem.label
         self.toolbarItem.toolTip = self.toolbarItem.label
         self.toolbarItem.target = sender
@@ -36,11 +36,11 @@ class PreferencesEditor: PreferencesItem {
         // ---------------------------------------------------------------------
         //  Create the preferences view
         // ---------------------------------------------------------------------
-        self.view = PreferencesEditorView()
+        self.view = PreferencesLibraryView()
     }
 }
 
-class PreferencesEditorView: NSView {
+class PreferencesLibraryView: NSView {
     
     // MARK: -
     // MARK: Initialization
@@ -64,12 +64,48 @@ class PreferencesEditorView: NSView {
         // ---------------------------------------------------------------------
         //  Add Preferences "Sidebar"
         // ---------------------------------------------------------------------
-        lastSubview = addHeader(title: "Editor",
+        lastSubview = addHeader(title: "Payload Library",
                                 withSeparator: true,
                                 toView: self,
                                 lastSubview: nil,
                                 height: &frameHeight,
                                 constraints: &constraints)
+        
+        lastSubview = addCheckbox(title: "Show Apple Collections",
+                                  bindTo: UserDefaults.standard,
+                                  bindKeyPath: PreferenceKey.showPayloadLibraryAppleCollections,
+                                  toView: self,
+                                  lastSubview: lastSubview,
+                                  height: &frameHeight,
+                                  indent: preferencesIndent,
+                                  constraints: &constraints)
+        
+        lastSubview = addCheckbox(title: "Show Apple Domains",
+                                  bindTo: UserDefaults.standard,
+                                  bindKeyPath: PreferenceKey.showPayloadLibraryAppleDomains,
+                                  toView: self,
+                                  lastSubview: lastSubview,
+                                  height: &frameHeight,
+                                  indent: preferencesIndent,
+                                  constraints: &constraints)
+        
+        lastSubview = addCheckbox(title: "Show Applications",
+                                  bindTo: UserDefaults.standard,
+                                  bindKeyPath: PreferenceKey.showPayloadLibraryApplications,
+                                  toView: self,
+                                  lastSubview: lastSubview,
+                                  height: &frameHeight,
+                                  indent: preferencesIndent,
+                                  constraints: &constraints)
+        
+        lastSubview = addCheckbox(title: "Show Developer",
+                                  bindTo: UserDefaults.standard,
+                                  bindKeyPath: PreferenceKey.showPayloadLibraryDeveloper,
+                                  toView: self,
+                                  lastSubview: lastSubview,
+                                  height: &frameHeight,
+                                  indent: preferencesIndent,
+                                  constraints: &constraints)
         
         // ---------------------------------------------------------------------
         //  Add constraints to last view

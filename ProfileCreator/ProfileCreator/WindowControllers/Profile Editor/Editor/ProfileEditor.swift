@@ -14,10 +14,18 @@ class ProfileEditor: NSObject {
     // MARK: -
     // MARK: Variables
     
-    private let tableView = ProfileEditorTableView()
-    private let headerView = ProfileEditorHeaderView()
-    private let scrollView = NSScrollView()
-    private let separator = NSBox(frame: NSZeroRect)
+    let tableView = ProfileEditorTableView()
+    let headerView = ProfileEditorHeaderView()
+    let scrollView = NSScrollView()
+    let separator = NSBox(frame: NSZeroRect)
+    let settings: ProfileEditorSettings
+    
+    
+    let editorColumnEnableSelector: String
+    let editorShowDisabledSelector: String
+    let editorShowHiddenSelector: String
+    let editorShowSupervisedSelector: String
+    
     public let editorView = NSView()
     
     private let payloadCellViews = PayloadCellViews()
@@ -31,7 +39,18 @@ class ProfileEditor: NSObject {
     public weak var profile: Profile?
     private var selectedPayloadPlaceholder: PayloadPlaceholder?
     
+    // MARK: -
+    // MARK: Initialization
+    
     init(profile: Profile) {
+        
+        self.editorColumnEnableSelector = NSStringFromSelector(#selector(getter: self.profile?.editorColumnEnable))
+        self.editorShowDisabledSelector = NSStringFromSelector(#selector(getter: profile.editorShowDisabled))
+        self.editorShowHiddenSelector = NSStringFromSelector(#selector(getter: self.profile?.editorShowHidden))
+        self.editorShowSupervisedSelector = NSStringFromSelector(#selector(getter: self.profile?.editorShowSupervised))
+        
+        self.settings = ProfileEditorSettings(profile: profile)
+        
         super.init()
         
         // ---------------------------------------------------------------------
@@ -47,7 +66,15 @@ class ProfileEditor: NSObject {
         self.setupEditorView(constraints: &constraints)
         self.setupHeaderView(constraints: &constraints)
         self.setupSeparator(constraints: &constraints)
-        self.setupTableView(constraints: &constraints)
+        self.setupTableView(profile: profile, constraints: &constraints)
+        
+        // ---------------------------------------------------------------------
+        //  Setup Notification Observers
+        // ---------------------------------------------------------------------
+        self.profile?.addObserver(self, forKeyPath: self.editorColumnEnableSelector, options: .new, context: nil)
+        self.profile?.addObserver(self, forKeyPath: self.editorShowDisabledSelector, options: .new, context: nil)
+        self.profile?.addObserver(self, forKeyPath: self.editorShowHiddenSelector, options: .new, context: nil)
+        self.profile?.addObserver(self, forKeyPath: self.editorShowSupervisedSelector, options: .new, context: nil)
         
         // ---------------------------------------------------------------------
         //  Activate layout constraints
@@ -57,24 +84,35 @@ class ProfileEditor: NSObject {
         // ---------------------------------------------------------------------
         //  Reload the TableView
         // ---------------------------------------------------------------------
-        self.reloadTableView(force: true)
+        self.reloadTableView(updateCellViews: true)
     }
     
     deinit {
         self.tableView.dataSource = nil
         self.tableView.delegate = nil
+        self.profile?.removeObserver(self, forKeyPath: self.editorColumnEnableSelector, context: nil)
+        self.profile?.removeObserver(self, forKeyPath: self.editorShowDisabledSelector, context: nil)
+        self.profile?.removeObserver(self, forKeyPath: self.editorShowHiddenSelector, context: nil)
+        self.profile?.removeObserver(self, forKeyPath: self.editorShowSupervisedSelector, context: nil)
     }
     
-    func reloadTableView(force: Bool = false) {
-        /*
-         guard let window = self.tableView.window else { return }
-         
-         Swift.print("window.firstResponder: \(window.firstResponder?.nextResponder)")
-         
-         var firstResponder = window.firstResponder
-         
-         Swift.print("Current First Responder")
-         */
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        switch keyPath ?? "" {
+        case self.editorShowDisabledSelector, self.editorShowHiddenSelector, self.editorShowSupervisedSelector:
+            self.reloadTableView(updateCellViews: true)
+        case self.editorColumnEnableSelector:
+            if let tableColumn = self.tableView.tableColumn(withIdentifier: .tableColumnPayloadEnable), let show = change?[.newKey] as? Bool {
+                tableColumn.isHidden = !show
+            }
+        default:
+            Swift.print("Class: \(self.self), Function: \(#function), observeValueforKeyPath: \(String(describing: keyPath))")
+        }
+    }
+    
+    func reloadTableView(updateCellViews: Bool = false) {
+        if updateCellViews, let selectedPayloadPlaceholder = self.selectedPayloadPlaceholder {
+            self.cellViews = self.payloadCellViews.cellViews(payloadPlaceholder: selectedPayloadPlaceholder, profileEditor: self)
+        }
         self.tableView.reloadData()
     }
     
@@ -86,7 +124,7 @@ class ProfileEditor: NSObject {
     
     func updateViewSettings(value: Any?, key: String, subkey: PayloadSourceSubkey) {
         self.profile?.updateViewSettings(value: value, key: key, subkey: subkey, updateComplete: { (successful, error) in
-            if successful { self.reloadTableView(force: true) }
+            if successful { self.reloadTableView(updateCellViews: true) }
             Swift.print("Class: \(self.self), Function: \(#function), ViewSettings Changed with status: \(successful)")
         })
     }
@@ -105,11 +143,8 @@ class ProfileEditor: NSObject {
             
             self.headerView.select(payloadPlaceholder: payloadPlaceholder)
             
-            // FIXME: Apply current settings here (like hidden)
-            self.cellViews = self.payloadCellViews.cellViews(payloadPlaceholder: payloadPlaceholder, profileEditor: self)
-            
             // FIXME: Why Force?
-            self.reloadTableView(force: true)
+            self.reloadTableView(updateCellViews: true)
         }
     }
     
@@ -135,212 +170,25 @@ class ProfileEditor: NSObject {
             }
         }
         
-        Swift.print("window: \(window)")
-        Swift.print("firstCellViewWindow: \(firstCellView?.leadingKeyView?.window)")
+        // NOTE: This sometimes crashes, should investigate and check if object exists in the correct window, and why it doesnt sometimes.
         if firstCellView != nil {
             window.initialFirstResponder = firstCellView as? NSView
             self.firstCellView = firstCellView as? NSView
         }
     }
-    
-    // MARK: -
-    // MARK: Setup Layout Constraints
-    
-    private func setupEditorView(constraints: inout [NSLayoutConstraint]) {
-        self.editorView.translatesAutoresizingMaskIntoConstraints = false
-    }
-    
-    private func setupHeaderView(constraints: inout [NSLayoutConstraint]) {
-        
-        // ---------------------------------------------------------------------
-        //  Add and setup Header View
-        // ---------------------------------------------------------------------
-        self.editorView.addSubview(self.headerView.headerView)
-        
-        // ---------------------------------------------------------------------
-        //  Add constraints
-        // ---------------------------------------------------------------------
-        // Top
-        constraints.append(NSLayoutConstraint(item: self.headerView.headerView,
-                                              attribute: .top,
-                                              relatedBy: .equal,
-                                              toItem: self.editorView,
-                                              attribute: .top,
-                                              multiplier: 1.0,
-                                              constant: 30.0))
-        
-        // Leading
-        constraints.append(NSLayoutConstraint(item: self.headerView.headerView,
-                                              attribute: .leading,
-                                              relatedBy: .equal,
-                                              toItem: self.editorView,
-                                              attribute: .leading,
-                                              multiplier: 1.0,
-                                              constant: 0.0))
-        
-        // Trailing
-        constraints.append(NSLayoutConstraint(item: self.editorView,
-                                              attribute: .trailing,
-                                              relatedBy: .equal,
-                                              toItem: self.headerView.headerView,
-                                              attribute: .trailing,
-                                              multiplier: 1.0,
-                                              constant: 0.0))
-    }
-    
-    private func setupSeparator(constraints: inout [NSLayoutConstraint]) {
-        self.separator.translatesAutoresizingMaskIntoConstraints = false
-        self.separator.boxType = .separator
-        
-        // ---------------------------------------------------------------------
-        //  Add TextField to TableCellView
-        // ---------------------------------------------------------------------
-        self.editorView.addSubview(self.separator)
-        
-        // ---------------------------------------------------------------------
-        //  Add Constraints
-        // ---------------------------------------------------------------------
-        
-        // Top
-        constraints.append(NSLayoutConstraint(item: self.separator,
-                                              attribute: .top,
-                                              relatedBy: .equal,
-                                              toItem: self.headerView.headerView,
-                                              attribute: .bottom,
-                                              multiplier: 1,
-                                              constant: 0.0))
-        
-        // Leading
-        constraints.append(NSLayoutConstraint(item: self.separator,
-                                              attribute: .leading,
-                                              relatedBy: .equal,
-                                              toItem: self.editorView,
-                                              attribute: .leading,
-                                              multiplier: 1,
-                                              constant: 20.0))
-        
-        // Trailing
-        constraints.append(NSLayoutConstraint(item: self.editorView,
-                                              attribute: .trailing,
-                                              relatedBy: .equal,
-                                              toItem: self.separator,
-                                              attribute: .trailing,
-                                              multiplier: 1,
-                                              constant: 20.0))
-        
-    }
-    
-    private func setupTableView(constraints: inout [NSLayoutConstraint]) {
-        self.tableView.translatesAutoresizingMaskIntoConstraints = false
-        self.tableView.floatsGroupRows = false
-        self.tableView.rowSizeStyle = .default
-        self.tableView.headerView = nil
-        self.tableView.dataSource = self
-        self.tableView.delegate = self
-        self.tableView.target = self
-        self.tableView.allowsMultipleSelection = true
-        self.tableView.selectionHighlightStyle = .none
-        self.tableView.columnAutoresizingStyle = .uniformColumnAutoresizingStyle
-        self.tableView.sizeLastColumnToFit()
-        self.tableView.refusesFirstResponder = true
-        
-        // ---------------------------------------------------------------------
-        //  Add TableColumn Padding Leading
-        // ---------------------------------------------------------------------
-        let tableColumnPaddingLeading = NSTableColumn(identifier: .tableColumnPaddingLeading)
-        tableColumnPaddingLeading.isEditable = false
-        tableColumnPaddingLeading.width = editorTableViewColumnPaddingWidth
-        tableColumnPaddingLeading.minWidth = editorTableViewColumnPaddingWidth
-        self.tableView.addTableColumn(tableColumnPaddingLeading)
-        
-        // ---------------------------------------------------------------------
-        //  Add TableColumn Enable
-        // ---------------------------------------------------------------------
-        let tableColumnPayloadEnable = NSTableColumn(identifier: .tableColumnPayloadEnable)
-        tableColumnPayloadEnable.isEditable = false
-        tableColumnPayloadEnable.width = 20.0
-        tableColumnPayloadEnable.minWidth = 20.0
-        tableColumnPayloadEnable.maxWidth = 20.0
-        self.tableView.addTableColumn(tableColumnPayloadEnable)
-        
-        // ---------------------------------------------------------------------
-        //  Add TableColumn Payload
-        // ---------------------------------------------------------------------
-        let tableColumnPayload = NSTableColumn(identifier: .tableColumnPayload)
-        tableColumnPayload.isEditable = false
-        tableColumnPayload.width = editorTableViewColumnPayloadWidth
-        tableColumnPayload.minWidth = editorTableViewColumnPayloadWidth
-        tableColumnPayload.maxWidth = editorTableViewColumnPayloadWidth
-        self.tableView.addTableColumn(tableColumnPayload)
-        
-        // ---------------------------------------------------------------------
-        //  Add TableColumn Padding Trailing
-        // ---------------------------------------------------------------------
-        let tableColumnPaddingTrailing = NSTableColumn(identifier: .tableColumnPaddingTrailing)
-        tableColumnPaddingTrailing.isEditable = false
-        tableColumnPaddingTrailing.width = editorTableViewColumnPaddingWidth
-        tableColumnPaddingTrailing.minWidth = editorTableViewColumnPaddingWidth
-        self.tableView.addTableColumn(tableColumnPaddingTrailing)
-        
-        // ---------------------------------------------------------------------
-        //  Setup ScrollView and add TableView as Document View
-        // ---------------------------------------------------------------------
-        self.scrollView.translatesAutoresizingMaskIntoConstraints = false
-        //self.scrollView.hasVerticalScroller = true
-        self.scrollView.documentView = self.tableView
-        // self.scrollView.autoresizesSubviews = true
-        
-        // ---------------------------------------------------------------------
-        //  Add and setup ScrollView
-        // ---------------------------------------------------------------------
-        self.editorView.addSubview(self.scrollView)
-        
-        // ---------------------------------------------------------------------
-        //  Add constraints
-        // ---------------------------------------------------------------------
-        // Top
-        constraints.append(NSLayoutConstraint(item: self.scrollView,
-                                              attribute: .top,
-                                              relatedBy: .equal,
-                                              toItem: self.separator,
-                                              attribute: .bottom,
-                                              multiplier: 1.0,
-                                              constant: 0.0))
-        
-        // Leading
-        constraints.append(NSLayoutConstraint(item: self.scrollView,
-                                              attribute: .leading,
-                                              relatedBy: .equal,
-                                              toItem: self.editorView,
-                                              attribute: .leading,
-                                              multiplier: 1.0,
-                                              constant: 0.0))
-        
-        // Trailing
-        constraints.append(NSLayoutConstraint(item: self.editorView,
-                                              attribute: .trailing,
-                                              relatedBy: .equal,
-                                              toItem: self.scrollView,
-                                              attribute: .trailing,
-                                              multiplier: 1.0,
-                                              constant: 0.0))
-        
-        // Bottom
-        constraints.append(NSLayoutConstraint(item: self.scrollView,
-                                              attribute: .bottom,
-                                              relatedBy: .equal,
-                                              toItem: self.editorView,
-                                              attribute: .bottom,
-                                              multiplier: 1.0,
-                                              constant: 0.0))
-    }
 }
+
+// MARK: -
+// MARK: NSTableViewDataSource
 
 extension ProfileEditor: NSTableViewDataSource {
     func numberOfRows(in tableView: NSTableView) -> Int {
         return self.cellViews.count
     }
 }
+
+// MARK: -
+// MARK: NSTableViewDelegate
 
 extension ProfileEditor: NSTableViewDelegate {
     func tableView(_ tableView: NSTableView, heightOfRow row: Int) -> CGFloat {
@@ -361,40 +209,29 @@ extension ProfileEditor: NSTableViewDelegate {
         } else {
             rowNumber = row
         }
-
+        
         // Get the cell view and subkey for the row
         guard
+            let profile = self.profile,
             let cellView = self.cellViews[rowNumber] as? PayloadCellView,
             let subkey = cellView.subkey else { return }
         
-        // Get and set all view settings
-        var enabled = false
-        if subkey.require == .always {
-            enabled = true
-        } else if
-            let viewTypeSettings = self.profile?.payloadViewTypeSettings(type: subkey.payloadSourceType),
-            let domainViewSettings = viewTypeSettings[subkey.domain] as? Dictionary<String, Any>,
-            let viewSettings = domainViewSettings[subkey.keyPath] as? Dictionary<String, Any> {
-            
-            // Enabled
-            if let isEnabled = viewSettings[SettingsKey.enabled] as? Bool {
-                enabled = isEnabled
-            }
-        }
+        let isEnabled = profile.subkeyIsEnabled(subkey: subkey)
         
-        // This is weird as it's "reversed", should maybe change the wording or the
-        if !enabled {
+        if !isEnabled {
             rowView.backgroundColor = NSColor.quaternaryLabelColor
         }
         
-        cellView.enable(enabled)
+        cellView.enable(isEnabled)
     }
     
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         if tableColumn?.identifier == .tableColumnPayload {
-            // FIXME: Should maybe not be done here
-            if self.cellViews.count == row + 1 {
-                self.updateKeyViewLoop(window: tableView.window!)
+            // FIXME: Should maybe not be done here?
+            if
+                self.cellViews.count == row + 1,
+                let window = tableView.window {
+                self.updateKeyViewLoop(window: window)
             }
             return self.cellViews[row]
         } else if tableColumn?.identifier == .tableColumnPayloadEnable {
@@ -406,7 +243,8 @@ extension ProfileEditor: NSTableViewDelegate {
     }
 }
 
-// Sublcasses to enable FirstResponder and KeyView
+// MARK: -
+// MARK: Subclasses to enable FirstResponder and KeyView
 
 class PayloadButton: NSButton {
     override var acceptsFirstResponder: Bool { return self.isEnabled }

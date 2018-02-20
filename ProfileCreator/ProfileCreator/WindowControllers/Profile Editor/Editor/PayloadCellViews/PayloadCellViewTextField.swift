@@ -119,7 +119,6 @@ class PayloadCellViewTextField: NSTableCellView, ProfileCreatorCellView, Payload
     }
     
     func enable(_ enable: Bool) {
-        Swift.print("textFieldInputenable: \(enable)")
         self.textFieldInput?.isEnabled = enable
         self.textFieldInput?.isSelectable = enable
     }
@@ -137,8 +136,20 @@ class PayloadCellViewTextField: NSTableCellView, ProfileCreatorCellView, Payload
         }
     }
     
-    internal override func controlTextDidEndEditing(_ obj: Notification) {
+    internal override func controlTextDidChange(_ obj: Notification) {
+        guard let subkey = self.subkey else { return }
         
+        if
+            isEditing,
+            let userInfo = obj.userInfo,
+            let fieldEditor = userInfo["NSFieldEditor"] as? NSTextView,
+            let newString = fieldEditor.textStorage?.string,
+            newString != self.valueBeginEditing {
+            self.editor?.updatePayloadSettings(value: newString, subkey: subkey)
+        }
+    }
+    
+    internal override func controlTextDidEndEditing(_ obj: Notification) {
         guard let subkey = self.subkey else { return }
         
         if

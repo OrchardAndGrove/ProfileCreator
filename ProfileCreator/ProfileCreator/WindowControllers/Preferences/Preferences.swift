@@ -21,11 +21,13 @@ class PreferencesWindowController: NSWindowController {
     
     let toolbar = NSToolbar(identifier: NSToolbar.Identifier(rawValue: "PreferencesWindowToolbar"))
     let toolbarItemIdentifiers: [NSToolbarItem.Identifier] = [.preferencesGeneral,
+                                                              .preferencesLibrary,
                                                               .preferencesEditor,
                                                               .preferencesProfileDefaults,
                                                               NSToolbarItem.Identifier.flexibleSpace]
     var preferencesGeneral: PreferencesGeneral?
     var preferencesEditor: PreferencesEditor?
+    var preferencesLibrary: PreferencesLibrary?
     var preferencesProfileDefaults: PreferencesProfileDefaults?
     
     // MARK: -
@@ -128,19 +130,22 @@ class PreferencesWindowController: NSWindowController {
     }
     
     fileprivate func preferencesItem(identifier: NSToolbarItem.Identifier) -> PreferencesItem? {
-        if identifier == .preferencesGeneral {
+        switch identifier {
+        case .preferencesGeneral:
             if self.preferencesGeneral == nil { self.preferencesGeneral = PreferencesGeneral(sender: self) }
             return self.preferencesGeneral
-            
-        } else if identifier == .preferencesEditor {
+        case .preferencesLibrary:
+            if self.preferencesLibrary == nil { self.preferencesLibrary = PreferencesLibrary(sender: self) }
+            return self.preferencesLibrary
+        case .preferencesEditor:
             if self.preferencesEditor == nil { self.preferencesEditor = PreferencesEditor(sender: self) }
             return self.preferencesEditor
-            
-        } else if identifier == .preferencesProfileDefaults {
+        case .preferencesProfileDefaults:
             if self.preferencesProfileDefaults == nil { self.preferencesProfileDefaults = PreferencesProfileDefaults(sender: self) }
             return self.preferencesProfileDefaults
+        default:
+            return nil
         }
-        return nil
     }
 }
 

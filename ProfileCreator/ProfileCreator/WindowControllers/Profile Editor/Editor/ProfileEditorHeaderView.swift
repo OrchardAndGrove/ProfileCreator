@@ -18,7 +18,7 @@ class ProfileEditorHeaderView: NSObject {
     let textFieldTitle = NSTextField()
     let textFieldTitleTopIndent: CGFloat = 28.0
     let textFieldDescription = NSTextField()
-    let textFieldDescriptionTopIndent: CGFloat = 6.0
+    let textFieldDescriptionTopIndent: CGFloat = 4.0
     let imageViewIcon = NSImageView()
     
     var height: CGFloat = 0.0
@@ -108,7 +108,7 @@ class ProfileEditorHeaderView: NSObject {
         self.textFieldTitle.preferredMaxLayoutWidth = editorTableViewColumnPayloadWidth
         self.textFieldTitle.alignment = .left
         self.textFieldTitle.stringValue = "Title"
-        self.textFieldTitle.font = NSFont.systemFont(ofSize: 24, weight: NSFont.Weight.heavy)
+        self.textFieldTitle.font = NSFont.systemFont(ofSize: 28, weight: NSFont.Weight.heavy)
         
         // ---------------------------------------------------------------------
         //  Add TextField to TableCellView

@@ -17,11 +17,11 @@ public class Profile: NSDocument {
     // General Settings
     public var uuid: UUID
     public var identifier: UUID
-    @objc public var title: String?
+    @objc public var title: String
+    
+    private var savedSettings = Dictionary<String, Any>()
     
     public var payloadSettings: Dictionary<String, Any>
-    private var savedPayloadSettings: Dictionary<String, Any>
-    
     public var profilePayloads: String? // Change to payloads framework class. Unsure if it should be used like this.
     
     // View Settings
@@ -29,9 +29,12 @@ public class Profile: NSDocument {
     public var scope: String? // Change to scope enum
     public var distribution: String? // Change to distribution enum
     public var sign = false
-    public var showHidden = false
-    public var showSupervised = false
-    public var showDisabled = false
+    
+    @objc public var editorShowHidden: Bool = false
+    @objc public var editorShowSupervised: Bool = false
+    @objc public var editorShowDisabled: Bool = false
+    
+    @objc public var editorColumnEnable: Bool = false
     
     // MARK: -
     // MARK: Initialization
@@ -41,12 +44,13 @@ public class Profile: NSDocument {
     }
     
     init(title: String?, identifier: UUID?, payloadSettings: Dictionary<String, Any>?, viewSettings: Dictionary<String, Any>?) {
-
-        self.identifier = identifier ?? UUID()
-        self.savedPayloadSettings = payloadSettings ?? Profile.defaultPayloadSettings()
-        self.payloadSettings = self.savedPayloadSettings
-        self.uuid = identifier ?? UUID()
+        
+        let profileIdentifier = identifier ?? UUID()
+        self.identifier = profileIdentifier
+        self.payloadSettings = payloadSettings ?? Profile.defaultPayloadSettings(uuid: profileIdentifier)
+        self.uuid = profileIdentifier
         self.viewSettings = viewSettings ?? Profile.defaultViewSettings()
+        self.title = title ?? StringConstant.defaultProfileName
         
         // ---------------------------------------------------------------------
         //  Initialize Self
@@ -54,30 +58,79 @@ public class Profile: NSDocument {
         super.init()
         
         // ---------------------------------------------------------------------
-        //  Initialize General Settings
-        // ---------------------------------------------------------------------
-        self.title = title ?? StringConstant.defaultProfileName
-        
-        // ---------------------------------------------------------------------
         //  Initialize View Settings
         // ---------------------------------------------------------------------
-        // FIXME: View Settings!
+        self.initialize(viewSettings: self.viewSettings)
+        
+        // ---------------------------------------------------------------------
+        //  Initialize Saved Settings
+        // ---------------------------------------------------------------------
+        self.savedSettings = self.saveDict()
     }
     
     // MARK: -
     // MARK: Private Functions
     
-    private func saveDict() -> [String : Any]? {
+    private func initialize(viewSettings: Dictionary<String, Any>) {
+        
+        // Editor Row Enable
+        if let editorColumnEnable = viewSettings[PreferenceKey.editorColumnEnable] as? Bool {
+            self.editorColumnEnable = editorColumnEnable
+        } else { self.editorColumnEnable = false }
+        
+        // Editor Show Disabled
+        if let editorShowDisabled = viewSettings[PreferenceKey.editorShowDisabledKeys] as? Bool {
+            self.editorShowDisabled = editorShowDisabled
+        } else { self.editorShowDisabled = false }
+        
+        // Editor Show Hidden
+        if let editorShowHidden = viewSettings[PreferenceKey.editorShowHiddenKeys] as? Bool {
+            self.editorShowHidden = editorShowHidden
+        } else { self.editorShowHidden = false }
+        
+        // Editor Show Supervised
+        if let editorShowSupervised = viewSettings[PreferenceKey.editorShowSupervisedKeys] as? Bool {
+            self.editorShowSupervised = editorShowSupervised
+        } else { self.editorShowSupervised = false }
+    }
+    
+    private func saveDict() -> [String : Any] {
         
         // ---------------------------------------------------------------------
         //  Create dict to save
         // ---------------------------------------------------------------------
-        return [SettingsKey.title : self.title ?? StringConstant.defaultProfileName,
-                SettingsKey.identifier : self.identifier.uuidString,
-                SettingsKey.sign : self.sign,
-                SettingsKey.payloadSettings : self.payloadSettings,
-                SettingsKey.viewSettings : self.viewSettings]
+        var profileDict = Dictionary<String, Any>()
         
+        profileDict[SettingsKey.title] = self.title
+        profileDict[SettingsKey.identifier] = self.identifier.uuidString
+        profileDict[SettingsKey.sign] = self.sign
+        profileDict[SettingsKey.payloadSettings] = self.payloadSettings
+        
+        var viewSettings = self.viewSettings
+        viewSettings[PreferenceKey.editorShowDisabledKeys] = self.editorShowDisabled
+        viewSettings[PreferenceKey.editorShowHiddenKeys] = self.editorShowHidden
+        viewSettings[PreferenceKey.editorShowSupervisedKeys] = self.editorShowSupervised
+        
+        profileDict[SettingsKey.viewSettings] = viewSettings
+        
+        return profileDict
+    }
+    
+    func isSaved() -> Bool {
+        
+        // NOTE: Should maybe use: self.isDocumentEdited and update change counts instead
+        
+        // ---------------------------------------------------------------------
+        //  Check if the profile settings has a url
+        // ---------------------------------------------------------------------
+        if self.fileURL == nil { return false }
+        
+        // ---------------------------------------------------------------------
+        //  Check that all current settings match those on disk
+        // ---------------------------------------------------------------------
+        Swift.print("self.savedSettings: \(self.savedSettings)")
+        Swift.print("self.saveDict(): \(self.saveDict())")
+        return self.savedSettings == self.saveDict()
     }
     
     // MARK: -
@@ -92,7 +145,8 @@ public class Profile: NSDocument {
         self.save(operationType: .saveOperation) { saveError in
             
             // TODO: Proper Logging
-            if saveError != nil {
+            if saveError == nil {
+                self.savedSettings = self.saveDict()
                 Swift.print("Class: \(self.self), Function: \(#function), Save Successful!")
             } else {
                 Swift.print("Class: \(self.self), Function: \(#function), Error: \(String(describing: saveError))")
@@ -107,15 +161,15 @@ public class Profile: NSDocument {
             throw NSError(domain: NSOSStatusErrorDomain, code: unimpErr, userInfo: nil)
         }
         
-        if let profileDict = self.saveDict() {
-            do {
-                let profileData = try PropertyListSerialization.data(fromPropertyList: profileDict, format: .xml, options: 0)
-                return profileData
-            } catch {
-                // TODO: Proper Logging
-            }
+        
+        do {
+            let profileData = try PropertyListSerialization.data(fromPropertyList: self.saveDict(), format: .xml, options: 0)
+            return profileData
+        } catch let error {
+            Swift.print("Error: \(error)")
+            // TODO: Proper Logging
         }
-
+        
         throw NSError(domain: NSOSStatusErrorDomain, code: unimpErr, userInfo: nil)
     }
     
@@ -133,11 +187,7 @@ public class Profile: NSDocument {
                         // TODO: Proper Error
                         throw NSError(domain: NSOSStatusErrorDomain, code: unimpErr, userInfo: nil)
                 }
-                
-                self.identifier = identifier
-                self.title = profileDict[SettingsKey.title] as? String
-                self.payloadSettings = profileDict[SettingsKey.payloadSettings] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
-                self.viewSettings = profileDict[SettingsKey.viewSettings] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
+                self.restoreSavedSettings(identifier: identifier, savedSettings: profileDict)
                 return
             }
         } catch {
@@ -153,7 +203,18 @@ public class Profile: NSDocument {
     // MARK: -
     // MARK: Public Functions
     
-    public func updatePayloadSelection(selected: Bool, payloadSource: PayloadSource, updateComplete: @escaping (Bool, Error?) -> ()) {
+    func restoreSavedSettings(identifier: UUID, savedSettings: Dictionary<String, Any>?) {
+        Swift.print("restoreSavedSettings for: \(identifier)")
+        let settingsDict = savedSettings ?? self.savedSettings
+        self.identifier = identifier
+        self.payloadSettings = settingsDict[SettingsKey.payloadSettings] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
+        self.viewSettings = settingsDict[SettingsKey.viewSettings] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
+        if let title = self.getPayloadSetting(key: PayloadKey.payloadDisplayName, domain: ManifestDomain.general, type: .manifest) as? String {
+            self.title = title
+        } else { self.title = StringConstant.defaultProfileName }
+    }
+    
+    func updatePayloadSelection(selected: Bool, payloadSource: PayloadSource, updateComplete: @escaping (Bool, Error?) -> ()) {
         
         // ---------------------------------------------------------------------
         //  Get the current domain settings or create an empty set if they doesn't exist
@@ -178,7 +239,7 @@ public class Profile: NSDocument {
         updateComplete(true, nil)
     }
     
-    public func updateDomainSettings(_ domainSettings: inout Dictionary<String, Any>) {
+    func updateDomainSettings(_ domainSettings: inout Dictionary<String, Any>) {
         
         // Verify PayloadUUID
         if domainSettings[PayloadKey.payloadUUID] == nil { domainSettings[PayloadKey.payloadUUID] = UUID().uuidString }
@@ -201,7 +262,7 @@ public class Profile: NSDocument {
         windowController.window?.makeKeyAndOrderFront(self)
     }
     
-    public func save(operationType: NSDocument.SaveOperationType, completionHandler: @escaping (Error?) -> Void) {
+    func save(operationType: NSDocument.SaveOperationType, completionHandler: @escaping (Error?) -> Void) {
         
         // ---------------------------------------------------------------------
         //  Get path to profile save folder
@@ -222,7 +283,7 @@ public class Profile: NSDocument {
         super.save(to: saveURL, ofType: TypeName.profile, for: operationType, completionHandler: completionHandler)
     }
     
-    public func update(title: String) {
+    func update(title: String) {
         
         // TODO: Update title and displayname in settings
         
@@ -230,26 +291,48 @@ public class Profile: NSDocument {
     }
     
     // MARK: -
+    // MARK: Subkey Check
+    
+    func subkeyIsEnabled(subkey: PayloadSourceSubkey) -> Bool {
+        var isEnabled = false // FIXME: This should be a setting, to default enable or disable a key
+        if subkey.require == .always {
+            isEnabled = true
+        } else if
+            let domainViewSettings = self.payloadViewTypeSettings(type: subkey.payloadSourceType)[subkey.domain] as? Dictionary<String, Any>,
+            let viewSettings = domainViewSettings[subkey.keyPath] as? Dictionary<String, Any>,
+            let enabled = viewSettings[SettingsKey.enabled] as? Bool {
+            isEnabled = enabled
+        } else if let enabledDefault = subkey.enabledDefault {
+            isEnabled = enabledDefault
+        }
+        return isEnabled
+    }
+    
+    // MARK: -
     // MARK: View Settings
     
     class func defaultViewSettings() -> Dictionary<String, Any> {
-        let viewSettings = Dictionary<String, Any>()
+        var viewSettings = Dictionary<String, Any>()
+        viewSettings[PreferenceKey.editorColumnEnable] = UserDefaults.standard.bool(forKey: PreferenceKey.editorColumnEnable)
+        viewSettings[PreferenceKey.editorShowDisabledKeys] = UserDefaults.standard.bool(forKey: PreferenceKey.editorShowDisabledKeys)
+        viewSettings[PreferenceKey.editorShowHiddenKeys] = UserDefaults.standard.bool(forKey: PreferenceKey.editorShowHiddenKeys)
+        viewSettings[PreferenceKey.editorShowSupervisedKeys] = UserDefaults.standard.bool(forKey: PreferenceKey.editorShowSupervisedKeys)
         return viewSettings
     }
     
-    public func payloadViewTypeSettings(type: PayloadSourceType) -> Dictionary<String, Any> {
+    func payloadViewTypeSettings(type: PayloadSourceType) -> Dictionary<String, Any> {
         return self.viewSettings[String(type.rawValue)] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
     }
     
-    public func setPayloadViewTypeSettings(settings: Dictionary<String, Any>, type: PayloadSourceType) {
+    func setPayloadViewTypeSettings(settings: Dictionary<String, Any>, type: PayloadSourceType) {
         self.viewSettings[String(type.rawValue)] = settings
     }
     
-    public func updateViewSettings(value: Any?, key: String, subkey: PayloadSourceSubkey, updateComplete: @escaping (Bool, Error?) -> ()) {
+    func updateViewSettings(value: Any?, key: String, subkey: PayloadSourceSubkey, updateComplete: @escaping (Bool, Error?) -> ()) {
         self.updateViewSettings(value: value, key: key, keyPath: subkey.keyPath, domain: subkey.domain, type: subkey.payloadSourceType, updateComplete: updateComplete)
     }
     
-    public func updateViewSettings(value: Any?, key: String, keyPath: String?, domain: String, type: PayloadSourceType, updateComplete: @escaping (Bool, Error?) -> ()) {
+    func updateViewSettings(value: Any?, key: String, keyPath: String?, domain: String, type: PayloadSourceType, updateComplete: @escaping (Bool, Error?) -> ()) {
         
         // ---------------------------------------------------------------------
         //  Get the current domain settings or create an empty set if they doesn't exist
@@ -277,30 +360,45 @@ public class Profile: NSDocument {
         
         updateComplete(true, nil)
     }
-
+    
     // MARK: -
     // MARK: Payload Settings
     
-    class func defaultPayloadSettings() -> Dictionary<String, Any> {
-        var payloadSettings = Dictionary<String, Any>()
-        payloadSettings[PayloadKey.payloadVersion] = 1
-        payloadSettings[PayloadKey.payloadUUID] = UUID().uuidString
-        return payloadSettings
+    class func defaultPayloadSettings(uuid: UUID) -> Dictionary<String, Any> {
+        
+        let defaultOrganization = UserDefaults.standard.string(forKey: PreferenceKey.defaultOrganizationIdentifier) ?? "com.profilecreator"
+        let defaultIdentifier = defaultOrganization + ".\(uuid.uuidString)"
+        
+        let payloadDomainSettings: Dictionary<String, Any> = [
+            PayloadKey.payloadVersion : 1,
+            PayloadKey.payloadUUID : uuid.uuidString,
+            PayloadKey.payloadIdentifier : defaultIdentifier
+        ]
+        let payloadTypeSettings: Dictionary<String, Any> = [
+            ManifestDomain.general : payloadDomainSettings
+        ]
+        return [String(PayloadSourceType.manifest.rawValue) : payloadTypeSettings]
     }
     
-    public func payloadTypeSettings(type: PayloadSourceType) -> Dictionary<String, Any> {
+    func payloadTypeSettings(type: PayloadSourceType) -> Dictionary<String, Any> {
         return self.payloadSettings[String(type.rawValue)] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
     }
     
-    public func setPayloadTypeSettings(settings: Dictionary<String, Any>, type: PayloadSourceType) {
+    func setPayloadTypeSettings(settings: Dictionary<String, Any>, type: PayloadSourceType) {
         self.payloadSettings[String(type.rawValue)] = settings
     }
     
-    public func updatePayloadSettings(value: Any?, subkey: PayloadSourceSubkey, updateComplete: @escaping (Bool, Error?) -> ()) {
+    func updatePayloadSettings(value: Any?, subkey: PayloadSourceSubkey, updateComplete: @escaping (Bool, Error?) -> ()) {
         self.updatePayloadSettings(value: value, key: subkey.keyPath, domain: subkey.domain, type: subkey.payloadSourceType, updateComplete: updateComplete)
     }
     
-    public func updatePayloadSettings(value: Any?, key: String, domain: String, type: PayloadSourceType, updateComplete: @escaping (Bool, Error?) -> ()) {
+    func getPayloadSetting(key: String, domain: String, type: PayloadSourceType) -> Any? {
+        var typeSettings = self.payloadTypeSettings(type: type)
+        var domainSettings = typeSettings[domain] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
+        return domainSettings[key]
+    }
+    
+    func updatePayloadSettings(value: Any?, key: String, domain: String, type: PayloadSourceType, updateComplete: @escaping (Bool, Error?) -> ()) {
         
         // ---------------------------------------------------------------------
         //  Get the current domain settings or create an empty set if they doesn't exist
@@ -327,6 +425,15 @@ public class Profile: NSDocument {
         //  Save the the changes to the current settings
         // ---------------------------------------------------------------------
         self.setPayloadTypeSettings(settings: typeSettings, type: type)
+        
+        // ---------------------------------------------------------------------
+        //  If this is the payload name setting, then update the profile title
+        // ---------------------------------------------------------------------
+        if key == PayloadKey.payloadDisplayName, type == .manifest, let title = value as? String {
+            Swift.print("Setting title: \(self.title)")
+            self.title = title
+            Swift.print("Setting title AFTER: \(self.title)")
+        }
         
         // ---------------------------------------------------------------------
         //  Using closure for the option of a longer save time if needed in the future for more checking etc.

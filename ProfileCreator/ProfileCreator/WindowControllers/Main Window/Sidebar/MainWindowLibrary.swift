@@ -159,7 +159,7 @@ class MainWindowLibrary: NSObject, OutlineViewParentItem, NSTextFieldDelegate {
                               firstButtonState: true,
                               sender: self,
                               returnValue: { (title, response) in
-                                if response == NSApplication.ModalResponse.alertFirstButtonReturn {
+                                if response == .alertFirstButtonReturn {
                                     self.addGroup(title: title, identifier: nil, profileIdentifiers: [UUID(), UUID(), UUID()])
                                 }
         })

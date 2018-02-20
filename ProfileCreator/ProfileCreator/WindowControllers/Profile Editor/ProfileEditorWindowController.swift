@@ -11,15 +11,23 @@ import Cocoa
 public class ProfileEditorWindowController: NSWindowController {
     
     // MARK: -
-    // MARK: Variables
+    // MARK: Static Variables
     
     let profile: Profile
     let splitView: ProfileEditorSplitView
     let toolbar = NSToolbar(identifier: NSToolbar.Identifier(rawValue: "MainWindowToolbar"))
-    let toolbarItemIdentifiers: [NSToolbarItem.Identifier] = [NSToolbarItem.Identifier.flexibleSpace,
+    let toolbarItemIdentifiers: [NSToolbarItem.Identifier] = [.editorSettings,
+                                                              NSToolbarItem.Identifier.flexibleSpace,
                                                               .editorTitle,
                                                               NSToolbarItem.Identifier.flexibleSpace]
+    
+    // MARK: -
+    // MARK: Variables
+    
     var toolbarItemTitle: ProfileEditorWindowToolbarItemTitle?
+    var toolbarItemSettings: ProfileEditorWindowToolbarItemSettings?
+    var alert: Alert?
+    var windowShouldClose = false
     
     // MARK: -
     // MARK: Initialization
@@ -56,7 +64,6 @@ public class ProfileEditorWindowController: NSWindowController {
         window.contentMinSize = NSSize.init(width: 600, height: 400)
         window.backgroundColor = NSColor.white
         window.autorecalculatesKeyViewLoop = false
-        // window.delegate = self
         window.center()
         
         // ---------------------------------------------------------------------
@@ -68,6 +75,11 @@ public class ProfileEditorWindowController: NSWindowController {
         //  Initialize self after the class variables have been instantiated
         // ---------------------------------------------------------------------
         super.init(window: window)
+        
+        // ---------------------------------------------------------------------
+        //  Set the window delegate to self
+        // ---------------------------------------------------------------------
+        self.window?.delegate = self
         
         // ---------------------------------------------------------------------
         //  Setup toolbar
@@ -120,6 +132,131 @@ public class ProfileEditorWindowController: NSWindowController {
 }
 
 // MARK: -
+// MARK: NSWindowDelegate
+
+extension ProfileEditorWindowController: NSWindowDelegate {
+    
+    public func windowShouldClose(_ sender: NSWindow) -> Bool {
+        
+        if windowShouldClose {
+            Swift.print("Closing Window!")
+            // Unsure if this needs to be reset?
+            // self.windowShouldClose = false
+            return true
+        }
+        
+        if self.profile.isSaved() {
+            Swift.print("Profile Saved, Closing Window!")
+            // Unsure if this needs to be reset?
+            // self.windowShouldClose = false
+            return true
+        } else {
+            let alert = Alert()
+            self.alert = alert
+            
+            let alertMessage = NSLocalizedString("Unsaved Settings", comment: "")
+            let alertInformativeText = NSLocalizedString("If you close this window, all unsaved settings will be lost. Are you sure you want to close the window?", comment: "")
+            
+            if self.profile.title == StringConstant.defaultProfileName {
+                
+                let informativeText = alertInformativeText + "\n\nYou need to give your profile a name before it can be saved."
+                
+                // ---------------------------------------------------------------------
+                //  Show unnamed and unsaved settings alert to user
+                // ---------------------------------------------------------------------
+                alert.showAlert(message: alertMessage,
+                                informativeText: informativeText,
+                                window: sender,
+                                defaultString: StringConstant.defaultProfileName,
+                                placeholderString: "Name",
+                                firstButtonTitle: ButtonTitle.saveAndClose,
+                                secondButtonTitle: ButtonTitle.close,
+                                thirdButtonTitle: ButtonTitle.cancel,
+                                firstButtonState: true,
+                                sender: self,
+                                returnValue: { (newProfileName, response) in
+                                    switch response {
+                                    case .alertFirstButtonReturn:
+                                        self.profile.updatePayloadSettings(value: newProfileName,
+                                                                           key: "PayloadDisplayName",
+                                                                           domain: ManifestDomain.general,
+                                                                           type: .manifest, updateComplete: { (success, error) in
+                                                                            if success {
+                                                                                self.profile.save(operationType: .saveOperation, completionHandler: { (saveError) in
+                                                                                    if saveError == nil {
+                                                                                        self.profile.title = newProfileName
+                                                                                        self.performSelector(onMainThread: #selector(self.windowClose), with: self, waitUntilDone: false)
+                                                                                        Swift.print("Class: \(self.self), Function: \(#function), Save Successful!")
+                                                                                    } else {
+                                                                                        Swift.print("Class: \(self.self), Function: \(#function), Error: \(String(describing: saveError))")
+                                                                                    }
+                                                                                })
+                                                                            }
+                                        })
+                                        Swift.print("Save & Clsoe with the name: \(newProfileName)")
+                                    case .alertSecondButtonReturn:
+                                        self.performSelector(onMainThread: #selector(self.windowClose), with: self, waitUntilDone: false)
+                                    case .alertThirdButtonReturn:
+                                        Swift.print("Cancel")
+                                    default:
+                                        Swift.print("Unknown")
+                                    }
+                })
+                
+                // ---------------------------------------------------------------------
+                //  Select the text field in the alert sheet
+                // ---------------------------------------------------------------------
+                if let textFieldInput = alert.textFieldInput {
+                    textFieldInput.selectText(self)
+                    alert.firstButton?.isEnabled = false
+                }
+            } else {
+                
+                // ---------------------------------------------------------------------
+                //  Show unsaved settings alert to user
+                // ---------------------------------------------------------------------
+                self.alert?.showAlert(message: alertMessage,
+                                      informativeText: alertInformativeText,
+                                      window: sender,
+                                      firstButtonTitle: ButtonTitle.saveAndClose,
+                                      secondButtonTitle: ButtonTitle.close,
+                                      thirdButtonTitle: ButtonTitle.cancel,
+                                      firstButtonState: true,
+                                      sender: self,
+                                      returnValue: { response  in
+                                        
+                                        switch response {
+                                        case .alertFirstButtonReturn:
+                                            self.profile.save(operationType: .saveOperation, completionHandler: { (saveError) in
+                                                if saveError == nil {
+                                                    self.performSelector(onMainThread: #selector(self.windowClose), with: self, waitUntilDone: false)
+                                                    Swift.print("Class: \(self.self), Function: \(#function), Save Successful!")
+                                                } else {
+                                                    Swift.print("Class: \(self.self), Function: \(#function), Error: \(String(describing: saveError))")
+                                                }
+                                            })
+                                            Swift.print("Save & Clsoe")
+                                        case .alertSecondButtonReturn:
+                                            self.performSelector(onMainThread: #selector(self.windowClose), with: self, waitUntilDone: false)
+                                        case .alertThirdButtonReturn:
+                                            Swift.print("Cancel")
+                                        default:
+                                            Swift.print("Unknown")
+                                        }
+                })
+            }
+        }
+        return false
+    }
+    
+    @objc func windowClose() {
+        self.window?.close()
+    }
+    
+}
+
+
+// MARK: -
 // MARK: NSToolbarDelegate
 
 extension ProfileEditorWindowController: NSToolbarDelegate {
@@ -140,7 +277,8 @@ extension ProfileEditorWindowController: NSToolbarDelegate {
     }
     
     func toolbarItem(identifier: NSToolbarItem.Identifier) -> NSToolbarItem? {
-        if identifier == .editorTitle {
+        switch identifier {
+        case .editorTitle:
             if self.toolbarItemTitle == nil {
                 self.toolbarItemTitle = ProfileEditorWindowToolbarItemTitle(profile: self.profile)
             }
@@ -148,7 +286,51 @@ extension ProfileEditorWindowController: NSToolbarDelegate {
             if let toolbarView = self.toolbarItemTitle {
                 return toolbarView.toolbarItem
             }
+        case .editorSettings:
+            if self.toolbarItemSettings == nil, let profileEditor = self.splitView.editor {
+                self.toolbarItemSettings = ProfileEditorWindowToolbarItemSettings(profile: self.profile, profileEditorSettings: profileEditor.settings)
+            }
+            
+            if let toolbarView = self.toolbarItemSettings {
+                return toolbarView.toolbarItem
+            }
+        default:
+            Swift.print("Unknown Toolbar Identifier: \(identifier)")
         }
         return nil
+    }
+}
+
+// MARK: -
+// MARK: NSTextFieldDelegate Functions
+extension ProfileEditorWindowController: NSTextFieldDelegate {
+    
+    // -------------------------------------------------------------------------
+    //  Used when selecting a new profile name to not allow default or empty name
+    // -------------------------------------------------------------------------
+    override public func controlTextDidChange(_ notification: Notification) {
+        
+        // ---------------------------------------------------------------------
+        //  Get current text in the text field
+        // ---------------------------------------------------------------------
+        guard let userInfo = notification.userInfo,
+            let fieldEditor = userInfo["NSFieldEditor"] as? NSTextView,
+            let string = fieldEditor.textStorage?.string else {
+                return
+        }
+        
+        // ---------------------------------------------------------------------
+        //  If current text in the text field is either:
+        //   * Empty
+        //   * Matches the default profile name
+        //  Disable the OK button.
+        // ---------------------------------------------------------------------
+        if let alert = self.alert {
+            if alert.firstButton!.isEnabled && (string.isEmpty || string == StringConstant.defaultProfileName) {
+                alert.firstButton!.isEnabled = false
+            } else {
+                alert.firstButton!.isEnabled = true
+            }
+        }
     }
 }

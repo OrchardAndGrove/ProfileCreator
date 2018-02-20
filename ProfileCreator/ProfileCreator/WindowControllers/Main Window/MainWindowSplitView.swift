@@ -18,6 +18,9 @@ class MainWindowSplitView: NSSplitView {
     let profilePreviewController = MainWindowProfilePreviewController()
     let welcomeViewController = MainWindowWelcomeViewController()
     
+    var autoSavePosition0: CGFloat = 150.0
+    var autoSavePosition1: CGFloat = 0.0
+    
     // MARK: -
     // MARK: Initialization
     
@@ -37,6 +40,11 @@ class MainWindowSplitView: NSSplitView {
         self.dividerStyle = .thin
         self.isVertical = true
         self.delegate = self
+        
+        // ---------------------------------------------------------------------
+        //  Get AutoSave Positions for SplitView Separatos
+        // ---------------------------------------------------------------------
+        self.getAutoSavePositions()
         
         // ---------------------------------------------------------------------
         //  Add subviews to splitview
@@ -90,7 +98,16 @@ class MainWindowSplitView: NSSplitView {
         // ---------------------------------------------------------------------
         // TODO: Fix the restore. It seems it has to be done from the SplitViewController
         // But to use that this whole implementation has to change. This need to be tested later
-        // restoreAutoSavePositions()
+        //self.setPosition(150.0, ofDividerAt: 0)
+        //self.setPosition(150.0, ofDividerAt: 0)
+        //
+        
+    }
+    
+    override func viewDidMoveToWindow() {
+        super.viewDidMoveToWindow()
+        self.setPosition(self.autoSavePosition0, ofDividerAt: 0)
+        
     }
     
     deinit {
@@ -265,20 +282,18 @@ extension MainWindowSplitView: NSSplitViewDelegate {
 
 // https://stackoverflow.com/a/42014989
 
-extension NSSplitView {
+extension MainWindowSplitView {
     
     /*
      ** unfortunately this needs to be called in the controller's viewDidAppear function as
      ** auto layout kicks in to override any default values after the split view's awakeFromNib
      */
-    func restoreAutoSavePositions() {
-        
+    func getAutoSavePositions() {
         let key = String(format: "NSSplitView Subview Frames %@", self.autosaveName! as CVarArg)
         let subViewFrames = UserDefaults.standard.array(forKey: key)
         guard subViewFrames != nil else { return }
-        
+
         for (i, frame) in (subViewFrames?.enumerated())! {
-            
             if let frameString = frame as? String {
                 
                 let components = frameString.components(separatedBy: ", ")
@@ -297,6 +312,49 @@ extension NSSplitView {
                         position = position + CGFloat(width)
                         //subView.setFrameSize(NSSize.init(width: position, height: subView.frame.size.height))
                     }
+                }
+                
+                if i == 0 {
+                    self.autoSavePosition0 = position
+                }
+                // Swift.print("Class: \(self.self), Function: \(#function), Set position: \(position) of divider: \(i)")
+                // setPosition(position, ofDividerAt: i)
+            }
+        }
+    }
+    
+    /*
+    func restoreAutoSavePositions(forSubviews subviews: [Int]?) {
+        let key = String(format: "NSSplitView Subview Frames %@", self.autosaveName! as CVarArg)
+        let subViewFrames = UserDefaults.standard.array(forKey: key)
+        guard subViewFrames != nil else { return }
+        
+        for (i, frame) in (subViewFrames?.enumerated())! {
+            if let subviewIndexes = subviews, !subviewIndexes.contains(i) {
+                Swift.print("Will not reset for view at index: \(i)")
+                continue
+            }
+            Swift.print("i: \(i)")
+            Swift.print("frame: \(frame)")
+            if let frameString = frame as? String {
+                
+                let components = frameString.components(separatedBy: ", ")
+                guard components.count >= 4 else { return }
+                
+                var position: CGFloat = 0.0
+                
+                // Manage the 'hidden state' per view
+                // let hidden = NSString(string:components[4].lowercased()).boolValue
+                // let subView = self.subviews[i]
+                //subView.isHidden = hidden
+                
+                // Set height (horizontal) or width (vertical)
+                if self.isVertical {
+                    if let width = Float(components[2]) {
+                        Swift.print("width: \(width)")
+                        position = position + CGFloat(width)
+                        //subView.setFrameSize(NSSize.init(width: position, height: subView.frame.size.height))
+                    }
                 } else {
                     if let height = Float(components[3]) {
                         position = CGFloat(height)
@@ -309,4 +367,5 @@ extension NSSplitView {
             }
         }
     }
+    */
 }

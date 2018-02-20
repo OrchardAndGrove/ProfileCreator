@@ -40,6 +40,16 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         self.setupProfilePayloads()
         self.setupLibraryPayloads()
         
+        // ---------------------------------------------------------------------
+        //  Add and enable the general settings
+        // ---------------------------------------------------------------------
+        if
+            let payloadManifestGeneral = ProfilePayloads.shared.manifest(domain: ManifestDomain.general),
+            let payloadPlaceholderGeneral = payloadManifestGeneral.placeholder {
+            self.generalPayloadPlaceholder = payloadPlaceholderGeneral
+            editor.updatePayloadSelection(selected: true, payloadSource: payloadManifestGeneral)
+        }
+        
         self.reloadTableviews()
     }
     

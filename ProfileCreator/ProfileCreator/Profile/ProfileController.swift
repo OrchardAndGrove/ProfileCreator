@@ -64,7 +64,12 @@ class ProfileController: NSDocumentController {
                 // TODO: Proper logging
                 return
             }
-                        
+            
+            // -----------------------------------------------------------------
+            //  Reset all changes
+            // -----------------------------------------------------------------
+            profile.restoreSavedSettings(identifier: profile.identifier, savedSettings: nil)
+            
             // -----------------------------------------------------------------
             //  Remove the window controller from the profile
             // -----------------------------------------------------------------
@@ -134,7 +139,7 @@ class ProfileController: NSDocumentController {
     
     public func exportProfile(withIdentifier: UUID) {
         if let profile = self.profile(withIdentifier: withIdentifier) {
-            Swift.print("Exporting Profile: \(profile.title ?? "")")
+            Swift.print("Exporting Profile: \(profile.title)")
         }
     }
     
@@ -270,7 +275,7 @@ class ProfileController: NSDocumentController {
                 //  Post notification that a profile was added
                 // -------------------------------------------------------------
                 NotificationCenter.default.post(name: .didAddProfile, object: self, userInfo: [NotificationKey.identifier : profile.identifier])
-            } catch {
+            } catch let error {
                 Swift.print("Class: \(self.self), Function: \(#function), Error: \(error)")
             }
         }

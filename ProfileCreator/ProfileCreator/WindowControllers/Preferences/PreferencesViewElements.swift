@@ -9,10 +9,12 @@
 import Cocoa
 
 public func addCheckbox(title: String,
-                        keyPath: String,
+                        bindTo: Any?,
+                        bindKeyPath: String,
                         toView: NSView,
                         lastSubview: NSView?,
                         height: inout CGFloat,
+                        indent: CGFloat,
                         constraints: inout [NSLayoutConstraint]) -> NSView? {
     
     // -------------------------------------------------------------------------
@@ -28,7 +30,7 @@ public func addCheckbox(title: String,
     // ---------------------------------------------------------------------
     //  Bind checkbox to keyPath
     // ---------------------------------------------------------------------
-    checkbox.bind(NSBindingName.value, to: UserDefaults.standard, withKeyPath: keyPath, options: [NSBindingOption.continuouslyUpdatesValue: true])
+    checkbox.bind(NSBindingName.value, to: bindTo ?? UserDefaults.standard, withKeyPath: bindKeyPath, options: [NSBindingOption.continuouslyUpdatesValue: true])
     
     // -------------------------------------------------------------------------
     //  Add Constraints
@@ -50,7 +52,7 @@ public func addCheckbox(title: String,
                                           toItem: toView,
                                           attribute: .leading,
                                           multiplier: 1,
-                                          constant: preferencesIndent))
+                                          constant: indent))
     
     // Trailing
     constraints.append(NSLayoutConstraint(item: toView,
@@ -181,12 +183,43 @@ public func addHeader(title: String,
     }
 }
 
-public func addTextField(placeholderValue: String,
+public func addTextField(label: String?,
+                         placeholderValue: String,
                          keyPath: String,
                          toView: NSView,
                          lastSubview: NSView?,
+                         lastTextField: NSView?,
                          height: inout CGFloat,
                          constraints: inout [NSLayoutConstraint]) -> NSView? {
+    
+    let textFieldLabel = NSTextField()
+    if let labelString = label {
+        
+        // -------------------------------------------------------------------------
+        //  Create and add TextField Label
+        // -------------------------------------------------------------------------
+        textFieldLabel.translatesAutoresizingMaskIntoConstraints = false
+        textFieldLabel.lineBreakMode = .byTruncatingTail
+        textFieldLabel.isBordered = false
+        textFieldLabel.isBezeled = false
+        textFieldLabel.drawsBackground = false
+        textFieldLabel.isEditable = false
+        textFieldLabel.isSelectable = true
+        textFieldLabel.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .regular))
+        textFieldLabel.textColor = NSColor.labelColor
+        textFieldLabel.alignment = .left
+        textFieldLabel.stringValue = labelString
+        toView.addSubview(textFieldLabel)
+        
+        // Leading
+        constraints.append(NSLayoutConstraint(item: textFieldLabel,
+                                              attribute: .leading,
+                                              relatedBy: .equal,
+                                              toItem: toView,
+                                              attribute: .leading,
+                                              multiplier: 1,
+                                              constant: preferencesIndent))
+    }
     
     // -------------------------------------------------------------------------
     //  Create and add TextField
@@ -223,14 +256,48 @@ public func addTextField(placeholderValue: String,
                                           multiplier: 1,
                                           constant: 8))
     
-    // Leading
-    constraints.append(NSLayoutConstraint(item: textField,
+    if label != nil {
+        
+        // Leading
+        constraints.append(NSLayoutConstraint(item: textField,
                                           attribute: .leading,
                                           relatedBy: .equal,
-                                          toItem: toView,
-                                          attribute: .leading,
+                                          toItem: textFieldLabel,
+                                          attribute: .trailing,
                                           multiplier: 1,
-                                          constant: preferencesIndent))
+                                          constant: 4.0))
+        
+        // Baseline
+        constraints.append(NSLayoutConstraint(item: textField,
+                                              attribute: .firstBaseline,
+                                              relatedBy: .equal,
+                                              toItem: textFieldLabel,
+                                              attribute: .firstBaseline,
+                                              multiplier: 1,
+                                              constant: 0.0))
+    } else {
+        
+        // Leading
+        constraints.append(NSLayoutConstraint(item: textField,
+                                              attribute: .leading,
+                                              relatedBy: .equal,
+                                              toItem: toView,
+                                              attribute: .leading,
+                                              multiplier: 1,
+                                              constant: preferencesIndent))
+    }
+    
+    if lastTextField != nil {
+        
+        // Leading
+        constraints.append(NSLayoutConstraint(item: textField,
+                                              attribute: .leading,
+                                              relatedBy: .equal,
+                                              toItem: lastTextField,
+                                              attribute: .leading,
+                                              multiplier: 1,
+                                              constant: 0.0))
+    }
     
     // Trailing
     constraints.append(NSLayoutConstraint(item: toView,

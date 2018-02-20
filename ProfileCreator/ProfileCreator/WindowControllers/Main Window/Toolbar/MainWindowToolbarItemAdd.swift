@@ -153,7 +153,7 @@ class MainWindowToolbarItemAddButton: NSButton {
         self.bezelStyle = .texturedRounded
         self.image = NSImage(named: NSImage.Name.addTemplate)
         self.target = self
-        self.action = #selector(clicked(button:))
+        self.action = #selector(self.clicked(button:))
         self.imageScaling = .scaleProportionallyDown
         self.imagePosition = .imageOnly
         

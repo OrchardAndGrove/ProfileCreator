@@ -13,12 +13,13 @@ class ProfileEditorWindowToolbarItemTitle: NSView {
     // MARK: -
     // MARK: Variables
     
-    let profile: Profile
+    public weak var profile: Profile?
     let toolbarItemHeight: CGFloat = 38.0
     let textFieldTitle = NSTextField()
 
     var toolbarItem: NSToolbarItem?
     var selectionTitle: String?
+    let profileTitleSelector: String
     
     // MARK: -
     // MARK: Initialization
@@ -33,6 +34,7 @@ class ProfileEditorWindowToolbarItemTitle: NSView {
         //  Setup Variables
         // ---------------------------------------------------------------------
         self.profile = profile
+        self.profileTitleSelector = NSStringFromSelector(#selector(setter: profile.title))
         var constraints = [NSLayoutConstraint]()
         
         // ---------------------------------------------------------------------
@@ -47,7 +49,7 @@ class ProfileEditorWindowToolbarItemTitle: NSView {
         self.textFieldTitle.textColor = NSColor.controlTextColor
         self.textFieldTitle.alignment = .center
         self.textFieldTitle.lineBreakMode = .byTruncatingTail
-        self.textFieldTitle.stringValue = profile.title!
+        self.textFieldTitle.stringValue = profile.title
 
         // ---------------------------------------------------------------------
         //  Create the initial size of the toolbar item
@@ -84,19 +86,20 @@ class ProfileEditorWindowToolbarItemTitle: NSView {
         // ---------------------------------------------------------------------
         //  Setup key/value observer for the profile title
         // ---------------------------------------------------------------------
-        self.profile.addObserver(self, forKeyPath: NSStringFromSelector(#selector(getter: self.profile.title)), options: .new, context: nil)
+        Swift.print("self.profileTitleSelector: \(self.profileTitleSelector)")
+        self.profile?.addObserver(self, forKeyPath: self.profileTitleSelector, options: .new, context: nil)
     }
     
     deinit {
-        self.profile.removeObserver(self, forKeyPath: "title", context: nil)
+        self.profile?.removeObserver(self, forKeyPath: self.profileTitleSelector, context: nil)
     }
     
     // MARK: -
     // MARK: Instance Functions
     
     func updateTitle() {
-        if let profileTitle = profile.title {
-            self.textFieldTitle.stringValue = "\(profileTitle): \(self.selectionTitle ?? "")"
+        if let profile = self.profile {
+            self.textFieldTitle.stringValue = "\(profile.title): \(self.selectionTitle ?? "")"
         } else {
             self.textFieldTitle.stringValue = self.selectionTitle ?? ""
         }
@@ -112,6 +115,9 @@ class ProfileEditorWindowToolbarItemTitle: NSView {
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         Swift.print("Class: \(self.self), Function: \(#function), observeValueforKeyPath: \(String(describing: keyPath))")
+        if keyPath == self.profileTitleSelector, let title = change?[.newKey] as? String {
+            self.textFieldTitle.stringValue = title
+        }
     }
     
     // MARK: -

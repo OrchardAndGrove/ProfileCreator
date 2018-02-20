@@ -12,5 +12,13 @@
 	<true/>
 	<key>ShowProfileCount</key>
 	<false/>
+	<key>EditorColumnEnable</key>
+	<false/>
+	<key>EditorShowDisabledKeys</key>
+	<true/>
+	<key>EditorShowHiddenKeys</key>
+	<false/>
+	<key>EditorShowSupervisedKeys</key>
+	<true/>
 </dict>
 </plist>

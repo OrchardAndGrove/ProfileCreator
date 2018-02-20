@@ -72,17 +72,21 @@ class PreferencesGeneralView: NSView {
                                 constraints: &constraints)
         
         lastSubview = addCheckbox(title: "Show Profile Count",
-                                  keyPath: PreferenceKey.showProfileCount,
+                                  bindTo: UserDefaults.standard,
+                                  bindKeyPath: PreferenceKey.showProfileCount,
                                   toView: self,
                                   lastSubview: lastSubview,
                                   height: &frameHeight,
+                                  indent: preferencesIndent,
                                   constraints: &constraints)
         
         lastSubview = addCheckbox(title: "Show Group Icons",
-                                  keyPath: PreferenceKey.showGroupIcons,
+                                  bindTo: UserDefaults.standard,
+                                  bindKeyPath: PreferenceKey.showGroupIcons,
                                   toView: self,
                                   lastSubview: lastSubview,
                                   height: &frameHeight,
+                                  indent: preferencesIndent,
                                   constraints: &constraints)
         
         // ---------------------------------------------------------------------

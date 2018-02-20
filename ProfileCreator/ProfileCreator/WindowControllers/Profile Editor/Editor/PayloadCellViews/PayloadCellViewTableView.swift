@@ -258,11 +258,6 @@ class PayloadCellViewTableView: NSTableCellView, ProfileCreatorCellView, Payload
     }
 }
 
-// Extension to compare Dictionaries
-public func ==(lhs: [AnyHashable: Any], rhs: [AnyHashable: Any] ) -> Bool {
-    return NSDictionary(dictionary: lhs).isEqual(to: rhs)
-}
-
 extension PayloadCellViewTableView: NSTableViewDataSource {
     func numberOfRows(in tableView: NSTableView) -> Int { return self.tableViewContent.count }
 }

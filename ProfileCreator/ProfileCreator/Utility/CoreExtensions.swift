@@ -8,6 +8,9 @@
 
 import Foundation
 
+// MARK: -
+// MARK: Array
+
 extension Array where Element: Equatable {
     func indexes(ofItems items: [Element]) -> IndexSet?  {
         return IndexSet(self.enumerated().flatMap { items.contains($0.element) ? $0.offset : nil })
@@ -27,9 +30,13 @@ extension Array {
     }
 }
 
+// MARK: -
+// MARK: Date
+
 extension Date {
     func midnight() -> Date? {
-        if let sourceTimeZone = NSTimeZone(abbreviation: "GMT") {
+        if
+            let sourceTimeZone = NSTimeZone(abbreviation: "GMT") {
             let destinationTimeZone = NSTimeZone.system
             let interval = TimeInterval(destinationTimeZone.secondsFromGMT(for: self) - sourceTimeZone.secondsFromGMT(for: self))
             let dateInSystemTimeZone = Date(timeInterval: interval, since: self)
@@ -41,4 +48,17 @@ extension Date {
         }
         return self
     }
+}
+
+// MARK: -
+// MARK: ==
+
+// Compare Dictionaries
+public func ==(lhs: [AnyHashable: Any], rhs: [AnyHashable: Any] ) -> Bool {
+    return NSDictionary(dictionary: lhs).isEqual(to: rhs)
+}
+
+// Compare Dictionaries - This SHOULD be covered bu the above AnyHashable but apparently not
+public func ==(lhs: [String: Any], rhs: [String: Any] ) -> Bool {
+    return NSDictionary(dictionary: lhs).isEqual(to: rhs)
 }

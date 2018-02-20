@@ -58,6 +58,7 @@ class PreferencesProfileDefaultsView: NSView {
         var constraints = [NSLayoutConstraint]()
         var frameHeight: CGFloat = 0.0
         var lastSubview: NSView?
+        var lastTextField: NSView?
         
         // ---------------------------------------------------------------------
         //  Add Preferences "Default Profile Settings"
@@ -69,19 +70,75 @@ class PreferencesProfileDefaultsView: NSView {
                                 height: &frameHeight,
                                 constraints: &constraints)
         
-        lastSubview = addTextField(placeholderValue: "Pretendco",
+        lastSubview = addTextField(label: "Organization Name",
+                                   placeholderValue: "Pretendco",
                                    keyPath: PreferenceKey.defaultOrganization,
                                    toView: self,
                                    lastSubview: lastSubview,
+                                   lastTextField: nil,
                                    height: &frameHeight,
                                    constraints: &constraints)
+        lastTextField = lastSubview
         
-        lastSubview = addTextField(placeholderValue: "com.pretendco",
+        lastSubview = addTextField(label: "Organization Identifier",
+                                   placeholderValue: "com.pretendco",
                                    keyPath: PreferenceKey.defaultOrganizationIdentifier,
                                    toView: self,
                                    lastSubview: lastSubview,
+                                   lastTextField: lastTextField,
                                    height: &frameHeight,
                                    constraints: &constraints)
+        lastTextField = lastSubview
+        
+        lastSubview = addHeader(title: "Payload Keys",
+                                withSeparator: true,
+                                toView: self,
+                                lastSubview: lastSubview,
+                                height: &frameHeight,
+                                constraints: &constraints)
+        
+        lastSubview = addCheckbox(title: "Show Hidden",
+                                  bindTo: UserDefaults.standard,
+                                  bindKeyPath: PreferenceKey.editorShowHiddenKeys,
+                                  toView: self,
+                                  lastSubview: lastSubview,
+                                  height: &frameHeight,
+                                  indent: preferencesIndent,
+                                  constraints: &constraints)
+        
+        lastSubview = addCheckbox(title: "Show Disabled",
+                                  bindTo: UserDefaults.standard,
+                                  bindKeyPath: PreferenceKey.editorShowDisabledKeys,
+                                  toView: self,
+                                  lastSubview: lastSubview,
+                                  height: &frameHeight,
+                                  indent: preferencesIndent,
+                                  constraints: &constraints)
+        
+        lastSubview = addCheckbox(title: "Show Supervised",
+                                  bindTo: UserDefaults.standard,
+                                  bindKeyPath: PreferenceKey.editorShowSupervisedKeys,
+                                  toView: self,
+                                  lastSubview: lastSubview,
+                                  height: &frameHeight,
+                                  indent: preferencesIndent,
+                                  constraints: &constraints)
+        
+        lastSubview = addHeader(title: "Editor Rows",
+                                withSeparator: true,
+                                toView: self,
+                                lastSubview: lastSubview,
+                                height: &frameHeight,
+                                constraints: &constraints)
+        
+        lastSubview = addCheckbox(title: "Show Enable/Disable",
+                                  bindTo: UserDefaults.standard,
+                                  bindKeyPath: PreferenceKey.editorColumnEnable,
+                                  toView: self,
+                                  lastSubview: lastSubview,
+                                  height: &frameHeight,
+                                  indent: preferencesIndent,
+                                  constraints: &constraints)
         
         // ---------------------------------------------------------------------
         //  Add constraints to last view

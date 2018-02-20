@@ -56,7 +56,7 @@ class EditorTextField {
             constraints.append(NSLayoutConstraint(item: textField,
                                                        attribute: .top,
                                                        relatedBy: .equal,
-                                                       toItem: cellView.textFieldTitle,
+                                                       toItem: cellView,
                                                        attribute: .top,
                                                        multiplier: 1.0,
                                                        constant: 8.0))

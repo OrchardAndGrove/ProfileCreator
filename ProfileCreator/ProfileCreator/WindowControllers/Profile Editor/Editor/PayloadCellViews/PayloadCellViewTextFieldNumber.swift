@@ -116,10 +116,10 @@ class PayloadCellViewTextFieldNumber: NSTableCellView, ProfileCreatorCellView, P
         // ---------------------------------------------------------------------
         if
             let domainSettings = settings[subkey.domain] as? Dictionary<String, Any>,
-            let value = domainSettings[subkey.keyPath] as? String {
-            self.textFieldInput?.stringValue = value
+            let value = domainSettings[subkey.keyPath] {
+            self.textFieldInput?.stringValue = String(describing: value)
         } else if let valueDefault = self.valueDefault {
-            self.textFieldInput?.stringValue = valueDefault
+            self.textFieldInput?.stringValue = String(describing: valueDefault)
         }
         
         // ---------------------------------------------------------------------

@@ -21,7 +21,7 @@ struct PayloadLibraryNoPayloads {
         // ---------------------------------------------------------------------
         //  Setup Variables
         // ---------------------------------------------------------------------
-        self.view = ViewWhite(draggingDestination: draggingDestination, draggingTypes: draggingTypes)
+        self.view = ViewWhite(draggingDestination: draggingDestination, draggingTypes: draggingTypes, acceptsFirstResponder: false)
         var constraints = [NSLayoutConstraint]()
         
         // ---------------------------------------------------------------------

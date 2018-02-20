@@ -10,8 +10,11 @@ import Cocoa
 
 struct ButtonTitle {
     static let cancel = NSLocalizedString("Cancel", comment: "")
+    static let close = NSLocalizedString("Close", comment: "")
     static let delete = NSLocalizedString("Delete", comment: "")
     static let ok = NSLocalizedString("OK", comment: "")
+    static let save = NSLocalizedString("Save", comment: "")
+    static let saveAndClose = NSLocalizedString("Save & Close", comment: "")
 }
 
 class Alert: NSObject {
@@ -22,6 +25,54 @@ class Alert: NSObject {
     var secondButton: NSButton?
     var thirdButton: NSButton?
 
+    public func showAlert(message: String,
+                          informativeText: String?,
+                          window: NSWindow,
+                          firstButtonTitle: String,
+                          secondButtonTitle: String?,
+                          thirdButtonTitle: String?,
+                          firstButtonState: Bool,
+                          sender: Any?,
+                          returnValue: @escaping (NSApplication.ModalResponse) -> Void ) {
+        
+        // ---------------------------------------------------------------------
+        //  Configure alert
+        // ---------------------------------------------------------------------
+        self.alert.alertStyle = .informational
+        
+        // ---------------------------------------------------------------------
+        //  Add buttons
+        // ---------------------------------------------------------------------
+        self.alert.addButton(withTitle: firstButtonTitle)
+        self.firstButton = self.alert.buttons.first
+        self.firstButton!.isEnabled = firstButtonState
+        
+        if let title = secondButtonTitle {
+            self.alert.addButton(withTitle: title)
+            self.secondButton = self.alert.buttons[1]
+        }
+        
+        if let title = thirdButtonTitle {
+            self.alert.addButton(withTitle: title)
+            self.thirdButton = self.alert.buttons[2]
+        }
+        
+        // ---------------------------------------------------------------------
+        //  Add message
+        // ---------------------------------------------------------------------
+        self.alert.messageText = message
+        if let text = informativeText {
+            self.alert.informativeText = text
+        }
+        
+        // ---------------------------------------------------------------------
+        //  Show modal alert in window
+        // ---------------------------------------------------------------------
+        self.alert.beginSheetModal(for: window) { response in
+            returnValue(response)
+        }
+    }
+    
     public func showAlert(message: String,
                           informativeText: String?,
                           window: NSWindow,

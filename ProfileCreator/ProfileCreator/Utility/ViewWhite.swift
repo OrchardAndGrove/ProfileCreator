@@ -10,17 +10,21 @@ import Cocoa
 
 class ViewWhite: NSView {
     
+    let acceptFirstResponder: Bool
+    
     private weak var draggingDestination: NSDraggingDestination?
     
     required init?(coder decoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    init() {
+    init(acceptsFirstResponder: Bool = true) {
+        self.acceptFirstResponder = acceptsFirstResponder
         super.init(frame: NSZeroRect)
     }
     
-    init(draggingDestination: NSDraggingDestination, draggingTypes: [NSPasteboard.PasteboardType]) {
+    init(draggingDestination: NSDraggingDestination, draggingTypes: [NSPasteboard.PasteboardType], acceptsFirstResponder: Bool = true) {
+        self.acceptFirstResponder = acceptsFirstResponder
         super.init(frame: NSZeroRect)
         self.draggingDestination = draggingDestination
         self.registerForDraggedTypes(draggingTypes)
@@ -65,12 +69,12 @@ extension ViewWhite {
     
     override var acceptsFirstResponder: Bool {
         Swift.print("Class: \(self.self), Function: \(#function), acceptsFirstResponder")
-        return true
+        return self.acceptFirstResponder
     }
     
     override func drawFocusRingMask() {
         Swift.print("Class: \(self.self), Function: \(#function), drawFocusRingMask")
-        return __NSRectFill( self.bounds )
+        // return __NSRectFill( self.bounds )
     }
     
     override var focusRingMaskBounds: NSRect {

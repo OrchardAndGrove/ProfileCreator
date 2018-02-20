@@ -13,7 +13,7 @@ class MainWindowWelcomeViewController: NSObject {
     // MARK: -
     // MARK: Variables
     
-    let view = ViewWhite()
+    let view = ViewWhite(acceptsFirstResponder: false)
     let textFieldTitle = NSTextField()
     let textFieldInfo = NSTextField()
     let button = NSButton()
@@ -33,6 +33,7 @@ class MainWindowWelcomeViewController: NSObject {
         //  Setup View
         // ---------------------------------------------------------------------
         self.view.translatesAutoresizingMaskIntoConstraints = false
+        
         
         // ---------------------------------------------------------------------
         //  Create and add TextField Title

@@ -11,6 +11,9 @@ import Cocoa
 let preferencesWindowWidth: CGFloat = 450.0
 let preferencesIndent: CGFloat = 40.0
 
+let editorPreferencesWindowWidth: CGFloat = 200.0
+let editorPreferencesIndent: CGFloat = 22.0
+
 let editorTableViewColumnPaddingWidth: CGFloat = 24.0
 let editorTableViewColumnPayloadWidth: CGFloat = 500.0
 
@@ -21,6 +24,10 @@ let manifestSubkeysIgnored = ["PayloadDescription",
                               "PayloadUUID",
                               "PayloadVersion",
                               "PayloadOrganization"]
+
+struct ManifestDomain {
+    static let general = "com.apple.general"
+}
 
 enum TableViewTag: Int {
     case profilePayloads
@@ -36,10 +43,12 @@ enum LibraryTag: Int {
 
 extension NSToolbarItem.Identifier {
     static let editorTitle = NSToolbarItem.Identifier("editorTitle")
+    static let editorSettings = NSToolbarItem.Identifier("editorSettings")
     static let mainWindowAdd = NSToolbarItem.Identifier("mainWindowAdd")
     static let mainWindowExport = NSToolbarItem.Identifier("mainWindowExport")
     static let preferencesGeneral = NSToolbarItem.Identifier("preferencesGeneral")
     static let preferencesEditor = NSToolbarItem.Identifier("preferencesEditor")
+    static let preferencesLibrary = NSToolbarItem.Identifier("preferencesLibrary")
     static let preferencesProfileDefaults = NSToolbarItem.Identifier("preferencesProfileDefaults")
 }
 
@@ -106,6 +115,10 @@ struct PreferenceKey {
     static let showPayloadLibraryAppleDomains = "ShowPayloadLibraryAppleDomains"
     static let showPayloadLibraryApplications = "ShowPayloadLibraryApplications"
     static let showPayloadLibraryDeveloper = "ShowPayloadLibraryDeveloper"
+    static let editorColumnEnable = "EditorColumnEnable"
+    static let editorShowDisabledKeys = "EditorShowDisabledKeys"
+    static let editorShowSupervisedKeys = "EditorShowSupervisedKeys"
+    static let editorShowHiddenKeys = "EditorShowHiddenKeys"
 }
 
 struct SidebarGroupTitle {

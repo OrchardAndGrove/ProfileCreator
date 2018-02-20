@@ -25,7 +25,7 @@ class PayloadCellViewTitle: NSTableCellView, ProfileCreatorCellView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    init(payloadSource: PayloadSource) {
+    init(title titleString: String?, description descriptionString: String?) {
         super.init(frame: NSZeroRect)
         
         // ---------------------------------------------------------------------
@@ -36,7 +36,7 @@ class PayloadCellViewTitle: NSTableCellView, ProfileCreatorCellView {
         // ---------------------------------------------------------------------
         //  Setup Static View Content
         // ---------------------------------------------------------------------
-        if !payloadSource.title.isEmpty {
+        if let title = titleString, !title.isEmpty {
             self.textFieldTitle = NSTextField()
             self.textFieldTitle?.translatesAutoresizingMaskIntoConstraints = false
             self.textFieldTitle?.lineBreakMode = .byWordWrapping
@@ -47,13 +47,13 @@ class PayloadCellViewTitle: NSTableCellView, ProfileCreatorCellView {
             self.textFieldTitle?.isSelectable = false
             self.textFieldTitle?.textColor = NSColor.labelColor
             self.textFieldTitle?.preferredMaxLayoutWidth = editorTableViewColumnPayloadWidth
-            self.textFieldTitle?.stringValue = payloadSource.title
+            self.textFieldTitle?.stringValue = title
             self.textFieldTitle?.alignment = .center
-            self.textFieldTitle?.font = NSFont.systemFont(ofSize: 24, weight: NSFont.Weight.heavy)
+            self.textFieldTitle?.font = NSFont.systemFont(ofSize: 20, weight: .bold)
             self.setupTextField(title: self.textFieldTitle!, constraints: &constraints)
         }
         
-        if !payloadSource.description.isEmpty {
+        if let description = descriptionString, !description.isEmpty {
             self.textFieldDescription = NSTextField()
             self.textFieldDescription?.translatesAutoresizingMaskIntoConstraints = false
             self.textFieldDescription?.lineBreakMode = .byWordWrapping
@@ -64,9 +64,9 @@ class PayloadCellViewTitle: NSTableCellView, ProfileCreatorCellView {
             self.textFieldDescription?.isSelectable = false
             self.textFieldDescription?.textColor = NSColor.labelColor
             self.textFieldDescription?.preferredMaxLayoutWidth = editorTableViewColumnPayloadWidth
-            self.textFieldDescription?.stringValue = payloadSource.description
+            self.textFieldDescription?.stringValue = description
             self.textFieldDescription?.alignment = .center
-            self.textFieldDescription?.font = NSFont.systemFont(ofSize: 17, weight: NSFont.Weight.ultraLight)
+            self.textFieldDescription?.font = NSFont.systemFont(ofSize: 15, weight: NSFont.Weight.ultraLight)
             self.setupTextField(description: self.textFieldDescription!, constraints: &constraints)
         }
         
@@ -87,6 +87,10 @@ class PayloadCellViewTitle: NSTableCellView, ProfileCreatorCellView {
         //  Activate Layout Constraints
         // ---------------------------------------------------------------------
         NSLayoutConstraint.activate(constraints)
+    }
+    
+    convenience init(payloadSource: PayloadSource) {
+        self.init(title: payloadSource.title, description: payloadSource.description)
     }
     
     func updateHeight(_ h: CGFloat) {
@@ -163,7 +167,7 @@ class PayloadCellViewTitle: NSTableCellView, ProfileCreatorCellView {
                                               toItem: self,
                                               attribute: .leading,
                                               multiplier: 1.0,
-                                              constant: 24.0))
+                                              constant: 8.0))
         
         // Trailing
         constraints.append(NSLayoutConstraint(item: self,
@@ -172,7 +176,7 @@ class PayloadCellViewTitle: NSTableCellView, ProfileCreatorCellView {
                                               toItem: description,
                                               attribute: .trailing,
                                               multiplier: 1.0,
-                                              constant: 24.0))
+                                              constant: 8.0))
         
         self.updateHeight(description.intrinsicContentSize.height)
     }
@@ -180,20 +184,29 @@ class PayloadCellViewTitle: NSTableCellView, ProfileCreatorCellView {
     private func setup(separator: NSBox, constraints: inout [NSLayoutConstraint]) {
         
         // ---------------------------------------------------------------------
-        //  Add TextField to TableCellView
-        // ---------------------------------------------------------------------
-        self.addSubview(separator)
-        
-        // ---------------------------------------------------------------------
         //  Add Constraints
         // ---------------------------------------------------------------------
         
         // Top
+        let textField: NSTextField
+        if let textFieldDescription = self.textFieldDescription {
+            textField = textFieldDescription
+        } else if let textFieldTitle = self.textFieldTitle {
+            textField = textFieldTitle
+        } else {
+            return
+        }
+        
+        // ---------------------------------------------------------------------
+        //  Add TextField to TableCellView
+        // ---------------------------------------------------------------------
+        self.addSubview(separator)
+        
         constraints.append(NSLayoutConstraint(
             item: separator,
             attribute: .top,
             relatedBy: .equal,
-            toItem: self.textFieldDescription,
+            toItem: textField,
             attribute: .bottom,
             multiplier: 1,
             constant: 14.0))

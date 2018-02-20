@@ -153,7 +153,7 @@ class MainWindowToolbarItemExportButton: NSButton {
         self.bezelStyle = .texturedRounded
         self.image = NSImage(named: NSImage.Name.shareTemplate)
         self.target = self
-        self.action = #selector(MainWindowToolbarItemExportButton.clicked(button:))
+        self.action = #selector(self.clicked(button:))
         self.imageScaling = .scaleProportionallyDown
         self.imagePosition = .imageOnly
         
@@ -173,7 +173,7 @@ class MainWindowToolbarItemExportButton: NSButton {
         menuItemExportProfile.title = NSLocalizedString("Export Profile", comment: "")
         menuItemExportProfile.isEnabled = true
         menuItemExportProfile.target = self
-        menuItemExportProfile.action = #selector(exportProfile(menuItem:))
+        menuItemExportProfile.action = #selector(self.exportProfile(menuItem:))
         self.buttonMenu.addItem(menuItemExportProfile)
     }
     
