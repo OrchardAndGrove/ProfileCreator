@@ -12,6 +12,7 @@ import ProfilePayloads
 let ProfileCreatorErrorDomain = Bundle.main.bundleIdentifier ?? "com.github.erikberglund.ProfileCreator"
 
 enum ProfileExportError: Error {
+    case unknownError
     case noPayloadSource(forDomain: String, ofType: PayloadSourceType)
     case invalid(value: Any?, forKey: String, inDomain: String, ofType: PayloadSourceType)
 }

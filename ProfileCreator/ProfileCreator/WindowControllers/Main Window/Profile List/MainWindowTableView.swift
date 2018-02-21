@@ -64,7 +64,7 @@ class MainWindowTableViewController: NSObject, MainWindowOutlineViewSelectionDel
         // Things I've tried to remove the separator between the views in the outline view
         /*
          self.tableView.gridColor = NSColor.clear
-         self.tableView.gridStyleMask = NSTableViewGridLineStyle.init(rawValue: 0)
+         self.tableView.gridStyleMask = NSTableViewGridLineStyle(rawValue: 0)
          self.tableView.intercellSpacing = NSZeroSize
          */
         

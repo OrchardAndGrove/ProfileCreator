@@ -50,19 +50,19 @@ public class ProfileEditorWindowController: NSWindowController {
         let rect = NSRect(x: 0, y: 0, width: 801, height: 700) // 801 because if 800 the text appears blurry when first loaded
         let styleMask = NSWindow.StyleMask(rawValue: (
             NSWindow.StyleMask.fullSizeContentView.rawValue |
-                NSWindow.StyleMask.titled.rawValue |
-                NSWindow.StyleMask.unifiedTitleAndToolbar.rawValue |
-                NSWindow.StyleMask.closable.rawValue |
-                NSWindow.StyleMask.miniaturizable.rawValue |
-                NSWindow.StyleMask.resizable.rawValue
+            NSWindow.StyleMask.titled.rawValue |
+            NSWindow.StyleMask.unifiedTitleAndToolbar.rawValue |
+            NSWindow.StyleMask.closable.rawValue |
+            NSWindow.StyleMask.miniaturizable.rawValue |
+            NSWindow.StyleMask.resizable.rawValue
         ))
         let window = NSWindow(contentRect: rect, styleMask: styleMask, backing: NSWindow.BackingStoreType.buffered, defer: false)
         window.titleVisibility = .hidden
         window.isReleasedWhenClosed = false
         window.isRestorable = true
         window.identifier = NSUserInterfaceItemIdentifier(rawValue: "ProfileCreatorEditorWindow-\(profile.identifier.uuidString)")
-        window.contentMinSize = NSSize.init(width: 600, height: 400)
-        window.backgroundColor = NSColor.white
+        window.contentMinSize = NSSize(width: 600, height: 400)
+        window.backgroundColor = .white
         window.autorecalculatesKeyViewLoop = false
         window.center()
         
@@ -179,18 +179,18 @@ extension ProfileEditorWindowController: NSWindowDelegate {
                                     case .alertFirstButtonReturn:
                                         self.profile.updatePayloadSettings(value: newProfileName,
                                                                            key: "PayloadDisplayName", // Somehow I cannot use the PayloadKey.payloadDisplayName here
-                                                                           domain: ManifestDomain.general,
-                                                                           type: .manifest, updateComplete: { (success, error) in
-                                                                            if success {
-                                                                                self.profile.save(operationType: .saveOperation, completionHandler: { (saveError) in
-                                                                                    if saveError == nil {
-                                                                                        self.performSelector(onMainThread: #selector(self.windowClose), with: self, waitUntilDone: false)
-                                                                                        Swift.print("Class: \(self.self), Function: \(#function), Save Successful!")
-                                                                                    } else {
-                                                                                        Swift.print("Class: \(self.self), Function: \(#function), Error: \(String(describing: saveError))")
-                                                                                    }
-                                                                                })
-                                                                            }
+                                            domain: ManifestDomain.general,
+                                            type: .manifest, updateComplete: { (success, error) in
+                                                if success {
+                                                    self.profile.save(operationType: .saveOperation, completionHandler: { (saveError) in
+                                                        if saveError == nil {
+                                                            self.performSelector(onMainThread: #selector(self.windowClose), with: self, waitUntilDone: false)
+                                                            Swift.print("Class: \(self.self), Function: \(#function), Save Successful!")
+                                                        } else {
+                                                            Swift.print("Class: \(self.self), Function: \(#function), Error: \(String(describing: saveError))")
+                                                        }
+                                                    })
+                                                }
                                         })
                                     case .alertSecondButtonReturn:
                                         self.performSelector(onMainThread: #selector(self.windowClose), with: self, waitUntilDone: false)

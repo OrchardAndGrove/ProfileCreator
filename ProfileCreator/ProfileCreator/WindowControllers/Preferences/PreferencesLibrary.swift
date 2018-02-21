@@ -130,6 +130,6 @@ class PreferencesLibraryView: NSView {
         // ---------------------------------------------------------------------
         //  Set the view frame for use when switching between preference views
         // ---------------------------------------------------------------------
-        self.frame = NSRect.init(x: 0.0, y: 0.0, width: preferencesWindowWidth, height: frameHeight)
+        self.frame = NSRect(x: 0.0, y: 0.0, width: preferencesWindowWidth, height: frameHeight)
     }
 }

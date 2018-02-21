@@ -49,7 +49,7 @@ class MainWindowController: NSWindowController {
         window.isRestorable = true
         window.identifier = NSUserInterfaceItemIdentifier(rawValue: "ProfileCreatorMainWindow-ID")
         window.setFrameAutosaveName(NSWindow.FrameAutosaveName(rawValue: "ProfileCreatorMainWindow-AS"))
-        window.contentMinSize = NSSize.init(width: 600, height: 400)
+        window.contentMinSize = NSSize(width: 600, height: 400)
         window.center()
         
         // ---------------------------------------------------------------------

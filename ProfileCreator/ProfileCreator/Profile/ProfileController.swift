@@ -137,19 +137,42 @@ class ProfileController: NSDocumentController {
         }
     }
     
+    public func export(profile: Profile) {
+        
+        Swift.print("profile.enabledPayloadsCount: \(profile.enabledPayloadsCount)")
+        
+        guard
+            let appDelegate = NSApplication.shared.delegate as? AppDelegate,
+            let mainWindow = appDelegate.mainWindowController.window else { return }
+        
+        let savePanel = NSSavePanel()
+        savePanel.allowedFileTypes = ["mobileconfig"]
+        savePanel.nameFieldStringValue = profile.title
+        savePanel.beginSheetModal(for: mainWindow) { (response) in
+            if response != .OK { return }
+            
+            if let profileURL = savePanel.url {
+                do {
+                    try ProfileExport.export(profile: profile, profileURL: profileURL)
+                } catch let error {
+                    Swift.print("Exporting profile resulted in error: \(error)")
+                }
+            } else {
+                
+            }
+        }
+    }
+    
     public func exportProfile(withIdentifier: UUID) {
         if let profile = self.profile(withIdentifier: withIdentifier) {
-            Swift.print("Exporting Profile: \(profile.title)")
+            self.export(profile: profile)
         }
     }
     
     public func exportProfiles(withIdentifiers: [UUID]) {
         if let profiles = self.profiles(withIdentifiers: withIdentifiers) {
-            Swift.print("Exporting Profiles: \(profiles)")
             for profile in profiles {
-                ProfileExport.export(profile: profile, completionHandler: { (error) in
-                    Swift.print("Exported with error: \(String(describing: error))")
-                })
+                self.export(profile: profile)
             }
         }
     }

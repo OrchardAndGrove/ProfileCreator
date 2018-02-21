@@ -226,7 +226,7 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         // ---------------------------------------------------------------------
         //  Setup TableColumn
         // ---------------------------------------------------------------------
-        let tableColumn = NSTableColumn.init(identifier: .tableColumnProfilePayloads)
+        let tableColumn = NSTableColumn(identifier: .tableColumnProfilePayloads)
         tableColumn.isEditable = false
         self.profilePayloadsTableView.addTableColumn(tableColumn)
         
@@ -248,18 +248,15 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
                 // ---------------------------------------------------------------------
                 guard
                     let typeInt = Int(typeRawValue),
-                    let type = PayloadSourceType(rawValue: typeInt),
-                    let typeSettings = typeSettingsDict as? Dictionary<String, Any> else {
+                    let type = PayloadSourceType(rawValue: typeInt) else {
                         continue
                 }
                 
                 // ---------------------------------------------------------------------
                 //  Loop through all domains and settings for the current type, add all enabled
                 // ---------------------------------------------------------------------
-                for (domain, payloadSettings) in typeSettings {
-                    if
-                        let settings = payloadSettings as? Dictionary<String, Any>,
-                        settings[SettingsKey.enabled] as? Bool == true {
+                for (domain, payloadSettings) in typeSettingsDict {
+                    if payloadSettings[SettingsKey.enabled] as? Bool == true {
                         if
                             let payload = ProfilePayloads.shared.payloadSource(domain: domain, type: type),
                             let payloadPlaceholder = payload.placeholder {
@@ -293,7 +290,7 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         // ---------------------------------------------------------------------
         //  Setup TableColumn
         // ---------------------------------------------------------------------
-        let tableColumn = NSTableColumn.init(identifier: .tableColumnLibraryPayloads)
+        let tableColumn = NSTableColumn(identifier: .tableColumnLibraryPayloads)
         tableColumn.isEditable = false
         self.libraryPayloadsTableView.addTableColumn(tableColumn)
         

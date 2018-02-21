@@ -21,7 +21,7 @@ public class Profile: NSDocument {
     
     private var savedSettings = Dictionary<String, Any>()
     
-    public var payloadSettings: Dictionary<String, Any>
+    public var payloadSettings: Dictionary<String, Dictionary<String, Dictionary<String, Any>>>
     public var profilePayloads: String? // Change to payloads framework class. Unsure if it should be used like this.
     
     // View Settings
@@ -36,6 +36,20 @@ public class Profile: NSDocument {
     
     @objc public var editorColumnEnable: Bool = false
     
+    public var enabledPayloadsCount: Int {
+        var count = 0
+        for typeDict in self.payloadSettings.values {
+            for (domain, domainDict) in typeDict {
+                if domain != ManifestDomain.general, let enabled = domainDict[SettingsKey.enabled] as? Bool, enabled {
+                    count += 1
+                }
+                Swift.print("domain: \(domain)")
+                Swift.print("domainDict: \(domainDict)")
+            }
+        }
+        return count
+    }
+    
     // MARK: -
     // MARK: Initialization
     
@@ -43,7 +57,7 @@ public class Profile: NSDocument {
         self.init(title: nil, identifier: nil, payloadSettings: nil, viewSettings: nil)
     }
     
-    init(title: String?, identifier: UUID?, payloadSettings: Dictionary<String, Any>?, viewSettings: Dictionary<String, Any>?) {
+    init(title: String?, identifier: UUID?, payloadSettings: Dictionary<String, Dictionary<String, Dictionary<String, Any>>>?, viewSettings: Dictionary<String, Any>?) {
         
         let profileIdentifier = identifier ?? UUID()
         self.identifier = profileIdentifier
@@ -203,7 +217,7 @@ public class Profile: NSDocument {
         let settingsDict = savedSettings ?? self.savedSettings
         self.savedSettings = settingsDict
         self.identifier = identifier
-        self.payloadSettings = settingsDict[SettingsKey.payloadSettings] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
+        self.payloadSettings = settingsDict[SettingsKey.payloadSettings] as? Dictionary<String, Dictionary<String, Dictionary<String, Any>>> ?? Dictionary<String, Dictionary<String, Dictionary<String, Any>>>()
         self.viewSettings = settingsDict[SettingsKey.viewSettings] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
         if let title = self.getPayloadSetting(key: PayloadKey.payloadDisplayName, domain: ManifestDomain.general, type: .manifest) as? String {
             self.title = title
@@ -216,7 +230,7 @@ public class Profile: NSDocument {
         //  Get the current domain settings or create an empty set if they doesn't exist
         // ---------------------------------------------------------------------
         var typeSettings = self.payloadTypeSettings(type: payloadSource.type)
-        var domainSettings = typeSettings[payloadSource.domain] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
+        var domainSettings = typeSettings[payloadSource.domain] ?? Dictionary<String, Any>()
         
         // ---------------------------------------------------------------------
         //  Set the new value
@@ -374,7 +388,7 @@ public class Profile: NSDocument {
     // MARK: -
     // MARK: Payload Settings
     
-    class func defaultPayloadSettings(uuid: UUID) -> Dictionary<String, Any> {
+    class func defaultPayloadSettings(uuid: UUID) -> Dictionary<String, Dictionary<String, Dictionary<String, Any>>> {
         
         let defaultOrganizationName = UserDefaults.standard.string(forKey: PreferenceKey.defaultOrganization) ?? "ProfileCreator"
         
@@ -389,7 +403,7 @@ public class Profile: NSDocument {
             PayloadKey.payloadDisplayName : StringConstant.defaultProfileName
         ]
         
-        let payloadTypeSettings: Dictionary<String, Any> = [
+        let payloadTypeSettings: Dictionary<String, Dictionary<String, Any>> = [
             ManifestDomain.general : payloadDomainSettings
         ]
         
@@ -398,14 +412,14 @@ public class Profile: NSDocument {
     
     func payloadDomainSettings(domain: String, type: PayloadSourceType) -> Dictionary<String, Any> {
         let payloadTypeSettings = self.payloadTypeSettings(type: type)
-        return payloadTypeSettings[domain] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
+        return payloadTypeSettings[domain] ?? Dictionary<String, Any>()
     }
     
-    func payloadTypeSettings(type: PayloadSourceType) -> Dictionary<String, Any> {
-        return self.payloadSettings[String(type.rawValue)] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
+    func payloadTypeSettings(type: PayloadSourceType) -> Dictionary<String, Dictionary<String, Any>> {
+        return self.payloadSettings[String(type.rawValue)] ?? Dictionary<String, Dictionary<String, Any>>()
     }
     
-    func setPayloadTypeSettings(settings: Dictionary<String, Any>, type: PayloadSourceType) {
+    func setPayloadTypeSettings(settings: Dictionary<String, Dictionary<String, Any>>, type: PayloadSourceType) {
         self.payloadSettings[String(type.rawValue)] = settings
     }
     
@@ -416,7 +430,7 @@ public class Profile: NSDocument {
     // For getting the currently in memory value
     func getPayloadSetting(key: String, domain: String, type: PayloadSourceType) -> Any? {
         var typeSettings = self.payloadTypeSettings(type: type)
-        var domainSettings = typeSettings[domain] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
+        var domainSettings = typeSettings[domain] ?? Dictionary<String, Any>()
         return domainSettings[key]
     }
     
@@ -426,7 +440,7 @@ public class Profile: NSDocument {
         //  Get the current domain settings or create an empty set if they doesn't exist
         // ---------------------------------------------------------------------
         var typeSettings = self.payloadTypeSettings(type: type)
-        var domainSettings = typeSettings[domain] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
+        var domainSettings = typeSettings[domain] ?? Dictionary<String, Any>()
         
         // ---------------------------------------------------------------------
         //  Set the new value

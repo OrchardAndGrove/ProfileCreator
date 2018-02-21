@@ -11,7 +11,7 @@ import ProfilePayloads
 
 class ProfileExport {
     
-    class func export(profile: Profile, completionHandler: @escaping (_ error: Error?) -> Void) {
+    class func export(profile: Profile, profileURL: URL) throws -> Void {
         
         var profileContentExported = Dictionary<String, Any>()
         
@@ -20,27 +20,23 @@ class ProfileExport {
             profileContentExported[PayloadKey.payloadContent] = try self.payloadContent(profile: profile)
         } catch let error {
             Swift.print("Profile Export Error: \(error)")
-            completionHandler(error)
-            return
-        }
-        
-        // NOTE: Only for testing
-        if FileManager.default.fileExists(atPath: "/Users/eriber2/Desktop/test.mobileconfig") {
-            do {
-                try FileManager.default.removeItem(atPath: "/Users/eriber2/Desktop/test.mobileconfig")
-            } catch let error {
-                Swift.print("Failed to remove test file")
-                completionHandler(error)
-                return
-            }
+            throw error
         }
         
         Swift.print("Finished Profile: \(profileContentExported)")
-        if !NSDictionary(dictionary: profileContentExported).write(toFile: "/Users/eriber2/Desktop/test.mobileconfig", atomically: true) {
-            Swift.print("Failed to write")
+        if #available(OSX 10.13, *) {
+            do {
+                try NSDictionary(dictionary: profileContentExported).write(to: profileURL)
+            } catch let error {
+                Swift.print("Failed to write")
+                throw error
+            }
+        } else {
+            if !NSDictionary(dictionary: profileContentExported).write(to: profileURL, atomically: true) {
+                // FIXME: Correct Error
+                throw ProfileExportError.unknownError
+            }
         }
-        
-        completionHandler(nil)
     }
     
     
@@ -54,7 +50,7 @@ class ProfileExport {
             //  Get the type settings for the current domain
             // ---------------------------------------------------------------------
             let typeSettings = profile.payloadTypeSettings(type: .manifest)
-            let domainSettings = typeSettings[ManifestDomain.general] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
+            let domainSettings = typeSettings[ManifestDomain.general] ?? Dictionary<String, Any>()
             
             // ---------------------------------------------------------------------
             //  Get the view settings for the current domain
@@ -133,15 +129,14 @@ class ProfileExport {
             // ---------------------------------------------------------------------
             guard
                 let typeInt = Int(typeRawValue),
-                let type = PayloadSourceType(rawValue: typeInt),
-                let typeSettings = typeSettingsDict as? Dictionary<String, Dictionary<String, Any>> else {
+                let type = PayloadSourceType(rawValue: typeInt) else {
                     continue
             }
             
             // ---------------------------------------------------------------------
             //  Loop through all domains and settings for the current type
             // ---------------------------------------------------------------------
-            for (domain, domainSettings) in typeSettings {
+            for (domain, domainSettings) in typeSettingsDict {
                 
                 // Ignore the General settings of type "Manifest"
                 if type == .manifest, domain == ManifestDomain.general { continue }
@@ -159,7 +154,7 @@ class ProfileExport {
                     // ---------------------------------------------------------------------
                     //  Export the current domain
                     // ---------------------------------------------------------------------
-                    self.export(subkeys: payloadSource.subkeys, domainSettings: domainSettings, typeSettings: typeSettings, viewDomainSettings: viewDomainSettings, viewTypeSettings: viewTypeSettings, payloadContent: &payloadContent)
+                    self.export(subkeys: payloadSource.subkeys, domainSettings: domainSettings, typeSettings: typeSettingsDict, viewDomainSettings: viewDomainSettings, viewTypeSettings: viewTypeSettings, payloadContent: &payloadContent)
                     
                     // ---------------------------------------------------------------------
                     //  Update the payload version (and hash) if anything has changed
