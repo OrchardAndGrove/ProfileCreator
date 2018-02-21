@@ -15,7 +15,7 @@ class ProfileEditor: NSObject {
     // MARK: Variables
     
     let tableView = ProfileEditorTableView()
-    let headerView = ProfileEditorHeaderView()
+    let headerView: ProfileEditorHeaderView
     let scrollView = NSScrollView()
     let separator = NSBox(frame: NSZeroRect)
     let settings: ProfileEditorSettings
@@ -49,6 +49,7 @@ class ProfileEditor: NSObject {
         self.editorShowSupervisedSelector = NSStringFromSelector(#selector(getter: profile.editorShowSupervised))
         
         self.settings = ProfileEditorSettings(profile: profile)
+        self.headerView = ProfileEditorHeaderView(profile: profile)
         
         super.init()
         

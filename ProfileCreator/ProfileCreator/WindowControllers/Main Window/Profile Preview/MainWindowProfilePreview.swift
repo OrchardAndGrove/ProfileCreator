@@ -49,10 +49,12 @@ class MainWindowProfilePreviewController: NSObject {
             let profileIdentifiers = userInfo[NotificationKey.identifiers] as? [UUID] {
             
             if profileIdentifiers.count == 1 {
-                self.previewViewController.updateSelection(profile: profileIdentifiers.first?.uuidString ?? "Temporary")
-                infoViewController.view.removeFromSuperview()
-                insert(subview: previewViewController.view)
-                self.view.state = .inactive
+                if let profile = ProfileController.sharedInstance.profile(withIdentifier: profileIdentifiers.first!) {
+                    self.previewViewController.updateSelection(profile: profile)
+                    infoViewController.view.removeFromSuperview()
+                    insert(subview: previewViewController.view)
+                    self.view.state = .inactive
+                }
             } else {
                 self.infoViewController.updateSelection(count: profileIdentifiers.count)
                 previewViewController.view.removeFromSuperview()
@@ -160,6 +162,7 @@ class MainWindowProfilePreviewViewController: NSObject {
         self.textFieldTitle.font = NSFont.boldSystemFont(ofSize: 30)
         self.textFieldTitle.textColor = NSColor.labelColor
         self.textFieldTitle.alignment = .center
+        self.textFieldTitle.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         setupTextFieldTitle(constraints: &constraints)
         
         // ---------------------------------------------------------------------
@@ -171,11 +174,8 @@ class MainWindowProfilePreviewViewController: NSObject {
     // MARK: -
     // MARK: Public Functions
     
-    public func updateSelection(profile: String) {
-        
-        // TODO: This is a placeholder, profile should be the profile class and not just a string
-        
-        self.textFieldTitle.stringValue = profile
+    public func updateSelection(profile: Profile) {
+        self.textFieldTitle.stringValue = profile.title
     }
     
     // MARK: -

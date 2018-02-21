@@ -43,6 +43,11 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         self.reloadTableviews()
         
         // ---------------------------------------------------------------------
+        //  Setup Notification Observers
+        // ---------------------------------------------------------------------
+        NotificationCenter.default.addObserver(self, selector: #selector(changePayloadEnable(_:)), name: .changePayloadEnable, object: nil)
+        
+        // ---------------------------------------------------------------------
         //  Add and enable the general settings
         // ---------------------------------------------------------------------
         if
@@ -66,6 +71,20 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         self.profilePayloadsTableView.dataSource = nil
         self.libraryPayloadsTableView.delegate = nil
         self.profilePayloadsTableView.delegate = nil
+        
+        NotificationCenter.default.removeObserver(self, name: .changePayloadEnable, object: nil)
+    }
+    
+    @objc func changePayloadEnable(_ notification: NSNotification?) {
+        guard
+            let userInfo = notification?.userInfo,
+            let payloadPlaceholder = userInfo[NotificationKey.payloadPlaceholder] as? PayloadPlaceholder else { return }
+        
+        if self.profilePayloads.contains(payloadPlaceholder) {
+            self.move(payloadPlaceholders: [payloadPlaceholder], from: .profilePayloads, to: .libraryPayloads)
+        } else {
+            self.move(payloadPlaceholders: [payloadPlaceholder], from: .libraryPayloads, to: .profilePayloads)
+        }
     }
     
     private func reloadTableviews() {

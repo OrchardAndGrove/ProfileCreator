@@ -43,8 +43,6 @@ public class Profile: NSDocument {
                 if domain != ManifestDomain.general, let enabled = domainDict[SettingsKey.enabled] as? Bool, enabled {
                     count += 1
                 }
-                Swift.print("domain: \(domain)")
-                Swift.print("domainDict: \(domainDict)")
             }
         }
         return count
@@ -292,15 +290,10 @@ public class Profile: NSDocument {
         // ---------------------------------------------------------------------
         super.save(to: saveURL, ofType: TypeName.profile, for: operationType) { (saveError) in
             if saveError == nil {
-                if let title = self.getPayloadSetting(key: PayloadKey.payloadDisplayName, domain: ManifestDomain.general, type: .manifest) as? String,
-                let savedTitle = self.getSavedPayloadSetting(key: PayloadKey.payloadDisplayName, domain: ManifestDomain.general, type: .manifest) as? String,
-                savedTitle != title {
-                    
-                    // -----------------------------------------------------------------
-                    //  Post notification that this profile was renamed
-                    // -----------------------------------------------------------------
-                    NotificationCenter.default.post(name: .didRenameProfile, object: self, userInfo: [NotificationKey.identifier : self.identifier])
-                }
+                // -----------------------------------------------------------------
+                //  Post notification that this profile was renamed
+                // -----------------------------------------------------------------
+                NotificationCenter.default.post(name: .didSaveProfile, object: self, userInfo: [NotificationKey.identifier : self.identifier])
                 self.savedSettings = self.saveDict()
                 completionHandler(nil)
             } else { completionHandler(saveError) }
@@ -383,6 +376,11 @@ public class Profile: NSDocument {
         self.setPayloadViewTypeSettings(settings: typeSettings, type: type)
         
         updateComplete(true, nil)
+    }
+    
+    func isEnabled(payloadSource: PayloadSource) -> Bool {
+        let domainSettings = self.payloadDomainSettings(domain: payloadSource.domain, type: payloadSource.type)
+        return domainSettings[SettingsKey.enabled] as? Bool ?? false
     }
     
     // MARK: -

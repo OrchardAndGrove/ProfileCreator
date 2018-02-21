@@ -14,12 +14,18 @@ class ProfileEditorHeaderView: NSObject {
     // MARK: -
     // MARK: Variables
     
+    weak var profile: Profile?
+    
     let headerView = NSView()
     let textFieldTitle = NSTextField()
     let textFieldTitleTopIndent: CGFloat = 28.0
     let textFieldDescription = NSTextField()
     let textFieldDescriptionTopIndent: CGFloat = 4.0
     let imageViewIcon = NSImageView()
+    let buttonAddRemove = NSButton()
+    
+    let buttonTitleEnable = NSLocalizedString("Add", comment: "")
+    let buttonTitleDisable = NSLocalizedString("Remove", comment: "")
     
     var height: CGFloat = 0.0
     var layoutConstraintHeight: NSLayoutConstraint?
@@ -34,12 +40,13 @@ class ProfileEditorHeaderView: NSObject {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override init() {
+    init(profile: Profile) {
         super.init()
         
         // ---------------------------------------------------------------------
         //  Setup Variables
         // ---------------------------------------------------------------------
+        self.profile = profile
         var constraints = [NSLayoutConstraint]()
         
         // ---------------------------------------------------------------------
@@ -48,6 +55,7 @@ class ProfileEditorHeaderView: NSObject {
         self.setupHeaderView(constraints: &constraints)
         self.setupTextFieldTitle(constraints: &constraints)
         self.setupTextFieldDescription(constraints: &constraints)
+        self.setupButtonAddRemove(constraints: &constraints)
         
         // ---------------------------------------------------------------------
         //  Activate layout constraints
@@ -65,6 +73,21 @@ class ProfileEditorHeaderView: NSObject {
     // MARK: -
     // MARK: Functions
     
+    func setButtonState(enabled: Bool) {
+        if enabled {
+            self.buttonAddRemove.attributedTitle = NSAttributedString(string: self.buttonTitleDisable, attributes: [ NSAttributedStringKey.foregroundColor : NSColor.red ])
+        } else {
+            self.buttonAddRemove.title = self.buttonTitleEnable // attributedTitle = NSAttributedString(string: "Add", attributes: [ NSAttributedStringKey.foregroundColor : NSColor.green ])
+        }
+    }
+    
+    @objc func clicked(button: NSButton) {
+        if let selectedPayloadPlaceholder = self.selectedPayloadPlaceholder {
+            NotificationCenter.default.post(name: .changePayloadEnable, object: self, userInfo: [NotificationKey.payloadPlaceholder : selectedPayloadPlaceholder ])
+            self.setButtonState(enabled: self.buttonAddRemove.title == self.buttonTitleEnable)
+        }
+    }
+    
     func select(payloadPlaceholder: PayloadPlaceholder) {
         if self.selectedPayloadPlaceholder != payloadPlaceholder {
             self.selectedPayloadPlaceholder = payloadPlaceholder
@@ -72,6 +95,16 @@ class ProfileEditorHeaderView: NSObject {
             guard let layoutConstraintHeight = self.layoutConstraintHeight else {
                 Swift.print("Class: \(self.self), Function: \(#function), layoutConstraintHeight is not set")
                 return
+            }
+            
+            // Hide button if it's the general settings
+            if payloadPlaceholder.domain == ManifestDomain.general, payloadPlaceholder.payloadSourceType == .manifest {
+                self.buttonAddRemove.isHidden = true
+            } else if let profile = self.profile {
+                self.buttonAddRemove.isHidden = false
+                self.setButtonState(enabled: profile.isEnabled(payloadSource: payloadPlaceholder.payloadSource))
+            } else {
+                self.buttonAddRemove.isHidden = true
             }
             
             self.height = 0.0
@@ -94,6 +127,43 @@ class ProfileEditorHeaderView: NSObject {
     
     private func setupHeaderView(constraints: inout [NSLayoutConstraint]) {
         self.headerView.translatesAutoresizingMaskIntoConstraints = false
+    }
+    
+    private func setupButtonAddRemove(constraints: inout [NSLayoutConstraint]) {
+        self.buttonAddRemove.translatesAutoresizingMaskIntoConstraints = false
+        self.buttonAddRemove.title = "Add"
+        self.buttonAddRemove.bezelStyle = .roundRect
+        self.buttonAddRemove.setButtonType(.momentaryPushIn)
+        self.buttonAddRemove.isBordered = true
+        self.buttonAddRemove.isTransparent = false
+        self.buttonAddRemove.action = #selector(self.clicked(button:))
+        self.buttonAddRemove.target = self
+        
+        // ---------------------------------------------------------------------
+        //  Add Button to TableCellView
+        // ---------------------------------------------------------------------
+        self.headerView.addSubview(self.buttonAddRemove)
+        
+        // ---------------------------------------------------------------------
+        //  Add constraints
+        // ---------------------------------------------------------------------
+        // Top
+        constraints.append(NSLayoutConstraint(item: self.buttonAddRemove,
+                                              attribute: .top,
+                                              relatedBy: .equal,
+                                              toItem: self.headerView,
+                                              attribute: .top,
+                                              multiplier: 1.0,
+                                              constant: self.textFieldTitleTopIndent))
+        
+        // Trailing
+        constraints.append(NSLayoutConstraint(item: self.headerView,
+                                              attribute: .trailing,
+                                              relatedBy: .equal,
+                                              toItem: self.buttonAddRemove,
+                                              attribute: .trailing,
+                                              multiplier: 1.0,
+                                              constant: 24.0))
     }
     
     private func setupTextFieldTitle(constraints: inout [NSLayoutConstraint]) {

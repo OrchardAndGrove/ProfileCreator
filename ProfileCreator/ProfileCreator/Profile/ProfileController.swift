@@ -139,12 +139,34 @@ class ProfileController: NSDocumentController {
     
     public func export(profile: Profile) {
         
-        Swift.print("profile.enabledPayloadsCount: \(profile.enabledPayloadsCount)")
-        
+        // ---------------------------------------------------------------------
+        //  Get a reference to the main window to attach dialogs to
+        // ---------------------------------------------------------------------
         guard
             let appDelegate = NSApplication.shared.delegate as? AppDelegate,
             let mainWindow = appDelegate.mainWindowController.window else { return }
         
+        // ---------------------------------------------------------------------
+        //  Verify atleast one payload is enabled
+        // ---------------------------------------------------------------------
+        if profile.enabledPayloadsCount == 0 {
+            let alert = Alert()
+            alert.showAlert(message: "No Payloads are included in \"\(profile.title)\".",
+                            informativeText: "Please include at least one (1) payload in the profile.",
+                            window: mainWindow,
+                            firstButtonTitle: ButtonTitle.ok,
+                            secondButtonTitle: nil,
+                            thirdButtonTitle: nil,
+                            firstButtonState: true,
+                            sender: self,
+                            returnValue: { (response) in
+            })
+            return
+        }
+        
+        // ---------------------------------------------------------------------
+        //  Show save panel to let user select save path
+        // ---------------------------------------------------------------------
         let savePanel = NSSavePanel()
         savePanel.allowedFileTypes = ["mobileconfig"]
         savePanel.nameFieldStringValue = profile.title

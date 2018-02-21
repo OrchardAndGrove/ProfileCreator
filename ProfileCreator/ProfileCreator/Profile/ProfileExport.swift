@@ -141,6 +141,9 @@ class ProfileExport {
                 // Ignore the General settings of type "Manifest"
                 if type == .manifest, domain == ManifestDomain.general { continue }
                 
+                // Ignore not enabled Payloads
+                if let enabled = domainSettings[SettingsKey.enabled] as? Bool, !enabled { continue }
+                
                 var payloadContent = Dictionary<String, Any>()
                 
                 if let payloadSource = ProfilePayloads.shared.payloadSource(domain: domain, type: type) {
