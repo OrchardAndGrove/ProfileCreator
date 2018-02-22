@@ -12,6 +12,8 @@
 	<true/>
 	<key>ShowProfileCount</key>
 	<false/>
+	<key>EditorDisableOptionalKeys</key>
+	<false/>
 	<key>EditorColumnEnable</key>
 	<false/>
 	<key>EditorShowDisabledKeys</key>

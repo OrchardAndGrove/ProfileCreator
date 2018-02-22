@@ -74,6 +74,15 @@ class ProfileEditorSettigsView: NSView {
                                 height: &frameHeight,
                                 constraints: &constraints)
         
+        lastSubview = addCheckbox(title: "Disable Optional Keys",
+                                  bindTo: profile,
+                                  bindKeyPath: "editorDisableOptionalKeys",
+                                  toView: self,
+                                  lastSubview: lastSubview,
+                                  height: &frameHeight,
+                                  indent: editorPreferencesIndent,
+                                  constraints: &constraints)
+        
         lastSubview = addCheckbox(title: "Show Hidden",
                                   bindTo: profile,
                                   bindKeyPath: "editorShowHidden",

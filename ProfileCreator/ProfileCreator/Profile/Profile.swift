@@ -30,6 +30,8 @@ public class Profile: NSDocument {
     public var distribution: String? // Change to distribution enum
     public var sign = false
     
+    @objc public var editorDisableOptionalKeys: Bool = false
+    
     @objc public var editorShowHidden: Bool = false
     @objc public var editorShowSupervised: Bool = false
     @objc public var editorShowDisabled: Bool = false
@@ -85,6 +87,11 @@ public class Profile: NSDocument {
     
     private func initialize(viewSettings: Dictionary<String, Any>) {
         
+        // Disable Optional Keys
+        if let editorDisableOptionalKeys = viewSettings[PreferenceKey.editorDisableOptionalKeys] as? Bool {
+            self.editorDisableOptionalKeys = editorDisableOptionalKeys
+        } else { self.editorDisableOptionalKeys = false }
+        
         // Editor Row Enable
         if let editorColumnEnable = viewSettings[PreferenceKey.editorColumnEnable] as? Bool {
             self.editorColumnEnable = editorColumnEnable
@@ -119,6 +126,7 @@ public class Profile: NSDocument {
         profileDict[SettingsKey.payloadSettings] = self.payloadSettings
         
         var viewSettings = self.viewSettings
+        viewSettings[PreferenceKey.editorDisableOptionalKeys] = self.editorDisableOptionalKeys
         viewSettings[PreferenceKey.editorShowDisabledKeys] = self.editorShowDisabled
         viewSettings[PreferenceKey.editorShowHiddenKeys] = self.editorShowHidden
         viewSettings[PreferenceKey.editorShowSupervisedKeys] = self.editorShowSupervised
@@ -329,6 +337,8 @@ public class Profile: NSDocument {
             isEnabled = enabled
         } else if let enabledDefault = subkey.enabledDefault {
             isEnabled = enabledDefault
+        } else {
+            isEnabled = !self.editorDisableOptionalKeys
         }
         return isEnabled
     }
@@ -337,12 +347,11 @@ public class Profile: NSDocument {
     // MARK: View Settings
     
     class func defaultViewSettings() -> Dictionary<String, Any> {
-        var viewSettings = Dictionary<String, Any>()
-        viewSettings[PreferenceKey.editorColumnEnable] = UserDefaults.standard.bool(forKey: PreferenceKey.editorColumnEnable)
-        viewSettings[PreferenceKey.editorShowDisabledKeys] = UserDefaults.standard.bool(forKey: PreferenceKey.editorShowDisabledKeys)
-        viewSettings[PreferenceKey.editorShowHiddenKeys] = UserDefaults.standard.bool(forKey: PreferenceKey.editorShowHiddenKeys)
-        viewSettings[PreferenceKey.editorShowSupervisedKeys] = UserDefaults.standard.bool(forKey: PreferenceKey.editorShowSupervisedKeys)
-        return viewSettings
+        return [ PreferenceKey.editorDisableOptionalKeys : UserDefaults.standard.bool(forKey: PreferenceKey.editorDisableOptionalKeys),
+                 PreferenceKey.editorColumnEnable : UserDefaults.standard.bool(forKey: PreferenceKey.editorColumnEnable),
+                 PreferenceKey.editorShowDisabledKeys : UserDefaults.standard.bool(forKey: PreferenceKey.editorShowDisabledKeys),
+                 PreferenceKey.editorShowHiddenKeys : UserDefaults.standard.bool(forKey: PreferenceKey.editorShowHiddenKeys),
+                 PreferenceKey.editorShowSupervisedKeys : UserDefaults.standard.bool(forKey: PreferenceKey.editorShowSupervisedKeys) ]
     }
     
     func payloadViewTypeSettings(type: PayloadSourceType) -> Dictionary<String, Any> {

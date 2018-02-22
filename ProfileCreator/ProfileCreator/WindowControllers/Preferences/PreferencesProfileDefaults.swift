@@ -97,6 +97,15 @@ class PreferencesProfileDefaultsView: NSView {
                                 height: &frameHeight,
                                 constraints: &constraints)
         
+        lastSubview = addCheckbox(title: "Disable Optional Keys",
+                                  bindTo: UserDefaults.standard,
+                                  bindKeyPath: PreferenceKey.editorDisableOptionalKeys,
+                                  toView: self,
+                                  lastSubview: lastSubview,
+                                  height: &frameHeight,
+                                  indent: preferencesIndent,
+                                  constraints: &constraints)
+        
         lastSubview = addCheckbox(title: "Show Hidden",
                                   bindTo: UserDefaults.standard,
                                   bindKeyPath: PreferenceKey.editorShowHiddenKeys,

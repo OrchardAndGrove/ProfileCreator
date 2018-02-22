@@ -118,6 +118,7 @@ struct PreferenceKey {
     static let showPayloadLibraryAppleDomains = "ShowPayloadLibraryAppleDomains"
     static let showPayloadLibraryApplications = "ShowPayloadLibraryApplications"
     static let showPayloadLibraryDeveloper = "ShowPayloadLibraryDeveloper"
+    static let editorDisableOptionalKeys = "EditorDisableOptionalKeys"
     static let editorColumnEnable = "EditorColumnEnable"
     static let editorShowDisabledKeys = "EditorShowDisabledKeys"
     static let editorShowSupervisedKeys = "EditorShowSupervisedKeys"

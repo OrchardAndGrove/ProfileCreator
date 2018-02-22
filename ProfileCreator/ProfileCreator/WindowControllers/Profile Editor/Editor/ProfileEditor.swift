@@ -20,6 +20,7 @@ class ProfileEditor: NSObject {
     let separator = NSBox(frame: NSZeroRect)
     let settings: ProfileEditorSettings
     
+    let editorDisableOptionalKeysSelector: String
     let editorColumnEnableSelector: String
     let editorShowDisabledSelector: String
     let editorShowHiddenSelector: String
@@ -43,6 +44,7 @@ class ProfileEditor: NSObject {
     
     init(profile: Profile) {
         
+        self.editorDisableOptionalKeysSelector = NSStringFromSelector(#selector(getter: profile.editorDisableOptionalKeys))
         self.editorColumnEnableSelector = NSStringFromSelector(#selector(getter: profile.editorColumnEnable))
         self.editorShowDisabledSelector = NSStringFromSelector(#selector(getter: profile.editorShowDisabled))
         self.editorShowHiddenSelector = NSStringFromSelector(#selector(getter: profile.editorShowHidden))
@@ -71,6 +73,7 @@ class ProfileEditor: NSObject {
         // ---------------------------------------------------------------------
         //  Setup Notification Observers
         // ---------------------------------------------------------------------
+        self.profile?.addObserver(self, forKeyPath: self.editorDisableOptionalKeysSelector, options: .new, context: nil)
         self.profile?.addObserver(self, forKeyPath: self.editorColumnEnableSelector, options: .new, context: nil)
         self.profile?.addObserver(self, forKeyPath: self.editorShowDisabledSelector, options: .new, context: nil)
         self.profile?.addObserver(self, forKeyPath: self.editorShowHiddenSelector, options: .new, context: nil)
@@ -90,6 +93,7 @@ class ProfileEditor: NSObject {
     deinit {
         self.tableView.dataSource = nil
         self.tableView.delegate = nil
+        self.profile?.removeObserver(self, forKeyPath: self.editorDisableOptionalKeysSelector, context: nil)
         self.profile?.removeObserver(self, forKeyPath: self.editorColumnEnableSelector, context: nil)
         self.profile?.removeObserver(self, forKeyPath: self.editorShowDisabledSelector, context: nil)
         self.profile?.removeObserver(self, forKeyPath: self.editorShowHiddenSelector, context: nil)
@@ -98,7 +102,7 @@ class ProfileEditor: NSObject {
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         switch keyPath ?? "" {
-        case self.editorShowDisabledSelector, self.editorShowHiddenSelector, self.editorShowSupervisedSelector:
+        case self.editorShowDisabledSelector, self.editorShowHiddenSelector, self.editorShowSupervisedSelector, self.editorDisableOptionalKeysSelector:
             self.reloadTableView(updateCellViews: true)
         case self.editorColumnEnableSelector:
             if let tableColumn = self.tableView.tableColumn(withIdentifier: .tableColumnPayloadEnable), let show = change?[.newKey] as? Bool {
