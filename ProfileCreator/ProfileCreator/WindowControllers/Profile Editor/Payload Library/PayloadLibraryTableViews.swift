@@ -45,7 +45,7 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         // ---------------------------------------------------------------------
         //  Setup Notification Observers
         // ---------------------------------------------------------------------
-        NotificationCenter.default.addObserver(self, selector: #selector(changePayloadEnable(_:)), name: .changePayloadEnable, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(changePayloadSelected(_:)), name: .changePayloadSelected, object: nil)
         
         // ---------------------------------------------------------------------
         //  Add and enable the general settings
@@ -72,10 +72,10 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         self.libraryPayloadsTableView.delegate = nil
         self.profilePayloadsTableView.delegate = nil
         
-        NotificationCenter.default.removeObserver(self, name: .changePayloadEnable, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .changePayloadSelected, object: nil)
     }
     
-    @objc func changePayloadEnable(_ notification: NSNotification?) {
+    @objc func changePayloadSelected(_ notification: NSNotification?) {
         guard
             let userInfo = notification?.userInfo,
             let payloadPlaceholder = userInfo[NotificationKey.payloadPlaceholder] as? PayloadPlaceholder else { return }
@@ -160,9 +160,9 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         //  Set whether to enable or disable the payload
         // ---------------------------------------------------------------------
         var selected: Bool = false
-        if to == TableViewTag.libraryPayloads {
+        if to == .libraryPayloads {
             selected = false
-        } else if to == TableViewTag.profilePayloads {
+        } else if to == .profilePayloads {
             selected = true
         }
         
@@ -177,6 +177,12 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
                 self.profilePayloads = self.profilePayloads.filter { $0 != payloadPlaceholder }
                 self.libraryPayloads.append(payloadPlaceholder)
             }
+            
+            // ---------------------------------------------------------------------
+            //  Post a notification that the payload has changed enabled state
+            // ---------------------------------------------------------------------
+            NotificationCenter.default.post(name: .didChangePayloadSelected, object: self, userInfo: [NotificationKey.payloadPlaceholder : payloadPlaceholder,
+                                                                                                    NotificationKey.payloadSelected : selected ])
         }
         
         // ---------------------------------------------------------------------

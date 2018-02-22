@@ -234,7 +234,15 @@ public class Profile: NSDocument {
         //  Set the new value
         // ---------------------------------------------------------------------
         domainSettings[SettingsKey.enabled] = selected
-        typeSettings[payloadSource.domain] = domainSettings
+        
+        // ---------------------------------------------------------------------
+        //  If disabled an no other settings are set, remove the domain
+        // ---------------------------------------------------------------------
+        if !selected, domainSettings.keys.count == 1 {
+            typeSettings.removeValue(forKey: payloadSource.domain)
+        } else {
+            typeSettings[payloadSource.domain] = domainSettings
+        }
         
         // ---------------------------------------------------------------------
         //  Save the the changes to the current settings
@@ -464,7 +472,6 @@ public class Profile: NSDocument {
         //  If this is the payload name setting, then update the profile title
         // ---------------------------------------------------------------------
         if key == PayloadKey.payloadDisplayName, type == .manifest, let title = value as? String {
-            Swift.print("Setting the title!")
             self.title = title
         }
         

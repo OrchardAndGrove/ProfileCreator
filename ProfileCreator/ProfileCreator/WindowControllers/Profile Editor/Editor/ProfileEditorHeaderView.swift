@@ -50,6 +50,11 @@ class ProfileEditorHeaderView: NSObject {
         var constraints = [NSLayoutConstraint]()
         
         // ---------------------------------------------------------------------
+        //  Setup Notification Observers
+        // ---------------------------------------------------------------------
+        NotificationCenter.default.addObserver(self, selector: #selector(self.didChangePayloadSelected(_:)), name: .didChangePayloadSelected, object: nil)
+        
+        // ---------------------------------------------------------------------
         //  Add subviews to headerView
         // ---------------------------------------------------------------------
         self.setupHeaderView(constraints: &constraints)
@@ -73,6 +78,17 @@ class ProfileEditorHeaderView: NSObject {
     // MARK: -
     // MARK: Functions
     
+    @objc func didChangePayloadSelected(_ notification: NSNotification?) {
+        guard
+            let userInfo = notification?.userInfo,
+            let payloadPlaceholder = userInfo[NotificationKey.payloadPlaceholder] as? PayloadPlaceholder,
+            let selected = userInfo[NotificationKey.payloadSelected] as? Bool else { return }
+        
+        if self.selectedPayloadPlaceholder == payloadPlaceholder {
+            self.setButtonState(enabled: selected)
+        }
+    }
+    
     func setButtonState(enabled: Bool) {
         if enabled {
             self.buttonAddRemove.attributedTitle = NSAttributedString(string: self.buttonTitleDisable, attributes: [ NSAttributedStringKey.foregroundColor : NSColor.red ])
@@ -83,8 +99,7 @@ class ProfileEditorHeaderView: NSObject {
     
     @objc func clicked(button: NSButton) {
         if let selectedPayloadPlaceholder = self.selectedPayloadPlaceholder {
-            NotificationCenter.default.post(name: .changePayloadEnable, object: self, userInfo: [NotificationKey.payloadPlaceholder : selectedPayloadPlaceholder ])
-            self.setButtonState(enabled: self.buttonAddRemove.title == self.buttonTitleEnable)
+            NotificationCenter.default.post(name: .changePayloadSelected, object: self, userInfo: [NotificationKey.payloadPlaceholder : selectedPayloadPlaceholder ])
         }
     }
     
