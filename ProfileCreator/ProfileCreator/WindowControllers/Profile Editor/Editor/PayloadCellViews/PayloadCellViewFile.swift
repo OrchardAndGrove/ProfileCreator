@@ -96,7 +96,7 @@ class PayloadCellViewFile: NSTableCellView, ProfileCreatorCellView, PayloadCellV
     }
     
     func enable(_ enable: Bool) {
-        Swift.print("enable: \(enable)")
+        Swift.print("File Enable: \(enable)")
     }
     
     // MARK: -

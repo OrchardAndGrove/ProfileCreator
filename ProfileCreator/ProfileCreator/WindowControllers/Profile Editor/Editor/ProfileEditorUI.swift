@@ -121,10 +121,10 @@ extension ProfileEditor {
         self.tableView.addTableColumn(tableColumnPaddingLeading)
         
         // ---------------------------------------------------------------------
-        //  Add TableColumn Disable
+        //  Add TableColumn Disable Leading
         // ---------------------------------------------------------------------
         if profile.editorColumnEnable {
-            let tableColumnPayloadEnable = NSTableColumn(identifier: .tableColumnPayloadEnable)
+            let tableColumnPayloadEnable = NSTableColumn(identifier: .tableColumnPayloadEnableLeading)
             tableColumnPayloadEnable.isEditable = false
             tableColumnPayloadEnable.width = 20.0
             tableColumnPayloadEnable.minWidth = 20.0
@@ -141,6 +141,18 @@ extension ProfileEditor {
         tableColumnPayload.minWidth = editorTableViewColumnPayloadWidth
         tableColumnPayload.maxWidth = editorTableViewColumnPayloadWidth
         self.tableView.addTableColumn(tableColumnPayload)
+        
+        // ---------------------------------------------------------------------
+        //  Add TableColumn Disable Trailing
+        // ---------------------------------------------------------------------
+        if profile.editorColumnEnable {
+            let tableColumnPayloadEnable = NSTableColumn(identifier: .tableColumnPayloadEnableTrailing)
+            tableColumnPayloadEnable.isEditable = false
+            tableColumnPayloadEnable.width = 20.0
+            tableColumnPayloadEnable.minWidth = 20.0
+            tableColumnPayloadEnable.maxWidth = 20.0
+            self.tableView.addTableColumn(tableColumnPayloadEnable)
+        }
         
         // ---------------------------------------------------------------------
         //  Add TableColumn Padding Trailing

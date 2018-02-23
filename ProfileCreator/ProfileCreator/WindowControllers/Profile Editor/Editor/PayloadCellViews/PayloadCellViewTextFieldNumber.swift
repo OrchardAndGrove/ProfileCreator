@@ -144,7 +144,8 @@ class PayloadCellViewTextFieldNumber: NSTableCellView, ProfileCreatorCellView, P
     }
     
     func enable(_ enable: Bool) {
-        Swift.print("enable: \(enable)")
+        self.textFieldInput?.isEnabled = enable
+        self.textFieldInput?.isSelectable = enable
     }
     
     // MARK: -

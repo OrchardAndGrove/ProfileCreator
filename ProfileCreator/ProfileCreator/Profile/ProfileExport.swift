@@ -11,7 +11,9 @@ import ProfilePayloads
 
 class ProfileExport {
     
-    class func export(profile: Profile, profileURL: URL) throws -> Void {
+    var profileIdentifier: String?
+    
+    func export(profile: Profile) throws -> Dictionary<String, Any>? {
         
         var profileContentExported = Dictionary<String, Any>()
         
@@ -23,24 +25,11 @@ class ProfileExport {
             throw error
         }
         
-        Swift.print("Finished Profile: \(profileContentExported)")
-        if #available(OSX 10.13, *) {
-            do {
-                try NSDictionary(dictionary: profileContentExported).write(to: profileURL)
-            } catch let error {
-                Swift.print("Failed to write")
-                throw error
-            }
-        } else {
-            if !NSDictionary(dictionary: profileContentExported).write(to: profileURL, atomically: true) {
-                // FIXME: Correct Error
-                throw ProfileExportError.unknownError
-            }
-        }
+        return profileContentExported
     }
     
     
-    class func profileContent(profile: Profile) throws -> Dictionary<String, Any> {
+    func profileContent(profile: Profile) throws -> Dictionary<String, Any> {
         
         var profileContent = Dictionary<String, Any>()
         
@@ -61,12 +50,12 @@ class ProfileExport {
             // ---------------------------------------------------------------------
             //  Export the general domain
             // ---------------------------------------------------------------------
-            self.export(subkeys: payloadSource.subkeys,
-                        domainSettings: domainSettings,
-                        typeSettings: typeSettings,
-                        viewDomainSettings: viewDomainSettings,
-                        viewTypeSettings: viewTypeSettings,
-                        payloadContent: &profileContent)
+            try self.export(subkeys: payloadSource.subkeys,
+                            domainSettings: domainSettings,
+                            typeSettings: typeSettings,
+                            viewDomainSettings: viewDomainSettings,
+                            viewTypeSettings: viewTypeSettings,
+                            payloadContent: &profileContent)
         } else {
             throw ProfileExportError.noPayloadSource(forDomain: ManifestDomain.general, ofType: .manifest)
         }
@@ -104,6 +93,7 @@ class ProfileExport {
                                              inDomain: ManifestDomain.general,
                                              ofType: .manifest)
         }
+        self.profileIdentifier = payloadIdentifier
         
         // PayloadUUID
         // ---------------------------------------------------------------------
@@ -118,7 +108,7 @@ class ProfileExport {
         return profileContent
     }
     
-    class func payloadContent(profile: Profile) throws -> [Dictionary<String, Any>] {
+    func payloadContent(profile: Profile) throws -> [Dictionary<String, Any>] {
         
         var allPayloadContent = [Dictionary<String, Any>]()
         
@@ -157,7 +147,12 @@ class ProfileExport {
                     // ---------------------------------------------------------------------
                     //  Export the current domain
                     // ---------------------------------------------------------------------
-                    self.export(subkeys: payloadSource.subkeys, domainSettings: domainSettings, typeSettings: typeSettingsDict, viewDomainSettings: viewDomainSettings, viewTypeSettings: viewTypeSettings, payloadContent: &payloadContent)
+                    try self.export(subkeys: payloadSource.subkeys,
+                                    domainSettings: domainSettings,
+                                    typeSettings: typeSettingsDict,
+                                    viewDomainSettings: viewDomainSettings,
+                                    viewTypeSettings: viewTypeSettings,
+                                    payloadContent: &payloadContent)
                     
                     // ---------------------------------------------------------------------
                     //  Update the payload version (and hash) if anything has changed
@@ -178,7 +173,7 @@ class ProfileExport {
         return allPayloadContent
     }
     
-    class func updatePayloadVersion(profile: Profile, type: PayloadSourceType, domain: String, viewDomainSettings: Dictionary<String, Any>, payloadContent: inout Dictionary<String, Any>) {
+    func updatePayloadVersion(profile: Profile, type: PayloadSourceType, domain: String, viewDomainSettings: Dictionary<String, Any>, payloadContent: inout Dictionary<String, Any>) {
         
         // ---------------------------------------------------------------------
         //  Get the current payload hash
@@ -222,16 +217,25 @@ class ProfileExport {
         }
     }
     
-    class func export(subkeys: [PayloadSourceSubkey], domainSettings: Dictionary<String, Any>, typeSettings: Dictionary<String, Any>, viewDomainSettings: Dictionary<String, Any>, viewTypeSettings: Dictionary<String, Any>, payloadContent: inout Dictionary<String, Any>) {
+    func export(subkeys: [PayloadSourceSubkey],
+                domainSettings: Dictionary<String, Any>,
+                typeSettings: Dictionary<String, Any>,
+                viewDomainSettings: Dictionary<String, Any>,
+                viewTypeSettings: Dictionary<String, Any>,
+                payloadContent: inout Dictionary<String, Any>) throws {
         for subkey in subkeys {
             
-            // Verify that this subkey should be exported
+            // ---------------------------------------------------------------------
+            //  Verify the subkey should be exported
+            // ---------------------------------------------------------------------
             if !self.shouldExport(subkey: subkey, domainSettings: domainSettings) {
                 Swift.print("This subkey was excluded from the export: \(subkey.keyPath)")
                 continue
             }
             
-            // Get and set all view settings
+            // ---------------------------------------------------------------------
+            //  Get all view settings (Enabled)
+            // ---------------------------------------------------------------------
             var enabled = false
             if subkey.require == .always {
                 enabled = true
@@ -239,12 +243,12 @@ class ProfileExport {
                 let viewSettings = viewDomainSettings[subkey.keyPath] as? Dictionary<String, Any> {
                 
                 // Enabled
-                if let isEnabled = viewSettings[SettingsKey.enabled] as? Bool {
-                    enabled = isEnabled
-                }
+                if let isEnabled = viewSettings[SettingsKey.enabled] as? Bool { enabled = isEnabled }
             }
             
-            // Only export enabled payloads
+            // ---------------------------------------------------------------------
+            //  Only export enabled payloads
+            // ---------------------------------------------------------------------
             if enabled {
                 
                 // Inintialize the value
@@ -263,20 +267,95 @@ class ProfileExport {
                     value = subkey.valueDefault ?? PayloadUtility.emptyValue(valueType: subkey.type)
                 }
                 
+                // ---------------------------------------------------------------------
+                //  Verify the value is valid
+                // ---------------------------------------------------------------------
+                if !self.shouldExport(value: value, subkey: subkey) {
+                    if subkey.require == .always {
+                        Swift.print("The value: \(String(describing: value)) is not valid for export for subkey: \(subkey.domain)")
+                        throw ProfileExportError.invalid(value: value, forKey: subkey.key, inDomain: subkey.domain, ofType: subkey.payloadSourceType)
+                    }
+                    continue
+                }
+                
+                
                 if let keyValue = value {
-                    Swift.print("Setting: \(subkey.key) = \(keyValue)")
-                    payloadContent[subkey.key] = keyValue
+                    
+                    // ---------------------------------------------------------------------
+                    //  Payload Identifier
+                    // ---------------------------------------------------------------------
+                    if subkey.key == PayloadKey.payloadIdentifier, let profileIdentifier = self.profileIdentifier {
+                        var payloadIdentifier: String
+                        if let payloadUUID = domainSettings[PayloadKey.payloadUUID] as? String {
+                            payloadIdentifier = profileIdentifier + ".\(keyValue).\(payloadUUID)"
+                        } else {
+                            payloadIdentifier = profileIdentifier + ".\(keyValue)"
+                        }
+                        Swift.print("Setting: \(subkey.key) = \(payloadIdentifier)")
+                        payloadContent[subkey.key] = payloadIdentifier
+                        
+                        // ---------------------------------------------------------------------
+                        //  All Other
+                        // ---------------------------------------------------------------------
+                    } else {
+                        Swift.print("Setting: \(subkey.key) = \(keyValue)")
+                        payloadContent[subkey.key] = keyValue
+                    }
                 } else {
                     Swift.print("ERROR: NO VALUE!")
                 }
             }
             
             // Continue through all subkeys
-            if !subkey.subkeys.isEmpty { self.export(subkeys: subkey.subkeys, domainSettings: domainSettings, typeSettings: typeSettings, viewDomainSettings: viewDomainSettings, viewTypeSettings: viewTypeSettings, payloadContent: &payloadContent) }
+            if !subkey.subkeys.isEmpty {
+                try self.export(subkeys: subkey.subkeys,
+                                domainSettings: domainSettings,
+                                typeSettings: typeSettings,
+                                viewDomainSettings: viewDomainSettings,
+                                viewTypeSettings: viewTypeSettings,
+                                payloadContent: &payloadContent)
+            }
         }
     }
     
-    class func shouldExport(subkey: PayloadSourceSubkey, domainSettings: Dictionary<String, Any>) -> Bool {
+    func shouldExport(value: Any?, subkey: PayloadSourceSubkey) -> Bool {
+        if subkey.require == .always {
+            Swift.print("This key is required: \(subkey.key)")
+            Swift.print("This key has value: \(String(describing: value))")
+            
+            switch subkey.type {
+            case .string:
+                guard let valueString = value as? String else { return false }
+                if valueString.isEmpty {
+                    return false
+                } else if
+                    let format = subkey.format,
+                    !valueString.matches(format) {
+                    return false
+                }
+            case .undefined:
+                Swift.print("undefined")
+            case .array:
+                Swift.print("array")
+            case .bool:
+                Swift.print("bool")
+            case .date:
+                Swift.print("date")
+            case .data:
+                Swift.print("data")
+            case .dictionary:
+                Swift.print("dictionary")
+            case .float:
+                Swift.print("float")
+            case .integer:
+                Swift.print("integer")
+            }
+            if value == nil { return false }
+        }
+        return true
+    }
+    
+    func shouldExport(subkey: PayloadSourceSubkey, domainSettings: Dictionary<String, Any>) -> Bool {
         return true
     }
 }

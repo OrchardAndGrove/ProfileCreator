@@ -60,7 +60,8 @@ extension NSUserInterfaceItemIdentifier {
     static let tableColumnLibraryPayloads = NSUserInterfaceItemIdentifier("tableColumnLibraryPayloads")
     static let tableColumnMainWindowOutlineView = NSUserInterfaceItemIdentifier("tableColumnMainWindowOutlineView")
     static let tableColumnPayload = NSUserInterfaceItemIdentifier("tableColumnPayload")
-    static let tableColumnPayloadEnable = NSUserInterfaceItemIdentifier("tableColumnPayloadEnable")
+    static let tableColumnPayloadEnableLeading = NSUserInterfaceItemIdentifier("tableColumnPayloadEnableLeading")
+    static let tableColumnPayloadEnableTrailing = NSUserInterfaceItemIdentifier("tableColumnPayloadEnableTrailing")
 }
 
 extension Notification.Name {

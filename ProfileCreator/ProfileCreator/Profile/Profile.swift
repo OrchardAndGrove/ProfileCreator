@@ -157,28 +157,83 @@ public class Profile: NSDocument {
         return self.savedSettings == self.saveDict()
     }
     
+    // Check to debug save inconsistencies
     func saveCheck(key: String, value: Any, newValue: Any?) {
         if
             let valueDict = value as? Dictionary<String, Any>,
             let newValueDict = newValue as? Dictionary<String, Any> {
             if valueDict != newValueDict {
-                Swift.print("Saved Settings: \(valueDict)")
-                Swift.print("New Settings: \(newValueDict)")
+                Swift.print("This key has changed: \(key) (Dictionary)")
+                for (key, value) in valueDict {
+                    self.saveCheck(key: key, value: value, newValue: newValueDict[key])
+                }
+                return
             }
-        } else {
-            Swift.print("<#T##items: Any...##Any#>")
-        }
-        
-        if
+        } else if
             let valueString = value as? String,
             let newValueString = newValue as? String {
             if valueString != newValueString {
-                Swift.print("Saved Settings: \(valueString)")
-                Swift.print("New Settings: \(newValueString)")
+                Swift.print("This key has changed: \(key) (String)")
+                Swift.print("Saved Value: \(valueString)")
+                Swift.print("Edited Value: \(newValueString)")
             }
+            return
         } else if
             let valueInt = value as? Int,
             let newValueInt = newValue as? Int {
+            if valueInt != newValueInt {
+                Swift.print("This key has changed: \(key) (Int)")
+                Swift.print("Saved Value: \(valueInt)")
+                Swift.print("Edited Value: \(newValueInt)")
+            }
+            return
+        } else if
+            let valueBool = value as? Bool,
+            let newValueBool = newValue as? Bool {
+            if valueBool != newValueBool {
+                Swift.print("This key has changed: \(key) (Bool)")
+                Swift.print("Saved Value: \(valueBool)")
+                Swift.print("Edited Value: \(newValueBool)")
+            }
+            return
+        } else if
+            let valueArray = value as? Array<Any>,
+            let newValueArray = newValue as? Array<Any> {
+            Swift.print("Doesn't compare arrays currently, so I don't know if this key has changed: \(key) (Array)")
+            Swift.print("Saved Value: \(valueArray)")
+            Swift.print("Edited Value: \(newValueArray)")
+            /*
+            if valueArray != newValueArray {
+                Swift.print("This key has changed: \(key) (Array)")
+                Swift.print("Saved Value: \(valueArray)")
+                Swift.print("Edited Value: \(newValueArray)")
+            }
+ */
+            return
+        } else if let valueFloat = value as? Float,
+            let newValueFloat = newValue as? Float {
+            if valueFloat != newValueFloat {
+                Swift.print("This key has changed: \(key) (Float)")
+                Swift.print("Saved Value: \(valueFloat)")
+                Swift.print("Edited Value: \(newValueFloat)")
+            }
+            return
+        } else if let valueDate = value as? Date,
+            let newValueDate = newValue as? Date {
+            if valueDate != newValueDate {
+                Swift.print("This key has changed: \(key) (Date)")
+                Swift.print("Saved Value: \(valueDate)")
+                Swift.print("Edited Value: \(newValueDate)")
+            }
+            return
+        } else if let valueData = value as? Data,
+            let newValueData = newValue as? Data {
+            if valueData != newValueData {
+                Swift.print("This key has changed: \(key) (Data)")
+                Swift.print("Saved Value: \(valueData)")
+                Swift.print("Edited Value: \(newValueData)")
+            }
+            return
         }
     }
     
@@ -258,7 +313,7 @@ public class Profile: NSDocument {
         self.alert = alert
         
         let alertMessage = NSLocalizedString("Unsaved Settings", comment: "")
-        let alertInformativeText = NSLocalizedString("If you close this window, all unsaved settings will be lost. Are you sure you want to close the window?", comment: "")
+        let alertInformativeText = NSLocalizedString("If you close this window, all unsaved changes will be lost. Are you sure you want to close the window?", comment: "")
         
         if self.title == StringConstant.defaultProfileName {
             
@@ -293,7 +348,7 @@ public class Profile: NSDocument {
                                 switch response {
                                 case .alertFirstButtonReturn:
                                     self.updatePayloadSettings(value: newProfileName,
-                                                                       key: "PayloadDisplayName", // Somehow I cannot use the PayloadKey.payloadDisplayName here
+                                                               key: "PayloadDisplayName", // Somehow I cannot use the PayloadKey.payloadDisplayName here
                                         domain: ManifestDomain.general,
                                         type: .manifest, updateComplete: { (success, error) in
                                             if success {

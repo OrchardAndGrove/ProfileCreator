@@ -123,7 +123,7 @@ class PayloadCellViewPopUpButton: NSTableCellView, ProfileCreatorCellView, Paylo
     }
     
     func enable(_ enable: Bool) {
-        Swift.print("enable: \(enable)")
+        Swift.print("PopUp Button Enable: \(enable)")
     }
     
     // MARK: -

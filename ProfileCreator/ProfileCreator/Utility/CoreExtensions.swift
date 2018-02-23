@@ -66,3 +66,12 @@ public func ==(lhs: [String: Any], rhs: [String: Any] ) -> Bool {
 public func !=(lhs: [String: Any], rhs: [String: Any] ) -> Bool {
     return !NSDictionary(dictionary: lhs).isEqual(to: rhs)
 }
+
+// MARK: -
+// MARK: String
+
+extension String {
+    func matches(_ regex: String) -> Bool {
+        return self.range(of: regex, options: .regularExpression, range: nil, locale: nil) != nil
+    }
+}

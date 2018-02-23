@@ -105,8 +105,11 @@ class ProfileEditor: NSObject {
         case self.editorShowDisabledSelector, self.editorShowHiddenSelector, self.editorShowSupervisedSelector, self.editorDisableOptionalKeysSelector:
             self.reloadTableView(updateCellViews: true)
         case self.editorColumnEnableSelector:
-            if let tableColumn = self.tableView.tableColumn(withIdentifier: .tableColumnPayloadEnable), let show = change?[.newKey] as? Bool {
-                tableColumn.isHidden = !show
+            if let tableColumnLeading = self.tableView.tableColumn(withIdentifier: .tableColumnPayloadEnableLeading), let show = change?[.newKey] as? Bool {
+                tableColumnLeading.isHidden = !show
+            }
+            if let tableColumnTrailing = self.tableView.tableColumn(withIdentifier: .tableColumnPayloadEnableTrailing), let show = change?[.newKey] as? Bool {
+                tableColumnTrailing.isHidden = !show
             }
         default:
             Swift.print("Class: \(self.self), Function: \(#function), observeValueforKeyPath: \(String(describing: keyPath))")
@@ -140,15 +143,9 @@ class ProfileEditor: NSObject {
     }
     
     func select(payloadPlaceholder: PayloadPlaceholder) {
-        Swift.print("select(payloadPlaceholder: \(payloadPlaceholder)")
         if self.selectedPayloadPlaceholder != payloadPlaceholder {
             self.selectedPayloadPlaceholder = payloadPlaceholder
-            
-            Swift.print("Class: \(self.self), Function: \(#function), Selecting this placeholder in the editor: \(payloadPlaceholder.title)")
-            
             self.headerView.select(payloadPlaceholder: payloadPlaceholder)
-            
-            // FIXME: Why Force?
             self.reloadTableView(updateCellViews: true)
         }
     }
@@ -239,7 +236,7 @@ extension ProfileEditor: NSTableViewDelegate {
                 self.updateKeyViewLoop(window: window)
             }
             return self.cellViews[row]
-        } else if tableColumn?.identifier == .tableColumnPayloadEnable {
+        } else if tableColumn?.identifier == .tableColumnPayloadEnableLeading {
             if let cellView = self.cellViews[row] as? PayloadCellView, let subkey = cellView.subkey, let viewSettings = self.profile?.payloadViewTypeSettings(type: subkey.payloadSourceType) {
                 return PayloadCellViewEnable(subkey: subkey, editor: self, settings: viewSettings)
             }

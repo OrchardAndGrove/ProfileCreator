@@ -105,7 +105,9 @@ class PayloadCellViewHostPort: NSTableCellView, ProfileCreatorCellView, PayloadC
     
     func enable(_ enable: Bool) {
         self.textFieldHost?.isEnabled = enable
+        self.textFieldHost?.isSelectable = enable
         self.textFieldPort?.isEnabled = enable
+        self.textFieldPort?.isSelectable = enable
     }
     
     // MARK: -

@@ -94,13 +94,13 @@ class PayloadCellViews {
         if 0 < hiddenCount + disabledCount {
             var row2String = ""
             if 0 < hiddenCount {
-                row2String = "\(hiddenCount) Hidden."
+                row2String = "\(hiddenCount) Hidden"
             }
             if 0 < disabledCount {
                 if row2String.isEmpty {
                     row2String = "\(disabledCount) Disabled."
                 } else {
-                    row2String = row2String + " \(disabledCount) Disabled"
+                    row2String = row2String + ". \(disabledCount) Disabled."
                 }
             }
             let cellViewFooter = PayloadCellViewFooter(row1: "\(hiddenCount + disabledCount) payload keys are not shown. ( \(row2String) )", row2: nil)
@@ -124,15 +124,9 @@ class PayloadCellViews {
                   hiddenCount: inout Int,
                   disabledCount: inout Int) -> NSTableCellView? {
         
-        // FIXME: Currently just ignore the static payload keys that normally aren't changed.
-        //        This should be added as a setting
-        if subkey.domain != ManifestDomain.general {
-            if manifestSubkeysIgnored.contains(subkey.key) { return nil }
-        }
-        
         // Check if subkey is hidden
         // FIXME: This default false should
-        if !showHidden, subkey.hiddenDefault ?? false {
+        if !showHidden, (subkey.hiddenDefault ?? false || ( subkey.domain != ManifestDomain.general && manifestSubkeysIgnored.contains(subkey.key) ) ) {
             hiddenCount += 1
             return nil
         }

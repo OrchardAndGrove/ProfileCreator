@@ -147,19 +147,33 @@ class ProfileController: NSDocumentController {
             let mainWindow = appDelegate.mainWindowController.window else { return }
         
         // ---------------------------------------------------------------------
+        //  Create the profile to export
+        // ---------------------------------------------------------------------
+        var profileDict: Dictionary<String, Any>
+        do {
+            if let dict = try ProfileExport().export(profile: profile) {
+                profileDict = dict
+                // FIXME: Show error here
+            } else { return }
+        } catch let error {
+            self.showAlertExport(error: error, window: mainWindow)
+            return
+        }
+        
+        // ---------------------------------------------------------------------
         //  Verify atleast one payload is enabled
         // ---------------------------------------------------------------------
         if profile.enabledPayloadsCount == 0 {
             let alert = Alert()
             alert.showAlert(message: "No Payloads are included in \"\(profile.title)\".",
-                            informativeText: "Please include at least one (1) payload in the profile.",
-                            window: mainWindow,
-                            firstButtonTitle: ButtonTitle.ok,
-                            secondButtonTitle: nil,
-                            thirdButtonTitle: nil,
-                            firstButtonState: true,
-                            sender: self,
-                            returnValue: { (response) in
+                informativeText: "Please include at least one (1) payload in the profile.",
+                window: mainWindow,
+                firstButtonTitle: ButtonTitle.ok,
+                secondButtonTitle: nil,
+                thirdButtonTitle: nil,
+                firstButtonState: true,
+                sender: self,
+                returnValue: { (response) in
             })
             return
         }
@@ -171,18 +185,35 @@ class ProfileController: NSDocumentController {
         savePanel.allowedFileTypes = ["mobileconfig"]
         savePanel.nameFieldStringValue = profile.title
         savePanel.beginSheetModal(for: mainWindow) { (response) in
-            if response != .OK { return }
-            
-            if let profileURL = savePanel.url {
-                do {
-                    try ProfileExport.export(profile: profile, profileURL: profileURL)
-                } catch let error {
-                    Swift.print("Exporting profile resulted in error: \(error)")
+            if response == .OK,  let profileURL = savePanel.url {
+                if #available(OSX 10.13, *) {
+                    do {
+                        try NSDictionary(dictionary: profileDict).write(to: profileURL)
+                    } catch let error {
+                        Swift.print("Failed to write: \(error)")
+                    }
+                } else {
+                    if !NSDictionary(dictionary: profileDict).write(to: profileURL, atomically: true) {
+                        Swift.print("Should show export write file failed error")
+                        // self.showAlertExport(error: <#T##Error#>, window: <#T##NSWindow#>)
+                    }
                 }
-            } else {
-                
             }
         }
+    }
+    
+    public func showAlertExport(error: Error, window: NSWindow) {
+        
+        let alert = Alert()
+        
+        alert.showAlert(message: error.localizedDescription,
+                        informativeText: nil,
+                        window: window,
+                        firstButtonTitle: ButtonTitle.ok,
+                        secondButtonTitle: nil,
+                        thirdButtonTitle: nil,
+                        firstButtonState: true,
+                        sender: nil) { (response) in }
     }
     
     public func exportProfile(withIdentifier: UUID) {
