@@ -109,14 +109,15 @@ class PayloadCellViewDatePicker: NSTableCellView, ProfileCreatorCellView, Payloa
     }
     
     func enable(_ enable: Bool) {
-        Swift.print("enable: \(enable)")
+        self.datePicker?.isEnabled = enable
     }
     
     // MARK: -
     // MARK: DatePicker Actions
     
     internal func selectDate(_ datePicker: NSDatePicker) {
-        Swift.print("Class: \(self.self), Function: \(#function), selectDate: \(datePicker)")
+        guard let subkey = self.subkey else { return }
+        self.editor?.updatePayloadSettings(value: datePicker.dateValue , subkey: subkey)
     }
     
     // MARK: -
@@ -135,7 +136,6 @@ class PayloadCellViewDatePicker: NSTableCellView, ProfileCreatorCellView, Payloa
         // ---------------------------------------------------------------------
         // Below
         addConstraintsFor(item: datePicker, orientation: .below, constraints: &constraints, cellView: self)
-        self.updateHeight(datePicker.intrinsicContentSize.height)
         
         // Width
         constraints.append(NSLayoutConstraint(item: datePicker,

@@ -24,6 +24,8 @@ public class Profile: NSDocument {
     public var payloadSettings: Dictionary<String, Dictionary<String, Dictionary<String, Any>>>
     public var profilePayloads: String? // Change to payloads framework class. Unsure if it should be used like this.
     
+    var alert: Alert?
+    
     // View Settings
     public var viewSettings: Dictionary<String, Any>
     public var scope: String? // Change to scope enum
@@ -148,7 +150,36 @@ public class Profile: NSDocument {
         // ---------------------------------------------------------------------
         //  Check that all current settings match those on disk
         // ---------------------------------------------------------------------
+        let saveDict = self.saveDict()
+        for (key, value) in self.savedSettings {
+            self.saveCheck(key: key, value: value, newValue: saveDict[key])
+        }
         return self.savedSettings == self.saveDict()
+    }
+    
+    func saveCheck(key: String, value: Any, newValue: Any?) {
+        if
+            let valueDict = value as? Dictionary<String, Any>,
+            let newValueDict = newValue as? Dictionary<String, Any> {
+            if valueDict != newValueDict {
+                Swift.print("Saved Settings: \(valueDict)")
+                Swift.print("New Settings: \(newValueDict)")
+            }
+        } else {
+            Swift.print("<#T##items: Any...##Any#>")
+        }
+        
+        if
+            let valueString = value as? String,
+            let newValueString = newValue as? String {
+            if valueString != newValueString {
+                Swift.print("Saved Settings: \(valueString)")
+                Swift.print("New Settings: \(newValueString)")
+            }
+        } else if
+            let valueInt = value as? Int,
+            let newValueInt = newValue as? Int {
+        }
     }
     
     // MARK: -
@@ -160,6 +191,7 @@ public class Profile: NSDocument {
     }
     
     override public func save(_ sender: Any?) {
+        if self.title == StringConstant.defaultProfileName { self.showAlertUnsaved(closeWindow: false); return }
         self.save(operationType: .saveOperation) { saveError in
             // TODO: Proper Logging
             if saveError == nil {
@@ -216,6 +248,120 @@ public class Profile: NSDocument {
         throw NSError(domain: NSOSStatusErrorDomain, code: unimpErr, userInfo: nil)
     }
     
+    func showAlertUnsaved(closeWindow: Bool) {
+        
+        guard
+            let windowController = self.windowControllers.first as? ProfileEditorWindowController,
+            let window = windowController.window else { Swift.print("No window"); return }
+        
+        let alert = Alert()
+        self.alert = alert
+        
+        let alertMessage = NSLocalizedString("Unsaved Settings", comment: "")
+        let alertInformativeText = NSLocalizedString("If you close this window, all unsaved settings will be lost. Are you sure you want to close the window?", comment: "")
+        
+        if self.title == StringConstant.defaultProfileName {
+            
+            let firstButtonTitle: String
+            if closeWindow {
+                firstButtonTitle = ButtonTitle.saveAndClose
+            } else {
+                firstButtonTitle = ButtonTitle.save
+            }
+            
+            let informativeText: String
+            if self.isSaved() {
+                informativeText = "You need to give your profile a name before it can be saved."
+            } else {
+                informativeText = alertInformativeText + "\n\nYou need to give your profile a name before it can be saved."
+            }
+            
+            // ---------------------------------------------------------------------
+            //  Show unnamed and unsaved settings alert to user
+            // ---------------------------------------------------------------------
+            alert.showAlert(message: alertMessage,
+                            informativeText: informativeText,
+                            window: window,
+                            defaultString: StringConstant.defaultProfileName,
+                            placeholderString: "Name",
+                            firstButtonTitle: firstButtonTitle,
+                            secondButtonTitle: ButtonTitle.close,
+                            thirdButtonTitle: ButtonTitle.cancel,
+                            firstButtonState: true,
+                            sender: self,
+                            returnValue: { (newProfileName, response) in
+                                switch response {
+                                case .alertFirstButtonReturn:
+                                    self.updatePayloadSettings(value: newProfileName,
+                                                                       key: "PayloadDisplayName", // Somehow I cannot use the PayloadKey.payloadDisplayName here
+                                        domain: ManifestDomain.general,
+                                        type: .manifest, updateComplete: { (success, error) in
+                                            if success {
+                                                self.save(operationType: .saveOperation, completionHandler: { (saveError) in
+                                                    if saveError == nil {
+                                                        if closeWindow {
+                                                            windowController.performSelector(onMainThread: #selector(windowController.windowClose), with: windowController, waitUntilDone: false)
+                                                        }
+                                                        Swift.print("Class: \(self.self), Function: \(#function), Save Successful!")
+                                                    } else {
+                                                        Swift.print("Class: \(self.self), Function: \(#function), Error: \(String(describing: saveError))")
+                                                    }
+                                                })
+                                            }
+                                    })
+                                case .alertSecondButtonReturn:
+                                    windowController.performSelector(onMainThread: #selector(windowController.windowClose), with: windowController, waitUntilDone: false)
+                                case .alertThirdButtonReturn:
+                                    Swift.print("Cancel")
+                                default:
+                                    Swift.print("Unknown Return")
+                                }
+            })
+            
+            // ---------------------------------------------------------------------
+            //  Select the text field in the alert sheet
+            // ---------------------------------------------------------------------
+            if let textFieldInput = alert.textFieldInput {
+                textFieldInput.selectText(self)
+                alert.firstButton?.isEnabled = false
+            }
+        } else {
+            
+            // ---------------------------------------------------------------------
+            //  Show unsaved settings alert to user
+            // ---------------------------------------------------------------------
+            self.alert?.showAlert(message: alertMessage,
+                                  informativeText: alertInformativeText,
+                                  window: window,
+                                  firstButtonTitle: ButtonTitle.saveAndClose,
+                                  secondButtonTitle: ButtonTitle.close,
+                                  thirdButtonTitle: ButtonTitle.cancel,
+                                  firstButtonState: true,
+                                  sender: self,
+                                  returnValue: { response  in
+                                    
+                                    switch response {
+                                    case .alertFirstButtonReturn:
+                                        self.save(operationType: .saveOperation, completionHandler: { (saveError) in
+                                            if saveError == nil {
+                                                windowController.performSelector(onMainThread: #selector(windowController.windowClose), with: windowController, waitUntilDone: false)
+                                                Swift.print("Class: \(self.self), Function: \(#function), Save Successful!")
+                                            } else {
+                                                Swift.print("Class: \(self.self), Function: \(#function), Error: \(String(describing: saveError))")
+                                            }
+                                        })
+                                        Swift.print("Save & Clsoe")
+                                    case .alertSecondButtonReturn:
+                                        windowController.performSelector(onMainThread: #selector(windowController.windowClose), with: windowController, waitUntilDone: false)
+                                    case .alertThirdButtonReturn:
+                                        Swift.print("Cancel")
+                                    default:
+                                        Swift.print("Unknown")
+                                    }
+            })
+        }
+    }
+    
     // MARK: -
     // MARK: Public Functions
     
@@ -223,8 +369,14 @@ public class Profile: NSDocument {
         let settingsDict = savedSettings ?? self.savedSettings
         self.savedSettings = settingsDict
         self.identifier = identifier
+        
+        // PayloadSettings
         self.payloadSettings = settingsDict[SettingsKey.payloadSettings] as? Dictionary<String, Dictionary<String, Dictionary<String, Any>>> ?? Dictionary<String, Dictionary<String, Dictionary<String, Any>>>()
+        
+        // ViewSettings
         self.viewSettings = settingsDict[SettingsKey.viewSettings] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
+        self.initialize(viewSettings: self.viewSettings)
+        
         if let title = self.getPayloadSetting(key: PayloadKey.payloadDisplayName, domain: ManifestDomain.general, type: .manifest) as? String {
             self.title = title
         } else { self.title = StringConstant.defaultProfileName }
@@ -503,5 +655,39 @@ public class Profile: NSDocument {
         var typeSettings = self.savedPayloadTypeSettings(type: type)
         var domainSettings = typeSettings[domain] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
         return domainSettings[key]
+    }
+}
+
+// MARK: -
+// MARK: NSTextFieldDelegate Functions
+extension Profile: NSTextFieldDelegate {
+    
+    // -------------------------------------------------------------------------
+    //  Used when selecting a new profile name to not allow default or empty name
+    // -------------------------------------------------------------------------
+    override public func controlTextDidChange(_ notification: Notification) {
+        
+        // ---------------------------------------------------------------------
+        //  Get current text in the text field
+        // ---------------------------------------------------------------------
+        guard let userInfo = notification.userInfo,
+            let fieldEditor = userInfo["NSFieldEditor"] as? NSTextView,
+            let string = fieldEditor.textStorage?.string else {
+                return
+        }
+        
+        // ---------------------------------------------------------------------
+        //  If current text in the text field is either:
+        //   * Empty
+        //   * Matches the default profile name
+        //  Disable the OK button.
+        // ---------------------------------------------------------------------
+        if let alert = self.alert {
+            if alert.firstButton!.isEnabled && (string.isEmpty || string == StringConstant.defaultProfileName) {
+                alert.firstButton!.isEnabled = false
+            } else {
+                alert.firstButton!.isEnabled = true
+            }
+        }
     }
 }

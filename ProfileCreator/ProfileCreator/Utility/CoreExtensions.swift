@@ -58,7 +58,11 @@ public func ==(lhs: [AnyHashable: Any], rhs: [AnyHashable: Any] ) -> Bool {
     return NSDictionary(dictionary: lhs).isEqual(to: rhs)
 }
 
-// Compare Dictionaries - This SHOULD be covered bu the above AnyHashable but apparently not
+// Compare Dictionaries - This SHOULD be covered by the above AnyHashable but apparently not
 public func ==(lhs: [String: Any], rhs: [String: Any] ) -> Bool {
     return NSDictionary(dictionary: lhs).isEqual(to: rhs)
+}
+
+public func !=(lhs: [String: Any], rhs: [String: Any] ) -> Bool {
+    return !NSDictionary(dictionary: lhs).isEqual(to: rhs)
 }
