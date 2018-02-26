@@ -59,12 +59,12 @@ class PayloadCellViewCheckbox: NSTableCellView, ProfileCreatorCellView, PayloadC
         // ---------------------------------------------------------------------
         //  Setup Static View Content
         // ---------------------------------------------------------------------
-        if let title = subkey.title {
-            self.textFieldTitle = EditorTextField.title(string: title, fontWeight: nil, leadingItem: self.checkbox, constraints: &constraints, cellView: self)
+        if let textFieldTitle = EditorTextField.title(subkey: subkey, fontWeight: nil, leadingItem: self.checkbox, constraints: &constraints, cellView: self) {
+            self.textFieldTitle = textFieldTitle
         }
         
-        if let description = subkey.description {
-            self.textFieldDescription = EditorTextField.description(string: description, constraints: &constraints, cellView: self)
+        if let textFieldDescription = EditorTextField.description(subkey: subkey, constraints: &constraints, cellView: self) {
+            self.textFieldDescription = textFieldDescription
         }
         
         // ---------------------------------------------------------------------

@@ -19,8 +19,9 @@ class PayloadCellViews {
         // var cellViews = allCellViews[payloadPlaceholder.domain] ?? [NSTableCellView]()
         var cellViews = [NSTableCellView]()
         
-        var hiddenCount = 0
         var disabledCount = 0
+        var hiddenCount = 0
+        var supervisedCount = 0
         
         // Verify we have a profile
         guard let profile = profileEditor.profile else { return [NSTableCellView]() }
@@ -35,8 +36,9 @@ class PayloadCellViews {
                                                showDisabled: profile.editorShowDisabled,
                                                showHidden: profile.editorShowHidden,
                                                showSupervised: profile.editorShowSupervised,
+                                               disabledCount: &disabledCount,
                                                hiddenCount: &hiddenCount,
-                                               disabledCount: &disabledCount) { cellViews.append(cellView) }
+                                               supervisedCount: &supervisedCount) { cellViews.append(cellView) }
                 }
             }
             break
@@ -49,8 +51,9 @@ class PayloadCellViews {
                                                showDisabled: profile.editorShowDisabled,
                                                showHidden: profile.editorShowHidden,
                                                showSupervised: profile.editorShowSupervised,
+                                               disabledCount: &disabledCount,
                                                hiddenCount: &hiddenCount,
-                                               disabledCount: &disabledCount) { cellViews.append(cellView) }
+                                               supervisedCount: &supervisedCount) { cellViews.append(cellView) }
                 }
             }
             break
@@ -65,8 +68,9 @@ class PayloadCellViews {
                                                showDisabled: profile.editorShowDisabled,
                                                showHidden: profile.editorShowHidden,
                                                showSupervised: profile.editorShowSupervised,
+                                               disabledCount: &disabledCount,
                                                hiddenCount: &hiddenCount,
-                                               disabledCount: &disabledCount) { cellViews.append(cellView) }
+                                               supervisedCount: &supervisedCount) { cellViews.append(cellView) }
                 }
             }
             break
@@ -91,11 +95,12 @@ class PayloadCellViews {
         }
         
         // TODO: This is for adding a note that x keys have been disabled, hidden etc.
-        if 0 < hiddenCount + disabledCount {
+        if 0 < hiddenCount + disabledCount + supervisedCount {
             var row2String = ""
             if 0 < hiddenCount {
                 row2String = "\(hiddenCount) Hidden"
             }
+            
             if 0 < disabledCount {
                 if row2String.isEmpty {
                     row2String = "\(disabledCount) Disabled."
@@ -103,7 +108,16 @@ class PayloadCellViews {
                     row2String = row2String + ". \(disabledCount) Disabled."
                 }
             }
-            let cellViewFooter = PayloadCellViewFooter(row1: "\(hiddenCount + disabledCount) payload keys are not shown. ( \(row2String) )", row2: nil)
+            
+            if 0 < supervisedCount {
+                if row2String.isEmpty {
+                    row2String = "\(supervisedCount) Supervised."
+                } else {
+                    row2String = row2String + ". \(supervisedCount) Supervised."
+                }
+            }
+            
+            let cellViewFooter = PayloadCellViewFooter(row1: "\(hiddenCount + disabledCount + supervisedCount) payload keys are not shown. ( \(row2String) )", row2: nil)
             cellViews.append(cellViewFooter)
         }
         
@@ -121,8 +135,9 @@ class PayloadCellViews {
                   showDisabled: Bool,
                   showHidden: Bool,
                   showSupervised: Bool,
+                  disabledCount: inout Int,
                   hiddenCount: inout Int,
-                  disabledCount: inout Int) -> NSTableCellView? {
+                  supervisedCount: inout Int) -> NSTableCellView? {
         
         // Check if subkey is hidden
         // FIXME: This default false should
@@ -134,6 +149,11 @@ class PayloadCellViews {
         // Check if subkey is enabled
         if !showDisabled, !profile.subkeyIsEnabled(subkey: subkey) {
             disabledCount += 1
+            return nil
+        }
+        
+        if !showSupervised, subkey.supervised {
+            supervisedCount += 1
             return nil
         }
         
@@ -167,15 +187,15 @@ class PayloadCellViews {
     }
     
     // FIXME: Create overrides that catch specific scenarios, should be called
-    
     func cellView(profile: Profile,
                   applicationSubkey: PayloadApplicationSubkey,
                   profileEditor: ProfileEditor,
                   showDisabled: Bool,
                   showHidden: Bool,
                   showSupervised: Bool,
+                  disabledCount: inout Int,
                   hiddenCount: inout Int,
-                  disabledCount: inout Int) -> NSTableCellView? {
+                  supervisedCount: inout Int) -> NSTableCellView? {
         //Swift.print("Class: \(self.self), Function: \(#function), Adding PayloadCollectionSubkey: \(applicationSubkey)")
         return self.cellView(profile: profile,
                              subkey: applicationSubkey,
@@ -183,19 +203,49 @@ class PayloadCellViews {
                              showDisabled: showDisabled,
                              showHidden: showHidden,
                              showSupervised: showSupervised,
+                             disabledCount: &disabledCount,
                              hiddenCount: &hiddenCount,
-                             disabledCount: &disabledCount)
+                             supervisedCount: &supervisedCount)
     }
     
-    func cellView(profile: Profile, collectionSubkey: PayloadCollectionSubkey, profileEditor: ProfileEditor, showDisabled: Bool, showHidden: Bool, showSupervised: Bool, hiddenCount: inout Int, disabledCount: inout Int) -> NSTableCellView? {
+    func cellView(profile: Profile,
+                  collectionSubkey: PayloadCollectionSubkey,
+                  profileEditor: ProfileEditor,
+                  showDisabled: Bool,
+                  showHidden: Bool,
+                  showSupervised: Bool,
+                  disabledCount: inout Int,
+                  hiddenCount: inout Int,
+                  supervisedCount: inout Int) -> NSTableCellView? {
         //Swift.print("Class: \(self.self), Function: \(#function), Adding PayloadCollectionSubkey: \(collectionSubkey)")
-        return self.cellView(profile: profile, subkey: collectionSubkey, profileEditor: profileEditor, showDisabled: showDisabled, showHidden: showHidden, showSupervised: showSupervised, hiddenCount: &hiddenCount,
-                             disabledCount: &disabledCount)
+        return self.cellView(profile: profile,
+                             subkey: collectionSubkey,
+                             profileEditor: profileEditor,
+                             showDisabled: showDisabled,
+                             showHidden: showHidden,
+                             showSupervised: showSupervised,
+                             disabledCount: &disabledCount,
+                             hiddenCount: &hiddenCount,
+                             supervisedCount: &supervisedCount)
     }
     
-    func cellView(profile: Profile, manifestSubkey: PayloadManifestSubkey, profileEditor: ProfileEditor, showDisabled: Bool, showHidden: Bool, showSupervised: Bool, hiddenCount: inout Int, disabledCount: inout Int) -> NSTableCellView? {
+    func cellView(profile: Profile,
+                  manifestSubkey: PayloadManifestSubkey,
+                  profileEditor: ProfileEditor,
+                  showDisabled: Bool, showHidden: Bool,
+                  showSupervised: Bool,
+                  disabledCount: inout Int,
+                  hiddenCount: inout Int,
+                  supervisedCount: inout Int) -> NSTableCellView? {
         //Swift.print("Class: \(self.self), Function: \(#function), Adding PayloadCollectionSubkey: \(manifestSubkey)")
-        return self.cellView(profile: profile, subkey: manifestSubkey, profileEditor: profileEditor, showDisabled: showDisabled, showHidden: showHidden, showSupervised: showSupervised, hiddenCount: &hiddenCount,
-                             disabledCount: &disabledCount)
+        return self.cellView(profile: profile,
+                             subkey: manifestSubkey,
+                             profileEditor: profileEditor,
+                             showDisabled: showDisabled,
+                             showHidden: showHidden,
+                             showSupervised: showSupervised,
+                             disabledCount: &disabledCount,
+                             hiddenCount: &hiddenCount,
+                             supervisedCount: &supervisedCount)
     }
 }

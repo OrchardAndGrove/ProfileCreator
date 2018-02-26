@@ -7,12 +7,113 @@
 //
 
 import Cocoa
+import ProfilePayloads
 
 class EditorTextField {
     
-    class func description(string: String?,
+    class func title(subkey: PayloadSourceSubkey,
+                     fontWeight: NSFont.Weight?,
+                     leadingItem: NSView?,
+                     constraints: inout [NSLayoutConstraint],
+                     cellView: PayloadCellView) -> NSTextField? {
+        
+        guard var title = subkey.title else { return nil }
+        
+        if subkey.supervised {
+            title = title + " (Supervised)"
+        }
+        
+        // -------------------------------------------------------------------------
+        //  Create and setup text field
+        // -------------------------------------------------------------------------
+        let textField = NSTextField()
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.lineBreakMode = .byWordWrapping
+        textField.isBordered = false
+        textField.isBezeled = false
+        textField.drawsBackground = false
+        textField.isEditable = false
+        textField.isSelectable = false
+        textField.textColor = NSColor.labelColor
+        textField.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .regular), weight: fontWeight ?? NSFont.Weight.bold)
+        textField.preferredMaxLayoutWidth = editorTableViewColumnPayloadWidth
+        textField.stringValue = title
+        
+        // -------------------------------------------------------------------------
+        //  Add text field to cell view
+        // -------------------------------------------------------------------------
+        cellView.addSubview(textField)
+        
+        // -------------------------------------------------------------------------
+        //  Setup Layout Constraings for text field
+        // -------------------------------------------------------------------------
+        
+        // Top
+        constraints.append(NSLayoutConstraint(item: textField,
+                                              attribute: .top,
+                                              relatedBy: .equal,
+                                              toItem: cellView,
+                                              attribute: .top,
+                                              multiplier: 1.0,
+                                              constant: 8.0))
+        
+        cellView.updateHeight(8.0 + textField.intrinsicContentSize.height)
+        
+        if let leadingView = leadingItem {
+            
+            let leadingConstant: CGFloat
+            if leadingView is NSPopUpButton, leadingView is NSTextField {
+                leadingConstant = 6.0
+            } else {
+                leadingConstant = 2.0
+            }
+            
+            // Leading
+            constraints.append(NSLayoutConstraint(item: textField,
+                                                  attribute: .leading,
+                                                  relatedBy: .equal,
+                                                  toItem: leadingView,
+                                                  attribute: .trailing,
+                                                  multiplier: 1.0,
+                                                  constant: leadingConstant))
+            
+            // Baseline
+            constraints.append(NSLayoutConstraint(item: textField,
+                                                  attribute: .firstBaseline,
+                                                  relatedBy: .equal,
+                                                  toItem: leadingView,
+                                                  attribute: .firstBaseline,
+                                                  multiplier: 1.0,
+                                                  constant: 0.0))
+        } else {
+            
+            // Leading
+            constraints.append(NSLayoutConstraint(item: textField,
+                                                  attribute: .leading,
+                                                  relatedBy: .equal,
+                                                  toItem: cellView,
+                                                  attribute: .leading,
+                                                  multiplier: 1.0,
+                                                  constant: 8.0))
+        }
+        
+        // Trailing
+        constraints.append(NSLayoutConstraint(item: cellView,
+                                              attribute: .trailing,
+                                              relatedBy: .equal,
+                                              toItem: textField,
+                                              attribute: .trailing,
+                                              multiplier: 1.0,
+                                              constant: 8.0))
+        
+        return textField
+    }
+    
+    class func description(subkey: PayloadSourceSubkey,
                            constraints: inout [NSLayoutConstraint],
-                           cellView: PayloadCellView) -> NSTextField {
+                           cellView: PayloadCellView) -> NSTextField? {
+        
+        guard var description = subkey.description else { return nil }
         
         // ---------------------------------------------------------------------
         //  Create and setup TextField
@@ -28,7 +129,7 @@ class EditorTextField {
         textField.textColor = NSColor.controlShadowColor
         textField.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .regular))
         textField.preferredMaxLayoutWidth = editorTableViewColumnPayloadWidth
-        textField.stringValue = string ?? ""
+        textField.stringValue = description
         
         // ---------------------------------------------------------------------
         //  Add text field to cell view
@@ -230,97 +331,5 @@ class EditorTextField {
         
         return textField
         
-    }
-    
-    class func title(string: String?,
-                     fontWeight: NSFont.Weight?,
-                     leadingItem: NSView?,
-                     constraints: inout [NSLayoutConstraint],
-                     cellView: PayloadCellView) -> NSTextField {
-        
-        // -------------------------------------------------------------------------
-        //  Create and setup text field
-        // -------------------------------------------------------------------------
-        let textField = NSTextField()
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.lineBreakMode = .byWordWrapping
-        textField.isBordered = false
-        textField.isBezeled = false
-        textField.drawsBackground = false
-        textField.isEditable = false
-        textField.isSelectable = false
-        textField.textColor = NSColor.labelColor
-        textField.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .regular), weight: fontWeight ?? NSFont.Weight.bold)
-        textField.preferredMaxLayoutWidth = editorTableViewColumnPayloadWidth
-        textField.stringValue = string ?? ""
-        
-        // -------------------------------------------------------------------------
-        //  Add text field to cell view
-        // -------------------------------------------------------------------------
-        cellView.addSubview(textField)
-        
-        // -------------------------------------------------------------------------
-        //  Setup Layout Constraings for text field
-        // -------------------------------------------------------------------------
-        
-        // Top
-        constraints.append(NSLayoutConstraint(item: textField,
-                                                   attribute: .top,
-                                                   relatedBy: .equal,
-                                                   toItem: cellView,
-                                                   attribute: .top,
-                                                   multiplier: 1.0,
-                                                   constant: 8.0))
-        
-        cellView.updateHeight(8.0 + textField.intrinsicContentSize.height)
-        
-        if let leadingView = leadingItem {
-            
-            let leadingConstant: CGFloat
-            if leadingView is NSPopUpButton, leadingView is NSTextField {
-                leadingConstant = 6.0
-            } else {
-                leadingConstant = 2.0
-            }
-            
-            // Leading
-            constraints.append(NSLayoutConstraint(item: textField,
-                                                       attribute: .leading,
-                                                       relatedBy: .equal,
-                                                       toItem: leadingView,
-                                                       attribute: .trailing,
-                                                       multiplier: 1.0,
-                                                       constant: leadingConstant))
-            
-            // Baseline
-            constraints.append(NSLayoutConstraint(item: textField,
-                                                       attribute: .firstBaseline,
-                                                       relatedBy: .equal,
-                                                       toItem: leadingView,
-                                                       attribute: .firstBaseline,
-                                                       multiplier: 1.0,
-                                                       constant: 0.0))
-        } else {
-            
-            // Leading
-            constraints.append(NSLayoutConstraint(item: textField,
-                                                       attribute: .leading,
-                                                       relatedBy: .equal,
-                                                       toItem: cellView,
-                                                       attribute: .leading,
-                                                       multiplier: 1.0,
-                                                       constant: 8.0))
-        }
-        
-        // Trailing
-        constraints.append(NSLayoutConstraint(item: cellView,
-                                                   attribute: .trailing,
-                                                   relatedBy: .equal,
-                                                   toItem: textField,
-                                                   attribute: .trailing,
-                                                   multiplier: 1.0,
-                                                   constant: 8.0))
-        
-        return textField
     }
 }

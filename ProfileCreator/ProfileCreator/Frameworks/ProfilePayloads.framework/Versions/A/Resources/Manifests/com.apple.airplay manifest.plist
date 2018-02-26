@@ -117,6 +117,8 @@
 			<string>List of visible AirPlay destinations restricted on this device (applies to supervised devices only) </string>
 			<key>pfm_type</key>
 			<string>array</string>
+			<key>pfm_supervised</key>
+			<true/>
 			<key>pfm_subkeys</key>
 			<array>
 				<dict>
