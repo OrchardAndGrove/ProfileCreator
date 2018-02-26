@@ -477,8 +477,6 @@ public class Profile: NSDocument {
         
         // Verify PayloadVersion
         if domainSettings[PayloadKey.payloadVersion] == nil { domainSettings[PayloadKey.payloadVersion] = 1 }
-        
-        Swift.print("Domain Settings: \(domainSettings)")
     }
     
     public func edit() {

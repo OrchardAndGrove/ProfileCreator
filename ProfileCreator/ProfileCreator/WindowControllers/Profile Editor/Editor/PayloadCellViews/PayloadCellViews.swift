@@ -159,7 +159,7 @@ class PayloadCellViews {
         case .data:
             return PayloadCellViewFile(subkey: subkey, editor: profileEditor, settings: typeSettings)
         case .dictionary:
-            Swift.print("Should return a Dictionary CellView Here")
+            Swift.print("Should return a Dictionary CellView Here fro key: \(subkey.keyPath)")
         default:
             Swift.print("Class: \(self.self), Function: \(#function), Unknown Manifest Type: \(subkey.type)")
         }

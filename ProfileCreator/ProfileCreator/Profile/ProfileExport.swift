@@ -13,7 +13,7 @@ class ProfileExport {
     
     var profileIdentifier: String?
     
-    func export(profile: Profile) throws -> Dictionary<String, Any>? {
+    func export(profile: Profile, profileURL: URL) throws -> Void {
         
         var profileContentExported = Dictionary<String, Any>()
         
@@ -25,7 +25,20 @@ class ProfileExport {
             throw error
         }
         
-        return profileContentExported
+        Swift.print("Finished Profile: \(profileContentExported)")
+        if #available(OSX 10.13, *) {
+            do {
+                try NSDictionary(dictionary: profileContentExported).write(to: profileURL)
+            } catch let error {
+                Swift.print("Failed to write")
+                throw error
+            }
+        } else {
+            if !NSDictionary(dictionary: profileContentExported).write(to: profileURL, atomically: true) {
+                // FIXME: Correct Error
+                throw ProfileExportError.unknownError
+            }
+        }
     }
     
     
@@ -228,82 +241,33 @@ class ProfileExport {
             // ---------------------------------------------------------------------
             //  Verify the subkey should be exported
             // ---------------------------------------------------------------------
-            if !self.shouldExport(subkey: subkey, domainSettings: domainSettings) {
-                Swift.print("This subkey was excluded from the export: \(subkey.keyPath)")
-                continue
-            }
-            
-            // ---------------------------------------------------------------------
-            //  Get all view settings (Enabled)
-            // ---------------------------------------------------------------------
-            var enabled = false
-            if subkey.require == .always {
-                enabled = true
-            } else if
-                let viewSettings = viewDomainSettings[subkey.keyPath] as? Dictionary<String, Any> {
-                
-                // Enabled
-                if let isEnabled = viewSettings[SettingsKey.enabled] as? Bool { enabled = isEnabled }
-            }
-            
-            // ---------------------------------------------------------------------
-            //  Only export enabled payloads
-            // ---------------------------------------------------------------------
-            if enabled {
-                
-                // Inintialize the value
-                var value: Any?
-                
-                if let userValue = domainSettings[subkey.keyPath] {
-                    if PayloadUtility.valueType(value: userValue, type: subkey.type) == subkey.type {
-                        value = userValue
-                    } else {
-                        Swift.print("User value: \(userValue) did not match value type: \(PayloadUtility.valueType(value: userValue)) != \(subkey.type) for key: \(subkey.key)")
-                    }
-                }
-                
-                // If no user value was found, get default value or use an empty value
-                if value == nil {
-                    value = subkey.valueDefault ?? PayloadUtility.emptyValue(valueType: subkey.type)
-                }
+            if self.shouldExport(subkey: subkey, typeSettings: typeSettings, domainSettings: domainSettings, viewTypeSettings: viewTypeSettings, viewDomainSettings: viewDomainSettings) {
                 
                 // ---------------------------------------------------------------------
-                //  Verify the value is valid
+                //  If this is an array, then move to the next subkey as the contents will be set by the "lowest" ( or highest? ) key in the tree
                 // ---------------------------------------------------------------------
-                if !self.shouldExport(value: value, subkey: subkey) {
-                    if subkey.require == .always {
-                        Swift.print("The value: \(String(describing: value)) is not valid for export for subkey: \(subkey.domain)")
-                        throw ProfileExportError.invalid(value: value, forKey: subkey.key, inDomain: subkey.domain, ofType: subkey.payloadSourceType)
-                    }
+                if subkey.type == .array, !subkey.subkeys.isEmpty {
+                    try self.export(subkeys: subkey.subkeys,
+                                    domainSettings: domainSettings,
+                                    typeSettings: typeSettings,
+                                    viewDomainSettings: viewDomainSettings,
+                                    viewTypeSettings: viewTypeSettings,
+                                    payloadContent: &payloadContent)
+                    continue
+                } else if let parentSubkey = subkey.parentSubkey, parentSubkey.type == .array, !subkey.subkeys.isEmpty {
+                    try self.export(subkeys: subkey.subkeys,
+                                    domainSettings: domainSettings,
+                                    typeSettings: typeSettings,
+                                    viewDomainSettings: viewDomainSettings,
+                                    viewTypeSettings: viewTypeSettings,
+                                    payloadContent: &payloadContent)
                     continue
                 }
                 
-                
-                if let keyValue = value {
-                    
-                    // ---------------------------------------------------------------------
-                    //  Payload Identifier
-                    // ---------------------------------------------------------------------
-                    if subkey.key == PayloadKey.payloadIdentifier, let profileIdentifier = self.profileIdentifier {
-                        var payloadIdentifier: String
-                        if let payloadUUID = domainSettings[PayloadKey.payloadUUID] as? String {
-                            payloadIdentifier = profileIdentifier + ".\(keyValue).\(payloadUUID)"
-                        } else {
-                            payloadIdentifier = profileIdentifier + ".\(keyValue)"
-                        }
-                        Swift.print("Setting: \(subkey.key) = \(payloadIdentifier)")
-                        payloadContent[subkey.key] = payloadIdentifier
-                        
-                        // ---------------------------------------------------------------------
-                        //  All Other
-                        // ---------------------------------------------------------------------
-                    } else {
-                        Swift.print("Setting: \(subkey.key) = \(keyValue)")
-                        payloadContent[subkey.key] = keyValue
-                    }
-                } else {
-                    Swift.print("ERROR: NO VALUE!")
-                }
+                // ---------------------------------------------------------------------
+                //  Update the payload contents with this subkeys value
+                // ---------------------------------------------------------------------
+                try self.updatePayloadContent(subkey: subkey, typeSettings: typeSettings, domainSettings: domainSettings, payloadContent: &payloadContent)
             }
             
             // Continue through all subkeys
@@ -318,44 +282,311 @@ class ProfileExport {
         }
     }
     
-    func shouldExport(value: Any?, subkey: PayloadSourceSubkey) -> Bool {
+    // MARK: -
+    // MARK: Verify
+    
+    func isEnabled(subkey: PayloadSourceSubkey, typeSettings: Dictionary<String, Any>, domainSettings: Dictionary<String, Any>, viewTypeSettings: Dictionary<String, Any>, viewDomainSettings: Dictionary<String, Any>) -> Bool {
+        var enabled = false
         if subkey.require == .always {
-            Swift.print("This key is required: \(subkey.key)")
-            Swift.print("This key has value: \(String(describing: value))")
-            
-            switch subkey.type {
-            case .string:
-                guard let valueString = value as? String else { return false }
-                if valueString.isEmpty {
-                    return false
-                } else if
-                    let format = subkey.format,
-                    !valueString.matches(format) {
-                    return false
-                }
-            case .undefined:
-                Swift.print("undefined")
-            case .array:
-                Swift.print("array")
-            case .bool:
-                Swift.print("bool")
-            case .date:
-                Swift.print("date")
-            case .data:
-                Swift.print("data")
-            case .dictionary:
-                Swift.print("dictionary")
-            case .float:
-                Swift.print("float")
-            case .integer:
-                Swift.print("integer")
-            }
-            if value == nil { return false }
+            enabled = true
+        } else if
+            let viewSettings = viewDomainSettings[subkey.keyPath] as? Dictionary<String, Any> {
+            if let isEnabled = viewSettings[SettingsKey.enabled] as? Bool { enabled = isEnabled }
         }
-        return true
+        return enabled
     }
     
-    func shouldExport(subkey: PayloadSourceSubkey, domainSettings: Dictionary<String, Any>) -> Bool {
-        return true
+    func isEnabledParents(subkey: PayloadSourceSubkey, typeSettings: Dictionary<String, Any>, domainSettings: Dictionary<String, Any>, viewTypeSettings: Dictionary<String, Any>, viewDomainSettings: Dictionary<String, Any>) -> Bool {
+        guard let parentSubkeys = subkey.parentSubkeys else { return true }
+        
+        Swift.print("viewDomainSettings: \(viewDomainSettings)")
+        
+        // Default to true only for testing
+        var enabled = true
+        var parentViewDomainSettings: Any?
+        for parentSubkey in parentSubkeys {
+            if !self.isEnabled(subkey: parentSubkey, typeSettings: typeSettings, domainSettings: domainSettings, viewTypeSettings: viewTypeSettings, viewDomainSettings: viewDomainSettings) {
+                return false
+            }
+        }
+        
+        return enabled
+    }
+    
+    func shouldExport(subkey: PayloadSourceSubkey, typeSettings: Dictionary<String, Any>, domainSettings: Dictionary<String, Any>, viewTypeSettings: Dictionary<String, Any>, viewDomainSettings: Dictionary<String, Any>) -> Bool {
+        
+        // ---------------------------------------------------------------------
+        //  Verify this subkey and it's parents are enabled
+        // ---------------------------------------------------------------------
+        let enabled = self.isEnabled(subkey: subkey, typeSettings: typeSettings, domainSettings: domainSettings, viewTypeSettings: viewTypeSettings, viewDomainSettings: viewDomainSettings)
+        let enabledParents = self.isEnabledParents(subkey: subkey, typeSettings: typeSettings, domainSettings: domainSettings, viewTypeSettings: viewTypeSettings, viewDomainSettings: viewDomainSettings)
+        
+        // ---------------------------------------------------------------------
+        //  Only export enabled payloads
+        // ---------------------------------------------------------------------
+        return enabled && enabledParents
+    }
+    
+    
+    
+    // MARK: -
+    // MARK: Value: Get
+    
+    func getValue(forSubkey subkey: PayloadSourceSubkey,
+                  parentSubkey pSubkey: PayloadSourceSubkey?,
+                  typeSettings: Dictionary<String, Any>,
+                  domainSettings: Dictionary<String, Any>,
+                  parentSettings: Any?,
+                  payloadContent: Dictionary<String, Any>,
+                  parentPayloadContent pPayloadContent: Any?) throws -> Any? {
+        
+        // ---------------------------------------------------------------------
+        //  Check if we got a parent subkey
+        // ---------------------------------------------------------------------
+        if let parentSubkey = pSubkey {
+            
+            // ---------------------------------------------------------------------
+            //  Get it's child subkey
+            // ---------------------------------------------------------------------
+            var childSubkey: PayloadSourceSubkey?
+            if let parentSubkeys = subkey.parentSubkeys,
+                let parentSubkeyIndex = parentSubkeys.index(where: {$0.keyPath == parentSubkey.keyPath}),
+                (parentSubkeyIndex + 2) <= parentSubkeys.count {
+                childSubkey = parentSubkeys[(parentSubkeyIndex + 1)]
+            }
+            
+            // ---------------------------------------------------------------------
+            //  Get the settings for the parent subkey
+            // ---------------------------------------------------------------------
+            switch parentSubkey.type {
+            case .array:
+                
+                // ---------------------------------------------------------------------
+                //  Get the parent subkey settings
+                // ---------------------------------------------------------------------
+                guard let parentSubkeySettings = domainSettings[parentSubkey.keyPath] as? [Any] else {
+                    throw ProfileExportError.invalid(value: domainSettings[parentSubkey.keyPath],
+                                                     forKey: parentSubkey.keyPath,
+                                                     inDomain: parentSubkey.domain,
+                                                     ofType: parentSubkey.payloadSourceType)
+                }
+                Swift.print("parentSubkeySettings: \(parentSubkeySettings)")
+                
+                // ---------------------------------------------------------------------
+                //  Get the parent subkey payload content
+                // ---------------------------------------------------------------------
+                var parentPayloadContent = pPayloadContent as? [Any] ?? [Any]()
+                Swift.print("parentPayloadContent: \(parentPayloadContent)")
+                
+                // ---------------------------------------------------------------------
+                //  Loop over all parent settings to get each setting for subkey
+                // ---------------------------------------------------------------------
+                for (index, childSettings) in parentSubkeySettings.enumerated() {
+                    Swift.print("Parent Subkey Settings at index: \(index): settings: \(childSettings)")
+                    
+                    var childPayloadContent: Any?
+                    if (index + 1) <= parentPayloadContent.count {
+                        childPayloadContent = parentPayloadContent[index]
+                    }
+                    Swift.print("childPayloadContent: \(String(describing: childPayloadContent))")
+                    
+                    if let subkeyValue = try self.getValue(forSubkey: subkey,
+                                                           parentSubkey: childSubkey,
+                                                           typeSettings: typeSettings,
+                                                           domainSettings: domainSettings,
+                                                           parentSettings: childSettings,
+                                                           payloadContent: payloadContent,
+                                                           parentPayloadContent: childPayloadContent) {
+                        parentPayloadContent.insert(subkeyValue, at: index)
+                    }
+                }
+                
+                return parentPayloadContent
+            case .dictionary:
+                
+                // ---------------------------------------------------------------------
+                //  Get the parent subkey settings
+                // ---------------------------------------------------------------------
+                guard let parentSubkeySettings = parentSettings as? Dictionary<String, Any> else {
+                    throw ProfileExportError.invalid(value: domainSettings[parentSubkey.keyPath],
+                                                     forKey: parentSubkey.keyPath,
+                                                     inDomain: parentSubkey.domain,
+                                                     ofType: parentSubkey.payloadSourceType)
+                }
+                Swift.print("parentSubkeySettings: \(parentSubkeySettings)")
+                
+                // ---------------------------------------------------------------------
+                //  Get the parent subkey payload content
+                // ---------------------------------------------------------------------
+                var parentPayloadContent = pPayloadContent as? Dictionary<String, Any> ?? Dictionary<String, Any>()
+                Swift.print("parentPayloadContent: \(parentPayloadContent)")
+                
+                
+                var childSettings: Any?
+                var childPayloadContent: Any?
+                if let theChildSubkey = childSubkey {
+                    childSettings = parentSubkeySettings[theChildSubkey.keyPath]
+                    Swift.print("childSettings: \(String(describing: childSettings))")
+                    
+                    childPayloadContent = parentPayloadContent[theChildSubkey.key]
+                    Swift.print("childPayloadContent: \(String(describing: childPayloadContent))")
+                    
+                    if let subkeyValue = try self.getValue(forSubkey: subkey,
+                                                           parentSubkey: childSubkey,
+                                                           typeSettings: typeSettings,
+                                                           domainSettings: domainSettings,
+                                                           parentSettings: childSettings,
+                                                           payloadContent: payloadContent,
+                                                           parentPayloadContent: childPayloadContent) {
+                        if let theChildSubkey = childSubkey {
+                            parentPayloadContent[theChildSubkey.key] = subkeyValue
+                        } else {
+                            parentPayloadContent[subkey.key] = subkeyValue
+                        }
+                    }
+                } else if let value = try self.getValue(forSubkey: subkey, typeSettings: typeSettings, domainSettings: domainSettings, parentDomainSettings: parentSettings) {
+                    parentPayloadContent[subkey.key] = value
+                } else {
+                    // FIXME: Add correct error
+                    throw ProfileExportError.unknownError
+                }
+                Swift.print("parentPayloadContent: \(String(describing: parentPayloadContent))")
+                return parentPayloadContent
+            default:
+                Swift.print("Type: \(parentSubkey.type) should not be possible to be a parent key. Ignored.")
+                return nil
+            }
+        } else {
+            return try self.getValue(forSubkey: subkey, typeSettings: typeSettings, domainSettings: domainSettings, parentDomainSettings: parentSettings)
+        }
+    }
+    
+    func getValue(forSubkey subkey: PayloadSourceSubkey, typeSettings: Dictionary<String, Any>, domainSettings: Dictionary<String, Any>, parentDomainSettings parentSettings: Any?) throws -> Any? {
+        var value: Any?
+        
+        if
+            let parentDomainSettings = parentSettings as? Dictionary<String, Any>,
+            let userValue = parentDomainSettings[subkey.keyPath] {
+            value = userValue
+        }
+        
+        if value == nil, let userValue = domainSettings[subkey.keyPath] {
+            value = userValue
+        }
+        
+        // If no user value was found, get default value or use an empty value
+        if value == nil {
+            value = subkey.valueDefault ?? PayloadUtility.emptyValue(valueType: subkey.type)
+        }
+        
+        // Verify the value is valid for the subkey
+        try self.verify(value: value, forSubkey: subkey)
+        
+        return value
+    }
+    
+    // MARK: -
+    // MARK: Value: Verify
+    
+    func verify(value: Any?, forSubkey subkey: PayloadSourceSubkey) throws {
+        
+        let errorInvalid = ProfileExportError.invalid(value: value, forKey: subkey.key, inDomain: subkey.domain, ofType: subkey.payloadSourceType)
+        
+        // ---------------------------------------------------------------------
+        //  Verify the value type matches the defined type in the subkey
+        // ---------------------------------------------------------------------
+        if PayloadUtility.valueType(value: value, type: subkey.type) != subkey.type {
+            throw errorInvalid
+        }
+        
+        // ---------------------------------------------------------------------
+        //  Get if this subkey is required
+        // ---------------------------------------------------------------------
+        let isRequired = (subkey.require == .always) ? true : false
+        
+        // ---------------------------------------------------------------------
+        //  Get if this subkey is required
+        // ---------------------------------------------------------------------
+        switch subkey.type {
+        case .string:
+            guard let valueString = value as? String else {
+                throw errorInvalid
+            }
+            
+            if isRequired, valueString.isEmpty {
+                throw errorInvalid
+            } else if let format = subkey.format, !valueString.matches(format) {
+                // FIXME: Add correct error here
+                throw errorInvalid
+            }
+        case .undefined:
+            Swift.print("undefined")
+        case .array:
+            Swift.print("array")
+        case .bool:
+            Swift.print("bool")
+        case .date:
+            Swift.print("date")
+        case .data:
+            Swift.print("data")
+        case .dictionary:
+            Swift.print("dictionary")
+        case .float:
+            Swift.print("float")
+        case .integer:
+            guard let valueInt = value as? Int else {
+                throw errorInvalid
+            }
+        }
+    }
+    
+    // MARK: -
+    // MARK: PayloadContent: Set
+    
+    func updatePayloadContent(subkey: PayloadSourceSubkey, typeSettings: Dictionary<String, Any>, domainSettings: Dictionary<String, Any>, payloadContent: inout Dictionary<String, Any>) throws {
+        
+        // ---------------------------------------------------------------------
+        //  If subkey has parents, need to update to parent settings
+        // ---------------------------------------------------------------------
+        if let rootSubkey = subkey.rootSubkey {
+            if let rootSubkeyValue = try self.getValue(forSubkey: subkey,
+                                                       parentSubkey: rootSubkey,
+                                                       typeSettings: typeSettings,
+                                                       domainSettings: domainSettings,
+                                                       parentSettings: domainSettings[rootSubkey.keyPath],
+                                                       payloadContent: payloadContent,
+                                                       parentPayloadContent: payloadContent[rootSubkey.key]) {
+                payloadContent[rootSubkey.key] = rootSubkeyValue
+            } else {
+                // FIXME: Add Correct Error
+                Swift.print("Got nothing for the root subkey!")
+                throw ProfileExportError.unknownError
+            }
+        } else if let value = try self.getValue(forSubkey: subkey, typeSettings: typeSettings, domainSettings: domainSettings, parentDomainSettings: nil) {
+            
+            // ---------------------------------------------------------------------
+            //  Payload Identifier
+            // ---------------------------------------------------------------------
+            if subkey.key == PayloadKey.payloadIdentifier, let profileIdentifier = self.profileIdentifier {
+                var payloadIdentifier: String
+                if let payloadUUID = domainSettings[PayloadKey.payloadUUID] as? String {
+                    payloadIdentifier = profileIdentifier + ".\(value).\(payloadUUID)"
+                } else {
+                    payloadIdentifier = profileIdentifier + ".\(value)"
+                }
+                Swift.print("Setting: \(subkey.key) = \(payloadIdentifier)")
+                payloadContent[subkey.key] = payloadIdentifier
+                
+                // ---------------------------------------------------------------------
+                //  All Other
+                // ---------------------------------------------------------------------
+            } else {
+                Swift.print("Setting: \(subkey.key) = \(value)")
+                payloadContent[subkey.key] = value
+            }
+        } else {
+            // FIXME: Add correct error
+            throw ProfileExportError.unknownError
+        }
     }
 }

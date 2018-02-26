@@ -90,7 +90,7 @@ class EditorTableViewCellViewTextField: NSTableCellView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    required init(cellView: TableViewCellView, key: String, stringValue: String?, placeholderString: String?, row: Int) {
+    required init(cellView: TableViewCellView, keyPath: String, stringValue: String?, placeholderString: String?, row: Int) {
         
         super.init(frame: NSZeroRect)
         
@@ -109,7 +109,7 @@ class EditorTableViewCellViewTextField: NSTableCellView {
         textField.placeholderString = placeholderString ?? ""
         textField.delegate = cellView
         textField.tag = row
-        textField.identifier = NSUserInterfaceItemIdentifier(rawValue: key)
+        textField.identifier = NSUserInterfaceItemIdentifier(rawValue: keyPath)
         self.addSubview(textField)
         self.textField = textField
         

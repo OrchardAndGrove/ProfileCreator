@@ -32,8 +32,10 @@ class PayloadCellViewTableView: NSTableCellView, ProfileCreatorCellView, Payload
     var tableView: NSTableView?
     var tableViewContent = [Dictionary<String, Any>]()
     var tableViewColumns = [PayloadSourceSubkey]()
-    var valueDefault: String?
+    var valueDefault: [Dictionary<String, Any>]?
     let buttonAddRemove = NSSegmentedControl()
+    
+    var valueBeginEditing: String?
     
     // MARK: -
     // MARK: Initialization
@@ -83,6 +85,38 @@ class PayloadCellViewTableView: NSTableCellView, ProfileCreatorCellView, Payload
         setupButtonAddRemove(constraints: &constraints)
         
         // ---------------------------------------------------------------------
+        //  Set Default Value
+        // ---------------------------------------------------------------------
+        if let valueDefault = subkey.valueDefault as? [Dictionary<String, Any>] {
+            Swift.print("This is the valueDefault: \(valueDefault)")
+            self.valueDefault = valueDefault
+        }
+        
+        // ---------------------------------------------------------------------
+        //  Set Placeholder Value
+        // ---------------------------------------------------------------------
+        if let valuePlaceholder = subkey.valuePlaceholder {
+            Swift.print("This is the valuePlaceholder: \(valuePlaceholder)")
+            // self.textFieldInput?.placeholderString = valuePlaceholder
+        } else if subkey.require == .always {
+            Swift.print("This key is REQUIRED, should add the required placeholder")
+            // self.textFieldInput?.placeholderString = NSLocalizedString("Required", comment: "")
+        }
+        
+        // ---------------------------------------------------------------------
+        //  Set Value
+        // ---------------------------------------------------------------------
+        if
+            let domainSettings = settings[subkey.domain] as? Dictionary<String, Any>,
+            let value = domainSettings[subkey.keyPath] as? [Dictionary<String, Any>] {
+            Swift.print("This is the value: \(value)")
+            self.tableViewContent = value
+        } else if let valueDefault = self.valueDefault {
+            Swift.print("This is the valueDefault: \(valueDefault)")
+            // (self.textFieldInput?.stringValue = valueDefault
+        }
+        
+        // ---------------------------------------------------------------------
         //  Setup KeyView Loop Items
         // ---------------------------------------------------------------------
         self.leadingKeyView = self.buttonAddRemove
@@ -106,7 +140,8 @@ class PayloadCellViewTableView: NSTableCellView, ProfileCreatorCellView, Payload
     }
     
     func enable(_ enable: Bool) {
-        Swift.print("TableView Enable: \(enable)")
+        self.tableView?.isEnabled = enable
+        self.buttonAddRemove.isEnabled = enable
     }
     
     // MARK: -
@@ -131,10 +166,12 @@ class PayloadCellViewTableView: NSTableCellView, ProfileCreatorCellView, Payload
     // MARK: Private Functions
     
     private func addRow() {
+        guard let subkey = self.subkey else { return }
+        
         var newRow = [String: Any]()
         for tableViewColumn in self.tableViewColumns {
             if tableViewColumn.type == .string {
-                newRow[tableViewColumn.key] = tableViewColumn.valueDefault ?? ""
+                newRow[tableViewColumn.keyPath] = tableViewColumn.valueDefault ?? ""
             } else {
                 Swift.print("Class: \(self.self), Function: \(#function), Unknown tableViewColumn.type: \(tableViewColumn.type)")
             }
@@ -145,13 +182,18 @@ class PayloadCellViewTableView: NSTableCellView, ProfileCreatorCellView, Payload
             self.tableView?.selectRowIndexes(IndexSet(integer: index), byExtendingSelection: false)
         } else {
             self.tableViewContent.append(newRow)
+            self.editor?.updatePayloadSettings(value: self.tableViewContent, subkey: subkey)
+            
             self.tableView?.reloadData()
         }
     }
     
     private func removeRow(index: Int) {
+        guard let subkey = self.subkey else { return }
+        
         self.tableViewContent.remove(at: index)
         self.tableView?.removeRows(at: IndexSet(integer: index), withAnimation: .slideDown)
+        self.editor?.updatePayloadSettings(value: self.tableViewContent, subkey: subkey)
         
         let rowCount = self.tableViewContent.count
         if 0 < rowCount {
@@ -176,7 +218,7 @@ class PayloadCellViewTableView: NSTableCellView, ProfileCreatorCellView, Payload
                     // ---------------------------------------------------------------------
                     //  Setup TableColumn
                     // ---------------------------------------------------------------------
-                    let tableColumn = NSTableColumn(identifier: NSUserInterfaceItemIdentifier(tableViewColumnSubkey.key))
+                    let tableColumn = NSTableColumn(identifier: NSUserInterfaceItemIdentifier(tableViewColumnSubkey.keyPath))
                     tableColumn.isEditable = true
                     tableColumn.title = tableViewColumnSubkey.key
                     tableColumn.headerToolTip = tableViewColumnSubkey.description
@@ -198,23 +240,62 @@ class PayloadCellViewTableView: NSTableCellView, ProfileCreatorCellView, Payload
     // MARK: -
     // MARK: NSTextFieldDelegate Functions
     
-    override func controlTextDidEndEditing(_ notification: Notification) {
-        
+    internal override func controlTextDidBeginEditing(_ obj: Notification) {
+        if
+            let userInfo = obj.userInfo,
+            let fieldEditor = userInfo["NSFieldEditor"] as? NSTextView,
+            let originalString = fieldEditor.textStorage?.string {
+            self.valueBeginEditing = originalString
+        }
+    }
+    
+    internal override func controlTextDidChange(_ notification: Notification) {
+        self.saveCurrentEdit(notification)
+    }
+    
+    internal override func controlTextDidEndEditing(_ notification: Notification) {
+        self.saveCurrentEdit(notification)
+    }
+    
+    private func saveCurrentEdit(_ notification: Notification) {
         // ---------------------------------------------------------------------
-        //  Get current text in the text field
+        //  Verify we are editing and get the current value
         // ---------------------------------------------------------------------
         guard
-            let textField = notification.object as? NSTextField,
             let userInfo = notification.userInfo,
             let fieldEditor = userInfo["NSFieldEditor"] as? NSTextView,
-            let string = fieldEditor.textStorage?.string else {
-                return
-        }
+            let stringValue = fieldEditor.textStorage?.string,
+            stringValue != self.valueBeginEditing else { return }
         
-        Swift.print("Class: \(self.self), Function: \(#function), controlTextDidChange: \(string)")
-        Swift.print("Class: \(self.self), Function: \(#function), textField: \(textField)")
-        Swift.print("Class: \(self.self), Function: \(#function), row: \(textField.tag)")
-        Swift.print("Class: \(self.self), Function: \(#function), key: \(String(describing: textField.identifier?.rawValue))")
+        // ---------------------------------------------------------------------
+        //  Get all required objects
+        // ---------------------------------------------------------------------
+        guard
+            let subkey = self.subkey,
+            let textField = notification.object as? NSTextField,
+            let keyPath = textField.identifier?.rawValue else { return }
+        
+        Swift.print("self.tableViewContent: \(self.tableViewContent)")
+        
+        // ---------------------------------------------------------------------
+        //  Get the current row settings
+        // ---------------------------------------------------------------------
+        var tableViewContent = self.tableViewContent
+        var rowContent = tableViewContent[textField.tag]
+        
+        // ---------------------------------------------------------------------
+        //  Update the current row settings
+        // ---------------------------------------------------------------------
+        rowContent[keyPath] = stringValue
+        tableViewContent[textField.tag] = rowContent
+        
+        Swift.print("self.tableViewContent: \(self.tableViewContent)")
+        
+        // ---------------------------------------------------------------------
+        //  Save the changes internally and to the payloadSettings
+        // ---------------------------------------------------------------------
+        self.tableViewContent = tableViewContent
+        self.editor?.updatePayloadSettings(value: tableViewContent, subkey: subkey)
     }
     
     // MARK: -
@@ -259,7 +340,9 @@ class PayloadCellViewTableView: NSTableCellView, ProfileCreatorCellView, Payload
 }
 
 extension PayloadCellViewTableView: NSTableViewDataSource {
-    func numberOfRows(in tableView: NSTableView) -> Int { return self.tableViewContent.count }
+    func numberOfRows(in tableView: NSTableView) -> Int {
+        return self.tableViewContent.count
+    }
 }
 
 extension PayloadCellViewTableView: NSTableViewDelegate {
@@ -269,22 +352,37 @@ extension PayloadCellViewTableView: NSTableViewDelegate {
     }
     
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-        if let tableViewColumn = self.tableViewColumns.first(where: {$0.key == tableColumn?.title}) {
-            Swift.print("Class: \(self.self), Function: \(#function), Checking tableViewColumn.type: \(tableViewColumn.type)")
-            if tableViewColumn.type == .string {
-                return EditorTableViewCellViewTextField(cellView: self, key: tableViewColumn.key, stringValue: "Test", placeholderString: "Placeholder", row: row)
-            } else if tableViewColumn.type == .bool {
-                return EditorTableViewCellViewCheckbox(cellView: self, key: tableViewColumn.key, value: true, row: row)
-            } else if tableViewColumn.type == .array, let titles = tableViewColumn.valueDefault as? [String] {
-                return EditorTableViewCellViewPopUpButton(cellView: self, key: tableViewColumn.key, titles: titles, row: row)
-            } else if tableViewColumn.type == .integer {
-                return EditorTableViewCellViewTextFieldNumber(cellView: self, key: tableViewColumn.key, value: NSNumber(value: 1), placeholderValue: NSNumber(value: 10), type: tableViewColumn.type, row: row)
-            } else {
-                Swift.print("Class: \(self.self), Function: \(#function), Unknown tableViewColumn.type: \(tableViewColumn.type)")
+        
+        guard
+            row <= self.tableViewContent.count,
+            let tableColumnTitle = tableColumn?.title,
+            let tableColumnIdentifier = tableColumn?.identifier.rawValue,
+            let tableViewColumn = self.tableViewColumns.first(where: {$0.key == tableColumnTitle}) else { return nil }
+        
+        let rowContent = self.tableViewContent[row]
+        
+        switch tableViewColumn.type {
+        case .string:
+            if let columnContent = rowContent[tableColumnIdentifier] as? String {
+                return EditorTableViewCellViewTextField(cellView: self, keyPath: tableViewColumn.keyPath, stringValue: columnContent, placeholderString: tableColumnTitle, row: row)
             }
-        } else {
-            Swift.print("Class: \(self.self), Function: \(#function), Found no table view column matching title: \(String(describing: tableColumn?.title))")
+        default:
+            Swift.print("Class: \(self.self), Function: \(#function), Unknown tableViewColumn.type: \(tableViewColumn.type)")
         }
+        /*
+         if tableViewColumn.type == .string {
+         
+         } else if tableViewColumn.type == .bool {
+         return EditorTableViewCellViewCheckbox(cellView: self, key: tableViewColumn.key, value: true, row: row)
+         } else if tableViewColumn.type == .array, let titles = tableViewColumn.valueDefault as? [String] {
+         return EditorTableViewCellViewPopUpButton(cellView: self, key: tableViewColumn.key, titles: titles, row: row)
+         } else if tableViewColumn.type == .integer {
+         return EditorTableViewCellViewTextFieldNumber(cellView: self, key: tableViewColumn.key, value: NSNumber(value: 1), placeholderValue: NSNumber(value: 10), type: tableViewColumn.type, row: row)
+         } else {
+         Swift.print("Class: \(self.self), Function: \(#function), Unknown tableViewColumn.type: \(tableViewColumn.type)")
+         }
+         */
+        
         return nil
     }
     
