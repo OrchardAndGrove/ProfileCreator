@@ -70,6 +70,19 @@ class PayloadCellViewFile: NSTableCellView, ProfileCreatorCellView, PayloadCellV
         setupButtonAdd(constraints: &constraints)
         
         // ---------------------------------------------------------------------
+        //  Set Value
+        // ---------------------------------------------------------------------
+        if
+            let domainSettings = settings[subkey.domain] as? Dictionary<String, Any>,
+            let valueData = domainSettings[subkey.keyPath] as? Data,
+            let valueFileInfo = domainSettings[SettingsKey.fileInfo] as? Dictionary<String, Any>,
+            self.processFile(data: valueData, fileInfo: valueFileInfo) {
+            self.showPrompt(false)
+        } else {
+            self.showPrompt(true)
+        }
+        
+        // ---------------------------------------------------------------------
         //  Setup KeyView Loop Items
         // ---------------------------------------------------------------------
         self.leadingKeyView = self.buttonAdd
@@ -84,11 +97,6 @@ class PayloadCellViewFile: NSTableCellView, ProfileCreatorCellView, PayloadCellV
         //  Activate Layout Constraints
         // ---------------------------------------------------------------------
         NSLayoutConstraint.activate(constraints)
-        
-        // ---------------------------------------------------------------------
-        //  Show Prompt
-        // ---------------------------------------------------------------------
-        self.showPrompt(true)
     }
     
     func updateHeight(_ h: CGFloat) {
@@ -105,12 +113,12 @@ class PayloadCellViewFile: NSTableCellView, ProfileCreatorCellView, PayloadCellV
         guard let fileView = self.fileView else { return }
         fileView.imageViewIcon.isHidden = show
         fileView.textFieldTitle.isHidden = show
-        fileView.textFieldDescriptionTopLabel.isHidden = show
-        fileView.textFieldDescriptionTop.isHidden = show
-        fileView.textFieldDescriptionCenterLabel.isHidden = show
-        fileView.textFieldDescriptionCenter.isHidden = show
-        fileView.textFieldDescriptionBottomLabel.isHidden = show
-        fileView.textFieldDescriptionBottom.isHidden = show
+        fileView.textFieldTopLabel.isHidden = show
+        fileView.textFieldTopContent.isHidden = show
+        fileView.textFieldCenterLabel.isHidden = show
+        fileView.textFieldCenterContent.isHidden = show
+        fileView.textFieldBottomLabel.isHidden = show
+        fileView.textFieldBottomContent.isHidden = show
         fileView.textFieldPropmpt.isHidden = !show
     }
     
@@ -118,7 +126,6 @@ class PayloadCellViewFile: NSTableCellView, ProfileCreatorCellView, PayloadCellV
     // MARK: Button Actions
     
     @objc private func selectFile(_ button: NSButton) {
-        Swift.print("Class: \(self.self), Function: \(#function), selectFile: \(button)")
         
         // ---------------------------------------------------------------------
         //  Get open dialog allowed file types
@@ -142,18 +149,133 @@ class PayloadCellViewFile: NSTableCellView, ProfileCreatorCellView, PayloadCellV
         
         if let window = button.window {
             openPanel.beginSheetModal(for: window) { (response) in
-                if response == .OK {
-                    Swift.print("Class: \(self.self), Function: \(#function), Add Files To Settings: \(String(describing: openPanel.urls.first))")
+                if response == .OK, let url = openPanel.urls.first {
+                    self.processFile(atURL: url, completionHandler: { (success) in
+                        self.showPrompt(!success)
+                    })
                 }
             }
         }
     }
     
     // MARK: -
-    // MARK: Setup Layout Constraints
+    // MARK: Process File
     
-    private func setupButtonAdd(constraints: inout [NSLayoutConstraint]) {
+    private func processFile(data: Data, fileInfo: Dictionary<String, Any>) -> Bool {
+        if let fileInfoProcessor = FileInfoProcessor(data: data, fileInfo: fileInfo) {
+            return self.updateView(fileInfo: fileInfoProcessor.fileInfo())
+        }
+        return false
+    }
+    
+    private func processFile(atURL url: URL, completionHandler: @escaping (_ success: Bool) -> Void) {
+        guard let subkey = self.subkey else { completionHandler(false); return }
         
+        var alertShow = false
+        var alertMessage = ""
+        var alertInformativeMessage = ""
+        
+        // Might redo so you can get the FileInfo directly ( internally handle the processor )
+        let fileInfoProcessor = FileInfoProcessor(fileURL: url)
+        guard let fileData = fileInfoProcessor.fileData() else { completionHandler(false); return }
+        let fileInfo = fileInfoProcessor.fileInfo()
+        let fileInfoDict = fileInfoProcessor.fileInfoDict()
+        
+        // ---------------------------------------------------------------------
+        //  Verify the file size is reasonable (< 1.0 MB)
+        // ---------------------------------------------------------------------
+        var fileSize: Int64 = -1
+        if
+            let fileAttributes = fileInfoDict[FileInfoKey.fileAttributes] as? [FileAttributeKey : Any],
+            let fileSizeBytes = fileAttributes[.size] as? Int64 {
+            fileSize = fileSizeBytes
+        }
+ 
+        let formatter = ByteCountFormatter()
+        formatter.allowsNonnumericFormatting = false
+        formatter.countStyle = .file
+        formatter.allowedUnits = [.useMB]
+        formatter.includesUnit = false
+        let fileSizeString = formatter.string(fromByteCount: fileSize)
+        if let fileSizeMB = Double(fileSizeString.replacingOccurrences(of: ",", with: ".")) {
+            if 1.0 < fileSizeMB {
+                alertShow = true
+                alertMessage = NSLocalizedString("Large File Size", comment: "")
+                alertInformativeMessage = NSLocalizedString("The file you have selected is: \(ByteCountFormatter.string(fromByteCount: fileSize, countStyle: .file)). Are you sure you want to continue?", comment: "")
+            } else if fileSizeMB < 0.0 {
+                alertShow = true
+                alertMessage = NSLocalizedString("Unknown File Size", comment: "")
+                alertInformativeMessage = NSLocalizedString("Could not determine the size of the selected file. Are you sure you want to continue?", comment: "")
+            }
+        } else {
+            alertShow = true
+            alertMessage = NSLocalizedString("Unknown File Size", comment: "")
+            alertInformativeMessage = NSLocalizedString("Could not determine the size of the selected file. Are you sure you want to continue?", comment: "")
+        }
+        
+        // ---------------------------------------------------------------------
+        //  If any issues was found with the file size, show alert
+        // ---------------------------------------------------------------------
+        if alertShow {
+            guard let window = self.buttonAdd.window else { completionHandler(false); return }
+            let alert = Alert()
+            alert.showAlert(message: alertMessage,
+                            informativeText: alertInformativeMessage,
+                            window: window,
+                            firstButtonTitle: ButtonTitle.ok,
+                            secondButtonTitle: ButtonTitle.cancel,
+                            thirdButtonTitle: nil,
+                            firstButtonState: true,
+                            sender: nil,
+                            returnValue: { (response) in
+                                if response == .alertFirstButtonReturn {
+                                    if self.updateView(fileInfo: fileInfo) {
+                                        self.editor?.updatePayloadSettings(value: fileInfoDict, key: SettingsKey.fileInfo, subkey: subkey)
+                                        self.editor?.updatePayloadSettings(value: fileData, subkey: subkey)
+                                    }
+                                    completionHandler(true); return
+                                } else {
+                                    completionHandler(false); return
+                                }
+            })
+        } else {
+            if self.updateView(fileInfo: fileInfo) {
+                self.editor?.updatePayloadSettings(value: fileInfoDict, key: SettingsKey.fileInfo, subkey: subkey)
+                self.editor?.updatePayloadSettings(value: fileData, subkey: subkey)
+            }
+            completionHandler(true); return
+        }
+    }
+    
+    private func updateView(fileInfo: FileInfo) -> Bool {
+        guard let fileView = self.fileView else { return false }
+        
+        fileView.textFieldTitle.stringValue = fileInfo.title
+        
+        // Top
+        fileView.textFieldTopLabel.stringValue = fileInfo.topLabel
+        fileView.textFieldTopContent.stringValue = fileInfo.topContent
+        
+        // Center
+        fileView.textFieldCenterLabel.stringValue = fileInfo.centerLabel ?? ""
+        fileView.textFieldCenterContent.stringValue = fileInfo.centerContent ?? ""
+        
+        // Bottom
+        fileView.textFieldBottomLabel.stringValue = fileInfo.bottomLabel ?? ""
+        fileView.textFieldBottomContent.stringValue = fileInfo.bottomContent ?? ""
+        
+        // Icon
+        fileView.imageViewIcon.image = fileInfo.icon
+        
+        return true
+    }
+}
+
+// MARK: -
+// MARK: Setup Layout Constraints
+
+extension PayloadCellViewFile {
+    private func setupButtonAdd(constraints: inout [NSLayoutConstraint]) {
         guard let fileView = self.fileView else { return }
         
         self.buttonAdd.translatesAutoresizingMaskIntoConstraints = false
@@ -161,7 +283,7 @@ class PayloadCellViewFile: NSTableCellView, ProfileCreatorCellView, PayloadCellV
         self.buttonAdd.setButtonType(.momentaryPushIn)
         self.buttonAdd.isBordered = true
         self.buttonAdd.isTransparent = false
-        self.buttonAdd.title = "Add"
+        self.buttonAdd.title = NSLocalizedString("Add", comment: "")
         self.buttonAdd.target = self
         self.buttonAdd.action = #selector(self.selectFile(_:))
         self.buttonAdd.sizeToFit()
@@ -197,6 +319,5 @@ class PayloadCellViewFile: NSTableCellView, ProfileCreatorCellView, PayloadCellV
                                               attribute: .trailing,
                                               multiplier: 1.0,
                                               constant: 8.0))
-        
     }
 }

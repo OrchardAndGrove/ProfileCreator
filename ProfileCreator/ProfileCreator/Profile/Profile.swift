@@ -647,6 +647,16 @@ public class Profile: NSDocument {
         self.updatePayloadSettings(value: value, key: subkey.keyPath, domain: subkey.domain, type: subkey.payloadSourceType, updateComplete: updateComplete)
     }
     
+    func updatePayloadSettings(value: Any?, key: String, subkey: PayloadSourceSubkey, updateComplete: @escaping (Bool, Error?) -> ()) {
+        var keyPath = key
+        var subkeyPathArray = subkey.keyPath.components(separatedBy: ".")
+        if 1 < subkeyPathArray.count {
+            subkeyPathArray.removeLast()
+            keyPath = "\(subkeyPathArray.joined(separator: ".")).\(key)"
+        }
+        self.updatePayloadSettings(value: value, key: keyPath, domain: subkey.domain, type: subkey.payloadSourceType, updateComplete: updateComplete)
+    }
+    
     // For getting the currently in memory value
     func getPayloadSetting(key: String, domain: String, type: PayloadSourceType) -> Any? {
         var typeSettings = self.payloadTypeSettings(type: type)

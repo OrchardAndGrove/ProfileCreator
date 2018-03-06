@@ -32,8 +32,7 @@ class PayloadCellViewTextView: NSTableCellView, ProfileCreatorCellView, PayloadC
     var scrollView: NSScrollView?
     var textView: NSTextView?
     
-    var isEditing: Bool = false
-    var valueBeginEditing: String?
+    var isEditing = false
     
     // MARK: -
     // MARK: Initialization
@@ -96,12 +95,23 @@ class PayloadCellViewTextView: NSTableCellView, ProfileCreatorCellView, PayloadC
         // ---------------------------------------------------------------------
         //  Set Value
         // ---------------------------------------------------------------------
+        var valueString = ""
         if
             let domainSettings = settings[subkey.domain] as? Dictionary<String, Any>,
             let value = domainSettings[subkey.keyPath] as? String {
-            self.textView?.string = value
+            valueString = value
         } else if let valueDefault = self.valueDefault {
-            self.textView?.string = valueDefault
+            valueString = valueDefault
+        }
+        self.textView?.string = valueString
+        
+        // ---------------------------------------------------------------------
+        //  Set TextColor (red if not matching format)
+        // ---------------------------------------------------------------------
+        if let format = subkey.format, !valueString.matches(format) {
+            self.textView?.textColor = NSColor.red
+        } else {
+            self.textView?.textColor = NSColor.black
         }
         
         // ---------------------------------------------------------------------
@@ -132,29 +142,33 @@ class PayloadCellViewTextView: NSTableCellView, ProfileCreatorCellView, PayloadC
     // MARK: -
     // MARK: NSControl Functions
     
-    internal override func controlTextDidBeginEditing(_ obj: Notification) {
+    internal override func controlTextDidChange(_ obj: Notification) {
+        guard let subkey = self.subkey else { return }
         self.isEditing = true
         if
             let userInfo = obj.userInfo,
             let fieldEditor = userInfo["NSFieldEditor"] as? NSTextView,
-            let originalString = fieldEditor.textStorage?.string {
-            self.valueBeginEditing = originalString
+            let newString = fieldEditor.textStorage?.string {
+            if let format = subkey.format, !newString.matches(format) {
+                self.textView?.textColor = NSColor.red
+            } else {
+                self.textView?.textColor = NSColor.black
+            }
+            self.editor?.updatePayloadSettings(value: newString, subkey: subkey)
         }
     }
     
     internal override func controlTextDidEndEditing(_ obj: Notification) {
-        
         guard let subkey = self.subkey else { return }
-        
-        if
-            isEditing,
-            let userInfo = obj.userInfo,
-            let fieldEditor = userInfo["NSFieldEditor"] as? NSTextView,
-            let newString = fieldEditor.textStorage?.string,
-            newString != self.valueBeginEditing {
-            self.editor?.updatePayloadSettings(value: newString, subkey: subkey)
+        if self.isEditing {
+            self.isEditing = false
+            if
+                let userInfo = obj.userInfo,
+                let fieldEditor = userInfo["NSFieldEditor"] as? NSTextView,
+                let newString = fieldEditor.textStorage?.string {
+                self.editor?.updatePayloadSettings(value: newString, subkey: subkey)
+            }
         }
-        self.isEditing = false
     }
     
     // MARK: -

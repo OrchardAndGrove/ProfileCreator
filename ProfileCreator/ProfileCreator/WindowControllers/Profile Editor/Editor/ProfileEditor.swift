@@ -142,6 +142,12 @@ class ProfileEditor: NSObject {
         })
     }
     
+    func updatePayloadSettings(value: Any?, key: String, subkey: PayloadSourceSubkey) {
+        self.profile?.updatePayloadSettings(value: value, key: key, subkey: subkey, updateComplete: { (successful, error) in
+            Swift.print("Class: \(self.self), Function: \(#function), PayloadSettings Changed with status: \(successful)")
+        })
+    }
+    
     func select(payloadPlaceholder: PayloadPlaceholder) {
         if self.selectedPayloadPlaceholder != payloadPlaceholder {
             self.selectedPayloadPlaceholder = payloadPlaceholder

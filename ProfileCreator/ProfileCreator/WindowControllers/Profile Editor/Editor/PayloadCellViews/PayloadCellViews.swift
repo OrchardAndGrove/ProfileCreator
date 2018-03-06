@@ -96,6 +96,7 @@ class PayloadCellViews {
         
         // TODO: This is for adding a note that x keys have been disabled, hidden etc.
         if 0 < hiddenCount + disabledCount + supervisedCount {
+            /*
             var row2String = ""
             if 0 < hiddenCount {
                 row2String = "\(hiddenCount) Hidden"
@@ -116,8 +117,11 @@ class PayloadCellViews {
                     row2String = row2String + ". \(supervisedCount) Supervised."
                 }
             }
+             
+             let cellViewFooter = PayloadCellViewFooter(row1: "\(hiddenCount + disabledCount + supervisedCount) payload keys are not shown. ( \(row2String) )", row2: nil)
+            */
             
-            let cellViewFooter = PayloadCellViewFooter(row1: "\(hiddenCount + disabledCount + supervisedCount) payload keys are not shown. ( \(row2String) )", row2: nil)
+            let cellViewFooter = PayloadCellViewFooter(row1: "\(hiddenCount + disabledCount + supervisedCount) payload keys are not shown", row2: nil)
             cellViews.append(cellViewFooter)
         }
         
@@ -179,7 +183,7 @@ class PayloadCellViews {
         case .data:
             return PayloadCellViewFile(subkey: subkey, editor: profileEditor, settings: typeSettings)
         case .dictionary:
-            Swift.print("Should return a Dictionary CellView Here fro key: \(subkey.keyPath)")
+            Swift.print("Should return a Dictionary CellView Here for key: \(subkey.keyPath)")
         default:
             Swift.print("Class: \(self.self), Function: \(#function), Unknown Manifest Type: \(subkey.type)")
         }

@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>DefaultOrganization</key>
+	<string>ProfileCreator</string>
+	<key>DefaultOrganizationIdentifier</key>
+	<string>com.github.erikberglund.ProfileCreator</string>
 	<key>ShowPayloadLibraryAppleCollections</key>
 	<true/>
 	<key>ShowPayloadLibraryAppleDomains</key>

@@ -113,7 +113,7 @@ class EditorTextField {
                            constraints: inout [NSLayoutConstraint],
                            cellView: PayloadCellView) -> NSTextField? {
         
-        guard var description = subkey.description else { return nil }
+        guard let description = subkey.description else { return nil }
         
         // ---------------------------------------------------------------------
         //  Create and setup TextField

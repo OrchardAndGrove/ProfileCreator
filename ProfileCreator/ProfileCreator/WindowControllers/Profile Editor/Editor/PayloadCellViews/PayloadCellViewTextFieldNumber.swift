@@ -33,8 +33,7 @@ class PayloadCellViewTextFieldNumber: NSTableCellView, ProfileCreatorCellView, P
     var valueDefault: String?
     @objc private var value: Any?
     
-    var isEditing: Bool = false
-    var valueBeginEditing: String?
+    var isEditing = false
     
     // MARK: -
     // MARK: Initialization
@@ -151,29 +150,33 @@ class PayloadCellViewTextFieldNumber: NSTableCellView, ProfileCreatorCellView, P
     // MARK: -
     // MARK: NSControl Functions
     
-    internal override func controlTextDidBeginEditing(_ obj: Notification) {
+    internal override func controlTextDidChange(_ obj: Notification) {
+        guard let subkey = self.subkey else { return }
         self.isEditing = true
         if
             let userInfo = obj.userInfo,
             let fieldEditor = userInfo["NSFieldEditor"] as? NSTextView,
-            let originalString = fieldEditor.textStorage?.string {
-            self.valueBeginEditing = originalString
+            let newString = fieldEditor.textStorage?.string {
+            if let format = subkey.format, !newString.matches(format) {
+                self.textFieldInput?.textColor = NSColor.red
+            } else {
+                self.textFieldInput?.textColor = NSColor.black
+            }
+            self.editor?.updatePayloadSettings(value: newString, subkey: subkey)
         }
     }
     
     internal override func controlTextDidEndEditing(_ obj: Notification) {
-        
         guard let subkey = self.subkey else { return }
-        
-        if
-            isEditing,
-            let userInfo = obj.userInfo,
-            let fieldEditor = userInfo["NSFieldEditor"] as? NSTextView,
-            let newString = fieldEditor.textStorage?.string,
-            newString != self.valueBeginEditing {
-            self.editor?.updatePayloadSettings(value: newString, subkey: subkey)
+        if self.isEditing {
+            self.isEditing = false
+            if
+                let userInfo = obj.userInfo,
+                let fieldEditor = userInfo["NSFieldEditor"] as? NSTextView,
+                let newString = fieldEditor.textStorage?.string {
+                self.editor?.updatePayloadSettings(value: newString, subkey: subkey)
+            }
         }
-        self.isEditing = false
     }
     
     // MARK: -

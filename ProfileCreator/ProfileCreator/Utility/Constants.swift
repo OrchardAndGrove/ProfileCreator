@@ -101,6 +101,24 @@ struct StringConstant {
     static let defaultProfileName = "Untitled"
 }
 
+struct FileInfoViewKey {
+    static let title = "Title"
+    static let topLabel = "TopLabel"
+    static let topContent = "TopContent"
+    static let centerLabel = "CenterLabel"
+    static let centerContent = "CenterContent"
+    static let bottomLabel = "BottomLabel"
+    static let bottomContent = "BottomContent"
+    static let iconPath = "IconPath"
+}
+
+struct FileInfoKey {
+    static let fileAttributes = "FileAttributes"
+    static let fileInfoView = "FileInfoView"
+    static let fileURL = "FileURL"
+    static let fileUTI = "FileUTI"
+}
+
 struct NotificationKey {
     static let identifier = "Identifier"
     static let identifiers = "Identifiers"
@@ -133,6 +151,7 @@ struct SidebarGroupTitle {
 
 public struct SettingsKey {
     static let enabled = "Enabled"
+    static let fileInfo = "FileInfo"
     static let hash = "Hash"
     static let group = "Group"
     static let identifier = "Identifier"

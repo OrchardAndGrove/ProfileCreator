@@ -71,7 +71,7 @@ class PreferencesProfileDefaultsView: NSView {
                                 constraints: &constraints)
         
         lastSubview = addTextField(label: "Organization Name",
-                                   placeholderValue: "Pretendco",
+                                   placeholderValue: "ProfileCreator",
                                    keyPath: PreferenceKey.defaultOrganization,
                                    toView: self,
                                    lastSubview: lastSubview,
@@ -81,7 +81,7 @@ class PreferencesProfileDefaultsView: NSView {
         lastTextField = lastSubview
         
         lastSubview = addTextField(label: "Organization Identifier",
-                                   placeholderValue: "com.pretendco",
+                                   placeholderValue: "com.github.erikberglund.ProfileCreator",
                                    keyPath: PreferenceKey.defaultOrganizationIdentifier,
                                    toView: self,
                                    lastSubview: lastSubview,

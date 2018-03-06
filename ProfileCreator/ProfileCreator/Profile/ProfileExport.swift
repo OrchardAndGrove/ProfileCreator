@@ -301,16 +301,18 @@ class ProfileExport {
         
         Swift.print("viewDomainSettings: \(viewDomainSettings)")
         
+        // FIXME: This requires some fixing depending on how the view settings will be saved
+        
         // Default to true only for testing
-        var enabled = true
-        var parentViewDomainSettings: Any?
+        //var enabled = true
+        //var parentViewDomainSettings: Any?
         for parentSubkey in parentSubkeys {
             if !self.isEnabled(subkey: parentSubkey, typeSettings: typeSettings, domainSettings: domainSettings, viewTypeSettings: viewTypeSettings, viewDomainSettings: viewDomainSettings) {
                 return false
             }
         }
         
-        return enabled
+        return true
     }
     
     func shouldExport(subkey: PayloadSourceSubkey, typeSettings: Dictionary<String, Any>, domainSettings: Dictionary<String, Any>, viewTypeSettings: Dictionary<String, Any>, viewDomainSettings: Dictionary<String, Any>) -> Bool {

@@ -63,12 +63,20 @@ class FileView: NSView {
     
     let imageViewIcon = NSImageView()
     let textFieldTitle = NSTextField()
-    let textFieldDescriptionTop = NSTextField()
-    let textFieldDescriptionTopLabel = NSTextField()
-    let textFieldDescriptionCenter = NSTextField()
-    let textFieldDescriptionCenterLabel = NSTextField()
-    let textFieldDescriptionBottom = NSTextField()
-    let textFieldDescriptionBottomLabel = NSTextField()
+    
+    // Top
+    let textFieldTopContent = NSTextField()
+    let textFieldTopLabel = NSTextField()
+    
+    // Center
+    let textFieldCenterContent = NSTextField()
+    let textFieldCenterLabel = NSTextField()
+    
+    // Bottom
+    let textFieldBottomContent = NSTextField()
+    let textFieldBottomLabel = NSTextField()
+    
+    
     let textFieldPropmpt = NSTextField()
     
     // MARK: -
@@ -101,26 +109,18 @@ class FileView: NSView {
         setupTitle(constraints: &constraints)
         
         // Description Top
-        setupDescriptionLabel(textField: self.textFieldDescriptionTopLabel, previousLabel: nil, constraints: &constraints)
-        setupDescription(textField: self.textFieldDescriptionTop, label: self.textFieldDescriptionTopLabel, constraints: &constraints)
+        setupLabel(textField: self.textFieldTopLabel, previousLabel: nil, constraints: &constraints)
+        setupContent(textField: self.textFieldTopContent, label: self.textFieldTopLabel, constraints: &constraints)
         
         // Description Center
-        setupDescriptionLabel(textField: self.textFieldDescriptionCenterLabel, previousLabel: self.textFieldDescriptionTopLabel, constraints: &constraints)
-        setupDescription(textField: self.textFieldDescriptionCenter, label: self.textFieldDescriptionCenterLabel, constraints: &constraints)
+        setupLabel(textField: self.textFieldCenterLabel, previousLabel: self.textFieldTopLabel, constraints: &constraints)
+        setupContent(textField: self.textFieldCenterContent, label: self.textFieldCenterLabel, constraints: &constraints)
         
         // Description Bottom
-        setupDescriptionLabel(textField: self.textFieldDescriptionBottomLabel, previousLabel: self.textFieldDescriptionCenterLabel, constraints: &constraints)
-        setupDescription(textField: self.textFieldDescriptionBottom, label: self.textFieldDescriptionBottomLabel, constraints: &constraints)
-                
-        // FIXME: Only for testing, will read from current settings
-        self.textFieldTitle.stringValue = "Title"
-        self.textFieldDescriptionTopLabel.stringValue = "TopLabel"
-        self.textFieldDescriptionTop.stringValue = "Top"
-        self.textFieldDescriptionCenterLabel.stringValue = "CenterLabel"
-        self.textFieldDescriptionCenter.stringValue = "Center"
-        self.textFieldDescriptionBottomLabel.stringValue = "BottomLabel"
-        self.textFieldDescriptionBottom.stringValue = "Bottom"
-        self.textFieldPropmpt.stringValue = "Add File"
+        setupLabel(textField: self.textFieldBottomLabel, previousLabel: self.textFieldCenterLabel, constraints: &constraints)
+        setupContent(textField: self.textFieldBottomContent, label: self.textFieldBottomLabel, constraints: &constraints)
+
+        self.textFieldPropmpt.stringValue = NSLocalizedString("Add File", comment: "")
     }
     
     // MARK: -
@@ -136,8 +136,7 @@ class FileView: NSView {
     }
 
     private func setupPrompt(constraints: inout [NSLayoutConstraint]) {
-        
-        setupLabel(textField: self.textFieldPropmpt, fontWeight: NSFont.Weight.regular, fontSize: 15, fontColor: NSColor.tertiaryLabelColor)
+        setup(textField: self.textFieldPropmpt, fontWeight: NSFont.Weight.regular, fontSize: 15, fontColor: NSColor.tertiaryLabelColor)
         
         self.addSubview(self.textFieldPropmpt)
         
@@ -163,7 +162,6 @@ class FileView: NSView {
     private func setupImageView(constraints: inout [NSLayoutConstraint]) {
         
         self.imageViewIcon.translatesAutoresizingMaskIntoConstraints = false
-        self.imageViewIcon.image = NSImage(named: .addTemplate)
         self.imageViewIcon.imageScaling = .scaleProportionallyUpOrDown
         self.imageViewIcon.setContentHuggingPriority(.required, for: .horizontal)
         
@@ -207,8 +205,7 @@ class FileView: NSView {
     }
     
     private func setupTitle(constraints: inout [NSLayoutConstraint]) {
-        
-        setupLabel(textField: self.textFieldTitle, fontWeight: NSFont.Weight.bold, fontSize: 15, fontColor: NSColor.labelColor)
+        setup(textField: self.textFieldTitle, fontWeight: NSFont.Weight.bold, fontSize: 15, fontColor: NSColor.labelColor)
         
         self.addSubview(self.textFieldTitle)
         
@@ -231,18 +228,18 @@ class FileView: NSView {
                                               constant: 14.0))
         
         // Trailing
-        constraints.append(NSLayoutConstraint(item: self.textFieldTitle,
+        constraints.append(NSLayoutConstraint(item: self,
                                               attribute: .trailing,
                                               relatedBy: .equal,
-                                              toItem: self,
+                                              toItem: self.textFieldTitle,
                                               attribute: .trailing,
                                               multiplier: 1.0,
                                               constant: 8.0))
         
     }
     
-    private func setupDescription(textField: NSTextField, label: NSTextField, constraints: inout [NSLayoutConstraint]) {
-        setupLabel(textField: textField, fontWeight: NSFont.Weight.regular, fontSize: (NSFont.systemFontSize(for: .small) + 1), fontColor: NSColor.controlShadowColor)
+    private func setupContent(textField: NSTextField, label: NSTextField, constraints: inout [NSLayoutConstraint]) {
+        setup(textField: textField, fontWeight: NSFont.Weight.regular, fontSize: (NSFont.systemFontSize(for: .small) + 1), fontColor: NSColor.controlShadowColor)
         
         self.addSubview(textField)
         
@@ -265,18 +262,18 @@ class FileView: NSView {
                                               constant: 8.0))
         
         // Trailing
-        constraints.append(NSLayoutConstraint(item: textField,
+        constraints.append(NSLayoutConstraint(item: self,
                                               attribute: .trailing,
                                               relatedBy: .equal,
-                                              toItem: self,
+                                              toItem: textField,
                                               attribute: .trailing,
                                               multiplier: 1.0,
                                               constant: 8.0))
         
     }
     
-    private func setupDescriptionLabel(textField: NSTextField, previousLabel: NSTextField?, constraints: inout [NSLayoutConstraint]) {
-        setupLabel(textField: textField, fontWeight: NSFont.Weight.regular, fontSize: (NSFont.systemFontSize(for: .small) + 1), fontColor: NSColor.secondaryLabelColor)
+    private func setupLabel(textField: NSTextField, previousLabel: NSTextField?, constraints: inout [NSLayoutConstraint]) {
+        setup(textField: textField, fontWeight: NSFont.Weight.regular, fontSize: (NSFont.systemFontSize(for: .small) + 1), fontColor: NSColor.secondaryLabelColor)
         textField.setContentHuggingPriority(NSLayoutConstraint.Priority(rawValue: (NSLayoutConstraint.Priority.defaultLow.rawValue + 1)), for: .horizontal)
         
         self.addSubview(textField)
@@ -316,9 +313,9 @@ class FileView: NSView {
                                               constant: 14.0))
     }
     
-    private func setupLabel(textField: NSTextField, fontWeight: NSFont.Weight, fontSize: CGFloat, fontColor: NSColor) {
+    private func setup(textField: NSTextField, fontWeight: NSFont.Weight, fontSize: CGFloat, fontColor: NSColor) {
         textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.lineBreakMode = .byWordWrapping
+        textField.lineBreakMode = .byTruncatingMiddle
         textField.isBordered = false
         textField.isBezeled = false
         textField.drawsBackground = false

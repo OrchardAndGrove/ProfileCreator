@@ -35,7 +35,7 @@ class PayloadCellViewTableView: NSTableCellView, ProfileCreatorCellView, Payload
     var valueDefault: [Dictionary<String, Any>]?
     let buttonAddRemove = NSSegmentedControl()
     
-    var valueBeginEditing: String?
+    var isEditing = false
     
     // MARK: -
     // MARK: Initialization
@@ -241,32 +241,27 @@ class PayloadCellViewTableView: NSTableCellView, ProfileCreatorCellView, Payload
     // MARK: -
     // MARK: NSTextFieldDelegate Functions
     
-    internal override func controlTextDidBeginEditing(_ obj: Notification) {
-        if
-            let userInfo = obj.userInfo,
-            let fieldEditor = userInfo["NSFieldEditor"] as? NSTextView,
-            let originalString = fieldEditor.textStorage?.string {
-            self.valueBeginEditing = originalString
-        }
-    }
-    
     internal override func controlTextDidChange(_ notification: Notification) {
+        self.isEditing = true
         self.saveCurrentEdit(notification)
     }
     
     internal override func controlTextDidEndEditing(_ notification: Notification) {
-        self.saveCurrentEdit(notification)
+        if self.isEditing {
+            self.isEditing = false
+            self.saveCurrentEdit(notification)
+        }
     }
     
     private func saveCurrentEdit(_ notification: Notification) {
+        
         // ---------------------------------------------------------------------
         //  Verify we are editing and get the current value
         // ---------------------------------------------------------------------
         guard
             let userInfo = notification.userInfo,
             let fieldEditor = userInfo["NSFieldEditor"] as? NSTextView,
-            let stringValue = fieldEditor.textStorage?.string,
-            stringValue != self.valueBeginEditing else { return }
+            let stringValue = fieldEditor.textStorage?.string else { return }
         
         // ---------------------------------------------------------------------
         //  Get all required objects
@@ -276,7 +271,17 @@ class PayloadCellViewTableView: NSTableCellView, ProfileCreatorCellView, Payload
             let textField = notification.object as? NSTextField,
             let keyPath = textField.identifier?.rawValue else { return }
         
-        Swift.print("self.tableViewContent: \(self.tableViewContent)")
+        // ---------------------------------------------------------------------
+        //  Set TextColor (red if not matching format)
+        // ---------------------------------------------------------------------
+        if let tableViewSubkey = subkey.subkeys.first, let textFieldSubkey = tableViewSubkey.subkeys.first(where: {$0.keyPath == keyPath}) {
+            if let format = textFieldSubkey.format, !stringValue.matches(format) {
+                Swift.print("textField: \(textField)")
+                textField.textColor = NSColor.red
+            } else {
+                textField.textColor = NSColor.black
+            }
+        }
         
         // ---------------------------------------------------------------------
         //  Get the current row settings
