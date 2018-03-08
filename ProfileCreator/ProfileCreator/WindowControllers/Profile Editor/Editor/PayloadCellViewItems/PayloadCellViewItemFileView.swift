@@ -10,11 +10,11 @@ import Cocoa
 
 class  EditorFileView {
     
-    class func view(acceptedFileUTIs: [String],
+    class func view(acceptedFileUTIs: [String]?,
                     constraints: inout [NSLayoutConstraint],
                     cellView: PayloadCellView) -> FileView {
         
-        let fileView = FileView(delegate: cellView, acceptedTypes: ["Test"], constraints: &constraints)
+        let fileView = FileView(delegate: cellView, acceptedFileUTIs: acceptedFileUTIs, constraints: &constraints)
         cellView.addSubview(fileView)
         
         // ---------------------------------------------------------------------
@@ -59,7 +59,7 @@ class FileView: NSView {
     // MARK: Instance Variables
     
     var delegate: PayloadCellView?
-    var acceptedTypes: [String]?
+    var acceptedFileUTIs: [String]?
     
     let imageViewIcon = NSImageView()
     let textFieldTitle = NSTextField()
@@ -86,11 +86,11 @@ class FileView: NSView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    init(delegate: PayloadCellView, acceptedTypes: [String], constraints: inout [NSLayoutConstraint]) {
+    init(delegate: PayloadCellView, acceptedFileUTIs: [String]?, constraints: inout [NSLayoutConstraint]) {
         super.init(frame: NSZeroRect)
         
         self.delegate = delegate
-        self.acceptedTypes = acceptedTypes
+        self.acceptedFileUTIs = acceptedFileUTIs
         
         self.translatesAutoresizingMaskIntoConstraints = false
         self.wantsLayer = true
@@ -131,8 +131,12 @@ class FileView: NSView {
     }
     
     private func pasteboardReadingOptions() -> [NSPasteboard.ReadingOptionKey: Any]? {
-        return [NSPasteboard.ReadingOptionKey.urlReadingFileURLsOnly : true,
-                NSPasteboard.ReadingOptionKey.urlReadingContentsConformToTypes : self.acceptedTypes ?? [String]()]
+        if let acceptedFileUTIs = self.acceptedFileUTIs, !acceptedFileUTIs.isEmpty {
+            return [NSPasteboard.ReadingOptionKey.urlReadingFileURLsOnly : true,
+                    NSPasteboard.ReadingOptionKey.urlReadingContentsConformToTypes : acceptedFileUTIs]
+        } else {
+            return [NSPasteboard.ReadingOptionKey.urlReadingFileURLsOnly : true]
+        }
     }
 
     private func setupPrompt(constraints: inout [NSLayoutConstraint]) {
@@ -329,16 +333,25 @@ class FileView: NSView {
     // MARK: NSDraggingDestination Functions
     
     override func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
-        if sender.draggingPasteboard().pasteboardItems?.count == 1 && self .containsAcceptedURL(pasteboard: sender.draggingPasteboard()) {
+        if sender.draggingPasteboard().pasteboardItems?.count == 1 && self.containsAcceptedURL(pasteboard: sender.draggingPasteboard()) {
             return NSDragOperation.copy
         }
         return NSDragOperation(rawValue: 0)
     }
     
     override func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
-        if sender.draggingPasteboard().pasteboardItems?.count == 1 && self .containsAcceptedURL(pasteboard: sender.draggingPasteboard()) {
-            if let urls = sender.draggingPasteboard().readObjects(forClasses: [NSURL.self], options: nil) {
-                Swift.print("Class: \(self.self), Function: \(#function), URLS: \(urls)")
+        if sender.draggingPasteboard().pasteboardItems?.count == 1 && self.containsAcceptedURL(pasteboard: sender.draggingPasteboard()) {
+            if
+                let urls = sender.draggingPasteboard().readObjects(forClasses: [NSURL.self], options: nil) as? [URL],
+                0 < urls.count,
+                let url = urls.first,
+                let cellView = delegate as? PayloadCellViewFile {
+                
+                cellView.processFile(atURL: url, completionHandler: { (success) in
+                    if success {
+                        cellView.showPrompt(!success)
+                    }
+                })
             }
             return true
         }

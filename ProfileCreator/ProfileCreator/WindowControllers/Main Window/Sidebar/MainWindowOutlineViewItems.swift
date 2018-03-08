@@ -355,9 +355,9 @@ class OutlineViewChildCellView: NSTableCellView {
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == PreferenceKey.showProfileCount {
-            if let show = change?[NSKeyValueChangeKey.newKey] as? Bool { profileCount(show: show) }
+            if let show = change?[.newKey] as? Bool { profileCount(show: show) }
         } else if keyPath == PreferenceKey.showGroupIcons {
-            if let show = change?[NSKeyValueChangeKey.newKey] as? Bool { icon(show: show) }
+            if let show = change?[.newKey] as? Bool { icon(show: show) }
         }
     }
     

@@ -63,9 +63,15 @@ class PayloadCellViewFile: NSTableCellView, ProfileCreatorCellView, PayloadCellV
         }
         
         // ---------------------------------------------------------------------
+        //  Read accepted file UTIs from subkey
+        // ---------------------------------------------------------------------
+        // FIXME: This needs to be fixed and decided how it should be set in the config
+        // let acceptedFileUTIs = [String]()
+        
+        // ---------------------------------------------------------------------
         //  Setup Custom View Content
         // ---------------------------------------------------------------------
-        self.fileView = EditorFileView.view(acceptedFileUTIs: ["Test"], constraints: &constraints, cellView: self)
+        self.fileView = EditorFileView.view(acceptedFileUTIs: nil, constraints: &constraints, cellView: self)
         addConstraintsFor(item: self.fileView!, orientation: .below, constraints: &constraints, cellView: self)
         setupButtonAdd(constraints: &constraints)
         
@@ -109,7 +115,7 @@ class PayloadCellViewFile: NSTableCellView, ProfileCreatorCellView, PayloadCellV
     
     // MARK: -
     // MARK: Private Functions
-    private func showPrompt(_ show: Bool) {
+    func showPrompt(_ show: Bool) {
         guard let fileView = self.fileView else { return }
         fileView.imageViewIcon.isHidden = show
         fileView.textFieldTitle.isHidden = show
@@ -168,14 +174,13 @@ class PayloadCellViewFile: NSTableCellView, ProfileCreatorCellView, PayloadCellV
         return false
     }
     
-    private func processFile(atURL url: URL, completionHandler: @escaping (_ success: Bool) -> Void) {
+    func processFile(atURL url: URL, completionHandler: @escaping (_ success: Bool) -> Void) {
         guard let subkey = self.subkey else { completionHandler(false); return }
         
         var alertShow = false
         var alertMessage = ""
         var alertInformativeMessage = ""
         
-        // Might redo so you can get the FileInfo directly ( internally handle the processor )
         let fileInfoProcessor = FileInfoProcessor(fileURL: url)
         guard let fileData = fileInfoProcessor.fileData() else { completionHandler(false); return }
         let fileInfo = fileInfoProcessor.fileInfo()

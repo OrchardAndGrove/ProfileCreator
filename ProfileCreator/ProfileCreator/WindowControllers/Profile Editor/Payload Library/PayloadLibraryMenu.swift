@@ -66,7 +66,7 @@ class PayloadLibraryMenu: NSObject {
     // MARK: Key/Value Observing Functions
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if let add = change?[NSKeyValueChangeKey.newKey] as? Bool {
+        if let add = change?[.newKey] as? Bool {
             if add {
                 self.updateButtons(keyPath: keyPath)
                 // FIXME: Keep selection here, if it isn't removed
