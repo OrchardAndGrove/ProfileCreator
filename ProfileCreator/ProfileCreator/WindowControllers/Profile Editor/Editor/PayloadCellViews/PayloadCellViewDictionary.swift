@@ -1,15 +1,15 @@
 //
-//  PayloadCellViewDatePicker.swift
+//  TableCellViewTextField.swift
 //  ProfileCreator
 //
-//  Created by Erik Berglund on 2017-08-14.
+//  Created by Erik Berglund on 2017-07-25.
 //  Copyright © 2017 Erik Berglund. All rights reserved.
 //
 
 import Cocoa
 import ProfilePayloads
 
-class PayloadCellViewDatePicker: NSTableCellView, ProfileCreatorCellView, PayloadCellView, DatePickerCellView {
+class PayloadCellViewDictionary: NSTableCellView, ProfileCreatorCellView, PayloadCellView {
     
     // MARK: -
     // MARK: PayloadCellView Variables
@@ -24,15 +24,12 @@ class PayloadCellViewDatePicker: NSTableCellView, ProfileCreatorCellView, Payloa
     var textFieldDescription: NSTextField?
     var leadingKeyView: NSView?
     var trailingKeyView: NSView?
-    var isEnabled: Bool { return self.datePicker?.isEnabled ?? false }
+    var isEnabled: Bool { return false }
     
     // MARK: -
     // MARK: Instance Variables
     
-    var datePicker: NSDatePicker?
-    var textFieldInterval: NSTextField?
-    
-    var valueDefault: Date?
+    var valueDefault: Dictionary<String, Any>?
     
     // MARK: -
     // MARK: Initialization
@@ -52,7 +49,6 @@ class PayloadCellViewDatePicker: NSTableCellView, ProfileCreatorCellView, Payloa
         //  Setup Variables
         // ---------------------------------------------------------------------
         var constraints = [NSLayoutConstraint]()
-
         
         // ---------------------------------------------------------------------
         //  Get Indent
@@ -71,34 +67,31 @@ class PayloadCellViewDatePicker: NSTableCellView, ProfileCreatorCellView, Payloa
         }
         
         // ---------------------------------------------------------------------
+        //  Create and add vertical separator bottom
+        // ---------------------------------------------------------------------
+        let separatorBottom = NSBox(frame: NSRect(x: 250.0, y: 15.0, width: preferencesWindowWidth - (20.0 + 20.0), height: 250.0))
+        separatorBottom.translatesAutoresizingMaskIntoConstraints = false
+        separatorBottom.boxType = .separator
+        self.setup(separatorBottom: separatorBottom, indent: indent, constraints: &constraints)
+        
+        // ---------------------------------------------------------------------
         //  Setup Custom View Content
         // ---------------------------------------------------------------------
-        self.datePicker = EditorDatePicker.picker(offsetDays: 0, offsetHours: 0, offsetMinutes: 0, showDate: true, showTime: true, constraints: &constraints, cellView: self)
-        self.setupDatePicker(constraints: &constraints)
+        //self.textFieldInput = EditorTextField.input(defaultString: "", placeholderString: "", constraints: &constraints, cellView: self)
+        //setupTextFieldInput(constraints: &constraints)
         
         // ---------------------------------------------------------------------
         //  Set Default Value
         // ---------------------------------------------------------------------
-        if let valueDefault = subkey.valueDefault as? Date {
+        if let valueDefault = subkey.valueDefault as? Dictionary<String, Any> {
             self.valueDefault = valueDefault
-        }
-        
-        // ---------------------------------------------------------------------
-        //  Set Value
-        // ---------------------------------------------------------------------
-        if
-            let domainSettings = settings[subkey.domain] as? Dictionary<String, Any>,
-            let value = domainSettings[subkey.keyPath] as? Date {
-            self.datePicker?.dateValue = value
-        } else if let valueDefault = self.valueDefault {
-            self.datePicker?.dateValue = valueDefault
         }
         
         // ---------------------------------------------------------------------
         //  Setup KeyView Loop Items
         // ---------------------------------------------------------------------
-        self.leadingKeyView = self.datePicker
-        self.trailingKeyView = self.datePicker
+        self.leadingKeyView = nil
+        self.trailingKeyView = nil
         
         // ---------------------------------------------------------------------
         //  Add spacing to bottom
@@ -116,50 +109,65 @@ class PayloadCellViewDatePicker: NSTableCellView, ProfileCreatorCellView, Payloa
     }
     
     func enable(_ enable: Bool) {
-        self.datePicker?.isEnabled = enable
-    }
-    
-    // MARK: -
-    // MARK: DatePicker Actions
-    
-    internal func selectDate(_ datePicker: NSDatePicker) {
-        guard let subkey = self.subkey else { return }
-        self.editor?.updatePayloadSettings(value: datePicker.dateValue , subkey: subkey)
+        
     }
     
     // MARK: -
     // MARK: Setup Layout Constraints
     
-    private func setupDatePicker(constraints: inout [NSLayoutConstraint]) {
+    private func setup(separatorBottom: NSBox, indent: Int, constraints: inout [NSLayoutConstraint]) {
+        
+        // ---------------------------------------------------------------------
+        //  Add Constraints
+        // ---------------------------------------------------------------------
+        
+        // Top
+        let textField: NSTextField
+        if let textFieldDescription = self.textFieldDescription {
+            textField = textFieldDescription
+        } else if let textFieldTitle = self.textFieldTitle {
+            textField = textFieldTitle
+        } else {
+            return
+        }
+        
+        // -------------------------------------------------------------------------
+        //  Calculate Indent
+        // -------------------------------------------------------------------------
+        let indentValue: CGFloat = 8.0 + (16.0 * CGFloat(indent))
         
         // ---------------------------------------------------------------------
         //  Add TextField to TableCellView
         // ---------------------------------------------------------------------
-        guard let datePicker = self.datePicker else { return }
-        self.addSubview(datePicker)
+        self.addSubview(separatorBottom)
         
-        // ---------------------------------------------------------------------
-        //  Add constraints
-        // ---------------------------------------------------------------------
-        // Below
-        addConstraintsFor(item: datePicker, orientation: .below, constraints: &constraints, cellView: self)
-        
-        // Width
-        constraints.append(NSLayoutConstraint(item: datePicker,
-                                              attribute: .width,
+        // Top
+        constraints.append(NSLayoutConstraint(item: separatorBottom,
+                                              attribute: .top,
                                               relatedBy: .equal,
-                                              toItem: nil,
-                                              attribute: .notAnAttribute,
-                                              multiplier: 1.0,
-                                              constant: datePicker.intrinsicContentSize.width))
+                                              toItem: textField,
+                                              attribute: .bottom,
+                                              multiplier: 1,
+                                              constant: 10.0))
         
         // Leading
-        constraints.append(NSLayoutConstraint(item: datePicker,
+        constraints.append(NSLayoutConstraint(item: separatorBottom,
                                               attribute: .leading,
                                               relatedBy: .equal,
                                               toItem: self,
                                               attribute: .leading,
-                                              multiplier: 1.0,
+                                              multiplier: 1,
+                                              constant: indentValue))
+        
+        // Trailing
+        constraints.append(NSLayoutConstraint(item: self,
+                                              attribute: .trailing,
+                                              relatedBy: .equal,
+                                              toItem: separatorBottom,
+                                              attribute: .trailing,
+                                              multiplier: 1,
                                               constant: 8.0))
+        
+        self.updateHeight(10 + separatorBottom.intrinsicContentSize.height)
     }
 }

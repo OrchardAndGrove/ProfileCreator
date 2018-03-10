@@ -24,6 +24,7 @@ class PayloadCellViewTextField: NSTableCellView, ProfileCreatorCellView, Payload
     var textFieldDescription: NSTextField?
     var leadingKeyView: NSView?
     var trailingKeyView: NSView?
+    var isEnabled: Bool { return self.textFieldInput?.isEnabled ?? false }
     
     // MARK: -
     // MARK: Instance Variables
@@ -53,13 +54,18 @@ class PayloadCellViewTextField: NSTableCellView, ProfileCreatorCellView, Payload
         var constraints = [NSLayoutConstraint]()
         
         // ---------------------------------------------------------------------
+        //  Get Indent
+        // ---------------------------------------------------------------------
+        let indent = subkey.parentSubkeys?.filter({$0.type == PayloadValueType.dictionary}).count ?? 0
+        
+        // ---------------------------------------------------------------------
         //  Setup Static View Content
         // ---------------------------------------------------------------------
-        if let textFieldTitle = EditorTextField.title(subkey: subkey, fontWeight: nil, leadingItem: nil, constraints: &constraints, cellView: self) {
+        if let textFieldTitle = EditorTextField.title(subkey: subkey, fontWeight: nil, indent: indent, leadingItem: nil, constraints: &constraints, cellView: self) {
             self.textFieldTitle = textFieldTitle
         }
         
-        if let textFieldDescription = EditorTextField.description(subkey: subkey, constraints: &constraints, cellView: self) {
+        if let textFieldDescription = EditorTextField.description(subkey: subkey, indent: indent, constraints: &constraints, cellView: self) {
             self.textFieldDescription = textFieldDescription
         }
         
@@ -67,7 +73,7 @@ class PayloadCellViewTextField: NSTableCellView, ProfileCreatorCellView, Payload
         //  Setup Custom View Content
         // ---------------------------------------------------------------------
         self.textFieldInput = EditorTextField.input(defaultString: "", placeholderString: "", constraints: &constraints, cellView: self)
-        setupTextFieldInput(constraints: &constraints)
+        setupTextFieldInput(constraints: &constraints, indent: indent)
         
         // ---------------------------------------------------------------------
         //  Set Default Value
@@ -168,7 +174,7 @@ class PayloadCellViewTextField: NSTableCellView, ProfileCreatorCellView, Payload
     // MARK: -
     // MARK: Setup Layout Constraints
     
-    private func setupTextFieldInput(constraints: inout [NSLayoutConstraint]) {
+    private func setupTextFieldInput(constraints: inout [NSLayoutConstraint], indent: Int) {
         
         // ---------------------------------------------------------------------
         //  Add TextField to TableCellView
@@ -176,6 +182,11 @@ class PayloadCellViewTextField: NSTableCellView, ProfileCreatorCellView, Payload
         guard let textFieldInput = self.textFieldInput else { return }
         textFieldInput.target = self
         self.addSubview(textFieldInput)
+        
+        // -------------------------------------------------------------------------
+        //  Calculate Indent
+        // -------------------------------------------------------------------------
+        let indentValue: CGFloat = 8.0 + (16.0 * CGFloat(indent))
         
         // ---------------------------------------------------------------------
         //  Add constraints
@@ -188,7 +199,7 @@ class PayloadCellViewTextField: NSTableCellView, ProfileCreatorCellView, Payload
                                               toItem: self,
                                               attribute: .leading,
                                               multiplier: 1.0,
-                                              constant: 8.0))
+                                              constant: indentValue))
         
         // Trailing
         constraints.append(NSLayoutConstraint(item: self,
@@ -199,15 +210,33 @@ class PayloadCellViewTextField: NSTableCellView, ProfileCreatorCellView, Payload
                                               multiplier: 1.0,
                                               constant: 8.0))
         
-        // Top
-        constraints.append(NSLayoutConstraint(item: textFieldInput,
-                                              attribute: .top,
-                                              relatedBy: .equal,
-                                              toItem: self.textFieldDescription,
-                                              attribute: .bottom,
-                                              multiplier: 1.0,
-                                              constant: 7.0))
+        var textFieldAbove: NSTextField?
+        if let textFieldDescription = self.textFieldDescription {
+            textFieldAbove = textFieldDescription
+        } else if let textFieldTitle = self.textFieldTitle {
+            textFieldAbove = textFieldTitle
+        }
         
-        self.updateHeight(7.0 + textFieldInput.intrinsicContentSize.height)
+        if let textField = textFieldAbove {
+            // Top
+            constraints.append(NSLayoutConstraint(item: textFieldInput,
+                                                  attribute: .top,
+                                                  relatedBy: .equal,
+                                                  toItem: textField,
+                                                  attribute: .bottom,
+                                                  multiplier: 1.0,
+                                                  constant: 7.0))
+            self.updateHeight(7.0 + textFieldInput.intrinsicContentSize.height)
+        } else {
+            // Top
+            constraints.append(NSLayoutConstraint(item: textFieldInput,
+                                                  attribute: .top,
+                                                  relatedBy: .equal,
+                                                  toItem: self,
+                                                  attribute: .top,
+                                                  multiplier: 1.0,
+                                                  constant: 8.0))
+            self.updateHeight(8.0 + textFieldInput.intrinsicContentSize.height)
+        }
     }
 }

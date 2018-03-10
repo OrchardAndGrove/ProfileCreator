@@ -24,11 +24,11 @@ class PayloadCellViewFile: NSTableCellView, ProfileCreatorCellView, PayloadCellV
     var textFieldDescription: NSTextField?
     var leadingKeyView: NSView?
     var trailingKeyView: NSView?
+    var isEnabled: Bool { return self.buttonAdd.isEnabled }
     
     // MARK: -
     // MARK: Instance Variables
     
-    var textFieldHost: PayloadTextField?
     var fileView: FileView?
     let buttonAdd = PayloadButton()
     
@@ -52,13 +52,18 @@ class PayloadCellViewFile: NSTableCellView, ProfileCreatorCellView, PayloadCellV
         var constraints = [NSLayoutConstraint]()
         
         // ---------------------------------------------------------------------
+        //  Get Indent
+        // ---------------------------------------------------------------------
+        let indent = subkey.parentSubkeys?.filter({$0.type == PayloadValueType.dictionary}).count ?? 0
+        
+        // ---------------------------------------------------------------------
         //  Setup Static View Content
         // ---------------------------------------------------------------------
-        if let textFieldTitle = EditorTextField.title(subkey: subkey, fontWeight: nil, leadingItem: nil, constraints: &constraints, cellView: self) {
+        if let textFieldTitle = EditorTextField.title(subkey: subkey, fontWeight: nil, indent: indent, leadingItem: nil, constraints: &constraints, cellView: self) {
             self.textFieldTitle = textFieldTitle
         }
         
-        if let textFieldDescription = EditorTextField.description(subkey: subkey, constraints: &constraints, cellView: self) {
+        if let textFieldDescription = EditorTextField.description(subkey: subkey, indent: indent, constraints: &constraints, cellView: self) {
             self.textFieldDescription = textFieldDescription
         }
         
@@ -110,7 +115,7 @@ class PayloadCellViewFile: NSTableCellView, ProfileCreatorCellView, PayloadCellV
     }
     
     func enable(_ enable: Bool) {
-        Swift.print("File Enable: \(enable)")
+        self.buttonAdd.isEnabled = enable
     }
     
     // MARK: -
@@ -143,7 +148,7 @@ class PayloadCellViewFile: NSTableCellView, ProfileCreatorCellView, PayloadCellV
         //  Setup open dialog
         // ---------------------------------------------------------------------
         let openPanel = NSOpenPanel()
-        openPanel.prompt = !self.buttonAdd.title.isEmpty ? self.buttonAdd.title : "Select File"
+        openPanel.prompt = !self.buttonAdd.title.isEmpty ? self.buttonAdd.title : NSLocalizedString("Select File", comment: "")
         openPanel.canChooseFiles = true
         openPanel.canChooseDirectories = false
         openPanel.canCreateDirectories = false

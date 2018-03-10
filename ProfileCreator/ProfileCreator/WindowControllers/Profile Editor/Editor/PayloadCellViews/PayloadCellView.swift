@@ -14,7 +14,7 @@ protocol ProfileCreatorCellView {
     func addSubview(_ subview: NSView)
 }
 
-protocol PayloadCellView: class {
+protocol PayloadCellView: class {    
     var row: Int { get set }
     
     weak var subkey: PayloadSourceSubkey? { get }
@@ -24,6 +24,7 @@ protocol PayloadCellView: class {
     var textFieldDescription: NSTextField? { get set }
     var leadingKeyView: NSView? { get set }
     var trailingKeyView: NSView? { get set }
+    var isEnabled: Bool { get }
     
     init(subkey: PayloadSourceSubkey, editor: ProfileEditor, settings: Dictionary<String , Any>)
     

@@ -76,7 +76,6 @@ class FileView: NSView {
     let textFieldBottomContent = NSTextField()
     let textFieldBottomLabel = NSTextField()
     
-    
     let textFieldPropmpt = NSTextField()
     
     // MARK: -
@@ -333,7 +332,7 @@ class FileView: NSView {
     // MARK: NSDraggingDestination Functions
     
     override func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
-        if sender.draggingPasteboard().pasteboardItems?.count == 1 && self.containsAcceptedURL(pasteboard: sender.draggingPasteboard()) {
+        if self.delegate?.isEnabled ?? false, sender.draggingPasteboard().pasteboardItems?.count == 1 && self.containsAcceptedURL(pasteboard: sender.draggingPasteboard()) {
             return NSDragOperation.copy
         }
         return NSDragOperation(rawValue: 0)

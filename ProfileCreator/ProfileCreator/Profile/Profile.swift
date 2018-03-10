@@ -532,9 +532,9 @@ public class Profile: NSDocument {
     // MARK: Subkey Check
     
     func subkeyIsEnabled(subkey: PayloadSourceSubkey) -> Bool {
-        var isEnabled = false // FIXME: This should be a setting, to default enable or disable a key
+        var isEnabled = !self.editorDisableOptionalKeys
         if subkey.require == .always {
-            isEnabled = true
+            return true
         } else if
             let domainViewSettings = self.payloadViewTypeSettings(type: subkey.payloadSourceType)[subkey.domain] as? Dictionary<String, Any>,
             let viewSettings = domainViewSettings[subkey.keyPath] as? Dictionary<String, Any>,
@@ -542,9 +542,17 @@ public class Profile: NSDocument {
             isEnabled = enabled
         } else if let enabledDefault = subkey.enabledDefault {
             isEnabled = enabledDefault
-        } else {
-            isEnabled = !self.editorDisableOptionalKeys
         }
+        
+        if !isEnabled {
+            for childSubkey in subkey.subkeys {
+                if self.subkeyIsEnabled(subkey: childSubkey) {
+                    isEnabled = true
+                    break
+                }
+            }
+        }
+        
         return isEnabled
     }
     

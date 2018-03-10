@@ -24,6 +24,7 @@ class PayloadCellViewTableView: NSTableCellView, ProfileCreatorCellView, Payload
     var textFieldDescription: NSTextField?
     var leadingKeyView: NSView?
     var trailingKeyView: NSView?
+    var isEnabled: Bool { return self.tableView?.isEnabled ?? false }
     
     // MARK: -
     // MARK: Instance Variables
@@ -57,13 +58,18 @@ class PayloadCellViewTableView: NSTableCellView, ProfileCreatorCellView, Payload
         var constraints = [NSLayoutConstraint]()
         
         // ---------------------------------------------------------------------
+        //  Get Indent
+        // ---------------------------------------------------------------------
+        let indent = subkey.parentSubkeys?.filter({$0.type == PayloadValueType.dictionary}).count ?? 0
+        
+        // ---------------------------------------------------------------------
         //  Setup Static View Content
         // ---------------------------------------------------------------------
-        if let textFieldTitle = EditorTextField.title(subkey: subkey, fontWeight: nil, leadingItem: nil, constraints: &constraints, cellView: self) {
+        if let textFieldTitle = EditorTextField.title(subkey: subkey, fontWeight: nil, indent: indent, leadingItem: nil, constraints: &constraints, cellView: self) {
             self.textFieldTitle = textFieldTitle
         }
         
-        if let textFieldDescription = EditorTextField.description(subkey: subkey, constraints: &constraints, cellView: self) {
+        if let textFieldDescription = EditorTextField.description(subkey: subkey, indent: indent, constraints: &constraints, cellView: self) {
             self.textFieldDescription = textFieldDescription
         }
         

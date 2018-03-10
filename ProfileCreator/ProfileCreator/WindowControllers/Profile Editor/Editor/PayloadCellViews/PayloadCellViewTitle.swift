@@ -91,7 +91,7 @@ class PayloadCellViewTitle: NSTableCellView, ProfileCreatorCellView {
         // ---------------------------------------------------------------------
         //  Add spacing to bottom
         // ---------------------------------------------------------------------
-        self.updateHeight(34.0)
+        self.updateHeight(20.0)
         
         // ---------------------------------------------------------------------
         //  Activate Layout Constraints
@@ -285,5 +285,6 @@ class PayloadCellViewTitle: NSTableCellView, ProfileCreatorCellView {
                                               multiplier: 1,
                                               constant: 8.0))
         
+        self.updateHeight(10 + separatorBottom.intrinsicContentSize.height)
     }
 }

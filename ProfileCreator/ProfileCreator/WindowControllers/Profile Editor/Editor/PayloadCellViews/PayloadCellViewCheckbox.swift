@@ -24,6 +24,7 @@ class PayloadCellViewCheckbox: NSTableCellView, ProfileCreatorCellView, PayloadC
     var textFieldDescription: NSTextField?
     var leadingKeyView: NSView?
     var trailingKeyView: NSView?
+    var isEnabled: Bool { return self.textField?.isEnabled ?? false }
     
     // MARK: -
     // MARK: Instance Variables
@@ -51,19 +52,24 @@ class PayloadCellViewCheckbox: NSTableCellView, ProfileCreatorCellView, PayloadC
         var constraints = [NSLayoutConstraint]()
         
         // ---------------------------------------------------------------------
+        //  Get Indent
+        // ---------------------------------------------------------------------
+        let indent = subkey.parentSubkeys?.filter({$0.type == PayloadValueType.dictionary}).count ?? 0
+        
+        // ---------------------------------------------------------------------
         //  Setup Custom View Content
         // ---------------------------------------------------------------------
         self.checkbox = EditorCheckbox.noTitle(constraints: &constraints, cellView: self)
-        self.setupCheckbox(constraints: &constraints)
+        self.setupCheckbox(constraints: &constraints, indent: indent)
         
         // ---------------------------------------------------------------------
         //  Setup Static View Content
         // ---------------------------------------------------------------------
-        if let textFieldTitle = EditorTextField.title(subkey: subkey, fontWeight: nil, leadingItem: self.checkbox, constraints: &constraints, cellView: self) {
+        if let textFieldTitle = EditorTextField.title(subkey: subkey, fontWeight: nil, indent: indent, leadingItem: self.checkbox, constraints: &constraints, cellView: self) {
             self.textFieldTitle = textFieldTitle
         }
         
-        if let textFieldDescription = EditorTextField.description(subkey: subkey, constraints: &constraints, cellView: self) {
+        if let textFieldDescription = EditorTextField.description(subkey: subkey, indent: indent, constraints: &constraints, cellView: self) {
             self.textFieldDescription = textFieldDescription
         }
         
@@ -121,13 +127,18 @@ class PayloadCellViewCheckbox: NSTableCellView, ProfileCreatorCellView, PayloadC
     // MARK: -
     // MARK: Setup Layout Constraints
     
-    private func setupCheckbox(constraints: inout [NSLayoutConstraint]) {
+    private func setupCheckbox(constraints: inout [NSLayoutConstraint], indent: Int) {
         
         // ---------------------------------------------------------------------
         //  Add Checkbox to TableCellView
         // ---------------------------------------------------------------------
         guard let checkbox = self.checkbox else { return }
         self.addSubview(checkbox)
+        
+        // -------------------------------------------------------------------------
+        //  Calculate Indent
+        // -------------------------------------------------------------------------
+        let indentValue: CGFloat = 8.0 + (16.0 * CGFloat(indent))
         
         // ---------------------------------------------------------------------
         //  Add constraints
@@ -149,6 +160,6 @@ class PayloadCellViewCheckbox: NSTableCellView, ProfileCreatorCellView, PayloadC
                                               toItem: self,
                                               attribute: .leading,
                                               multiplier: 1.0,
-                                              constant: 8))
+                                              constant: indentValue))
     }
 }

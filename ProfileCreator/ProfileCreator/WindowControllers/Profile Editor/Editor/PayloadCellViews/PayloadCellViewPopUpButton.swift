@@ -24,6 +24,7 @@ class PayloadCellViewPopUpButton: NSTableCellView, ProfileCreatorCellView, Paylo
     var textFieldDescription: NSTextField?
     var leadingKeyView: NSView?
     var trailingKeyView: NSView?
+    var isEnabled: Bool { return self.popUpButton?.isEnabled ?? false }
     
     // MARK: -
     // MARK: Instance Variables
@@ -51,6 +52,11 @@ class PayloadCellViewPopUpButton: NSTableCellView, ProfileCreatorCellView, Paylo
         var constraints = [NSLayoutConstraint]()
         
         // ---------------------------------------------------------------------
+        //  Get Indent
+        // ---------------------------------------------------------------------
+        let indent = subkey.parentSubkeys?.filter({$0.type == PayloadValueType.dictionary}).count ?? 0
+        
+        // ---------------------------------------------------------------------
         //  Setup Custom View Content
         // ---------------------------------------------------------------------
         var titles = [String]()
@@ -65,11 +71,11 @@ class PayloadCellViewPopUpButton: NSTableCellView, ProfileCreatorCellView, Paylo
         // ---------------------------------------------------------------------
         //  Setup Static View Content
         // ---------------------------------------------------------------------
-        if let textFieldTitle = EditorTextField.title(subkey: subkey, fontWeight: nil, leadingItem: nil, constraints: &constraints, cellView: self) {
+        if let textFieldTitle = EditorTextField.title(subkey: subkey, fontWeight: nil, indent: indent, leadingItem: nil, constraints: &constraints, cellView: self) {
             self.textFieldTitle = textFieldTitle
         }
         
-        if let textFieldDescription = EditorTextField.description(subkey: subkey, constraints: &constraints, cellView: self) {
+        if let textFieldDescription = EditorTextField.description(subkey: subkey, indent: indent, constraints: &constraints, cellView: self) {
             self.textFieldDescription = textFieldDescription
         }
         
@@ -123,7 +129,7 @@ class PayloadCellViewPopUpButton: NSTableCellView, ProfileCreatorCellView, Paylo
     }
     
     func enable(_ enable: Bool) {
-        Swift.print("PopUp Button Enable: \(enable)")
+        self.popUpButton?.isEnabled = enable
     }
     
     // MARK: -

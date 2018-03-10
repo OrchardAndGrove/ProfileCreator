@@ -13,11 +13,12 @@ class EditorTextField {
     
     class func title(subkey: PayloadSourceSubkey,
                      fontWeight: NSFont.Weight?,
+                     indent: Int,
                      leadingItem: NSView?,
                      constraints: inout [NSLayoutConstraint],
                      cellView: PayloadCellView) -> NSTextField? {
         
-        guard var title = subkey.title else { return nil }
+        guard var title = subkey.title, !title.isEmpty else { return nil }
         
         if subkey.supervised {
             title = title + " (Supervised)"
@@ -87,6 +88,11 @@ class EditorTextField {
                                                   constant: 0.0))
         } else {
             
+            // -------------------------------------------------------------------------
+            //  Calculate Indent
+            // -------------------------------------------------------------------------
+            let indentValue: CGFloat = 8.0 + (16.0 * CGFloat(indent))
+            
             // Leading
             constraints.append(NSLayoutConstraint(item: textField,
                                                   attribute: .leading,
@@ -94,7 +100,7 @@ class EditorTextField {
                                                   toItem: cellView,
                                                   attribute: .leading,
                                                   multiplier: 1.0,
-                                                  constant: 8.0))
+                                                  constant: indentValue))
         }
         
         // Trailing
@@ -110,10 +116,11 @@ class EditorTextField {
     }
     
     class func description(subkey: PayloadSourceSubkey,
+                           indent: Int,
                            constraints: inout [NSLayoutConstraint],
                            cellView: PayloadCellView) -> NSTextField? {
         
-        guard let description = subkey.description else { return nil }
+        guard let description = subkey.description, !description.isEmpty else { return nil }
         
         // ---------------------------------------------------------------------
         //  Create and setup TextField
@@ -165,6 +172,11 @@ class EditorTextField {
             cellView.updateHeight(8.0 + textField.intrinsicContentSize.height)
         }
         
+        // -------------------------------------------------------------------------
+        //  Calculate Indent
+        // -------------------------------------------------------------------------
+        let indentValue: CGFloat = 8.0 + (16.0 * CGFloat(indent))
+        
         // Leading
         constraints.append(NSLayoutConstraint(item: textField,
                                                    attribute: .leading,
@@ -172,7 +184,7 @@ class EditorTextField {
                                                    toItem: cellView,
                                                    attribute: .leading,
                                                    multiplier: 1.0,
-                                                   constant: 8.0))
+                                                   constant: indentValue))
         
         // Trailing
         constraints.append(NSLayoutConstraint(item: cellView,
