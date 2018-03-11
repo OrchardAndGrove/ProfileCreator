@@ -10,8 +10,7 @@ import Cocoa
 
 class EditorCheckbox {
 
-    class func noTitle(constraints: inout [NSLayoutConstraint],
-                       cellView: CheckboxCellView) -> NSButton {
+    class func noTitle(cellView: CheckboxCellView) -> NSButton {
         
         // ---------------------------------------------------------------------
         //  Create and setup Checkbox

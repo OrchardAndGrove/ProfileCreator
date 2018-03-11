@@ -9,22 +9,7 @@
 import Cocoa
 import ProfilePayloads
 
-class PayloadCellViewCheckbox: NSTableCellView, ProfileCreatorCellView, PayloadCellView, CheckboxCellView {
-
-    // MARK: -
-    // MARK: PayloadCellView Variables
-    
-    var height: CGFloat = 0.0
-    var row = -1
-    
-    weak var subkey: PayloadSourceSubkey?
-    weak var editor: ProfileEditor?
-    
-    var textFieldTitle: NSTextField?
-    var textFieldDescription: NSTextField?
-    var leadingKeyView: NSView?
-    var trailingKeyView: NSView?
-    var isEnabled: Bool { return self.textField?.isEnabled ?? false }
+class PayloadCellViewCheckbox: PayloadCellView, ProfileCreatorCellView, CheckboxCellView {
     
     // MARK: -
     // MARK: Instance Variables
@@ -40,38 +25,13 @@ class PayloadCellViewCheckbox: NSTableCellView, ProfileCreatorCellView, PayloadC
     }
     
     required init(subkey: PayloadSourceSubkey, editor: ProfileEditor, settings: Dictionary<String, Any>) {
-        
-        self.subkey = subkey
-        self.editor = editor
-        
-        super.init(frame: NSZeroRect)
-        
-        // ---------------------------------------------------------------------
-        //  Setup Variables
-        // ---------------------------------------------------------------------
-        var constraints = [NSLayoutConstraint]()
-        
-        // ---------------------------------------------------------------------
-        //  Get Indent
-        // ---------------------------------------------------------------------
-        let indent = subkey.parentSubkeys?.filter({$0.type == PayloadValueType.dictionary}).count ?? 0
+        super.init(subkey: subkey, editor: editor, settings: settings)
         
         // ---------------------------------------------------------------------
         //  Setup Custom View Content
         // ---------------------------------------------------------------------
-        self.checkbox = EditorCheckbox.noTitle(constraints: &constraints, cellView: self)
-        self.setupCheckbox(constraints: &constraints, indent: indent)
-        
-        // ---------------------------------------------------------------------
-        //  Setup Static View Content
-        // ---------------------------------------------------------------------
-        if let textFieldTitle = EditorTextField.title(subkey: subkey, fontWeight: nil, indent: indent, leadingItem: self.checkbox, constraints: &constraints, cellView: self) {
-            self.textFieldTitle = textFieldTitle
-        }
-        
-        if let textFieldDescription = EditorTextField.description(subkey: subkey, indent: indent, constraints: &constraints, cellView: self) {
-            self.textFieldDescription = textFieldDescription
-        }
+        self.checkbox = EditorCheckbox.noTitle(cellView: self)
+        self.setupCheckbox()
         
         // ---------------------------------------------------------------------
         //  Set Default Value
@@ -98,21 +58,16 @@ class PayloadCellViewCheckbox: NSTableCellView, ProfileCreatorCellView, PayloadC
         self.trailingKeyView = self.checkbox
         
         // ---------------------------------------------------------------------
-        //  Add spacing to bottom
-        // ---------------------------------------------------------------------
-        self.updateHeight(3.0)
-        
-        // ---------------------------------------------------------------------
         //  Activate Layout Constraints
         // ---------------------------------------------------------------------
-        NSLayoutConstraint.activate(constraints)
+        NSLayoutConstraint.activate(self.cellViewConstraints)
     }
     
-    func updateHeight(_ h: CGFloat) {
-        self.height += h
-    }
+    // MARK: -
+    // MARK: PayloadCellView Functions
     
-    func enable(_ enable: Bool) {
+    override func enable(_ enable: Bool) {
+        self.isEnabled = enable
         self.checkbox?.isEnabled = enable
     }
     
@@ -123,11 +78,14 @@ class PayloadCellViewCheckbox: NSTableCellView, ProfileCreatorCellView, PayloadC
         guard let subkey = self.subkey else { return }
         self.editor?.updatePayloadSettings(value: checkbox.state == .on ? true : false, subkey: subkey)
     }
+}
+
+// MARK: -
+// MARK: Setup NSLayoutConstraints
+
+extension PayloadCellViewCheckbox {
     
-    // MARK: -
-    // MARK: Setup Layout Constraints
-    
-    private func setupCheckbox(constraints: inout [NSLayoutConstraint], indent: Int) {
+    private func setupCheckbox() {
         
         // ---------------------------------------------------------------------
         //  Add Checkbox to TableCellView
@@ -135,31 +93,24 @@ class PayloadCellViewCheckbox: NSTableCellView, ProfileCreatorCellView, PayloadC
         guard let checkbox = self.checkbox else { return }
         self.addSubview(checkbox)
         
-        // -------------------------------------------------------------------------
-        //  Calculate Indent
-        // -------------------------------------------------------------------------
-        let indentValue: CGFloat = 8.0 + (16.0 * CGFloat(indent))
+        // ---------------------------------------------------------------------
+        //  Update leading constraints for TextField Title
+        // ---------------------------------------------------------------------
+        self.updateConstraints(forViewLeadingTitle: checkbox)
         
         // ---------------------------------------------------------------------
         //  Add constraints
         // ---------------------------------------------------------------------
+        // Leading
+        self.addConstraints(forViewLeading: checkbox)
         
         // Width
-        constraints.append(NSLayoutConstraint(item: checkbox,
+        self.cellViewConstraints.append(NSLayoutConstraint(item: checkbox,
                                               attribute: .width,
                                               relatedBy: .equal,
                                               toItem: nil,
                                               attribute: .notAnAttribute,
                                               multiplier: 1.0,
                                               constant: checkbox.intrinsicContentSize.width))
-        
-        // Leading
-        constraints.append(NSLayoutConstraint(item: checkbox,
-                                              attribute: .leading,
-                                              relatedBy: .equal,
-                                              toItem: self,
-                                              attribute: .leading,
-                                              multiplier: 1.0,
-                                              constant: indentValue))
     }
 }

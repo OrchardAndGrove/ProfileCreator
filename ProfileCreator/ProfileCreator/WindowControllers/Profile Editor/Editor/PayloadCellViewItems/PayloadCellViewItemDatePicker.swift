@@ -15,7 +15,6 @@ class EditorDatePicker {
                       offsetMinutes: Int,
                       showDate: Bool,
                       showTime: Bool,
-                      constraints: inout [NSLayoutConstraint],
                       cellView: PayloadCellView & DatePickerCellView) -> NSDatePicker {
         
         // ---------------------------------------------------------------------

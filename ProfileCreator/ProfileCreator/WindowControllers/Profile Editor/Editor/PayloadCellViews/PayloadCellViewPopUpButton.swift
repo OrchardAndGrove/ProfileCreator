@@ -9,22 +9,7 @@
 import Cocoa
 import ProfilePayloads
 
-class PayloadCellViewPopUpButton: NSTableCellView, ProfileCreatorCellView, PayloadCellView, PopUpButtonCellView {
-    
-    // MARK: -
-    // MARK: PayloadCellView Variables
-    
-    var height: CGFloat = 0.0
-    var row = -1
-    
-    weak var subkey: PayloadSourceSubkey?
-    weak var editor: ProfileEditor?
-    
-    var textFieldTitle: NSTextField?
-    var textFieldDescription: NSTextField?
-    var leadingKeyView: NSView?
-    var trailingKeyView: NSView?
-    var isEnabled: Bool { return self.popUpButton?.isEnabled ?? false }
+class PayloadCellViewPopUpButton: PayloadCellView, ProfileCreatorCellView, PopUpButtonCellView {
     
     // MARK: -
     // MARK: Instance Variables
@@ -40,21 +25,7 @@ class PayloadCellViewPopUpButton: NSTableCellView, ProfileCreatorCellView, Paylo
     }
     
     required init(subkey: PayloadSourceSubkey, editor: ProfileEditor, settings: Dictionary<String, Any>) {
-        
-        self.subkey = subkey
-        self.editor = editor
-        
-        super.init(frame: NSZeroRect)
-        
-        // ---------------------------------------------------------------------
-        //  Setup Variables
-        // ---------------------------------------------------------------------
-        var constraints = [NSLayoutConstraint]()
-        
-        // ---------------------------------------------------------------------
-        //  Get Indent
-        // ---------------------------------------------------------------------
-        let indent = subkey.parentSubkeys?.filter({$0.type == PayloadValueType.dictionary}).count ?? 0
+        super.init(subkey: subkey, editor: editor, settings: settings)
         
         // ---------------------------------------------------------------------
         //  Setup Custom View Content
@@ -65,24 +36,9 @@ class PayloadCellViewPopUpButton: NSTableCellView, ProfileCreatorCellView, Paylo
                 titles.append(String(describing: value))
             }
         }
-        self.popUpButton = EditorPopUpButton.withTitles(titles: titles, constraints: &constraints, cellView: self)
-        setupPopUpButton(constraints: &constraints)
-        
-        // ---------------------------------------------------------------------
-        //  Setup Static View Content
-        // ---------------------------------------------------------------------
-        if let textFieldTitle = EditorTextField.title(subkey: subkey, fontWeight: nil, indent: indent, leadingItem: nil, constraints: &constraints, cellView: self) {
-            self.textFieldTitle = textFieldTitle
-        }
-        
-        if let textFieldDescription = EditorTextField.description(subkey: subkey, indent: indent, constraints: &constraints, cellView: self) {
-            self.textFieldDescription = textFieldDescription
-        }
-        
-        // ---------------------------------------------------------------------
-        //  Setup Constraints
-        // ---------------------------------------------------------------------
-        addConstraintsFor(item: self.popUpButton!, orientation: .below, constraints: &constraints, cellView: self)
+        self.popUpButton = EditorPopUpButton.withTitles(titles: titles, cellView: self)
+        self.setupPopUpButton()
+
         
         // ---------------------------------------------------------------------
         //  Set Default Value
@@ -114,21 +70,16 @@ class PayloadCellViewPopUpButton: NSTableCellView, ProfileCreatorCellView, Paylo
         self.trailingKeyView = self.popUpButton
         
         // ---------------------------------------------------------------------
-        //  Add spacing to bottom
-        // ---------------------------------------------------------------------
-        self.updateHeight(3.0)
-        
-        // ---------------------------------------------------------------------
         //  Activate Layout Constraints
         // ---------------------------------------------------------------------
-        NSLayoutConstraint.activate(constraints)
+        NSLayoutConstraint.activate(self.cellViewConstraints)
     }
     
-    func updateHeight(_ h: CGFloat) {
-        self.height += h
-    }
+    // MARK: -
+    // MARK: PayloadCellView Functions
     
-    func enable(_ enable: Bool) {
+    override func enable(_ enable: Bool) {
+        self.isEnabled = enable
         self.popUpButton?.isEnabled = enable
     }
     
@@ -143,11 +94,14 @@ class PayloadCellViewPopUpButton: NSTableCellView, ProfileCreatorCellView, Paylo
         
         self.editor?.updatePayloadSettings(value: selectedTitle, subkey: subkey)
     }
+}
     
-    // MARK: -
-    // MARK: Setup Layout Constraints
+// MARK: -
+// MARK: Setup NSLayoutConstraints
     
-    private func setupPopUpButton(constraints: inout [NSLayoutConstraint]) {
+extension PayloadCellViewPopUpButton {
+    
+    private func setupPopUpButton() {
         
         // ---------------------------------------------------------------------
         //  Add PopUpButton to TableCellView
@@ -158,23 +112,10 @@ class PayloadCellViewPopUpButton: NSTableCellView, ProfileCreatorCellView, Paylo
         // ---------------------------------------------------------------------
         //  Add constraints
         // ---------------------------------------------------------------------
+        // Below
+        self.addConstraints(forViewBelow: popUpButton)
         
         // Leading
-        constraints.append(NSLayoutConstraint(item: popUpButton,
-                                              attribute: .leading,
-                                              relatedBy: .equal,
-                                              toItem: self,
-                                              attribute: .leading,
-                                              multiplier: 1.0,
-                                              constant: 8))
-        
-        // Leading
-        constraints.append(NSLayoutConstraint(item: self,
-                                              attribute: .trailing,
-                                              relatedBy: .equal,
-                                              toItem: popUpButton,
-                                              attribute: .trailing,
-                                              multiplier: 1.0,
-                                              constant: 8))
+        self.addConstraints(forViewLeading: popUpButton)
     }
 }

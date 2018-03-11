@@ -9,22 +9,7 @@
 import Cocoa
 import ProfilePayloads
 
-class PayloadCellViewDatePicker: NSTableCellView, ProfileCreatorCellView, PayloadCellView, DatePickerCellView {
-    
-    // MARK: -
-    // MARK: PayloadCellView Variables
-    
-    var height: CGFloat = 0.0
-    var row = -1
-    
-    weak var subkey: PayloadSourceSubkey?
-    weak var editor: ProfileEditor?
-    
-    var textFieldTitle: NSTextField?
-    var textFieldDescription: NSTextField?
-    var leadingKeyView: NSView?
-    var trailingKeyView: NSView?
-    var isEnabled: Bool { return self.datePicker?.isEnabled ?? false }
+class PayloadCellViewDatePicker: PayloadCellView, ProfileCreatorCellView, DatePickerCellView {
     
     // MARK: -
     // MARK: Instance Variables
@@ -42,39 +27,13 @@ class PayloadCellViewDatePicker: NSTableCellView, ProfileCreatorCellView, Payloa
     }
     
     required init(subkey: PayloadSourceSubkey, editor: ProfileEditor, settings: Dictionary<String, Any>) {
-        
-        self.subkey = subkey
-        self.editor = editor
-        
-        super.init(frame: NSZeroRect)
-        
-        // ---------------------------------------------------------------------
-        //  Setup Variables
-        // ---------------------------------------------------------------------
-        var constraints = [NSLayoutConstraint]()
-
-        
-        // ---------------------------------------------------------------------
-        //  Get Indent
-        // ---------------------------------------------------------------------
-        let indent = subkey.parentSubkeys?.filter({$0.type == PayloadValueType.dictionary}).count ?? 0
-        
-        // ---------------------------------------------------------------------
-        //  Setup Static View Content
-        // ---------------------------------------------------------------------
-        if let textFieldTitle = EditorTextField.title(subkey: subkey, fontWeight: nil, indent: indent, leadingItem: nil, constraints: &constraints, cellView: self) {
-            self.textFieldTitle = textFieldTitle
-        }
-        
-        if let textFieldDescription = EditorTextField.description(subkey: subkey, indent: indent, constraints: &constraints, cellView: self) {
-            self.textFieldDescription = textFieldDescription
-        }
+        super.init(subkey: subkey, editor: editor, settings: settings)
         
         // ---------------------------------------------------------------------
         //  Setup Custom View Content
         // ---------------------------------------------------------------------
-        self.datePicker = EditorDatePicker.picker(offsetDays: 0, offsetHours: 0, offsetMinutes: 0, showDate: true, showTime: true, constraints: &constraints, cellView: self)
-        self.setupDatePicker(constraints: &constraints)
+        self.datePicker = EditorDatePicker.picker(offsetDays: 0, offsetHours: 0, offsetMinutes: 0, showDate: true, showTime: true, cellView: self)
+        self.setupDatePicker()
         
         // ---------------------------------------------------------------------
         //  Set Default Value
@@ -101,21 +60,16 @@ class PayloadCellViewDatePicker: NSTableCellView, ProfileCreatorCellView, Payloa
         self.trailingKeyView = self.datePicker
         
         // ---------------------------------------------------------------------
-        //  Add spacing to bottom
-        // ---------------------------------------------------------------------
-        self.updateHeight(3.0)
-        
-        // ---------------------------------------------------------------------
         //  Activate Layout Constraints
         // ---------------------------------------------------------------------
-        NSLayoutConstraint.activate(constraints)
+        NSLayoutConstraint.activate(self.cellViewConstraints)
     }
     
-    func updateHeight(_ h: CGFloat) {
-        self.height += h
-    }
+    // MARK: -
+    // MARK: PayloadCellView Functions
     
-    func enable(_ enable: Bool) {
+    override func enable(_ enable: Bool) {
+        self.isEnabled = enable
         self.datePicker?.isEnabled = enable
     }
     
@@ -126,14 +80,17 @@ class PayloadCellViewDatePicker: NSTableCellView, ProfileCreatorCellView, Payloa
         guard let subkey = self.subkey else { return }
         self.editor?.updatePayloadSettings(value: datePicker.dateValue , subkey: subkey)
     }
+}
+
+// MARK: -
+// MARK: Setup NSLayoutConstraints
     
-    // MARK: -
-    // MARK: Setup Layout Constraints
+extension PayloadCellViewDatePicker {
     
-    private func setupDatePicker(constraints: inout [NSLayoutConstraint]) {
+    private func setupDatePicker() {
         
         // ---------------------------------------------------------------------
-        //  Add TextField to TableCellView
+        //  Add DatePicker to TableCellView
         // ---------------------------------------------------------------------
         guard let datePicker = self.datePicker else { return }
         self.addSubview(datePicker)
@@ -142,24 +99,18 @@ class PayloadCellViewDatePicker: NSTableCellView, ProfileCreatorCellView, Payloa
         //  Add constraints
         // ---------------------------------------------------------------------
         // Below
-        addConstraintsFor(item: datePicker, orientation: .below, constraints: &constraints, cellView: self)
-        
-        // Width
-        constraints.append(NSLayoutConstraint(item: datePicker,
-                                              attribute: .width,
-                                              relatedBy: .equal,
-                                              toItem: nil,
-                                              attribute: .notAnAttribute,
-                                              multiplier: 1.0,
-                                              constant: datePicker.intrinsicContentSize.width))
+        self.addConstraints(forViewBelow: datePicker)
         
         // Leading
-        constraints.append(NSLayoutConstraint(item: datePicker,
-                                              attribute: .leading,
-                                              relatedBy: .equal,
-                                              toItem: self,
-                                              attribute: .leading,
-                                              multiplier: 1.0,
-                                              constant: 8.0))
+        self.addConstraints(forViewLeading: datePicker)
+        
+        // Width
+        self.cellViewConstraints.append(NSLayoutConstraint(item: datePicker,
+                                                           attribute: .width,
+                                                           relatedBy: .equal,
+                                                           toItem: nil,
+                                                           attribute: .notAnAttribute,
+                                                           multiplier: 1.0,
+                                                           constant: datePicker.intrinsicContentSize.width))
     }
 }

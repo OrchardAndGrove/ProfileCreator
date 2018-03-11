@@ -9,22 +9,7 @@
 import Cocoa
 import ProfilePayloads
 
-class PayloadCellViewHostPort: NSTableCellView, ProfileCreatorCellView, PayloadCellView, NSTextFieldDelegate {
-    
-    // MARK: -
-    // MARK: PayloadCellView Variables
-    
-    var height: CGFloat = 0.0
-    var row = -1
-    
-    weak var subkey: PayloadSourceSubkey?
-    weak var editor: ProfileEditor?
-    
-    var textFieldTitle: NSTextField?
-    var textFieldDescription: NSTextField?
-    var leadingKeyView: NSView?
-    var trailingKeyView: NSView?
-    var isEnabled: Bool { return self.textFieldHost?.isEnabled ?? false }
+class PayloadCellViewHostPort: PayloadCellView, ProfileCreatorCellView, NSTextFieldDelegate {
     
     // MARK: -
     // MARK: Instance Variables
@@ -47,46 +32,16 @@ class PayloadCellViewHostPort: NSTableCellView, ProfileCreatorCellView, PayloadC
     }
     
     required init(subkey: PayloadSourceSubkey, editor: ProfileEditor, settings: Dictionary<String, Any>) {
-        
-        self.subkey = subkey
-        self.editor = editor
-        
-        super.init(frame: NSZeroRect)
-        
-        // ---------------------------------------------------------------------
-        //  Setup Variables
-        // ---------------------------------------------------------------------
-        var constraints = [NSLayoutConstraint]()
-        
-        // ---------------------------------------------------------------------
-        //  Get Indent
-        // ---------------------------------------------------------------------
-        let indent = subkey.parentSubkeys?.filter({$0.type == PayloadValueType.dictionary}).count ?? 0
-        
-        // ---------------------------------------------------------------------
-        //  Setup Static View Content
-        // ---------------------------------------------------------------------
-        if let textFieldTitle = EditorTextField.title(subkey: subkey, fontWeight: nil, indent: indent, leadingItem: nil, constraints: &constraints, cellView: self) {
-            self.textFieldTitle = textFieldTitle
-        }
-        
-        if let textFieldDescription = EditorTextField.description(subkey: subkey, indent: indent, constraints: &constraints, cellView: self) {
-            self.textFieldDescription = textFieldDescription
-        }
+        super.init(subkey: subkey, editor: editor, settings: settings)
         
         // ---------------------------------------------------------------------
         //  Setup Custom View Content
         // ---------------------------------------------------------------------
-        self.textFieldHost = EditorTextField.input(defaultString: "", placeholderString: "Host", constraints: &constraints, cellView: self)
-        setupTextField(host: self.textFieldHost!, constraints: &constraints)
-        self.textFieldPort = EditorTextField.input(defaultString: "", placeholderString: "Port", constraints: &constraints, cellView: self)
-        setupTextField(port: self.textFieldPort!, constraints: &constraints)
-        _ = EditorTextField.label(string: ":", fontWeight: NSFont.Weight.regular, leadingItem: self.textFieldHost!, leadingConstant: nil, trailingItem: self.textFieldPort!, constraints: &constraints, cellView: self)
-        
-        // ---------------------------------------------------------------------
-        //  Setup Constraints
-        // ---------------------------------------------------------------------
-        addConstraintsFor(item: self.textFieldHost!, orientation: .below, constraints: &constraints, cellView: self)
+        self.textFieldHost = EditorTextField.input(defaultString: "", placeholderString: "Host", cellView: self)
+        self.setupTextField(host: self.textFieldHost!)
+        self.textFieldPort = EditorTextField.input(defaultString: "", placeholderString: "Port", cellView: self)
+        self.setupTextField(port: self.textFieldPort!)
+        _ = EditorTextField.label(string: ":", fontWeight: .regular, leadingItem: self.textFieldHost!, leadingConstant: nil, trailingItem: self.textFieldPort!, constraints: &self.cellViewConstraints, cellView: self)
         
         // ---------------------------------------------------------------------
         //  Setup KeyView Loop Items
@@ -95,29 +50,27 @@ class PayloadCellViewHostPort: NSTableCellView, ProfileCreatorCellView, PayloadC
         self.trailingKeyView = self.textFieldPort
         
         // ---------------------------------------------------------------------
-        //  Add spacing to bottom
-        // ---------------------------------------------------------------------
-        self.updateHeight(3.0)
-        
-        // ---------------------------------------------------------------------
         //  Activate Layout Constraints
         // ---------------------------------------------------------------------
-        NSLayoutConstraint.activate(constraints)
+        NSLayoutConstraint.activate(self.cellViewConstraints)
     }
     
-    func updateHeight(_ h: CGFloat) {
-        self.height += h
-    }
+    // MARK: -
+    // MARK: PayloadCellView Functions
     
-    func enable(_ enable: Bool) {
+    override func enable(_ enable: Bool) {
+        self.isEnabled = enable
         self.textFieldHost?.isEnabled = enable
         self.textFieldHost?.isSelectable = enable
         self.textFieldPort?.isEnabled = enable
         self.textFieldPort?.isSelectable = enable
     }
-    
-    // MARK: -
-    // MARK: NSControl Functions
+}
+
+// MARK: -
+// MARK: NSControl Functions
+
+extension PayloadCellViewHostPort {
     
     internal override func controlTextDidBeginEditing(_ obj: Notification) {
         
@@ -164,11 +117,14 @@ class PayloadCellViewHostPort: NSTableCellView, ProfileCreatorCellView, PayloadC
             self.isEditingPort = false
         }
     }
+}
+
+// MARK: -
+// MARK: Setup NSLayoutConstraints
+
+extension PayloadCellViewHostPort {
     
-    // MARK: -
-    // MARK: Setup Layout Constraints
-    
-    private func setupTextField(host: NSTextField, constraints: inout [NSLayoutConstraint]) {
+    private func setupTextField(host: NSTextField) {
         
         // ---------------------------------------------------------------------
         //  Add TextField to TableCellView
@@ -178,17 +134,14 @@ class PayloadCellViewHostPort: NSTableCellView, ProfileCreatorCellView, PayloadC
         // ---------------------------------------------------------------------
         //  Add constraints
         // ---------------------------------------------------------------------
+        // Below
+        self.addConstraints(forViewBelow: host)
+        
         // Leading
-        constraints.append(NSLayoutConstraint(item: host,
-                                              attribute: .leading,
-                                              relatedBy: .equal,
-                                              toItem: self,
-                                              attribute: .leading,
-                                              multiplier: 1.0,
-                                              constant: 8.0))
+        self.addConstraints(forViewLeading: host)
     }
     
-    private func setupTextField(port: NSTextField, constraints: inout [NSLayoutConstraint]) {
+    private func setupTextField(port: NSTextField) {
         
         // ---------------------------------------------------------------------
         //  Add Number Formatter to TextField
@@ -208,14 +161,14 @@ class PayloadCellViewHostPort: NSTableCellView, ProfileCreatorCellView, PayloadC
         // ---------------------------------------------------------------------
         //  Add constraints
         // ---------------------------------------------------------------------
-        // Width (fixed to fit 5 characters: 49)
-        constraints.append(NSLayoutConstraint(item: port,
-                                              attribute: .width,
-                                              relatedBy: .equal,
-                                              toItem: nil,
-                                              attribute: .notAnAttribute,
-                                              multiplier: 1.0,
-                                              constant: 49.0))
+        // Width (fixed size to fit 5 characters: 49.0)
+        self.cellViewConstraints.append(NSLayoutConstraint(item: port,
+                                                           attribute: .width,
+                                                           relatedBy: .equal,
+                                                           toItem: nil,
+                                                           attribute: .notAnAttribute,
+                                                           multiplier: 1.0,
+                                                           constant: 49.0))
         
         // Trailing
         self.constraintPortTrailing = NSLayoutConstraint(item: self,
@@ -226,6 +179,7 @@ class PayloadCellViewHostPort: NSTableCellView, ProfileCreatorCellView, PayloadC
                                                          multiplier: 1.0,
                                                          constant: 8.0)
         
-        constraints.append(self.constraintPortTrailing!)
+        self.cellViewConstraints.append(self.constraintPortTrailing!)
     }
+    
 }

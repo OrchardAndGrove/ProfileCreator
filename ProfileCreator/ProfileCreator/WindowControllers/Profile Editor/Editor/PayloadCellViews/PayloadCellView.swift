@@ -14,25 +14,6 @@ protocol ProfileCreatorCellView {
     func addSubview(_ subview: NSView)
 }
 
-protocol PayloadCellView: class {    
-    var row: Int { get set }
-    
-    weak var subkey: PayloadSourceSubkey? { get }
-    weak var editor: ProfileEditor? { get }
-    
-    var textFieldTitle: NSTextField? { get set }
-    var textFieldDescription: NSTextField? { get set }
-    var leadingKeyView: NSView? { get set }
-    var trailingKeyView: NSView? { get set }
-    var isEnabled: Bool { get }
-    
-    init(subkey: PayloadSourceSubkey, editor: ProfileEditor, settings: Dictionary<String , Any>)
-    
-    func updateHeight(_ h: CGFloat)
-    func addSubview(_ subview: NSView)
-    func enable(_ enable: Bool)
-}
-
 @objc protocol CheckboxCellView {
     func clicked(_ checkbox: NSButton)
 }
@@ -47,4 +28,171 @@ protocol PayloadCellView: class {
 
 @objc protocol TableViewCellView: class, NSTableViewDelegate, NSTableViewDataSource, NSTextFieldDelegate {
     
+}
+
+class PayloadCellView: NSTableCellView {
+    
+    // MARK: -
+    // MARK: PayloadCellView Variables
+    
+    var height: CGFloat = 0.0
+    var row = -1
+    
+    weak var subkey: PayloadSourceSubkey?
+    weak var editor: ProfileEditor?
+    
+    var textFieldTitle: NSTextField?
+    var textFieldDescription: NSTextField?
+    var leadingKeyView: NSView?
+    var trailingKeyView: NSView?
+    var isEnabled = false
+    
+    var cellViewConstraints = [NSLayoutConstraint]()
+    var indent: Int = 0
+    
+    // MARK: -
+    // MARK: Initialization
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    required init(subkey: PayloadSourceSubkey, editor: ProfileEditor, settings: Dictionary<String, Any>) {
+        
+        self.subkey = subkey
+        self.editor = editor
+        
+        super.init(frame: NSZeroRect)
+        
+        // ---------------------------------------------------------------------
+        //  Get Indent
+        // ---------------------------------------------------------------------
+        self.indent = subkey.parentSubkeys?.filter({$0.type == PayloadValueType.dictionary}).count ?? 0
+        
+        // ---------------------------------------------------------------------
+        //  Setup Static View Content
+        // ---------------------------------------------------------------------
+        if let textFieldTitle = EditorTextField.title(subkey: subkey, indent: self.indent, constraints: &self.cellViewConstraints, cellView: self) {
+            self.textFieldTitle = textFieldTitle
+        }
+        
+        if let textFieldDescription = EditorTextField.description(subkey: subkey, indent: self.indent, constraints: &self.cellViewConstraints, cellView: self) {
+            self.textFieldDescription = textFieldDescription
+        }
+        
+        // ---------------------------------------------------------------------
+        //  Add spacing to bottom
+        // ---------------------------------------------------------------------
+        self.updateHeight(3.0)
+    }
+    
+    func updateHeight(_ h: CGFloat) {
+        self.height += h
+    }
+    
+    func enable(_ enable: Bool) {
+        Swift.print("This should be overridden by the subclass, you should not see this message!")
+    }
+    
+    func indentValue() -> CGFloat {
+        return 8.0 + (16.0 * CGFloat(self.indent))
+    }
+    
+    // MARK: -
+    // MARK: Add Layout Constraints
+    
+    func addConstraints(forViewBelow viewBelow: NSView) {
+        if let textFieldDescription = self.textFieldDescription {
+            self.cellViewConstraints.append(NSLayoutConstraint(item: viewBelow,
+                                                               attribute: .top,
+                                                               relatedBy: .equal,
+                                                               toItem: textFieldDescription,
+                                                               attribute: .bottom,
+                                                               multiplier: 1.0,
+                                                               constant: 7.0))
+            
+            self.updateHeight(7.0 + viewBelow.intrinsicContentSize.height)
+        } else if let textFieldTitle = self.textFieldTitle {
+            self.cellViewConstraints.append(NSLayoutConstraint(item: textFieldTitle,
+                                                               attribute: .bottom,
+                                                               relatedBy: .equal,
+                                                               toItem: viewBelow,
+                                                               attribute: .top,
+                                                               multiplier: 1.0,
+                                                               constant: 7.0))
+            
+            self.updateHeight(7.0 + viewBelow.intrinsicContentSize.height)
+        } else {
+            self.cellViewConstraints.append(NSLayoutConstraint(item: viewBelow,
+                                                               attribute: .top,
+                                                               relatedBy: .equal,
+                                                               toItem: self,
+                                                               attribute: .top,
+                                                               multiplier: 1.0,
+                                                               constant: 8.0))
+            
+            self.updateHeight(8.0 + viewBelow.intrinsicContentSize.height)
+        }
+    }
+    
+    func addConstraints(forViewLeading viewLeading: NSView) {
+        self.cellViewConstraints.append(NSLayoutConstraint(item: viewLeading,
+                                                           attribute: .leading,
+                                                           relatedBy: .equal,
+                                                           toItem: self,
+                                                           attribute: .leading,
+                                                           multiplier: 1.0,
+                                                           constant: self.indentValue()))
+    }
+    
+    func addConstraints(forViewTrailing viewTrailing: NSView) {
+        self.cellViewConstraints.append(NSLayoutConstraint(item: self,
+                                                           attribute: .trailing,
+                                                           relatedBy: .equal,
+                                                           toItem: viewTrailing,
+                                                           attribute: .trailing,
+                                                           multiplier: 1.0,
+                                                           constant: 8.0))
+    }
+    
+    // MARK: -
+    // MARK: Update Layout Constraints
+    
+    func updateConstraints(forViewLeadingTitle viewLeading: NSView) {
+        
+        guard let textFieldTitle = self.textFieldTitle else { return }
+        
+        // ---------------------------------------------------------------------
+        //  Remove current leading constraint from TextField Title
+        // ---------------------------------------------------------------------
+        self.cellViewConstraints = self.cellViewConstraints.filter({ if let firstItem = $0.firstItem as? NSTextField, firstItem == self.textFieldTitle, $0.firstAttribute == .leading { return false } else { return true }  })
+        
+        // ---------------------------------------------------------------------
+        //  Calculate the leading constant
+        // ---------------------------------------------------------------------
+        let leadingConstant: CGFloat
+        if viewLeading is NSPopUpButton, viewLeading is NSTextField {
+            leadingConstant = 6.0
+        } else {
+            leadingConstant = 2.0
+        }
+        
+        // Leading
+        self.cellViewConstraints.append(NSLayoutConstraint(item: textFieldTitle,
+                                                           attribute: .leading,
+                                                           relatedBy: .equal,
+                                                           toItem: viewLeading,
+                                                           attribute: .trailing,
+                                                           multiplier: 1.0,
+                                                           constant: leadingConstant))
+        
+        // Baseline
+        self.cellViewConstraints.append(NSLayoutConstraint(item: textFieldTitle,
+                                                           attribute: .firstBaseline,
+                                                           relatedBy: .equal,
+                                                           toItem: viewLeading,
+                                                           attribute: .firstBaseline,
+                                                           multiplier: 1.0,
+                                                           constant: 0.0))
+    }
 }

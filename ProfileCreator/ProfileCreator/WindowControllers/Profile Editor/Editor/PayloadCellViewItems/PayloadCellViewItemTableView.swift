@@ -46,23 +46,6 @@ class EditorTableView {
         // ---------------------------------------------------------------------
         //  Setup Layout Constraings for ScrollView
         // ---------------------------------------------------------------------
-        // Leading
-        constraints.append(NSLayoutConstraint(item: scrollView,
-                                              attribute: .leading,
-                                              relatedBy: .equal,
-                                              toItem: cellView,
-                                              attribute: .leading,
-                                              multiplier: 1.0,
-                                              constant: 8.0))
-        
-        // Trailing
-        constraints.append(NSLayoutConstraint(item: cellView,
-                                              attribute: .trailing,
-                                              relatedBy: .equal,
-                                              toItem: scrollView,
-                                              attribute: .trailing,
-                                              multiplier: 1.0,
-                                              constant: 8.0))
         
         // Height
         constraints.append(NSLayoutConstraint(item: scrollView,

@@ -9,22 +9,7 @@
 import Cocoa
 import ProfilePayloads
 
-class PayloadCellViewDictionary: NSTableCellView, ProfileCreatorCellView, PayloadCellView {
-    
-    // MARK: -
-    // MARK: PayloadCellView Variables
-    
-    var height: CGFloat = 0.0
-    var row = -1
-    
-    weak var subkey: PayloadSourceSubkey?
-    weak var editor: ProfileEditor?
-    
-    var textFieldTitle: NSTextField?
-    var textFieldDescription: NSTextField?
-    var leadingKeyView: NSView?
-    var trailingKeyView: NSView?
-    var isEnabled: Bool { return false }
+class PayloadCellViewDictionary: PayloadCellView, ProfileCreatorCellView {
     
     // MARK: -
     // MARK: Instance Variables
@@ -39,32 +24,7 @@ class PayloadCellViewDictionary: NSTableCellView, ProfileCreatorCellView, Payloa
     }
     
     required init(subkey: PayloadSourceSubkey, editor: ProfileEditor, settings: Dictionary<String, Any>) {
-        
-        self.subkey = subkey
-        self.editor = editor
-        
-        super.init(frame: NSZeroRect)
-        
-        // ---------------------------------------------------------------------
-        //  Setup Variables
-        // ---------------------------------------------------------------------
-        var constraints = [NSLayoutConstraint]()
-        
-        // ---------------------------------------------------------------------
-        //  Get Indent
-        // ---------------------------------------------------------------------
-        let indent = subkey.parentSubkeys?.filter({$0.type == PayloadValueType.dictionary}).count ?? 0
-        
-        // ---------------------------------------------------------------------
-        //  Setup Static View Content
-        // ---------------------------------------------------------------------
-        if let textFieldTitle = EditorTextField.title(subkey: subkey, fontWeight: nil, indent: indent, leadingItem: nil, constraints: &constraints, cellView: self) {
-            self.textFieldTitle = textFieldTitle
-        }
-        
-        if let textFieldDescription = EditorTextField.description(subkey: subkey, indent: indent, constraints: &constraints, cellView: self) {
-            self.textFieldDescription = textFieldDescription
-        }
+        super.init(subkey: subkey, editor: editor, settings: settings)
         
         // ---------------------------------------------------------------------
         //  Create and add vertical separator bottom
@@ -72,7 +32,7 @@ class PayloadCellViewDictionary: NSTableCellView, ProfileCreatorCellView, Payloa
         let separatorBottom = NSBox(frame: NSRect(x: 250.0, y: 15.0, width: preferencesWindowWidth - (20.0 + 20.0), height: 250.0))
         separatorBottom.translatesAutoresizingMaskIntoConstraints = false
         separatorBottom.boxType = .separator
-        self.setup(separatorBottom: separatorBottom, indent: indent, constraints: &constraints)
+        self.setup(separatorBottom: separatorBottom)
         
         // ---------------------------------------------------------------------
         //  Setup Custom View Content
@@ -94,28 +54,25 @@ class PayloadCellViewDictionary: NSTableCellView, ProfileCreatorCellView, Payloa
         self.trailingKeyView = nil
         
         // ---------------------------------------------------------------------
-        //  Add spacing to bottom
-        // ---------------------------------------------------------------------
-        self.updateHeight(3.0)
-        
-        // ---------------------------------------------------------------------
         //  Activate Layout Constraints
         // ---------------------------------------------------------------------
-        NSLayoutConstraint.activate(constraints)
-    }
-    
-    func updateHeight(_ h: CGFloat) {
-        self.height += h
-    }
-    
-    func enable(_ enable: Bool) {
-        
+        NSLayoutConstraint.activate(self.cellViewConstraints)
     }
     
     // MARK: -
-    // MARK: Setup Layout Constraints
+    // MARK: PayloadCellView Functions
     
-    private func setup(separatorBottom: NSBox, indent: Int, constraints: inout [NSLayoutConstraint]) {
+    override func enable(_ enable: Bool) {
+        self.isEnabled = enable
+    }
+}
+    
+// MARK: -
+// MARK: Setup NSLayoutConstraints
+    
+extension PayloadCellViewDictionary {
+    
+    private func setup(separatorBottom: NSBox) {
         
         // ---------------------------------------------------------------------
         //  Add Constraints
@@ -131,43 +88,29 @@ class PayloadCellViewDictionary: NSTableCellView, ProfileCreatorCellView, Payloa
             return
         }
         
-        // -------------------------------------------------------------------------
-        //  Calculate Indent
-        // -------------------------------------------------------------------------
-        let indentValue: CGFloat = 8.0 + (16.0 * CGFloat(indent))
-        
         // ---------------------------------------------------------------------
         //  Add TextField to TableCellView
         // ---------------------------------------------------------------------
         self.addSubview(separatorBottom)
         
+        // ---------------------------------------------------------------------
+        //  Add constraints
+        // ---------------------------------------------------------------------
+        // Leading
+        self.addConstraints(forViewLeading: separatorBottom)
+        
+        // Trailing
+        self.addConstraints(forViewTrailing: separatorBottom)
+        
         // Top
-        constraints.append(NSLayoutConstraint(item: separatorBottom,
+        self.cellViewConstraints.append(NSLayoutConstraint(item: separatorBottom,
                                               attribute: .top,
                                               relatedBy: .equal,
                                               toItem: textField,
                                               attribute: .bottom,
                                               multiplier: 1,
                                               constant: 10.0))
-        
-        // Leading
-        constraints.append(NSLayoutConstraint(item: separatorBottom,
-                                              attribute: .leading,
-                                              relatedBy: .equal,
-                                              toItem: self,
-                                              attribute: .leading,
-                                              multiplier: 1,
-                                              constant: indentValue))
-        
-        // Trailing
-        constraints.append(NSLayoutConstraint(item: self,
-                                              attribute: .trailing,
-                                              relatedBy: .equal,
-                                              toItem: separatorBottom,
-                                              attribute: .trailing,
-                                              multiplier: 1,
-                                              constant: 8.0))
-        
+
         self.updateHeight(10 + separatorBottom.intrinsicContentSize.height)
     }
 }

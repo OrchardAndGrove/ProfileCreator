@@ -9,22 +9,7 @@
 import Cocoa
 import ProfilePayloads
 
-class PayloadCellViewTableView: NSTableCellView, ProfileCreatorCellView, PayloadCellView, TableViewCellView {
-    
-    // MARK: -
-    // MARK: PayloadCellView Variables
-    
-    var height: CGFloat = 0.0
-    var row = -1
-    
-    weak var subkey: PayloadSourceSubkey?
-    weak var editor: ProfileEditor?
-    
-    var textFieldTitle: NSTextField?
-    var textFieldDescription: NSTextField?
-    var leadingKeyView: NSView?
-    var trailingKeyView: NSView?
-    var isEnabled: Bool { return self.tableView?.isEnabled ?? false }
+class PayloadCellViewTableView: PayloadCellView, ProfileCreatorCellView, TableViewCellView {
     
     // MARK: -
     // MARK: Instance Variables
@@ -46,49 +31,24 @@ class PayloadCellViewTableView: NSTableCellView, ProfileCreatorCellView, Payload
     }
     
     required init(subkey: PayloadSourceSubkey, editor: ProfileEditor, settings: Dictionary<String, Any>) {
-        
-        self.subkey = subkey
-        self.editor = editor
-        
-        super.init(frame: NSZeroRect)
-        
-        // ---------------------------------------------------------------------
-        //  Setup Variables
-        // ---------------------------------------------------------------------
-        var constraints = [NSLayoutConstraint]()
-        
-        // ---------------------------------------------------------------------
-        //  Get Indent
-        // ---------------------------------------------------------------------
-        let indent = subkey.parentSubkeys?.filter({$0.type == PayloadValueType.dictionary}).count ?? 0
-        
-        // ---------------------------------------------------------------------
-        //  Setup Static View Content
-        // ---------------------------------------------------------------------
-        if let textFieldTitle = EditorTextField.title(subkey: subkey, fontWeight: nil, indent: indent, leadingItem: nil, constraints: &constraints, cellView: self) {
-            self.textFieldTitle = textFieldTitle
-        }
-        
-        if let textFieldDescription = EditorTextField.description(subkey: subkey, indent: indent, constraints: &constraints, cellView: self) {
-            self.textFieldDescription = textFieldDescription
-        }
+        super.init(subkey: subkey, editor: editor, settings: settings)
         
         // ---------------------------------------------------------------------
         //  Setup Custom View Content
         // ---------------------------------------------------------------------
-        self.scrollView = EditorTableView.scrollView(string: "", constraints: &constraints, cellView: self)
+        self.scrollView = EditorTableView.scrollView(string: "", constraints: &self.cellViewConstraints, cellView: self)
         if let tableView = self.scrollView?.documentView as? NSTableView { self.tableView = tableView }
-        addConstraintsFor(item: self.scrollView!, orientation: .below, constraints: &constraints, cellView: self)
+        self.setupScrollView()
         
         // ---------------------------------------------------------------------
         //  Setup Table View Content
         // ---------------------------------------------------------------------
-        setupTableViewContent(subkey: subkey)
+        self.setupTableViewContent(subkey: subkey)
         
         // ---------------------------------------------------------------------
-        //  Setup Button
+        //  Setup Button Add/Remove
         // ---------------------------------------------------------------------
-        setupButtonAddRemove(constraints: &constraints)
+        self.setupButtonAddRemove()
         
         // ---------------------------------------------------------------------
         //  Set Default Value
@@ -129,23 +89,21 @@ class PayloadCellViewTableView: NSTableCellView, ProfileCreatorCellView, Payload
         self.trailingKeyView = self.buttonAddRemove
         
         // ---------------------------------------------------------------------
-        //  Add spacing to bottom
-        // ---------------------------------------------------------------------
-        self.updateHeight(3.0)
-        
-        // ---------------------------------------------------------------------
         //  Activate Layout Constraints
         // ---------------------------------------------------------------------
-        NSLayoutConstraint.activate(constraints)
+        NSLayoutConstraint.activate(self.cellViewConstraints)
         
+        // ---------------------------------------------------------------------
+        //  Reload TableView
+        // ---------------------------------------------------------------------
         self.tableView?.reloadData()
     }
     
-    func updateHeight(_ h: CGFloat) {
-        self.height += h
-    }
+    // MARK: -
+    // MARK: PayloadCellView Functions
     
-    func enable(_ enable: Bool) {
+    override func enable(_ enable: Bool) {
+        self.isEnabled = enable
         self.tableView?.isEnabled = enable
         self.buttonAddRemove.isEnabled = enable
     }
@@ -162,11 +120,6 @@ class PayloadCellViewTableView: NSTableCellView, ProfileCreatorCellView, Payload
             }
         }
     }
-    
-    // MARK: -
-    // MARK: CellView Actions
-    
-    
     
     // MARK: -
     // MARK: Private Functions
@@ -244,21 +197,6 @@ class PayloadCellViewTableView: NSTableCellView, ProfileCreatorCellView, Payload
         }
     }
     
-    // MARK: -
-    // MARK: NSTextFieldDelegate Functions
-    
-    internal override func controlTextDidChange(_ notification: Notification) {
-        self.isEditing = true
-        self.saveCurrentEdit(notification)
-    }
-    
-    internal override func controlTextDidEndEditing(_ notification: Notification) {
-        if self.isEditing {
-            self.isEditing = false
-            self.saveCurrentEdit(notification)
-        }
-    }
-    
     private func saveCurrentEdit(_ notification: Notification) {
         
         // ---------------------------------------------------------------------
@@ -309,12 +247,47 @@ class PayloadCellViewTableView: NSTableCellView, ProfileCreatorCellView, Payload
         self.tableViewContent = tableViewContent
         self.editor?.updatePayloadSettings(value: tableViewContent, subkey: subkey)
     }
+}
+
+// MARK: -
+// MARK: NSTextFieldDelegate Functions
+
+extension PayloadCellViewTableView {
+    internal override func controlTextDidChange(_ notification: Notification) {
+        self.isEditing = true
+        self.saveCurrentEdit(notification)
+    }
     
-    // MARK: -
-    // MARK: NSLayoutConstraints
-    
-    private func setupButtonAddRemove(constraints: inout [NSLayoutConstraint]) {
+    internal override func controlTextDidEndEditing(_ notification: Notification) {
+        if self.isEditing {
+            self.isEditing = false
+            self.saveCurrentEdit(notification)
+        }
+    }
+}
+
+// MARK: -
+// MARK: Setup NSLayoutConstraints
+
+extension PayloadCellViewTableView {
+    private func setupScrollView() {
+        guard let scrollView = self.scrollView else { return }
         
+        // ---------------------------------------------------------------------
+        //  Add constraints
+        // ---------------------------------------------------------------------
+        // Below
+        self.addConstraints(forViewBelow: scrollView)
+        
+        // Leading
+        self.addConstraints(forViewLeading: scrollView)
+        
+        // Trailing
+        self.addConstraints(forViewTrailing: scrollView)
+        
+    }
+    
+    private func setupButtonAddRemove() {
         guard let scrollView = self.scrollView else { return }
         
         self.buttonAddRemove.translatesAutoresizingMaskIntoConstraints = false
@@ -327,10 +300,19 @@ class PayloadCellViewTableView: NSTableCellView, ProfileCreatorCellView, Payload
         self.buttonAddRemove.action = #selector(clicked(_:))
         self.buttonAddRemove.target = self
         
+        // ---------------------------------------------------------------------
+        //  Add Button to TableCellView
+        // ---------------------------------------------------------------------
         self.addSubview(self.buttonAddRemove)
         
+        // ---------------------------------------------------------------------
+        //  Add constraints
+        // ---------------------------------------------------------------------
+        // Leading
+        self.addConstraints(forViewLeading: self.buttonAddRemove)
+        
         // Top
-        constraints.append(NSLayoutConstraint(item: self.buttonAddRemove,
+        self.cellViewConstraints.append(NSLayoutConstraint(item: self.buttonAddRemove,
                                               attribute: .top,
                                               relatedBy: .equal,
                                               toItem: scrollView,
@@ -339,23 +321,20 @@ class PayloadCellViewTableView: NSTableCellView, ProfileCreatorCellView, Payload
                                               constant: 8.0))
         
         self.updateHeight((8 + self.buttonAddRemove.intrinsicContentSize.height))
-        
-        // Leading
-        constraints.append(NSLayoutConstraint(item: self.buttonAddRemove,
-                                              attribute: .leading,
-                                              relatedBy: .equal,
-                                              toItem: self,
-                                              attribute: .leading,
-                                              multiplier: 1.0,
-                                              constant: 8.0))
     }
 }
+
+// MARK: -
+// MARK: NSTableViewDataSource Functions
 
 extension PayloadCellViewTableView: NSTableViewDataSource {
     func numberOfRows(in tableView: NSTableView) -> Int {
         return self.tableViewContent.count
     }
 }
+
+// MARK: -
+// MARK: NSTableViewDelegate Functions
 
 extension PayloadCellViewTableView: NSTableViewDelegate {
     

@@ -41,7 +41,7 @@ class PayloadCellViewEnable: NSTableCellView, CheckboxCellView {
         // ---------------------------------------------------------------------
         //  Setup Custom View Content
         // ---------------------------------------------------------------------
-        self.checkbox = EditorCheckbox.noTitle(constraints: &constraints, cellView: self)
+        self.checkbox = EditorCheckbox.noTitle(cellView: self)
         setupCheckbox(constraints: &constraints)
         
         // ---------------------------------------------------------------------
@@ -71,10 +71,13 @@ class PayloadCellViewEnable: NSTableCellView, CheckboxCellView {
         guard let subkey = self.subkey else { return }
         self.editor?.updateViewSettings(value: checkbox.state == .on ? true : false, key: SettingsKey.enabled, subkey: subkey)
     }
-    
-    // MARK: -
-    // MARK: Setup Layout Constraints
-    
+}
+
+// MARK: -
+// MARK: Setup NSLayoutConstraints
+
+extension PayloadCellViewEnable {
+
     private func setupCheckbox(constraints: inout [NSLayoutConstraint]) {
         
         guard
@@ -94,7 +97,6 @@ class PayloadCellViewEnable: NSTableCellView, CheckboxCellView {
         if subkey.type == .bool {
             topConstant = 11.29
         }
-        
         
         // Top
         constraints.append(NSLayoutConstraint(item: checkbox,

@@ -9,22 +9,7 @@
 import Cocoa
 import ProfilePayloads
 
-class PayloadCellViewTextView: NSTableCellView, ProfileCreatorCellView, PayloadCellView, NSTextFieldDelegate {
-    
-    // MARK: -
-    // MARK: PayloadCellView Variables
-    
-    var height: CGFloat = 0.0
-    var row = -1
-    
-    weak var subkey: PayloadSourceSubkey?
-    weak var editor: ProfileEditor?
-    
-    var textFieldTitle: NSTextField?
-    var textFieldDescription: NSTextField?
-    var leadingKeyView: NSView?
-    var trailingKeyView: NSView?
-    var isEnabled: Bool { return false } // FIXME: This needs fixing!
+class PayloadCellViewTextView: PayloadCellView, ProfileCreatorCellView, NSTextFieldDelegate {
     
     // MARK: -
     // MARK: Instance Variables
@@ -43,45 +28,15 @@ class PayloadCellViewTextView: NSTableCellView, ProfileCreatorCellView, PayloadC
     }
     
     required init(subkey: PayloadSourceSubkey, editor: ProfileEditor, settings: Dictionary<String, Any>) {
-       
-        self.subkey = subkey
-        self.editor = editor
-        
-        super.init(frame: NSZeroRect)
-        
-        // ---------------------------------------------------------------------
-        //  Setup Variables
-        // ---------------------------------------------------------------------
-        var constraints = [NSLayoutConstraint]()
-        
-        // ---------------------------------------------------------------------
-        //  Get Indent
-        // ---------------------------------------------------------------------
-        let indent = subkey.parentSubkeys?.filter({$0.type == PayloadValueType.dictionary}).count ?? 0
-        
-        // ---------------------------------------------------------------------
-        //  Setup Static View Content
-        // ---------------------------------------------------------------------
-        if let textFieldTitle = EditorTextField.title(subkey: subkey, fontWeight: nil, indent: indent, leadingItem: nil, constraints: &constraints, cellView: self) {
-            self.textFieldTitle = textFieldTitle
-        }
-        
-        if let textFieldDescription = EditorTextField.description(subkey: subkey, indent: indent, constraints: &constraints, cellView: self) {
-            self.textFieldDescription = textFieldDescription
-        }
+        super.init(subkey: subkey, editor: editor, settings: settings)
         
         // ---------------------------------------------------------------------
         //  Setup Custom View Content
         // ---------------------------------------------------------------------
-        self.scrollView = EditorTextView.scrollView(string: "", visibleRows: 4, constraints: &constraints, cellView: self)
+        self.scrollView = EditorTextView.scrollView(string: "", visibleRows: 4, constraints: &self.cellViewConstraints, cellView: self)
         self.textView = self.scrollView?.documentView as? NSTextView
-        setupScrollView(constraints: &constraints)
-        
-        // ---------------------------------------------------------------------
-        //  Setup Constraints
-        // ---------------------------------------------------------------------
-        addConstraintsFor(item: self.scrollView!, orientation: .below, constraints: &constraints, cellView: self)
-        
+        self.setupScrollView()
+                
         // ---------------------------------------------------------------------
         //  Set Default Value
         // ---------------------------------------------------------------------
@@ -127,27 +82,21 @@ class PayloadCellViewTextView: NSTableCellView, ProfileCreatorCellView, PayloadC
         self.trailingKeyView = self.scrollView
         
         // ---------------------------------------------------------------------
-        //  Add spacing to bottom
-        // ---------------------------------------------------------------------
-        self.updateHeight(3.0)
-        
-        // ---------------------------------------------------------------------
         //  Activate Layout Constraints
         // ---------------------------------------------------------------------
-        NSLayoutConstraint.activate(constraints)
+        NSLayoutConstraint.activate(self.cellViewConstraints)
     }
     
-    func updateHeight(_ h: CGFloat) {
-        self.height += h
-    }
-    
-    func enable(_ enable: Bool) {
-        // FIXME: Fix the isEnabled variable aswell!
+    override func enable(_ enable: Bool) {
+        self.isEnabled = enable
         Swift.print("TextView Enable: \(enable)")
     }
-    
-    // MARK: -
-    // MARK: NSControl Functions
+}
+
+// MARK: -
+// MARK: NSControl Functions
+
+extension PayloadCellViewTextView {
     
     internal override func controlTextDidChange(_ obj: Notification) {
         guard let subkey = self.subkey else { return }
@@ -178,40 +127,10 @@ class PayloadCellViewTextView: NSTableCellView, ProfileCreatorCellView, PayloadC
         }
     }
     
-    // MARK: -
-    // MARK: Setup Layout Constraints
-    
-    private func setupScrollView(constraints: inout [NSLayoutConstraint]) {
-        
-        // ---------------------------------------------------------------------
-        //  Add TextField to TableCellView
-        // ---------------------------------------------------------------------
-        guard let scrollView = self.scrollView else { return }
-        self.addSubview(scrollView)
-        
-        // ---------------------------------------------------------------------
-        //  Add constraints
-        // ---------------------------------------------------------------------
-        
-        // Leading
-        constraints.append(NSLayoutConstraint(item: scrollView,
-                                              attribute: .leading,
-                                              relatedBy: .equal,
-                                              toItem: self,
-                                              attribute: .leading,
-                                              multiplier: 1.0,
-                                              constant: 8.0))
-        
-        // Trailing
-        constraints.append(NSLayoutConstraint(item: self,
-                                              attribute: .trailing,
-                                              relatedBy: .equal,
-                                              toItem: scrollView,
-                                              attribute: .trailing,
-                                              multiplier: 1.0,
-                                              constant: 8.0))
-    }
 }
+
+// MARK: -
+// MARK: NSTextViewDelegate Functions
 
 extension PayloadCellViewTextView: NSTextViewDelegate {
     
@@ -232,4 +151,31 @@ extension PayloadCellViewTextView: NSTextViewDelegate {
         return false
     }
  */
+}
+
+// MARK: -
+// MARK: Setup Layout Constraints
+
+extension PayloadCellViewTextView {
+    
+    private func setupScrollView() {
+        
+        // ---------------------------------------------------------------------
+        //  Add TextField to TableCellView
+        // ---------------------------------------------------------------------
+        guard let scrollView = self.scrollView else { return }
+        self.addSubview(scrollView)
+        
+        // ---------------------------------------------------------------------
+        //  Add constraints
+        // ---------------------------------------------------------------------
+        // Below
+        self.addConstraints(forViewBelow: scrollView)
+        
+        // Leading
+        self.addConstraints(forViewLeading: scrollView)
+        
+        // Trailing
+        self.addConstraints(forViewTrailing: scrollView)
+    }
 }

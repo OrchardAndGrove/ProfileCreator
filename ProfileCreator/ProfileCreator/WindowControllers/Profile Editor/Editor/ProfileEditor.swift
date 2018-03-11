@@ -180,8 +180,8 @@ class ProfileEditor: NSObject {
         
         // NOTE: This sometimes crashes, should investigate and check if object exists in the correct window, and why it doesnt sometimes.
         if firstCellView != nil {
-            window.initialFirstResponder = firstCellView as? NSView
-            self.firstCellView = firstCellView as? NSView
+            window.initialFirstResponder = firstCellView
+            self.firstCellView = firstCellView
         }
     }
 }

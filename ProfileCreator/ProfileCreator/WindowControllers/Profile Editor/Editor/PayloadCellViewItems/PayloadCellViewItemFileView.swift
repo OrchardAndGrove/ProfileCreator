@@ -15,29 +15,15 @@ class  EditorFileView {
                     cellView: PayloadCellView) -> FileView {
         
         let fileView = FileView(delegate: cellView, acceptedFileUTIs: acceptedFileUTIs, constraints: &constraints)
+        
+        // ---------------------------------------------------------------------
+        //  Add FileView to TableCellView
+        // ---------------------------------------------------------------------
         cellView.addSubview(fileView)
         
         // ---------------------------------------------------------------------
         //  Setup Layout Constraings for FileView
         // ---------------------------------------------------------------------
-        // Leading
-        constraints.append(NSLayoutConstraint(item: fileView,
-                                              attribute: .leading,
-                                              relatedBy: .equal,
-                                              toItem: cellView,
-                                              attribute: .leading,
-                                              multiplier: 1.0,
-                                              constant: 8.0))
-        
-        // Trailing
-        constraints.append(NSLayoutConstraint(item: cellView,
-                                              attribute: .trailing,
-                                              relatedBy: .equal,
-                                              toItem: fileView,
-                                              attribute: .trailing,
-                                              multiplier: 1.0,
-                                              constant: 8.0))
-        
         // Height
         constraints.append(NSLayoutConstraint(item: fileView,
                                               attribute: .height,

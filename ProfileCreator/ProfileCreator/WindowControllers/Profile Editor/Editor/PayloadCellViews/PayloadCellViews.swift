@@ -84,7 +84,7 @@ class PayloadCellViews {
             
             // Get the index of the first disabled subkey
             if let indexDisabled = sortedCellViews.index(where: { !profile.subkeyIsEnabled(subkey: $0.subkey!) } ) {
-                cellViews = sortedCellViews as! [NSTableCellView]
+                cellViews = sortedCellViews
                 
                 let cellView = PayloadCellViewTitle(title: "Disabled Keys", description: "The payload keys below will not be included in the exported profile")
                 cellViews.insert(cellView, at: indexDisabled)

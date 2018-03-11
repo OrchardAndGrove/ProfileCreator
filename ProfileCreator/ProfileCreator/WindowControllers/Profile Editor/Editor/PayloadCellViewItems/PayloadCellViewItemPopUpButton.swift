@@ -11,7 +11,6 @@ import Cocoa
 class EditorPopUpButton {
 
     class func withTitles(titles: [String],
-                          constraints: inout [NSLayoutConstraint],
                           cellView: PopUpButtonCellView) -> NSPopUpButton {
         
         // ---------------------------------------------------------------------
@@ -25,5 +24,4 @@ class EditorPopUpButton {
         
         return popUpButton
     }
-    
 }

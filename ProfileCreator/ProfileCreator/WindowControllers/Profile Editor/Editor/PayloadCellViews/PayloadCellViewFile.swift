@@ -9,22 +9,7 @@
 import Cocoa
 import ProfilePayloads
 
-class PayloadCellViewFile: NSTableCellView, ProfileCreatorCellView, PayloadCellView {
-    
-    // MARK: -
-    // MARK: PayloadCellView Variables
-    
-    var height: CGFloat = 0.0
-    var row = -1
-    
-    weak var subkey: PayloadSourceSubkey?
-    weak var editor: ProfileEditor?
-    
-    var textFieldTitle: NSTextField?
-    var textFieldDescription: NSTextField?
-    var leadingKeyView: NSView?
-    var trailingKeyView: NSView?
-    var isEnabled: Bool { return self.buttonAdd.isEnabled }
+class PayloadCellViewFile: PayloadCellView, ProfileCreatorCellView {
     
     // MARK: -
     // MARK: Instance Variables
@@ -40,32 +25,7 @@ class PayloadCellViewFile: NSTableCellView, ProfileCreatorCellView, PayloadCellV
     }
     
     required init(subkey: PayloadSourceSubkey, editor: ProfileEditor, settings: Dictionary<String, Any>) {
-        
-        self.subkey = subkey
-        self.editor = editor
-        
-        super.init(frame: NSZeroRect)
-        
-        // ---------------------------------------------------------------------
-        //  Setup Variables
-        // ---------------------------------------------------------------------
-        var constraints = [NSLayoutConstraint]()
-        
-        // ---------------------------------------------------------------------
-        //  Get Indent
-        // ---------------------------------------------------------------------
-        let indent = subkey.parentSubkeys?.filter({$0.type == PayloadValueType.dictionary}).count ?? 0
-        
-        // ---------------------------------------------------------------------
-        //  Setup Static View Content
-        // ---------------------------------------------------------------------
-        if let textFieldTitle = EditorTextField.title(subkey: subkey, fontWeight: nil, indent: indent, leadingItem: nil, constraints: &constraints, cellView: self) {
-            self.textFieldTitle = textFieldTitle
-        }
-        
-        if let textFieldDescription = EditorTextField.description(subkey: subkey, indent: indent, constraints: &constraints, cellView: self) {
-            self.textFieldDescription = textFieldDescription
-        }
+        super.init(subkey: subkey, editor: editor, settings: settings)
         
         // ---------------------------------------------------------------------
         //  Read accepted file UTIs from subkey
@@ -76,9 +36,9 @@ class PayloadCellViewFile: NSTableCellView, ProfileCreatorCellView, PayloadCellV
         // ---------------------------------------------------------------------
         //  Setup Custom View Content
         // ---------------------------------------------------------------------
-        self.fileView = EditorFileView.view(acceptedFileUTIs: nil, constraints: &constraints, cellView: self)
-        addConstraintsFor(item: self.fileView!, orientation: .below, constraints: &constraints, cellView: self)
-        setupButtonAdd(constraints: &constraints)
+        self.fileView = EditorFileView.view(acceptedFileUTIs: nil, constraints: &self.cellViewConstraints, cellView: self)
+        self.setupFileView()
+        self.setupButtonAdd()
         
         // ---------------------------------------------------------------------
         //  Set Value
@@ -100,26 +60,22 @@ class PayloadCellViewFile: NSTableCellView, ProfileCreatorCellView, PayloadCellV
         self.trailingKeyView = self.buttonAdd
         
         // ---------------------------------------------------------------------
-        //  Add spacing to bottom
-        // ---------------------------------------------------------------------
-        self.updateHeight(3.0)
-        
-        // ---------------------------------------------------------------------
         //  Activate Layout Constraints
         // ---------------------------------------------------------------------
-        NSLayoutConstraint.activate(constraints)
+        NSLayoutConstraint.activate(self.cellViewConstraints)
     }
     
-    func updateHeight(_ h: CGFloat) {
-        self.height += h
-    }
+    // MARK: -
+    // MARK: PayloadCellView Functions
     
-    func enable(_ enable: Bool) {
+    override func enable(_ enable: Bool) {
+        self.isEnabled = enable
         self.buttonAdd.isEnabled = enable
     }
     
     // MARK: -
     // MARK: Private Functions
+    
     func showPrompt(_ show: Bool) {
         guard let fileView = self.fileView else { return }
         fileView.imageViewIcon.isHidden = show
@@ -282,10 +238,27 @@ class PayloadCellViewFile: NSTableCellView, ProfileCreatorCellView, PayloadCellV
 }
 
 // MARK: -
-// MARK: Setup Layout Constraints
+// MARK: Setup NSLayoutConstraints
 
 extension PayloadCellViewFile {
-    private func setupButtonAdd(constraints: inout [NSLayoutConstraint]) {
+    
+    private func setupFileView() {
+        guard let fileView = self.fileView else { return }
+        
+        // ---------------------------------------------------------------------
+        //  Add constraints
+        // ---------------------------------------------------------------------
+        // Below
+        self.addConstraints(forViewBelow: fileView)
+        
+        // Leading
+        self.addConstraints(forViewLeading: fileView)
+        
+        // Trailing
+        self.addConstraints(forViewTrailing: fileView)
+    }
+    
+    private func setupButtonAdd() {
         guard let fileView = self.fileView else { return }
         
         self.buttonAdd.translatesAutoresizingMaskIntoConstraints = false
@@ -299,10 +272,19 @@ extension PayloadCellViewFile {
         self.buttonAdd.sizeToFit()
         self.buttonAdd.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         
+        // ---------------------------------------------------------------------
+        //  Add Button to TableCellView
+        // ---------------------------------------------------------------------
         self.addSubview(self.buttonAdd)
         
+        // ---------------------------------------------------------------------
+        //  Add constraints
+        // ---------------------------------------------------------------------
+        // Leading
+        self.addConstraints(forViewLeading: self.buttonAdd)
+        
         // Top
-        constraints.append(NSLayoutConstraint(item: self.buttonAdd,
+        self.cellViewConstraints.append(NSLayoutConstraint(item: self.buttonAdd,
                                               attribute: .top,
                                               relatedBy: .equal,
                                               toItem: fileView,
@@ -311,23 +293,5 @@ extension PayloadCellViewFile {
                                               constant: 8.0))
         
         self.updateHeight((8 + self.buttonAdd.intrinsicContentSize.height))
-        
-        // Leading
-        constraints.append(NSLayoutConstraint(item: self.buttonAdd,
-                                              attribute: .leading,
-                                              relatedBy: .equal,
-                                              toItem: self,
-                                              attribute: .leading,
-                                              multiplier: 1.0,
-                                              constant: 8.0))
-        
-        // Trailing
-        constraints.append(NSLayoutConstraint(item: self,
-                                              attribute: .trailing,
-                                              relatedBy: .greaterThanOrEqual,
-                                              toItem: self.buttonAdd,
-                                              attribute: .trailing,
-                                              multiplier: 1.0,
-                                              constant: 8.0))
     }
 }
