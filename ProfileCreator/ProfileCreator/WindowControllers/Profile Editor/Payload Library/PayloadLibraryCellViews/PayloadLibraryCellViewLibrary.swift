@@ -43,7 +43,7 @@ class PayloadLibraryCellViewLibrary: NSTableCellView, PayloadLibraryCellView {
         //  Setup Static View Content
         // ---------------------------------------------------------------------
         self.imageViewIcon = LibraryImageView.icon(image: payloadPlaceholder.icon, width: 28.0, indent: 2.0, constraints: &constraints, cellView: self)
-        self.buttonToggle = LibraryButton.toggle(image: NSImage(named: NSImage.Name.addTemplate), width: 14.0, indent: 5.0, constraints: &constraints, cellView: self)
+        self.buttonToggle = LibraryButton.toggle(image: NSImage(named: .addTemplate), width: 14.0, indent: 5.0, constraints: &constraints, cellView: self)
         self.textFieldTitle = LibraryTextField.title(string: payloadPlaceholder.title, fontSize: 11, fontWeight: NSFont.Weight.semibold.rawValue, indent: 4.0, constraints: &constraints, cellView: self)
         
         // ---------------------------------------------------------------------

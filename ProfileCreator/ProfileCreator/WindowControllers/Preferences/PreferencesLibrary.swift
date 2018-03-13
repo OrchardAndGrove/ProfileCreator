@@ -26,7 +26,7 @@ class PreferencesLibrary: PreferencesItem {
         //  Create the toolbar item
         // ---------------------------------------------------------------------
         self.toolbarItem = NSToolbarItem(itemIdentifier: identifier)
-        self.toolbarItem.image = NSImage(named: NSImage.Name.preferencesGeneral)
+        self.toolbarItem.image = NSImage(named: .preferencesGeneral)
         self.toolbarItem.label = NSLocalizedString("Library", comment: "")
         self.toolbarItem.paletteLabel = self.toolbarItem.label
         self.toolbarItem.toolTip = self.toolbarItem.label

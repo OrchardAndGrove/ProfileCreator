@@ -85,7 +85,7 @@ class ProfileEditorWindowToolbarItemSettingsButton: NSButton {
         //  Setup Self (Toolbar Item)
         // ---------------------------------------------------------------------
         self.bezelStyle = .texturedRounded
-        self.image = NSImage(named: NSImage.Name.actionTemplate)
+        self.image = NSImage(named: .actionTemplate)
         self.target = self
         self.action = #selector(self.clicked(button:))
         self.imageScaling = .scaleProportionallyDown

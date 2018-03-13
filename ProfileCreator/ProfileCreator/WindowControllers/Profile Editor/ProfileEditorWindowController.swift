@@ -19,13 +19,15 @@ public class ProfileEditorWindowController: NSWindowController {
     let toolbarItemIdentifiers: [NSToolbarItem.Identifier] = [.editorSettings,
                                                               NSToolbarItem.Identifier.flexibleSpace,
                                                               .editorTitle,
-                                                              NSToolbarItem.Identifier.flexibleSpace]
+                                                              NSToolbarItem.Identifier.flexibleSpace,
+                                                              .editorView]
     
     // MARK: -
     // MARK: Variables
     
     var toolbarItemTitle: ProfileEditorWindowToolbarItemTitle?
     var toolbarItemSettings: ProfileEditorWindowToolbarItemSettings?
+    var toolbarItemView: ProfileEditorWindowToolbarItemView?
     var windowShouldClose = false
     
     // MARK: -
@@ -189,6 +191,14 @@ extension ProfileEditorWindowController: NSToolbarDelegate {
             }
             
             if let toolbarView = self.toolbarItemSettings {
+                return toolbarView.toolbarItem
+            }
+        case .editorView:
+            if self.toolbarItemView == nil, let profileEditor = self.splitView.editor {
+                self.toolbarItemView = ProfileEditorWindowToolbarItemView(profile: self.profile, profileEditor: profileEditor)
+            }
+            
+            if let toolbarView = self.toolbarItemView {
                 return toolbarView.toolbarItem
             }
         default:

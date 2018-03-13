@@ -42,8 +42,8 @@ class PayloadLibraryCellViewProfile: NSTableCellView, PayloadLibraryCellView {
         // ---------------------------------------------------------------------
         //  Setup Static View Content
         // ---------------------------------------------------------------------
-        self.imageViewIcon = LibraryImageView.icon(image: NSImage(named: NSImage.Name.preferencesGeneral), width: 31.0, indent: 4.0, constraints: &constraints, cellView: self)
-        self.buttonToggle = LibraryButton.toggle(image: NSImage(named: NSImage.Name.removeTemplate), width: 14.0, indent: 5.0, constraints: &constraints, cellView: self)
+        self.imageViewIcon = LibraryImageView.icon(image: NSImage(named: .preferencesGeneral), width: 31.0, indent: 4.0, constraints: &constraints, cellView: self)
+        self.buttonToggle = LibraryButton.toggle(image: NSImage(named: .removeTemplate), width: 14.0, indent: 5.0, constraints: &constraints, cellView: self)
         self.textFieldTitle = LibraryTextField.title(string: payloadPlaceholder.title, fontSize: 12, fontWeight: NSFont.Weight.bold.rawValue, indent: 6.0, constraints: &constraints, cellView: self)
         self.textFieldDescription = LibraryTextField.description(string: "1 Payload", constraints: &constraints, cellView: self)
         

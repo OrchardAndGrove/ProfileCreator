@@ -71,6 +71,8 @@
 		E32767E61F3F71B700B4670C /* PayloadCellViewFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32767E51F3F71B700B4670C /* PayloadCellViewFile.swift */; };
 		E32767E81F3F736B00B4670C /* PayloadCellViewItemFileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32767E71F3F736B00B4670C /* PayloadCellViewItemFileView.swift */; };
 		E331A46C1FB2EAB800F98477 /* ProfileExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = E331A46B1FB2EAB800F98477 /* ProfileExport.swift */; };
+		E347E4BF2057C51A008F5137 /* ProfileEditorWindowToolbarItemEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E347E4BE2057C51A008F5137 /* ProfileEditorWindowToolbarItemEditorView.swift */; };
+		E347E4C22057C9F3008F5137 /* xml.png in Resources */ = {isa = PBXBuildFile; fileRef = E347E4C12057C9F3008F5137 /* xml.png */; };
 		E34A527D2036E39E00A9508F /* ProfileEditorSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E34A527C2036E39E00A9508F /* ProfileEditorSettings.swift */; };
 		E34A527F2036E3B600A9508F /* ProfileEditorSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E34A527E2036E3B600A9508F /* ProfileEditorSettingsViewController.swift */; };
 		E3505C951F4AB82B00FC39AD /* ProfilePayloads.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E39287151F4A27DE005383CC /* ProfilePayloads.framework */; };
@@ -175,6 +177,8 @@
 		E32767E51F3F71B700B4670C /* PayloadCellViewFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewFile.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViewFile.swift"; sourceTree = "<group>"; };
 		E32767E71F3F736B00B4670C /* PayloadCellViewItemFileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewItemFileView.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViewItems/PayloadCellViewItemFileView.swift"; sourceTree = "<group>"; };
 		E331A46B1FB2EAB800F98477 /* ProfileExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProfileExport.swift; path = Profile/ProfileExport.swift; sourceTree = "<group>"; };
+		E347E4BE2057C51A008F5137 /* ProfileEditorWindowToolbarItemEditorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileEditorWindowToolbarItemEditorView.swift; sourceTree = "<group>"; };
+		E347E4C12057C9F3008F5137 /* xml.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = xml.png; sourceTree = "<group>"; };
 		E34A527C2036E39E00A9508F /* ProfileEditorSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProfileEditorSettings.swift; path = "WindowControllers/Profile Editor/Settings/ProfileEditorSettings.swift"; sourceTree = "<group>"; };
 		E34A527E2036E3B600A9508F /* ProfileEditorSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProfileEditorSettingsViewController.swift; path = "WindowControllers/Profile Editor/Settings/ProfileEditorSettingsViewController.swift"; sourceTree = "<group>"; };
 		E3577C19204A74E9007D9FE9 /* FileInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FileInfo.swift; path = "WindowControllers/Profile Editor/Editor/FileInfoProcessor/FileInfo.swift"; sourceTree = "<group>"; };
@@ -334,6 +338,7 @@
 				535CB4611F2BC26B00A746F6 /* Settings-16.png */,
 				53DADB4D1F1382B40045CB3F /* SidebarFolder.icns */,
 				5365F48B1F0F87440064C02A /* downarrow.png */,
+				E347E4C12057C9F3008F5137 /* xml.png */,
 			);
 			name = Icons;
 			sourceTree = "<group>";
@@ -371,6 +376,7 @@
 			children = (
 				5370780C1F232DAA00570090 /* ProfileEditorWindowToolbarItemTitle.swift */,
 				E3CBFE0C20343874006037D4 /* ProfileEditorWindowToolbarItemSettings.swift */,
+				E347E4BE2057C51A008F5137 /* ProfileEditorWindowToolbarItemEditorView.swift */,
 			);
 			name = Toolbar;
 			sourceTree = "<group>";
@@ -580,6 +586,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				539592621F102DEE005090B3 /* Defaults.plist in Resources */,
+				E347E4C22057C9F3008F5137 /* xml.png in Resources */,
 				539832161F0EE15400C4792D /* Assets.xcassets in Resources */,
 				535CB4631F2BC26B00A746F6 /* Approval-18.png in Resources */,
 				539832191F0EE15400C4792D /* Main.storyboard in Resources */,
@@ -662,6 +669,7 @@
 				538D2C471F1BC73800FF6051 /* PreferencesGeneral.swift in Sources */,
 				E3BFD6701F4DC8E9001120DB /* PayloadCellViewTableView.swift in Sources */,
 				E391A21820316C3800CCE71C /* ProfileEditorUI.swift in Sources */,
+				E347E4BF2057C51A008F5137 /* ProfileEditorWindowToolbarItemEditorView.swift in Sources */,
 				530CD3DA1F17793B0071E866 /* MainWindowTableViewItems.swift in Sources */,
 				532917891F32593800CD7175 /* PayloadCellViewItemCheckbox.swift in Sources */,
 				5370780D1F232DAA00570090 /* ProfileEditorWindowToolbarItemTitle.swift in Sources */,

@@ -11,6 +11,7 @@ import ProfilePayloads
 
 class ProfileExport {
     
+    var ignoreErrorInvalidValue = false
     var profileIdentifier: String?
     
     func export(profile: Profile, profileURL: URL) throws -> Void {
@@ -147,34 +148,11 @@ class ProfileExport {
                 // Ignore not enabled Payloads
                 if let enabled = domainSettings[SettingsKey.enabled] as? Bool, !enabled { continue }
                 
+                // Create a new PayloadContent dictionary
                 var payloadContent = Dictionary<String, Any>()
                 
-                if let payloadSource = ProfilePayloads.shared.payloadSource(domain: domain, type: type) {
-                    
-                    // ---------------------------------------------------------------------
-                    //  Get the view settings for the current domain
-                    // ---------------------------------------------------------------------
-                    let viewTypeSettings = profile.payloadViewTypeSettings(type: type)
-                    let viewDomainSettings = viewTypeSettings[domain] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
-                    
-                    // ---------------------------------------------------------------------
-                    //  Export the current domain
-                    // ---------------------------------------------------------------------
-                    try self.export(subkeys: payloadSource.subkeys,
-                                    domainSettings: domainSettings,
-                                    typeSettings: typeSettingsDict,
-                                    viewDomainSettings: viewDomainSettings,
-                                    viewTypeSettings: viewTypeSettings,
-                                    payloadContent: &payloadContent)
-                    
-                    // ---------------------------------------------------------------------
-                    //  Update the payload version (and hash) if anything has changed
-                    // ---------------------------------------------------------------------
-                    self.updatePayloadVersion(profile: profile, type: type, domain: domain, viewDomainSettings: viewDomainSettings, payloadContent: &payloadContent)
-                    
-                } else {
-                    Swift.print("Failed to get a payloadSource for domain: \(domain) of type: \(type)")
-                }
+                // Populate the PayloadContent dictionary
+                try self.export(profile: profile, domain: domain, type: type, domainSettings: domainSettings, typeSettings: typeSettingsDict, payloadContent: &payloadContent)
                 
                 // ---------------------------------------------------------------------
                 //  If payload is not empty, add to all payloads
@@ -230,12 +208,49 @@ class ProfileExport {
         }
     }
     
+    func export(profile: Profile,
+                domain: String,
+                type: PayloadSourceType,
+                domainSettings: Dictionary<String, Any>,
+                typeSettings: Dictionary<String, Any>,
+                payloadContent: inout Dictionary<String, Any>) throws {
+        
+        if let payloadSource = ProfilePayloads.shared.payloadSource(domain: domain, type: type) {
+            
+            // ---------------------------------------------------------------------
+            //  Get the view settings for the current domain
+            // ---------------------------------------------------------------------
+            let viewTypeSettings = profile.payloadViewTypeSettings(type: type)
+            let viewDomainSettings = viewTypeSettings[domain] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
+            
+            // ---------------------------------------------------------------------
+            //  Export the current domain
+            // ---------------------------------------------------------------------
+            try self.export(subkeys: payloadSource.subkeys,
+                            domainSettings: domainSettings,
+                            typeSettings: typeSettings,
+                            viewDomainSettings: viewDomainSettings,
+                            viewTypeSettings: viewTypeSettings,
+                            payloadContent: &payloadContent)
+            
+            // ---------------------------------------------------------------------
+            //  Update the payload version (and hash) if anything has changed
+            // ---------------------------------------------------------------------
+            self.updatePayloadVersion(profile: profile, type: type, domain: domain, viewDomainSettings: viewDomainSettings, payloadContent: &payloadContent)
+            
+        } else {
+            Swift.print("Failed to get a payloadSource for domain: \(domain) of type: \(type)")
+        }
+        
+    }
+    
     func export(subkeys: [PayloadSourceSubkey],
                 domainSettings: Dictionary<String, Any>,
                 typeSettings: Dictionary<String, Any>,
                 viewDomainSettings: Dictionary<String, Any>,
                 viewTypeSettings: Dictionary<String, Any>,
                 payloadContent: inout Dictionary<String, Any>) throws {
+        
         for subkey in subkeys {
             
             // ---------------------------------------------------------------------
@@ -492,6 +507,14 @@ class ProfileExport {
     
     func verify(value: Any?, forSubkey subkey: PayloadSourceSubkey) throws {
         
+        // ---------------------------------------------------------------------
+        //  If variable ignoreErrorInvalidValue is set to true, don't verify the value
+        // ---------------------------------------------------------------------
+        if self.ignoreErrorInvalidValue { return }
+        
+        // ---------------------------------------------------------------------
+        //  Create the error to return if any check fails
+        // ---------------------------------------------------------------------
         let errorInvalid = ProfileExportError.invalid(value: value, forKey: subkey.key, inDomain: subkey.domain, ofType: subkey.payloadSourceType)
         
         // ---------------------------------------------------------------------

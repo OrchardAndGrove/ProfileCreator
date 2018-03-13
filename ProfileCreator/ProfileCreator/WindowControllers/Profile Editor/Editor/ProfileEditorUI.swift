@@ -97,6 +97,28 @@ extension ProfileEditor {
         
     }
     
+    func setupTextView(constraints: inout [NSLayoutConstraint]) {
+        self.textView.minSize = NSSize(width: 0, height: 0)
+        self.textView.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+        self.textView.isVerticallyResizable = true
+        self.textView.isHorizontallyResizable = true
+        self.textView.drawsBackground = false
+        self.textView.isEditable = false
+        self.textView.isSelectable = true
+        
+        self.textView.font = NSFont(name: "Menlo Regular", size: NSFont.systemFontSize(for: .regular))
+        self.textView.textColor = NSColor.controlTextColor
+        self.textView.string = "This is a test string"
+    
+        self.textView.textContainerInset = NSSize(width: 50, height: 30)
+        
+        // Use old resizing masks until I know how to replicate with AutoLayout.
+        self.textView.autoresizingMask = .width
+        
+        self.textView.textContainer?.containerSize = NSSize(width: self.scrollView.contentSize.width, height: CGFloat.greatestFiniteMagnitude)
+        self.textView.textContainer?.heightTracksTextView = false
+    }
+    
     internal func setupTableView(profile: Profile, constraints: inout [NSLayoutConstraint]) {
         self.tableView.translatesAutoresizingMaskIntoConstraints = false
         self.tableView.floatsGroupRows = false

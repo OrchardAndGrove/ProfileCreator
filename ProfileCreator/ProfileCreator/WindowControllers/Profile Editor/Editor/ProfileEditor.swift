@@ -14,8 +14,9 @@ class ProfileEditor: NSObject {
     // MARK: -
     // MARK: Variables
     
-    let tableView = ProfileEditorTableView()
     let headerView: ProfileEditorHeaderView
+    let tableView = ProfileEditorTableView()
+    let textView = NSTextView()
     let scrollView = NSScrollView()
     let separator = NSBox(frame: NSZeroRect)
     let settings: ProfileEditorSettings
@@ -69,6 +70,11 @@ class ProfileEditor: NSObject {
         self.setupHeaderView(constraints: &constraints)
         self.setupSeparator(constraints: &constraints)
         self.setupTableView(profile: profile, constraints: &constraints)
+        
+        // ---------------------------------------------------------------------
+        //  Setup TextView
+        // ---------------------------------------------------------------------
+        self.setupTextView(constraints: &constraints)
         
         // ---------------------------------------------------------------------
         //  Setup Notification Observers
@@ -148,11 +154,55 @@ class ProfileEditor: NSObject {
         })
     }
     
+    func select(view: Int) {
+        switch view {
+        case EditorViewTag.profileCreator.rawValue:
+            guard self.scrollView.documentView != self.tableView else { return }
+            
+            Swift.print("Profile Creator")
+            self.scrollView.documentView = self.tableView
+        case EditorViewTag.source.rawValue:
+            guard
+                self.scrollView.documentView != self.textView,
+                let selectedPayloadPlaceholder = self.selectedPayloadPlaceholder else { return }
+            self.updateTextView(payloadPlaceholder: selectedPayloadPlaceholder)
+            self.scrollView.documentView = self.textView
+        default:
+            Swift.print("Unknown Tag!")
+        }
+        Swift.print("Show: \(view)")
+    }
+    
+    func updateTextView(payloadPlaceholder: PayloadPlaceholder) {
+        guard let profile = self.profile else { return }
+        
+        let profileExport = ProfileExport()
+        profileExport.ignoreErrorInvalidValue = true
+        
+        var payloadContent = Dictionary<String, Any>()
+        do {
+            try profileExport.export(profile: profile,
+                                     domain: payloadPlaceholder.domain,
+                                     type: payloadPlaceholder.payloadSourceType,
+                                     domainSettings: profile.payloadDomainSettings(domain: payloadPlaceholder.domain,
+                                                                                   type: payloadPlaceholder.payloadSourceType),
+                                     typeSettings: profile.payloadTypeSettings(type: payloadPlaceholder.payloadSourceType),
+                                     payloadContent: &payloadContent)
+        } catch let error {
+            Swift.print("Export failed: \(error)")
+        }
+        
+        if !payloadContent.isEmpty {
+            self.textView.string = NSDictionary(dictionary: payloadContent).description
+        }
+    }
+    
     func select(payloadPlaceholder: PayloadPlaceholder) {
         if self.selectedPayloadPlaceholder != payloadPlaceholder {
             self.selectedPayloadPlaceholder = payloadPlaceholder
             self.headerView.select(payloadPlaceholder: payloadPlaceholder)
             self.reloadTableView(updateCellViews: true)
+            self.updateTextView(payloadPlaceholder: payloadPlaceholder)
         }
     }
     

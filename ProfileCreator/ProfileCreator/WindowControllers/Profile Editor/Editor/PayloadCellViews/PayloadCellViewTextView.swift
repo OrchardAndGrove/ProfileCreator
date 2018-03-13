@@ -87,6 +87,9 @@ class PayloadCellViewTextView: PayloadCellView, ProfileCreatorCellView, NSTextFi
         NSLayoutConstraint.activate(self.cellViewConstraints)
     }
     
+    // MARK: -
+    // MARK: PayloadCellView Functions
+    
     override func enable(_ enable: Bool) {
         self.isEnabled = enable
         Swift.print("TextView Enable: \(enable)")
@@ -154,7 +157,7 @@ extension PayloadCellViewTextView: NSTextViewDelegate {
 }
 
 // MARK: -
-// MARK: Setup Layout Constraints
+// MARK: Setup NSLayoutConstraints
 
 extension PayloadCellViewTextView {
     

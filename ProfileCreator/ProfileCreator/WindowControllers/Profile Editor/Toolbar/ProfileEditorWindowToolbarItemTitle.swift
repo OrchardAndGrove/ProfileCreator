@@ -113,9 +113,12 @@ class ProfileEditorWindowToolbarItemTitle: NSView {
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == self.profileTitleSelector { self.updateTitle() }
     }
-    
-    // MARK: -
-    // MARK: Setup Layout Constraints
+}
+
+// MARK: -
+// MARK: Setup NSLayoutConstraints
+
+extension ProfileEditorWindowToolbarItemTitle {
     
     func setupTextFieldTitle(constraints: inout [NSLayoutConstraint]) {
         

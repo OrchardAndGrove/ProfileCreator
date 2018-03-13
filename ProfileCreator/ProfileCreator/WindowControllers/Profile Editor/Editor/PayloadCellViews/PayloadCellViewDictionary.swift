@@ -75,20 +75,6 @@ extension PayloadCellViewDictionary {
     private func setup(separatorBottom: NSBox) {
         
         // ---------------------------------------------------------------------
-        //  Add Constraints
-        // ---------------------------------------------------------------------
-        
-        // Top
-        let textField: NSTextField
-        if let textFieldDescription = self.textFieldDescription {
-            textField = textFieldDescription
-        } else if let textFieldTitle = self.textFieldTitle {
-            textField = textFieldTitle
-        } else {
-            return
-        }
-        
-        // ---------------------------------------------------------------------
         //  Add TextField to TableCellView
         // ---------------------------------------------------------------------
         self.addSubview(separatorBottom)
@@ -103,6 +89,15 @@ extension PayloadCellViewDictionary {
         self.addConstraints(forViewTrailing: separatorBottom)
         
         // Top
+        let textField: NSTextField
+        if let textFieldDescription = self.textFieldDescription {
+            textField = textFieldDescription
+        } else if let textFieldTitle = self.textFieldTitle {
+            textField = textFieldTitle
+        } else {
+            return
+        }
+        
         self.cellViewConstraints.append(NSLayoutConstraint(item: separatorBottom,
                                               attribute: .top,
                                               relatedBy: .equal,

@@ -26,7 +26,7 @@ class PreferencesProfileDefaults: PreferencesItem {
         //  Create the toolbar item
         // ---------------------------------------------------------------------
         self.toolbarItem = NSToolbarItem(itemIdentifier: identifier)
-        self.toolbarItem.image = NSImage(named: NSImage.Name.homeTemplate)
+        self.toolbarItem.image = NSImage(named: .homeTemplate)
         self.toolbarItem.label = NSLocalizedString("Profile Defaults", comment: "")
         self.toolbarItem.paletteLabel = self.toolbarItem.label
         self.toolbarItem.toolTip = self.toolbarItem.label

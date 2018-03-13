@@ -72,7 +72,7 @@ class MainWindowWelcomeViewController: NSObject {
         // ---------------------------------------------------------------------
         self.button.translatesAutoresizingMaskIntoConstraints = false
         self.button.bezelStyle = .texturedRounded
-        self.button.image = NSImage(named: NSImage.Name.addTemplate)
+        self.button.image = NSImage(named: .addTemplate)
         self.button.target = self
         self.button.action = #selector(clicked(button:))
         self.button.imageScaling = .scaleProportionallyDown

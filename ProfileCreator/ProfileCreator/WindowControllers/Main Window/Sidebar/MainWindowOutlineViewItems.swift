@@ -93,7 +93,7 @@ class OutlineViewParentCellView: NSTableCellView {
             self.buttonAdd?.isBordered = false
             self.buttonAdd?.isTransparent = false
             self.buttonAdd?.imagePosition = .imageOnly
-            self.buttonAdd?.image = NSImage(named: NSImage.Name.addTemplate)
+            self.buttonAdd?.image = NSImage(named: .addTemplate)
             (self.buttonAdd?.cell as! NSButtonCell).highlightsBy = NSCell.StyleMask(rawValue: (
                 NSCell.StyleMask.pushInCellMask.rawValue | NSCell.StyleMask.changeBackgroundCellMask.rawValue ))
             self.buttonAdd?.sizeToFit()

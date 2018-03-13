@@ -41,9 +41,15 @@ enum LibraryTag: Int {
     case developer
 }
 
+enum EditorViewTag: Int {
+    case profileCreator
+    case source
+}
+
 extension NSToolbarItem.Identifier {
     static let editorTitle = NSToolbarItem.Identifier("editorTitle")
     static let editorSettings = NSToolbarItem.Identifier("editorSettings")
+    static let editorView = NSToolbarItem.Identifier("editorView")
     static let mainWindowAdd = NSToolbarItem.Identifier("mainWindowAdd")
     static let mainWindowExport = NSToolbarItem.Identifier("mainWindowExport")
     static let preferencesGeneral = NSToolbarItem.Identifier("preferencesGeneral")

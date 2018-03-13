@@ -446,6 +446,11 @@ public class Profile: NSDocument {
         var domainSettings = typeSettings[payloadSource.domain] ?? Dictionary<String, Any>()
         
         // ---------------------------------------------------------------------
+        //  Verify the domain has the required settings
+        // ---------------------------------------------------------------------
+        self.updateDomainSettings(&domainSettings)
+        
+        // ---------------------------------------------------------------------
         //  Set the new value
         // ---------------------------------------------------------------------
         domainSettings[SettingsKey.enabled] = selected
@@ -453,7 +458,7 @@ public class Profile: NSDocument {
         // ---------------------------------------------------------------------
         //  If disabled an no other settings are set, remove the domain
         // ---------------------------------------------------------------------
-        if !selected, domainSettings.keys.count == 1 {
+        if !selected, domainSettings.keys.count <= 3 {
             typeSettings.removeValue(forKey: payloadSource.domain)
         } else {
             typeSettings[payloadSource.domain] = domainSettings

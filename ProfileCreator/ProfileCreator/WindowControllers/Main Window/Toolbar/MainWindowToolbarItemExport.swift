@@ -151,7 +151,7 @@ class MainWindowToolbarItemExportButton: NSButton {
         //  Setup Self (Toolbar Item)
         // ---------------------------------------------------------------------
         self.bezelStyle = .texturedRounded
-        self.image = NSImage(named: NSImage.Name.shareTemplate)
+        self.image = NSImage(named: .shareTemplate)
         self.target = self
         self.action = #selector(self.clicked(button:))
         self.imageScaling = .scaleProportionallyDown
