@@ -131,6 +131,7 @@ class ProfileEditor: NSObject {
     
     func updatePayloadSelection(selected: Bool, payloadSource: PayloadSource) {
         self.profile?.updatePayloadSelection(selected: selected, payloadSource: payloadSource, updateComplete: { (successful, error) in
+            if successful, let payloadPlaceholder = self.selectedPayloadPlaceholder { self.updateTextView(payloadPlaceholder: payloadPlaceholder) }
             Swift.print("Class: \(self.self), Function: \(#function), SelectionSettings Changed with status: \(successful)")
         })
     }
@@ -178,6 +179,7 @@ class ProfileEditor: NSObject {
         
         let profileExport = ProfileExport()
         profileExport.ignoreErrorInvalidValue = true
+        profileExport.ignoreSave = true
         
         var payloadContent = Dictionary<String, Any>()
         do {
@@ -193,16 +195,89 @@ class ProfileEditor: NSObject {
         }
         
         if !payloadContent.isEmpty {
-            self.textView.string = NSDictionary(dictionary: payloadContent).description
+            self.getPlistString(dictionary: payloadContent, completionHandler: { (string, error) in
+                if let payloadString = string {
+                    self.textView.string = payloadString
+                    // self.textView.deleteToBeginningOfLine(nil)
+                } else {
+                    Swift.print("Error: \(String(describing: error))")
+                    self.textView.string = ""
+                }
+            })
+        } else {
+            self.textView.string = ""
         }
+    }
+    
+    func getPlistString(dictionary: Dictionary<String, Any>, completionHandler: @escaping (String?, Error?) -> Void) {
+        
+        // ---------------------------------------------------------------------
+        //  Generate a temporary unique URL to write the dictionary to
+        // ---------------------------------------------------------------------
+        let tmpURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString)
+        
+        // ---------------------------------------------------------------------
+        //  Write the dictionary to a file at the temporary URL
+        // ---------------------------------------------------------------------
+        if #available(OSX 10.13, *) {
+            do {
+                try NSDictionary(dictionary: dictionary).write(to: tmpURL)
+            } catch let error {
+                // FIXME: Correct Error
+                Swift.print("Failed to write: \(error)")
+            }
+        } else {
+            if !NSDictionary(dictionary: dictionary).write(to: tmpURL, atomically: true) {
+                // FIXME: Correct Error
+            }
+        }
+        
+        // ---------------------------------------------------------------------
+        //  Read the contents of the file at the temporary URL
+        // ---------------------------------------------------------------------
+        var plistString: String?
+        var plistError: Error?
+        do {
+            plistString = try String(contentsOf: tmpURL, encoding: .utf8)
+        } catch let error {
+            plistError = error
+        }
+        
+        // ---------------------------------------------------------------------
+        //  Remove the file at the temporary URL
+        // ---------------------------------------------------------------------
+        try? FileManager.default.removeItem(at: tmpURL)
+        
+        // ---------------------------------------------------------------------
+        //  If file contents wasn't empty, then remove the plist header and tag
+        // ---------------------------------------------------------------------
+        if let string = plistString {
+            
+            // Create a scanner from the file contents
+            let scanner = Scanner(string: string)
+            var scannerString: NSString? = ""
+            
+            // Move to the first line containing '<dict>'
+            scanner.scanUpTo("<dict>", into: nil)
+            
+            // Add all lines until a line contains '</plist>' to scannerString
+            scanner.scanUpTo("</plist>", into: &scannerString)
+            
+            // If the scannerString is not empty, replace the plistString
+            if scannerString?.length != 0 {
+                plistString = scannerString as String?
+            }
+        }
+        
+        completionHandler(plistString, plistError)
     }
     
     func select(payloadPlaceholder: PayloadPlaceholder) {
         if self.selectedPayloadPlaceholder != payloadPlaceholder {
             self.selectedPayloadPlaceholder = payloadPlaceholder
             self.headerView.select(payloadPlaceholder: payloadPlaceholder)
-            self.reloadTableView(updateCellViews: true)
             self.updateTextView(payloadPlaceholder: payloadPlaceholder)
+            self.reloadTableView(updateCellViews: true)
         }
     }
     

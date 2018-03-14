@@ -12,6 +12,8 @@ import ProfilePayloads
 class ProfileExport {
     
     var ignoreErrorInvalidValue = false
+    var ignoreSave = false
+    
     var profileIdentifier: String?
     
     func export(profile: Profile, profileURL: URL) throws -> Void {
@@ -184,7 +186,7 @@ class ProfileExport {
             //  Update Payload Hash
             // ---------------------------------------------------------------------
             profile.updateViewSettings(value: payloadHash, key: SettingsKey.hash, keyPath: nil, domain: domain, type: type, updateComplete: { (success, error) in
-                if success { profile.save(self) }
+                if success, !self.ignoreSave { profile.save(self) }
             })
         } else if payloadHash != lastPayloadHash {
             
@@ -194,7 +196,7 @@ class ProfileExport {
             let newPayloadVersion = lastPayloadVersion + 1
             payloadContent[PayloadKey.payloadVersion] = newPayloadVersion
             profile.updatePayloadSettings(value: newPayloadVersion, key: PayloadKey.payloadVersion, domain: domain, type: type, updateComplete: { (success, error) in
-                if success { profile.save(self) }
+                if success, !self.ignoreSave { profile.save(self) }
             })
             
             // ---------------------------------------------------------------------
@@ -203,7 +205,7 @@ class ProfileExport {
             let newPayloadData = NSKeyedArchiver.archivedData(withRootObject: payloadContent)
             let newPayloadHash = newPayloadData.hashValue
             profile.updateViewSettings(value: newPayloadHash, key: SettingsKey.hash, keyPath: nil, domain: domain, type: type, updateComplete: { (success, error) in
-                if success { profile.save(self) }
+                if success, !self.ignoreSave { profile.save(self) }
             })
         }
     }
