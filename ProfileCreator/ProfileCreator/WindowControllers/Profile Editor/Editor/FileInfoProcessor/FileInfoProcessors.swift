@@ -24,6 +24,8 @@ class FileInfoProcessors {
             
             if NSWorkspace.shared.type(fileUTI, conformsToType: "public.x509-certificate") {
                 return FileInfoProcessorCertificate(fileURL: url)
+            } else if NSWorkspace.shared.type(fileUTI, conformsToType: "public.font") {
+                return FileInfoProcessorFont(fileURL: url)
             }
         }
         return FileInfoProcessor(fileURL: url)
@@ -34,6 +36,8 @@ class FileInfoProcessors {
             
             if NSWorkspace.shared.type(fileUTI, conformsToType: "public.x509-certificate") {
                 return FileInfoProcessorCertificate(data: data, fileInfo: fileInfo)
+            } else if NSWorkspace.shared.type(fileUTI, conformsToType: "public.font") {
+                return FileInfoProcessorFont(data: data, fileInfo: fileInfo)
             }
             
         }

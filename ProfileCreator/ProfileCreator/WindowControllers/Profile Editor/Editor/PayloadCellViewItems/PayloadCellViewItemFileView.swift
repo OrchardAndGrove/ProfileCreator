@@ -125,8 +125,7 @@ class FileView: NSView {
     }
 
     private func setupPrompt(constraints: inout [NSLayoutConstraint]) {
-        setup(textField: self.textFieldPropmpt, fontWeight: NSFont.Weight.regular, fontSize: 15, fontColor: NSColor.tertiaryLabelColor)
-        
+        self.setup(textField: self.textFieldPropmpt, fontWeight: .regular, fontSize: 15, fontColor: .tertiaryLabelColor)
         self.addSubview(self.textFieldPropmpt)
         
         // Center X
@@ -149,11 +148,9 @@ class FileView: NSView {
     }
     
     private func setupImageView(constraints: inout [NSLayoutConstraint]) {
-        
         self.imageViewIcon.translatesAutoresizingMaskIntoConstraints = false
         self.imageViewIcon.imageScaling = .scaleProportionallyUpOrDown
         self.imageViewIcon.setContentHuggingPriority(.required, for: .horizontal)
-        
         self.addSubview(self.imageViewIcon)
         
         // Top
@@ -194,8 +191,7 @@ class FileView: NSView {
     }
     
     private func setupTitle(constraints: inout [NSLayoutConstraint]) {
-        setup(textField: self.textFieldTitle, fontWeight: NSFont.Weight.bold, fontSize: 15, fontColor: NSColor.labelColor)
-        
+        self.setup(textField: self.textFieldTitle, fontWeight: .bold, fontSize: 15, fontColor: .labelColor)
         self.addSubview(self.textFieldTitle)
         
         // Top
@@ -227,44 +223,10 @@ class FileView: NSView {
         
     }
     
-    private func setupContent(textField: NSTextField, label: NSTextField, constraints: inout [NSLayoutConstraint]) {
-        setup(textField: textField, fontWeight: NSFont.Weight.regular, fontSize: (NSFont.systemFontSize(for: .small) + 1), fontColor: NSColor.controlShadowColor)
-        
-        self.addSubview(textField)
-        
-        // Baseline
-        constraints.append(NSLayoutConstraint(item: textField,
-                                              attribute: .firstBaseline,
-                                              relatedBy: .equal,
-                                              toItem: label,
-                                              attribute: .firstBaseline,
-                                              multiplier: 1.0,
-                                              constant: 0.0))
-        
-        // Leading
-        constraints.append(NSLayoutConstraint(item: textField,
-                                              attribute: .leading,
-                                              relatedBy: .equal,
-                                              toItem: label,
-                                              attribute: .trailing,
-                                              multiplier: 1.0,
-                                              constant: 8.0))
-        
-        // Trailing
-        constraints.append(NSLayoutConstraint(item: self,
-                                              attribute: .trailing,
-                                              relatedBy: .equal,
-                                              toItem: textField,
-                                              attribute: .trailing,
-                                              multiplier: 1.0,
-                                              constant: 8.0))
-        
-    }
-    
     private func setupLabel(textField: NSTextField, previousLabel: NSTextField?, constraints: inout [NSLayoutConstraint]) {
-        setup(textField: textField, fontWeight: NSFont.Weight.regular, fontSize: (NSFont.systemFontSize(for: .small) + 1), fontColor: NSColor.secondaryLabelColor)
-        textField.setContentHuggingPriority(NSLayoutConstraint.Priority(rawValue: (NSLayoutConstraint.Priority.defaultLow.rawValue + 1)), for: .horizontal)
-        
+        self.setup(textField: textField, fontWeight: .medium, fontSize: (NSFont.systemFontSize(for: .small) + 1), fontColor: .secondaryLabelColor)
+        textField.setContentCompressionResistancePriority(.required, for: .horizontal)
+        textField.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         self.addSubview(textField)
         
         let topConstraint: CGFloat
@@ -302,9 +264,42 @@ class FileView: NSView {
                                               constant: 14.0))
     }
     
+    private func setupContent(textField: NSTextField, label: NSTextField, constraints: inout [NSLayoutConstraint]) {
+        self.setup(textField: textField, fontWeight: .regular, fontSize: (NSFont.systemFontSize(for: .small) + 1), fontColor: .controlShadowColor)
+        self.addSubview(textField)
+        
+        // Baseline
+        constraints.append(NSLayoutConstraint(item: textField,
+                                              attribute: .firstBaseline,
+                                              relatedBy: .equal,
+                                              toItem: label,
+                                              attribute: .firstBaseline,
+                                              multiplier: 1.0,
+                                              constant: 0.0))
+        
+        // Leading
+        constraints.append(NSLayoutConstraint(item: textField,
+                                              attribute: .leading,
+                                              relatedBy: .equal,
+                                              toItem: label,
+                                              attribute: .trailing,
+                                              multiplier: 1.0,
+                                              constant: 8.0))
+        
+        // Trailing
+        constraints.append(NSLayoutConstraint(item: self,
+                                              attribute: .trailing,
+                                              relatedBy: .equal,
+                                              toItem: textField,
+                                              attribute: .trailing,
+                                              multiplier: 1.0,
+                                              constant: 8.0))
+        
+    }
+    
     private func setup(textField: NSTextField, fontWeight: NSFont.Weight, fontSize: CGFloat, fontColor: NSColor) {
         textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.lineBreakMode = .byTruncatingMiddle
+        textField.lineBreakMode = .byTruncatingTail
         textField.isBordered = false
         textField.isBezeled = false
         textField.drawsBackground = false

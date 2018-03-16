@@ -85,7 +85,7 @@ class PayloadCellViewFooter: NSTableCellView, ProfileCreatorCellView {
         row.drawsBackground = false
         row.isEditable = false
         row.isSelectable = false
-        row.textColor = NSColor.tertiaryLabelColor
+        row.textColor = .tertiaryLabelColor
         row.preferredMaxLayoutWidth = editorTableViewColumnPayloadWidth
         row.alignment = .center
         row.font = NSFont.systemFont(ofSize: 10, weight: .light)

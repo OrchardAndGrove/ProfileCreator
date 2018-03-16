@@ -96,6 +96,7 @@
 		E3C8D5481F3F31850083DA5F /* PayloadCellViewTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C8D5471F3F31850083DA5F /* PayloadCellViewTextView.swift */; };
 		E3C8D54A1F3F31CE0083DA5F /* PayloadCellViewItemTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C8D5491F3F31CE0083DA5F /* PayloadCellViewItemTextView.swift */; };
 		E3CBFE0D20343874006037D4 /* ProfileEditorWindowToolbarItemSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CBFE0C20343874006037D4 /* ProfileEditorWindowToolbarItemSettings.swift */; };
+		E3CE1ACC205C019A00B3B012 /* FileInfoProcessorFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CE1ACB205C019A00B3B012 /* FileInfoProcessorFont.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -203,6 +204,7 @@
 		E3C8D5471F3F31850083DA5F /* PayloadCellViewTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewTextView.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViewTextView.swift"; sourceTree = "<group>"; };
 		E3C8D5491F3F31CE0083DA5F /* PayloadCellViewItemTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewItemTextView.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViewItems/PayloadCellViewItemTextView.swift"; sourceTree = "<group>"; };
 		E3CBFE0C20343874006037D4 /* ProfileEditorWindowToolbarItemSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditorWindowToolbarItemSettings.swift; sourceTree = "<group>"; };
+		E3CE1ACB205C019A00B3B012 /* FileInfoProcessorFont.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FileInfoProcessorFont.swift; path = "WindowControllers/Profile Editor/Editor/FileInfoProcessor/FileInfoProcessorFont.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -525,6 +527,7 @@
 				E35C7FBF2045EA8A009971F5 /* FileInfoProcessors.swift */,
 				E3577C1B204A7536007D9FE9 /* FileInfoProcessor.swift */,
 				E31FFE62205BAE8A0027D40A /* FileInfoProcessorCertificate.swift */,
+				E3CE1ACB205C019A00B3B012 /* FileInfoProcessorFont.swift */,
 			);
 			name = FileInfoProcessor;
 			sourceTree = "<group>";
@@ -687,6 +690,7 @@
 				E37C67AD1F415D5D00B3D4CB /* PayloadCellViewItemDatePicker.swift in Sources */,
 				5383C1961F2C9127004EBE9B /* PayloadLibraryCellView.swift in Sources */,
 				5309D1311F29BB1E007C9D01 /* PayloadCellViewItemTextField.swift in Sources */,
+				E3CE1ACC205C019A00B3B012 /* FileInfoProcessorFont.swift in Sources */,
 				5395925F1F1012F3005090B3 /* MainWindowToolbarItemExport.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

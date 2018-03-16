@@ -225,8 +225,8 @@ class PayloadCellViewFile: PayloadCellView, ProfileCreatorCellView {
             fileView.textFieldTopLabel.textColor = .red
             fileView.textFieldTopContent.textColor = .red
         } else {
-            fileView.textFieldTopLabel.textColor = .black
-            fileView.textFieldTopContent.textColor = .black
+            fileView.textFieldTopLabel.textColor = .secondaryLabelColor
+            fileView.textFieldTopContent.textColor = .controlShadowColor
         }
         
         // Center
@@ -236,8 +236,8 @@ class PayloadCellViewFile: PayloadCellView, ProfileCreatorCellView {
             fileView.textFieldCenterLabel.textColor = .red
             fileView.textFieldCenterContent.textColor = .red
         } else {
-            fileView.textFieldCenterLabel.textColor = .black
-            fileView.textFieldCenterContent.textColor = .black
+            fileView.textFieldCenterLabel.textColor = .secondaryLabelColor
+            fileView.textFieldCenterContent.textColor = .controlShadowColor
         }
         
         // Bottom
@@ -247,8 +247,8 @@ class PayloadCellViewFile: PayloadCellView, ProfileCreatorCellView {
             fileView.textFieldBottomLabel.textColor = .red
             fileView.textFieldBottomContent.textColor = .red
         } else {
-            fileView.textFieldBottomLabel.textColor = .black
-            fileView.textFieldBottomContent.textColor = .black
+            fileView.textFieldBottomLabel.textColor = .secondaryLabelColor
+            fileView.textFieldBottomContent.textColor = .controlShadowColor
         }
         
         // Icon
