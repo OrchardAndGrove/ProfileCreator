@@ -123,7 +123,43 @@ class FileView: NSView {
             return [NSPasteboard.ReadingOptionKey.urlReadingFileURLsOnly : true]
         }
     }
+}
 
+// MARK: -
+// MARK: NSDraggingDestination Functions
+
+extension FileView {
+    override func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
+        if self.delegate?.isEnabled ?? false, sender.draggingPasteboard().pasteboardItems?.count == 1 && self.containsAcceptedURL(pasteboard: sender.draggingPasteboard()) {
+            return NSDragOperation.copy
+        }
+        return NSDragOperation(rawValue: 0)
+    }
+    
+    override func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
+        if sender.draggingPasteboard().pasteboardItems?.count == 1 && self.containsAcceptedURL(pasteboard: sender.draggingPasteboard()) {
+            if
+                let urls = sender.draggingPasteboard().readObjects(forClasses: [NSURL.self], options: nil) as? [URL],
+                let url = urls.first,
+                let cellView = delegate as? PayloadCellViewFile {
+                
+                cellView.processFile(atURL: url, completionHandler: { (success) in
+                    if success {
+                        cellView.showPrompt(!success)
+                    }
+                })
+            }
+            return true
+        }
+        return false
+    }
+}
+
+// MARK: -
+// MARK: Setup NSLayoutConstraints
+
+extension FileView {
+    
     private func setupPrompt(constraints: inout [NSLayoutConstraint]) {
         self.setup(textField: self.textFieldPropmpt, fontWeight: .regular, fontSize: 15, fontColor: .tertiaryLabelColor)
         self.addSubview(self.textFieldPropmpt)
@@ -307,34 +343,5 @@ class FileView: NSView {
         textField.isSelectable = false
         textField.font = NSFont.systemFont(ofSize: fontSize, weight: fontWeight)
         textField.textColor = fontColor
-    }
-    
-    // MARK: -
-    // MARK: NSDraggingDestination Functions
-    
-    override func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
-        if self.delegate?.isEnabled ?? false, sender.draggingPasteboard().pasteboardItems?.count == 1 && self.containsAcceptedURL(pasteboard: sender.draggingPasteboard()) {
-            return NSDragOperation.copy
-        }
-        return NSDragOperation(rawValue: 0)
-    }
-    
-    override func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
-        if sender.draggingPasteboard().pasteboardItems?.count == 1 && self.containsAcceptedURL(pasteboard: sender.draggingPasteboard()) {
-            if
-                let urls = sender.draggingPasteboard().readObjects(forClasses: [NSURL.self], options: nil) as? [URL],
-                0 < urls.count,
-                let url = urls.first,
-                let cellView = delegate as? PayloadCellViewFile {
-                
-                cellView.processFile(atURL: url, completionHandler: { (success) in
-                    if success {
-                        cellView.showPrompt(!success)
-                    }
-                })
-            }
-            return true
-        }
-        return false
     }
 }
