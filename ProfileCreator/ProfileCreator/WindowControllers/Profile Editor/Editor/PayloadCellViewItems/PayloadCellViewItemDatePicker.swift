@@ -27,8 +27,9 @@ class EditorDatePicker {
         datePicker.target = cellView
         datePicker.action = #selector(cellView.selectDate(_:))
         
-        let midnight = Date().midnight()
-        datePicker.dateValue = midnight ?? Date()
+        // let midnight = Date().midnight()
+        // datePicker.dateValue = midnight ?? Date()
+        datePicker.dateValue = Date()
         
         var offsetComponents = DateComponents()
         offsetComponents.day = offsetDays

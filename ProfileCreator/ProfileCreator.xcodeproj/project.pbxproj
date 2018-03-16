@@ -64,10 +64,12 @@
 		53DADB501F13ACF90045CB3F /* AppResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DADB4F1F13ACF90045CB3F /* AppResources.swift */; };
 		53DF38771F11675F006DE5BE /* MainWindowTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53DF38761F11675F006DE5BE /* MainWindowTableView.swift */; };
 		E3036614202F3A930051040D /* PreferencesLibrary.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3036613202F3A930051040D /* PreferencesLibrary.swift */; };
+		E303F0BA2059603E000F1D01 /* edit.png in Resources */ = {isa = PBXBuildFile; fileRef = E303F0B92059603E000F1D01 /* edit.png */; };
 		E30667981F4B2457000C6424 /* PayloadCellViewPadding.swift in Sources */ = {isa = PBXBuildFile; fileRef = E30667971F4B2457000C6424 /* PayloadCellViewPadding.swift */; };
 		E30B64051F4DCB3800240427 /* PayloadCellViewItemTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E30B64041F4DCB3800240427 /* PayloadCellViewItemTableView.swift */; };
 		E30CC5E0205273F0006F113D /* PayloadCellViewDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = E30CC5DF205273F0006F113D /* PayloadCellViewDictionary.swift */; };
 		E31FA8D21F4D59DE00F6B6BD /* PayloadCellViewTextFieldNumber.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31FA8D11F4D59DE00F6B6BD /* PayloadCellViewTextFieldNumber.swift */; };
+		E31FFE63205BAE8A0027D40A /* FileInfoProcessorCertificate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31FFE62205BAE8A0027D40A /* FileInfoProcessorCertificate.swift */; };
 		E32767E61F3F71B700B4670C /* PayloadCellViewFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32767E51F3F71B700B4670C /* PayloadCellViewFile.swift */; };
 		E32767E81F3F736B00B4670C /* PayloadCellViewItemFileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32767E71F3F736B00B4670C /* PayloadCellViewItemFileView.swift */; };
 		E331A46C1FB2EAB800F98477 /* ProfileExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = E331A46B1FB2EAB800F98477 /* ProfileExport.swift */; };
@@ -170,10 +172,12 @@
 		53DADB4F1F13ACF90045CB3F /* AppResources.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AppResources.swift; path = Utility/AppResources.swift; sourceTree = "<group>"; };
 		53DF38761F11675F006DE5BE /* MainWindowTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowTableView.swift; path = "WindowControllers/Main Window/Profile List/MainWindowTableView.swift"; sourceTree = "<group>"; };
 		E3036613202F3A930051040D /* PreferencesLibrary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PreferencesLibrary.swift; path = WindowControllers/Preferences/PreferencesLibrary.swift; sourceTree = "<group>"; };
+		E303F0B92059603E000F1D01 /* edit.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = edit.png; sourceTree = "<group>"; };
 		E30667971F4B2457000C6424 /* PayloadCellViewPadding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PayloadCellViewPadding.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViewPadding.swift"; sourceTree = "<group>"; };
 		E30B64041F4DCB3800240427 /* PayloadCellViewItemTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PayloadCellViewItemTableView.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViewItems/PayloadCellViewItemTableView.swift"; sourceTree = "<group>"; };
 		E30CC5DF205273F0006F113D /* PayloadCellViewDictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PayloadCellViewDictionary.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViewDictionary.swift"; sourceTree = "<group>"; };
 		E31FA8D11F4D59DE00F6B6BD /* PayloadCellViewTextFieldNumber.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PayloadCellViewTextFieldNumber.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViewTextFieldNumber.swift"; sourceTree = "<group>"; };
+		E31FFE62205BAE8A0027D40A /* FileInfoProcessorCertificate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FileInfoProcessorCertificate.swift; path = "WindowControllers/Profile Editor/Editor/FileInfoProcessor/FileInfoProcessorCertificate.swift"; sourceTree = "<group>"; };
 		E32767E51F3F71B700B4670C /* PayloadCellViewFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewFile.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViewFile.swift"; sourceTree = "<group>"; };
 		E32767E71F3F736B00B4670C /* PayloadCellViewItemFileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewItemFileView.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViewItems/PayloadCellViewItemFileView.swift"; sourceTree = "<group>"; };
 		E331A46B1FB2EAB800F98477 /* ProfileExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProfileExport.swift; path = Profile/ProfileExport.swift; sourceTree = "<group>"; };
@@ -338,6 +342,7 @@
 				535CB4611F2BC26B00A746F6 /* Settings-16.png */,
 				53DADB4D1F1382B40045CB3F /* SidebarFolder.icns */,
 				5365F48B1F0F87440064C02A /* downarrow.png */,
+				E303F0B92059603E000F1D01 /* edit.png */,
 				E347E4C12057C9F3008F5137 /* xml.png */,
 			);
 			name = Icons;
@@ -517,8 +522,9 @@
 			isa = PBXGroup;
 			children = (
 				E3577C19204A74E9007D9FE9 /* FileInfo.swift */,
-				E3577C1B204A7536007D9FE9 /* FileInfoProcessor.swift */,
 				E35C7FBF2045EA8A009971F5 /* FileInfoProcessors.swift */,
+				E3577C1B204A7536007D9FE9 /* FileInfoProcessor.swift */,
+				E31FFE62205BAE8A0027D40A /* FileInfoProcessorCertificate.swift */,
 			);
 			name = FileInfoProcessor;
 			sourceTree = "<group>";
@@ -587,6 +593,7 @@
 			files = (
 				539592621F102DEE005090B3 /* Defaults.plist in Resources */,
 				E347E4C22057C9F3008F5137 /* xml.png in Resources */,
+				E303F0BA2059603E000F1D01 /* edit.png in Resources */,
 				539832161F0EE15400C4792D /* Assets.xcassets in Resources */,
 				535CB4631F2BC26B00A746F6 /* Approval-18.png in Resources */,
 				539832191F0EE15400C4792D /* Main.storyboard in Resources */,
@@ -625,6 +632,7 @@
 				531852221F2295B000529E6B /* ProfileEditorSplitView.swift in Sources */,
 				5383C19D1F2C9592004EBE9B /* LibraryCellViewItemImageView.swift in Sources */,
 				5309D3051F1A430F002133A0 /* ProfileController.swift in Sources */,
+				E31FFE63205BAE8A0027D40A /* FileInfoProcessorCertificate.swift in Sources */,
 				E331A46C1FB2EAB800F98477 /* ProfileExport.swift in Sources */,
 				53DADB501F13ACF90045CB3F /* AppResources.swift in Sources */,
 				E3C8D5421F3EED1E0083DA5F /* PayloadCellViewPopUpButton.swift in Sources */,

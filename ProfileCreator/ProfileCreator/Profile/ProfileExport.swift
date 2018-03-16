@@ -179,7 +179,7 @@ class ProfileExport {
         // ---------------------------------------------------------------------
         let lastPayloadHash = viewDomainSettings[SettingsKey.hash] as? Int ?? -1
         let lastPayloadVersion = payloadContent[PayloadKey.payloadVersion] as? Int ?? 1
-        
+        Swift.print("lastPayloadHash: \(lastPayloadHash)")
         if lastPayloadHash == -1 {
             
             // ---------------------------------------------------------------------
@@ -315,9 +315,7 @@ class ProfileExport {
     
     func isEnabledParents(subkey: PayloadSourceSubkey, typeSettings: Dictionary<String, Any>, domainSettings: Dictionary<String, Any>, viewTypeSettings: Dictionary<String, Any>, viewDomainSettings: Dictionary<String, Any>) -> Bool {
         guard let parentSubkeys = subkey.parentSubkeys else { return true }
-        
-        Swift.print("viewDomainSettings: \(viewDomainSettings)")
-        
+                
         // FIXME: This requires some fixing depending on how the view settings will be saved
         
         // Default to true only for testing

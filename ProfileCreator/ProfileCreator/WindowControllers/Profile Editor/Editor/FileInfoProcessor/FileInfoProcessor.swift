@@ -21,7 +21,6 @@ class FileInfoProcessor {
     var fileTitle: String?
     var fileDataVar: Data?
     
-    
     // MARK: -
     // MARK: Initialization
     
@@ -47,12 +46,11 @@ class FileInfoProcessor {
         // File Info
         if
             let fileInfoDict = fileInfo[FileInfoKey.fileInfoView] as? Dictionary<String, Any> {
-        
+            
             Swift.print("fileInfoDict: \(fileInfoDict)")
-        
+            
             if let fileInfo = FileInfo(infoDict: fileInfoDict, backupIcon: NSWorkspace.shared.icon(forFileType: self.fileUTI)) {
-            Swift.print("Setting fileInfoVar: \(fileInfo.centerLabel)")
-            self.fileInfoVar = fileInfo
+                self.fileInfoVar = fileInfo
             } else {
                 Swift.print("Failed!")
             }
@@ -147,23 +145,19 @@ class FileInfoProcessor {
                 // Icon
                 icon = NSWorkspace.shared.icon(forFileType: self.fileUTI)
                 // icon = NSWorkspace.shared.icon(forFile: fileURL.path)
-            } else if let fileData = self.fileDataVar {
-                
-                // Title
-                title = self.fileTitle ?? ""
-                
-                // Top
-                topLabel = ""
             }
             
             // FIXME: Need to fix defaults here
             self.fileInfoVar = FileInfo(title: title,
                                         topLabel: topLabel,
                                         topContent: topContent,
+                                        topError: false,
                                         centerLabel: centerLabel,
                                         centerContent: centerContent,
+                                        centerError: false,
                                         bottomLabel: nil,
                                         bottomContent: nil,
+                                        bottomError: false,
                                         icon: icon)
             return self.fileInfoVar!
         }

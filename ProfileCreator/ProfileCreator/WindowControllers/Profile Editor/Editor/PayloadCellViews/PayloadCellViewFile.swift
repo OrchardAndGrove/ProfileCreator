@@ -142,7 +142,7 @@ class PayloadCellViewFile: PayloadCellView, ProfileCreatorCellView {
         var alertMessage = ""
         var alertInformativeMessage = ""
         
-        let fileInfoProcessor = FileInfoProcessor(fileURL: url)
+        let fileInfoProcessor = FileInfoProcessors.shared.processorFor(fileAtURL: url)
         guard let fileData = fileInfoProcessor.fileData() else { completionHandler(false); return }
         let fileInfo = fileInfoProcessor.fileInfo()
         let fileInfoDict = fileInfoProcessor.fileInfoDict()
@@ -221,14 +221,35 @@ class PayloadCellViewFile: PayloadCellView, ProfileCreatorCellView {
         // Top
         fileView.textFieldTopLabel.stringValue = fileInfo.topLabel
         fileView.textFieldTopContent.stringValue = fileInfo.topContent
+        if fileInfo.topError {
+            fileView.textFieldTopLabel.textColor = .red
+            fileView.textFieldTopContent.textColor = .red
+        } else {
+            fileView.textFieldTopLabel.textColor = .black
+            fileView.textFieldTopContent.textColor = .black
+        }
         
         // Center
         fileView.textFieldCenterLabel.stringValue = fileInfo.centerLabel ?? ""
         fileView.textFieldCenterContent.stringValue = fileInfo.centerContent ?? ""
+        if fileInfo.centerError {
+            fileView.textFieldCenterLabel.textColor = .red
+            fileView.textFieldCenterContent.textColor = .red
+        } else {
+            fileView.textFieldCenterLabel.textColor = .black
+            fileView.textFieldCenterContent.textColor = .black
+        }
         
         // Bottom
         fileView.textFieldBottomLabel.stringValue = fileInfo.bottomLabel ?? ""
         fileView.textFieldBottomContent.stringValue = fileInfo.bottomContent ?? ""
+        if fileInfo.bottomError {
+            fileView.textFieldBottomLabel.textColor = .red
+            fileView.textFieldBottomContent.textColor = .red
+        } else {
+            fileView.textFieldBottomLabel.textColor = .black
+            fileView.textFieldBottomContent.textColor = .black
+        }
         
         // Icon
         fileView.imageViewIcon.image = fileInfo.icon

@@ -101,7 +101,7 @@ class ProfileEditorWindowToolbarItemViewSegmentedControl: NSSegmentedControl {
             // Fallback on earlier versions
         }
         
-        if let iconEdit = NSImage(named: .preferencesGeneral) {
+        if let iconEdit = NSImage(named: .init(rawValue: "edit")) {
             self.setImage(iconEdit, forSegment: 0)
         }
         
