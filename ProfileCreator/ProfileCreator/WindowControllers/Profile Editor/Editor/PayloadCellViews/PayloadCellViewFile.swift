@@ -129,7 +129,7 @@ class PayloadCellViewFile: PayloadCellView, ProfileCreatorCellView {
     // MARK: Process File
     
     private func processFile(data: Data, fileInfo: Dictionary<String, Any>) -> Bool {
-        if let fileInfoProcessor = FileInfoProcessor(data: data, fileInfo: fileInfo) {
+        if let fileInfoProcessor = FileInfoProcessors.shared.processorFor(data: data, fileInfo: fileInfo) {
             return self.updateView(fileInfo: fileInfoProcessor.fileInfo())
         }
         return false
@@ -146,7 +146,7 @@ class PayloadCellViewFile: PayloadCellView, ProfileCreatorCellView {
         guard let fileData = fileInfoProcessor.fileData() else { completionHandler(false); return }
         let fileInfo = fileInfoProcessor.fileInfo()
         let fileInfoDict = fileInfoProcessor.fileInfoDict()
-        
+        Swift.print("This is the fileInfoDict: \(fileInfoDict)")
         // ---------------------------------------------------------------------
         //  Verify the file size is reasonable (< 1.0 MB)
         // ---------------------------------------------------------------------

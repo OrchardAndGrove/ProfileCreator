@@ -8,23 +8,78 @@
 
 import Cocoa
 
-enum CertificateType {
+enum CertificateFormat {
     case pkcs1
     case pkcs12
 }
 
+enum CertificateType: Int {
+    case p12
+    case selfSignedCA
+    case standard
+}
+
+struct CertificateFileInfoKey {
+    static let type = "CertificateType"
+}
+
 class FileInfoProcessorCertificate: FileInfoProcessor {
+    
+    // MARK: -
+    // MARK: Variables
+    
+    var certificateType: CertificateType = .standard
     
     override init(fileURL url: URL) {
         super.init(fileURL: url)
     }
     
     override init?(data: Data, fileInfo: Dictionary<String, Any>) {
+        
+        // Certificate Type
+        if
+            let certificateTypeInt = fileInfo[CertificateFileInfoKey.type] as? Int,
+            let certificateTyoe = CertificateType(rawValue: certificateTypeInt) {
+            self.certificateType = certificateTyoe
+        }
+        
         super.init(data: data, fileInfo: fileInfo)
     }
     
     // MARK: -
     // MARK: Functions
+    
+    func iconURL(certificateType: CertificateType) -> URL? {
+        guard let securityInterfaceBundle = Bundle(identifier: "com.apple.securityinterface") ?? Bundle(path: "/System/Library/Frameworks/SecurityInterface.framework") else { return nil }
+        
+        switch certificateType {
+        case .p12:
+            return securityInterfaceBundle.urlForImageResource(NSImage.Name(rawValue: "CertLargePersonal"))
+        case .selfSignedCA:
+            return securityInterfaceBundle.urlForImageResource(NSImage.Name(rawValue: "CertLargeRoot"))
+        case .standard:
+            return securityInterfaceBundle.urlForImageResource(NSImage.Name(rawValue: "CertLargeStd"))
+        }
+    }
+    
+    func icon(certificateType: CertificateType) -> NSImage? {
+        if let url = self.iconURL(certificateType: certificateType) {
+            return NSImage(contentsOf: url)
+        }
+        return nil
+    }
+    
+    // MARK: -
+    // MARK: FileInfoProcessor Functions
+    
+    override func fileInfoDict() -> Dictionary<String, Any> {
+        var fileInfoDict = super.fileInfoDict()
+        
+        // Certificate Type
+        fileInfoDict[CertificateFileInfoKey.type] = self.certificateType.rawValue
+        
+        return fileInfoDict
+    }
     
     override func fileData() -> Data? {
         if let fileURL = self.fileURL {
@@ -64,33 +119,28 @@ class FileInfoProcessorCertificate: FileInfoProcessor {
             return fileInfoVar
         } else {
             
-            let securityInterfaceBundle = Bundle(identifier: "com.apple.securityinterface") ?? Bundle(path: "/System/Library/Frameworks/SecurityInterface.framework")
-            
             var title = ""
             var topLabel = ""
             var centerLabel: String?
             var bottomLabel: String?
             var bottomError = false
             var icon: NSImage?
+            var iconPath: String?
             
-            var certificateType: CertificateType = .pkcs1
+            var certificateFormat: CertificateFormat = .pkcs1
             
             if let fileURL = self.fileURL, fileURL.pathExtension == "p12" {
-                certificateType = .pkcs12
+                certificateFormat = .pkcs12
             }
             
-            if certificateType == .pkcs12 {
+            if certificateFormat == .pkcs12 {
+                self.certificateType = .p12
                 
                 // Title
                 title = NSLocalizedString("Personal Information Exchange", comment: "")
                 
                 // Top
                 topLabel = NSLocalizedString("This content is stored in Personal Information Exchange (PKCS12) format, and is password protected. No information can be displayed.", comment: "")
-                
-                // Icon
-                if let iconURL = securityInterfaceBundle?.urlForImageResource(NSImage.Name(rawValue: "CertLargePersonal")) {
-                    icon = NSImage(contentsOf: iconURL)
-                }
                 
             } else if
                 let fileData = self.fileData(),
@@ -126,20 +176,12 @@ class FileInfoProcessorCertificate: FileInfoProcessor {
                     }
                     
                     if issuerData == subjectData {
-                        
-                        // Icon
-                        if let iconURL = securityInterfaceBundle?.urlForImageResource(NSImage.Name(rawValue: "CertLargeRoot")) {
-                            icon = NSImage(contentsOf: iconURL)
-                        }
+                        self.certificateType = .selfSignedCA
                         
                         // Top
                         topLabel = NSLocalizedString("Root certificate authority", comment: "")
                     } else {
-                        
-                        // Icon
-                        if let iconURL = securityInterfaceBundle?.urlForImageResource(NSImage.Name(rawValue: "CertLargeStd")) {
-                            icon = NSImage(contentsOf: iconURL)
-                        }
+                        self.certificateType = .standard
                         
                         // Is Certificate Authority
                         var isCertificateAuthority: Bool = false
@@ -216,7 +258,14 @@ class FileInfoProcessorCertificate: FileInfoProcessor {
                 Swift.print("Could not get the file Data, this is an error and should notify the user.")
             }
             
-            if icon == nil {
+            // Icon
+            if let iconURL = self.iconURL(certificateType: self.certificateType) {
+                iconPath = iconURL.path
+            }
+            
+            if let certificateIcon = self.icon(certificateType: self.certificateType) {
+                icon = certificateIcon
+            } else {
                 icon = NSWorkspace.shared.icon(forFileType: self.fileUTI)
             }
             
@@ -231,7 +280,8 @@ class FileInfoProcessorCertificate: FileInfoProcessor {
                                         bottomLabel: bottomLabel,
                                         bottomContent: nil,
                                         bottomError: bottomError,
-                                        icon: icon)
+                                        icon: icon,
+                                        iconPath: iconPath)
             return self.fileInfoVar!
         }
     }

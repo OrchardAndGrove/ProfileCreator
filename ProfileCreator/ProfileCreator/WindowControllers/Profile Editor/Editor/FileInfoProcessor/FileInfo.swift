@@ -24,6 +24,7 @@ struct FileInfo {
     let bottomError: Bool
     
     let icon: NSImage?
+    let iconPath: String?
     
     init(title: String,
          topLabel: String,
@@ -35,7 +36,8 @@ struct FileInfo {
          bottomLabel: String? = nil,
          bottomContent: String? = nil,
          bottomError: Bool,
-         icon: NSImage? = nil) {
+         icon: NSImage? = nil,
+         iconPath: String? = nil) {
         self.title = title
         self.topLabel = topLabel
         self.topContent = topContent
@@ -46,6 +48,7 @@ struct FileInfo {
         self.bottomLabel = bottomLabel
         self.bottomContent = bottomContent
         self.bottomError = bottomError
+        self.iconPath = iconPath
         self.icon = icon
     }
     
@@ -99,17 +102,18 @@ struct FileInfo {
         // Bottom Error
         if let bottomError = infoDict[FileInfoViewKey.bottomError] as? Bool {
             self.bottomError = bottomError
-        } else {  self.bottomError = false }
+        } else { self.bottomError = false }
         
         // Icon
         if let iconPath = infoDict[FileInfoViewKey.iconPath] as? String {
+            self.iconPath = iconPath
             if FileManager.default.fileExists(atPath: iconPath) {
                 let iconURL = URL(fileURLWithPath: iconPath)
                 if let icon = NSImage(contentsOf: iconURL) {
                     self.icon = icon
                 } else { self.icon = backupIcon }
             } else { self.icon = backupIcon }
-        } else { self.icon = backupIcon }
+        } else { self.icon = backupIcon; self.iconPath = nil }
     }
     
     func infoDict() -> Dictionary<String, Any> {
@@ -131,6 +135,9 @@ struct FileInfo {
         
         // Bottom Description
         if let bottomContent = self.bottomContent { infoDict[FileInfoViewKey.bottomContent] = bottomContent }
+        
+        // Icon Path
+        if let iconPath = self.iconPath { infoDict[FileInfoViewKey.iconPath] = iconPath }
         
         return infoDict
     }

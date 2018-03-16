@@ -47,8 +47,6 @@ class FileInfoProcessor {
         if
             let fileInfoDict = fileInfo[FileInfoKey.fileInfoView] as? Dictionary<String, Any> {
             
-            Swift.print("fileInfoDict: \(fileInfoDict)")
-            
             if let fileInfo = FileInfo(infoDict: fileInfoDict, backupIcon: NSWorkspace.shared.icon(forFileType: self.fileUTI)) {
                 self.fileInfoVar = fileInfo
             } else {
