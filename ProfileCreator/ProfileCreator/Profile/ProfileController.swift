@@ -11,9 +11,12 @@ import Cocoa
 class ProfileController: NSDocumentController {
     
     // MARK: -
-    // MARK: Variables
+    // MARK: Static Variables
     
     public static let sharedInstance = ProfileController()
+    
+    // MARK: -
+    // MARK: Variables
     
     var profiles = Set<Profile>()
     
@@ -37,13 +40,11 @@ class ProfileController: NSDocumentController {
         // ---------------------------------------------------------------------
         NotificationCenter.default.addObserver(self, selector: #selector(windowWillClose(_:)), name: NSWindow.willCloseNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(newDocument(_:)), name: .newProfile, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(removeProfile(_:)), name: .removeProfile, object: nil)
     }
     
     deinit {
         NotificationCenter.default.removeObserver(self, name: NSWindow.willCloseNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: .newProfile, object: nil)
-        NotificationCenter.default.removeObserver(self, name: .removeProfile, object: nil)
     }
     
     // MARK: -
@@ -54,19 +55,20 @@ class ProfileController: NSDocumentController {
         // ---------------------------------------------------------------------
         //  If window was a ProfileEditor window, update the associated profile
         // ---------------------------------------------------------------------
-        if let window = notification?.object as? NSWindow,
+        if
+            let window = notification?.object as? NSWindow,
             let windowController = window.windowController as? ProfileEditorWindowController {
             
             // -----------------------------------------------------------------
             //  Get profile associated with the editor
             // -----------------------------------------------------------------
             guard let profile = windowController.document as? Profile else {
-                // TODO: Proper logging
+                Log.shared.error(message: "Failed to get the profile associated with the window being closed")
                 return
             }
             
             // -----------------------------------------------------------------
-            //  Reset all changes
+            //  Reset all unsaved changes
             // -----------------------------------------------------------------
             profile.restoreSavedSettings(identifier: profile.identifier, savedSettings: nil)
             
@@ -80,25 +82,34 @@ class ProfileController: NSDocumentController {
             // -----------------------------------------------------------------
             if profile.fileURL == nil {
                 let identifier = profile.identifier
-                let (success, error) = removeProfile(identifier: identifier)
-                if success {
-                    
-                    // ---------------------------------------------------------
-                    //  If removed successfully, post a didRemoveProfiles notification
-                    // ---------------------------------------------------------
-                    NotificationCenter.default.post(name: .didRemoveProfiles, object: self, userInfo: [NotificationKey.identifiers: [ identifier ],
-                                                                                                       NotificationKey.indexSet : IndexSet()])
-                } else {
-                    Swift.print("Class: \(self.self), Function: \(#function), Error: \(String(describing: error))")
+                do {
+                    if try self.removeProfile(withIdentifier: identifier) {
+                        
+                        // ---------------------------------------------------------
+                        //  If removed successfully, post a didRemoveProfiles notification
+                        // ---------------------------------------------------------
+                        NotificationCenter.default.post(name: .didRemoveProfiles, object: self, userInfo: [NotificationKey.identifiers: [ identifier ],
+                                                                                                           NotificationKey.indexSet : IndexSet()])
+                    }
+                } catch let error {
+                    Log.shared.error(message: "Failed to remove unsaved profile with identifier: \(identifier) with error: \(error.localizedDescription)")
                 }
             }
         }
     }
     
+    // MARK: -
+    // MARK: NSDocumentController Functions
+    
     override func newDocument(_ sender: Any?) {
+        Log.shared.log(message: "Creating new empty profile")
+        
         do {
+            
+            // -------------------------------------------------------------
+            //  Try to create a new empty Profile document
+            // -------------------------------------------------------------
             if let profile = try self.openUntitledDocumentAndDisplay(true) as? Profile {
-                
                 
                 self.profiles.insert(profile)
                 
@@ -107,37 +118,117 @@ class ProfileController: NSDocumentController {
                 // -------------------------------------------------------------
                 NotificationCenter.default.post(name: .didAddProfile, object: self, userInfo: [NotificationKey.identifier : profile.identifier])
             }
-        } catch {
-            Swift.print("Class: \(self.self), Function: \(#function), UnknownError")
+        } catch let error {
+            Log.shared.error(message: "Failed to create a new empty profile with error: \(error.localizedDescription)")
         }
     }
     
-    @objc func removeProfile(_ notification: Notification?) {
-        Swift.print("Class: \(self.self), Function: \(#function), removeProfile: \(String(describing: notification))")
+    // MARK: -
+    // MARK: Load Profiles
+    
+    private func loadSavedProfiles() {
+        #if DEBUG
+            Log.shared.debug(message: "Loading saved profiles")
+        #endif
+        
+        // ---------------------------------------------------------------------
+        //  Get path to default profile save folder
+        // ---------------------------------------------------------------------
+        guard let profileFolderURL = applicationFolder(Folder.profiles) else {
+            Log.shared.error(message: "No default profile save folder was found")
+            return
+        }
+        
+        var profileURLs = [URL]()
+        
+        // ---------------------------------------------------------------------
+        //  Put all items from default profile save folder into an array
+        // ---------------------------------------------------------------------
+        do {
+            profileURLs = try FileManager.default.contentsOfDirectory(at: profileFolderURL, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
+        } catch {
+            Log.shared.error(message: "Failed to get the contents of the default profile save folder with error: \(error.localizedDescription)")
+            return
+        }
+        
+        // ---------------------------------------------------------------------
+        //  Remove all items that doesn't have the FileExtension.profile extension
+        // ---------------------------------------------------------------------
+        profileURLs = profileURLs.filter { $0.pathExtension == FileExtension.profile }
+        
+        // ---------------------------------------------------------------------
+        //  Loop through all profile files, try to create a Profile instance and add them to the profiles set
+        // ---------------------------------------------------------------------
+        for profileURL in profileURLs {
+            do {
+                
+                // -------------------------------------------------------------
+                //  Create the profile from the file at profileURL
+                // -------------------------------------------------------------
+                let document = try self.makeDocument(withContentsOf: profileURL, ofType: TypeName.profile)
+                
+                // -------------------------------------------------------------
+                //  Check that no other profile exist with the same identifier
+                //  This means that only the first profile created with that identifier will exist
+                // -------------------------------------------------------------
+                guard let profile = document as? Profile, !self.profiles.contains(where: { $0.identifier == profile.identifier }) else {
+                    Log.shared.error(message: "A profile with identifier: \(String(describing: (document as? Profile)?.identifier)) was already imported. This and subsequent profiles with the same identifier will be ignored.")
+                    return
+                }
+                self.profiles.insert(profile)
+                
+                // -------------------------------------------------------------
+                //  Post notification that a profile was added
+                // -------------------------------------------------------------
+                NotificationCenter.default.post(name: .didAddProfile, object: self, userInfo: [NotificationKey.identifier : profile.identifier])
+            } catch {
+                Log.shared.error(message: "Failed to load a profile from the file at: \(profileURL.path) with error: \(error.localizedDescription)")
+            }
+        }
     }
     
     // MARK: -
-    // MARK: Public Functions
+    // MARK: Get Profiles
+    
+    public func profile(withIdentifier identifier: UUID) -> Profile? {
+        return self.profiles.first(where: { $0.identifier == identifier })
+    }
+    
+    public func profiles(withIdentifiers identifiers: [UUID]) -> [Profile]? {
+        return self.profiles.filter({ identifiers.contains($0.identifier) })
+    }
     
     public func profileIdentifiers() -> [UUID]? {
         return self.profiles.map({ $0.identifier })
     }
     
-    public func profile(withIdentifier: UUID) -> Profile? {
-        return self.profiles.first(where: {$0.identifier == withIdentifier})
+    public func titleOfProfile(withIdentifier identifier: UUID) -> String? {
+        if let profile = self.profile(withIdentifier: identifier) {
+            return profile.title
+        } else { Log.shared.error(message: "Found no profile with identifier: \(identifier)") }
+        return nil
     }
     
-    public func profiles(withIdentifiers: [UUID]) -> [Profile]? {
-        return self.profiles.filter({ withIdentifiers.contains($0.identifier) })
-    }
+    // MARK: -
+    // MARK: Edit Profiles
     
-    public func editProfile(withIdentifier: UUID) {
-        if let profile = self.profile(withIdentifier: withIdentifier) {
+    public func editProfile(withIdentifier identifier: UUID) {
+        #if DEBUG
+            Log.shared.debug(message: "Edit profile with identifier: \(identifier)")
+        #endif
+        
+        if let profile = self.profile(withIdentifier: identifier) {
             profile.edit()
-        }
+        } else { Log.shared.error(message: "Found no profile with identifier: \(identifier)") }
     }
+    
+    // MARK: -
+    // MARK: Export Profiles
     
     public func export(profile: Profile) {
+        #if DEBUG
+            Log.shared.debug(message: "Export profile with identifier: \(profile.identifier)")
+        #endif
         
         // ---------------------------------------------------------------------
         //  Get a reference to the main window to attach dialogs to
@@ -150,17 +241,8 @@ class ProfileController: NSDocumentController {
         //  Verify atleast one payload is enabled
         // ---------------------------------------------------------------------
         if profile.enabledPayloadsCount == 0 {
-            let alert = Alert()
-            alert.showAlert(message: "No Payloads are included in \"\(profile.title)\".",
-                            informativeText: "Please include at least one (1) payload in the profile.",
-                            window: mainWindow,
-                            firstButtonTitle: ButtonTitle.ok,
-                            secondButtonTitle: nil,
-                            thirdButtonTitle: nil,
-                            firstButtonState: true,
-                            sender: self,
-                            returnValue: { (response) in
-            })
+            Log.shared.error(message: "No payloads were selected in profile with identifier: \(profile.identifier)")
+            self.showAlertNoPayloadSelected(inProfile: profile, window: mainWindow)
             return
         }
         
@@ -176,20 +258,45 @@ class ProfileController: NSDocumentController {
             if let profileURL = savePanel.url {
                 do {
                     try ProfileExport().export(profile: profile, profileURL: profileURL)
-                } catch let error {
+                } catch {
+                    Log.shared.error(message: "Failed to export profile with identifier: \(profile.identifier) to path: \(profileURL.path) with error: \(error.localizedDescription)")
                     self.showAlertExport(error: error, window: mainWindow)
-                    Swift.print("Exporting profile resulted in error: \(error)")
                 }
-            } else {
-                
-            }
+            } else { Log.shared.error(message: "Failed to get the selected save path from the save panel for profile with identifier: \(profile.identifier)") }
         }
     }
     
+    public func exportProfile(withIdentifier identifier: UUID) {
+        if let profile = self.profile(withIdentifier: identifier) {
+            self.export(profile: profile)
+        } else { Log.shared.error(message: "Found no profile with identifier: \(identifier)") }
+    }
+    
+    public func exportProfiles(withIdentifiers identifiers: [UUID]) {
+        if let profiles = self.profiles(withIdentifiers: identifiers) {
+            for profile in profiles {
+                self.export(profile: profile)
+            }
+        } else { Log.shared.error(message: "Found no profiles with identifiers: \(identifiers)") }
+    }
+    
+    public func showAlertNoPayloadSelected(inProfile profile: Profile, window: NSWindow) {
+        let alert = Alert()
+        let alertMessage = NSLocalizedString("No Payloads are included in \"\(profile.title)\".", comment: "")
+        let alertInformativeText = NSLocalizedString("Please include at least one (1) payload in the profile.", comment: "")
+        
+        alert.showAlert(message: alertMessage,
+                        informativeText: alertInformativeText,
+                        window: window,
+                        firstButtonTitle: ButtonTitle.ok,
+                        secondButtonTitle: nil,
+                        thirdButtonTitle: nil,
+                        firstButtonState: true,
+                        sender: nil) { _ in }
+    }
+    
     public func showAlertExport(error: Error, window: NSWindow) {
-        
         guard let exportError = error as? ProfileExportError else { return }
-        
         let alert = Alert()
         
         alert.showAlert(message: exportError.localizedDescription,
@@ -199,64 +306,14 @@ class ProfileController: NSDocumentController {
                         secondButtonTitle: nil,
                         thirdButtonTitle: nil,
                         firstButtonState: true,
-                        sender: nil) { (response) in }
-    }
-    
-    public func exportProfile(withIdentifier: UUID) {
-        if let profile = self.profile(withIdentifier: withIdentifier) {
-            self.export(profile: profile)
-        }
-    }
-    
-    public func exportProfiles(withIdentifiers: [UUID]) {
-        if let profiles = self.profiles(withIdentifiers: withIdentifiers) {
-            for profile in profiles {
-                self.export(profile: profile)
-            }
-        }
-    }
-    
-    public func removeProfiles(atIndexes: IndexSet, withIdentifiers: [UUID]) {
-        var removedIdentifiers = [UUID]()
-        
-        // ---------------------------------------------------------------------
-        //  Loop through all passed identifiers and try to remove them individually
-        // ---------------------------------------------------------------------
-        for identifier in withIdentifiers {
-            let (success, error) = removeProfile(identifier: identifier)
-            if success {
-                
-                // -------------------------------------------------------------
-                //  If removed successfully, add to removedIdentifiers
-                // -------------------------------------------------------------
-                removedIdentifiers.append(identifier)
-            } else {
-                Swift.print("Class: \(self.self), Function: \(#function), Error: \(String(describing: error))")
-            }
-        }
-        
-        // ---------------------------------------------------------------------
-        //  Post all successfully removed profile identifiers as a didRemoveProfile notification
-        // ---------------------------------------------------------------------
-        if !removedIdentifiers.isEmpty {
-            NotificationCenter.default.post(name: .didRemoveProfiles, object: self, userInfo: [NotificationKey.identifiers: removedIdentifiers,
-                                                                                               NotificationKey.indexSet : atIndexes])
-        }
-    }
-    
-    public func titleOfProfile(withIdentifier: UUID) -> String? {
-        if let profile = self.profile(withIdentifier: withIdentifier) {
-            return profile.title
-        }
-        return nil
+                        sender: nil) { _ in }
     }
     
     // MARK: -
-    // MARK: Private Functions
+    // MARK: Remove Profiles
     
-    private func removeProfile(identifier: UUID) -> (Bool, Error?) {
-        
-        var error: Error?
+    private func removeProfile(withIdentifier identifier: UUID) throws -> Bool {
+        Log.shared.log(message: "Removing profile with identifier: \(identifier)")
         
         if let profile = self.profile(withIdentifier: identifier) {
             
@@ -265,81 +322,49 @@ class ProfileController: NSDocumentController {
             // -----------------------------------------------------------------
             guard let url = profile.fileURL, FileManager.default.fileExists(atPath: url.path) else {
                 self.profiles.remove(profile)
-                return (true, nil)
+                return true
             }
             
             // -----------------------------------------------------------------
             //  Try to remove item at url
             // -----------------------------------------------------------------
-            if FileManager.default.fileExists(atPath: url.path) {
-                do {
-                    try FileManager.default.removeItem(at: url)
-                    return (true, nil)
-                } catch let removeError as NSError {
-                    error = removeError
-                }
-            }
-        }
-        return (false, error)
+            try FileManager.default.removeItem(at: url)
+            self.profiles.remove(profile)
+            return true
+        } else { Log.shared.error(message: "Found no profile with identifier: \(identifier)") }
+        return false
     }
     
-    private func loadSavedProfiles() {
+    public func removeProfiles(atIndexes indexes: IndexSet, withIdentifiers identifiers: [UUID]) {
+        #if DEBUG
+            Log.shared.debug(message: "Removing profiles at indexes: \(indexes) with identifiers: \(identifiers)")
+        #endif
+        
+        var removedIdentifiers = [UUID]()
         
         // ---------------------------------------------------------------------
-        //  Get path to profile save folder
+        //  Loop through all passed identifiers and try to remove them individually
         // ---------------------------------------------------------------------
-        guard let profileFolderURL = applicationFolder(Folder.profiles) else {
-            // TODO: Proper logging
-            return
-        }
-        
-        var profileURLs = [URL]()
-        
-        // ---------------------------------------------------------------------
-        //  Put all items from profile folder into array
-        // ---------------------------------------------------------------------
-        do {
-            profileURLs = try FileManager.default.contentsOfDirectory(at: profileFolderURL, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
-        } catch {
-            Swift.print("Class: \(self.self), Function: \(#function), Error: \(error)")
-            return
-        }
-        
-        // ---------------------------------------------------------------------
-        //  Remove all items that doesn't have the FileExtension.profile extension
-        // ---------------------------------------------------------------------
-        profileURLs = profileURLs.filter { $0.pathExtension == FileExtension.profile }
-        
-        // ---------------------------------------------------------------------
-        //  Loop through all group files and add them to the group
-        // ---------------------------------------------------------------------
-        for profileURL in profileURLs {
+        for identifier in identifiers {
             do {
-                
-                // -------------------------------------------------------------
-                //  Create the profile from the file at profileURL
-                // -------------------------------------------------------------
-                let document = try self.makeDocument(withContentsOf: profileURL, ofType: TypeName.profile)
-                
-                // -------------------------------------------------------------
-                //  Check that no other profile exist with the same identifier
-                //  This means that only the first profile created with that identifier will exist
-                // -------------------------------------------------------------
-                guard let profile = document as? Profile, !self.profiles.contains(where: { $0.identifier == profile.identifier }) else {
+                if try self.removeProfile(withIdentifier: identifier) {
                     
-                    // TODO: Proper logging
-                    Swift.print("Class: \(self.self), Function: \(#function), A Profile with the identifier: \(String(describing: (document as? Profile)?.identifier)) already exist!")
-                    return
+                    // -------------------------------------------------------------
+                    //  If removed successfully, add to removedIdentifiers
+                    // -------------------------------------------------------------
+                    removedIdentifiers.append(identifier)
                 }
-                self.profiles.insert(profile)
-                
-                // -------------------------------------------------------------
-                //  Post notification that a profile was added
-                // -------------------------------------------------------------
-                NotificationCenter.default.post(name: .didAddProfile, object: self, userInfo: [NotificationKey.identifier : profile.identifier])
-            } catch let error {
-                Swift.print("Class: \(self.self), Function: \(#function), Error: \(error)")
+            } catch {
+                Log.shared.error(message: "Removing profile with identifier: \(identifier) failed with error: \(error.localizedDescription)")
             }
+        }
+        
+        // ---------------------------------------------------------------------
+        //  Post all successfully removed profile identifiers as a didRemoveProfile notification
+        // ---------------------------------------------------------------------
+        if !removedIdentifiers.isEmpty {
+            NotificationCenter.default.post(name: .didRemoveProfiles, object: self, userInfo: [NotificationKey.identifiers: removedIdentifiers,
+                                                                                               NotificationKey.indexSet : indexes])
         }
     }
 }

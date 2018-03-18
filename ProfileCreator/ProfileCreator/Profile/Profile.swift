@@ -38,6 +38,11 @@ public class Profile: NSDocument {
     @objc public var editorShowSupervised: Bool = false
     @objc public var editorShowDisabled: Bool = false
     
+    // Platform
+    @objc public var editorShowIOS: Bool = false
+    @objc public var editorShowMacOS: Bool = false
+    @objc public var editorShowTvOS: Bool = false
+    
     @objc public var editorColumnEnable: Bool = false
     
     public var enabledPayloadsCount: Int {
@@ -113,6 +118,21 @@ public class Profile: NSDocument {
         if let editorShowSupervised = viewSettings[PreferenceKey.editorShowSupervisedKeys] as? Bool {
             self.editorShowSupervised = editorShowSupervised
         } else { self.editorShowSupervised = false }
+        
+        // Editor Show iOS
+        if let editorShowIOS = viewSettings[PreferenceKey.editorShowIOS] as? Bool {
+            self.editorShowIOS = editorShowIOS
+        } else { self.editorShowIOS = true }
+        
+        // Editor Show macOS
+        if let editorShowMacOS = viewSettings[PreferenceKey.editorShowMacOS] as? Bool {
+            self.editorShowMacOS = editorShowMacOS
+        } else { self.editorShowMacOS = true }
+        
+        // Editor Show tvOS
+        if let editorShowTvOS = viewSettings[PreferenceKey.editorShowTvOS] as? Bool {
+            self.editorShowTvOS = editorShowTvOS
+        } else { self.editorShowTvOS = true }
     }
     
     private func saveDict() -> [String : Any] {
@@ -132,6 +152,9 @@ public class Profile: NSDocument {
         viewSettings[PreferenceKey.editorShowDisabledKeys] = self.editorShowDisabled
         viewSettings[PreferenceKey.editorShowHiddenKeys] = self.editorShowHidden
         viewSettings[PreferenceKey.editorShowSupervisedKeys] = self.editorShowSupervised
+        viewSettings[PreferenceKey.editorShowIOS] = self.editorShowIOS
+        viewSettings[PreferenceKey.editorShowMacOS] = self.editorShowMacOS
+        viewSettings[PreferenceKey.editorShowTvOS] = self.editorShowTvOS
         
         profileDict[SettingsKey.viewSettings] = viewSettings
         
@@ -163,7 +186,7 @@ public class Profile: NSDocument {
             let valueDict = value as? Dictionary<String, Any>,
             let newValueDict = newValue as? Dictionary<String, Any> {
             if valueDict != newValueDict {
-                Swift.print("This key has changed: \(key) (Dictionary)")
+                Log.shared.debug(message: "The key: \(key) (Dictionary) has a new value")
                 for (key, value) in valueDict {
                     self.saveCheck(key: key, value: value, newValue: newValueDict[key])
                 }
@@ -173,35 +196,35 @@ public class Profile: NSDocument {
             let valueString = value as? String,
             let newValueString = newValue as? String {
             if valueString != newValueString {
-                Swift.print("This key has changed: \(key) (String)")
-                Swift.print("Saved Value: \(valueString)")
-                Swift.print("Edited Value: \(newValueString)")
+                Log.shared.debug(message: "The key: \(key) (String) has a new value")
+                Log.shared.debug(message: "The key: \(key) saved value: \(valueString)")
+                Log.shared.debug(message: "The key: \(key) new value: \(newValueString)")
             }
             return
         } else if
             let valueInt = value as? Int,
             let newValueInt = newValue as? Int {
             if valueInt != newValueInt {
-                Swift.print("This key has changed: \(key) (Int)")
-                Swift.print("Saved Value: \(valueInt)")
-                Swift.print("Edited Value: \(newValueInt)")
+                Log.shared.debug(message: "The key: \(key) (Int) has a new value")
+                Log.shared.debug(message: "The key: \(key) saved value: \(valueInt)")
+                Log.shared.debug(message: "The key: \(key) new value: \(newValueInt)")
             }
             return
         } else if
             let valueBool = value as? Bool,
             let newValueBool = newValue as? Bool {
             if valueBool != newValueBool {
-                Swift.print("This key has changed: \(key) (Bool)")
-                Swift.print("Saved Value: \(valueBool)")
-                Swift.print("Edited Value: \(newValueBool)")
+                Log.shared.debug(message: "The key: \(key) (Bool) has a new value")
+                Log.shared.debug(message: "The key: \(key) saved value: \(valueBool)")
+                Log.shared.debug(message: "The key: \(key) new value: \(newValueBool)")
             }
             return
         } else if
             let valueArray = value as? Array<Any>,
             let newValueArray = newValue as? Array<Any> {
-            Swift.print("Doesn't compare arrays currently, so I don't know if this key has changed: \(key) (Array)")
-            Swift.print("Saved Value: \(valueArray)")
-            Swift.print("Edited Value: \(newValueArray)")
+            Log.shared.debug(message: "The key: \(key) (Array) might have a new value. Currently arrays can't be compared")
+            Log.shared.debug(message: "The key: \(key) saved value: \(valueArray)")
+            Log.shared.debug(message: "The key: \(key) new value: \(newValueArray)")
             /*
             if valueArray != newValueArray {
                 Swift.print("This key has changed: \(key) (Array)")
@@ -213,25 +236,25 @@ public class Profile: NSDocument {
         } else if let valueFloat = value as? Float,
             let newValueFloat = newValue as? Float {
             if valueFloat != newValueFloat {
-                Swift.print("This key has changed: \(key) (Float)")
-                Swift.print("Saved Value: \(valueFloat)")
-                Swift.print("Edited Value: \(newValueFloat)")
+                Log.shared.debug(message: "The key: \(key) (Float) has a new value")
+                Log.shared.debug(message: "The key: \(key) saved value: \(valueFloat)")
+                Log.shared.debug(message: "The key: \(key) new value: \(newValueFloat)")
             }
             return
         } else if let valueDate = value as? Date,
             let newValueDate = newValue as? Date {
             if valueDate != newValueDate {
-                Swift.print("This key has changed: \(key) (Date)")
-                Swift.print("Saved Value: \(valueDate)")
-                Swift.print("Edited Value: \(newValueDate)")
+                Log.shared.debug(message: "The key: \(key) (Date) has a new value")
+                Log.shared.debug(message: "The key: \(key) saved value: \(valueDate)")
+                Log.shared.debug(message: "The key: \(key) new value: \(newValueDate)")
             }
             return
         } else if let valueData = value as? Data,
             let newValueData = newValue as? Data {
             if valueData != newValueData {
-                Swift.print("This key has changed: \(key) (Data)")
-                Swift.print("Saved Value: \(valueData)")
-                Swift.print("Edited Value: \(newValueData)")
+                Log.shared.debug(message: "The key: \(key) (Data) has a new value")
+                Log.shared.debug(message: "The key: \(key) saved value: \(valueData)")
+                Log.shared.debug(message: "The key: \(key) new value: \(newValueData)")
             }
             return
         }
@@ -248,11 +271,10 @@ public class Profile: NSDocument {
     override public func save(_ sender: Any?) {
         if self.title == StringConstant.defaultProfileName { self.showAlertUnsaved(closeWindow: false); return }
         self.save(operationType: .saveOperation) { saveError in
-            // TODO: Proper Logging
             if saveError == nil {
-                Swift.print("Class: \(self.self), Function: \(#function), Save Successful!")
+                Log.shared.log(message: "Saving profile: \"\(self.title)\" at path: \(self.fileURL?.path ?? "") was successful")
             } else {
-                Swift.print("Class: \(self.self), Function: \(#function), Error: \(String(describing: saveError))")
+                Log.shared.error(message: "Saving profile: \(self.title) failed with error: \(String(describing: saveError?.localizedDescription))")
             }
         }
     }
@@ -357,9 +379,9 @@ public class Profile: NSDocument {
                                                         if closeWindow {
                                                             windowController.performSelector(onMainThread: #selector(windowController.windowClose), with: windowController, waitUntilDone: false)
                                                         }
-                                                        Swift.print("Class: \(self.self), Function: \(#function), Save Successful!")
+                                                        Log.shared.log(message: "Saving profile: \"\(self.title)\" at path: \(self.fileURL?.path ?? "") was successful")
                                                     } else {
-                                                        Swift.print("Class: \(self.self), Function: \(#function), Error: \(String(describing: saveError))")
+                                                        Log.shared.error(message: "Saving profile: \(self.title) failed with error: \(String(describing: saveError?.localizedDescription))")
                                                     }
                                                 })
                                             }
@@ -400,12 +422,11 @@ public class Profile: NSDocument {
                                         self.save(operationType: .saveOperation, completionHandler: { (saveError) in
                                             if saveError == nil {
                                                 windowController.performSelector(onMainThread: #selector(windowController.windowClose), with: windowController, waitUntilDone: false)
-                                                Swift.print("Class: \(self.self), Function: \(#function), Save Successful!")
+                                                Log.shared.log(message: "Saving profile: \"\(self.title)\" at path: \(self.fileURL?.path ?? "") was successful")
                                             } else {
-                                                Swift.print("Class: \(self.self), Function: \(#function), Error: \(String(describing: saveError))")
+                                                Log.shared.error(message: "Saving profile: \(self.title) failed with error: \(String(describing: saveError?.localizedDescription))")
                                             }
                                         })
-                                        Swift.print("Save & Clsoe")
                                     case .alertSecondButtonReturn:
                                         windowController.performSelector(onMainThread: #selector(windowController.windowClose), with: windowController, waitUntilDone: false)
                                     case .alertThirdButtonReturn:

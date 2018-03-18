@@ -9,7 +9,7 @@
 import Foundation
 import ProfilePayloads
 
-let ProfileCreatorErrorDomain = Bundle.main.bundleIdentifier ?? "com.github.erikberglund.ProfileCreator"
+let ProfileCreatorErrorDomain = Bundle.main.bundleIdentifier ?? StringConstant.domain
 
 enum ProfileExportError: Error {
     case unknownError

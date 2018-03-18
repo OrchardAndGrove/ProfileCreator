@@ -26,5 +26,11 @@
 	<false/>
 	<key>EditorShowSupervisedKeys</key>
 	<true/>
+	<key>EditorShowMacOS</key>
+	<true/>
+	<key>EditorShowIOS</key>
+	<true/>
+	<key>EditorShowTvOS</key>
+	<true/>
 </dict>
 </plist>

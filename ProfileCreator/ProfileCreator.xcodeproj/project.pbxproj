@@ -84,6 +84,7 @@
 		E35C696C1FA2FFC4008BE451 /* ProfileEditorHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E35C696B1FA2FFC4008BE451 /* ProfileEditorHeaderView.swift */; };
 		E35C69711FA31CEA008BE451 /* PayloadCellViewEnable.swift in Sources */ = {isa = PBXBuildFile; fileRef = E35C69701FA31CEA008BE451 /* PayloadCellViewEnable.swift */; };
 		E35C7FC02045EA8A009971F5 /* FileInfoProcessors.swift in Sources */ = {isa = PBXBuildFile; fileRef = E35C7FBF2045EA8A009971F5 /* FileInfoProcessors.swift */; };
+		E37397F1205CFA410018180E /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37397F0205CFA410018180E /* Log.swift */; };
 		E37C67AB1F415CDD00B3D4CB /* PayloadCellViewDatePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37C67AA1F415CDD00B3D4CB /* PayloadCellViewDatePicker.swift */; };
 		E37C67AD1F415D5D00B3D4CB /* PayloadCellViewItemDatePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = E37C67AC1F415D5D00B3D4CB /* PayloadCellViewItemDatePicker.swift */; };
 		E391A21820316C3800CCE71C /* ProfileEditorUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = E391A21720316C3800CCE71C /* ProfileEditorUI.swift */; };
@@ -191,6 +192,7 @@
 		E35C696B1FA2FFC4008BE451 /* ProfileEditorHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProfileEditorHeaderView.swift; path = "WindowControllers/Profile Editor/Editor/ProfileEditorHeaderView.swift"; sourceTree = "<group>"; };
 		E35C69701FA31CEA008BE451 /* PayloadCellViewEnable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewEnable.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViewEnable.swift"; sourceTree = "<group>"; };
 		E35C7FBF2045EA8A009971F5 /* FileInfoProcessors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FileInfoProcessors.swift; path = "WindowControllers/Profile Editor/Editor/FileInfoProcessor/FileInfoProcessors.swift"; sourceTree = "<group>"; };
+		E37397F0205CFA410018180E /* Log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Log.swift; path = Utility/Log.swift; sourceTree = "<group>"; };
 		E37C67AA1F415CDD00B3D4CB /* PayloadCellViewDatePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewDatePicker.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViewDatePicker.swift"; sourceTree = "<group>"; };
 		E37C67AC1F415D5D00B3D4CB /* PayloadCellViewItemDatePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewItemDatePicker.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViewItems/PayloadCellViewItemDatePicker.swift"; sourceTree = "<group>"; };
 		E391A21720316C3800CCE71C /* ProfileEditorUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProfileEditorUI.swift; path = "WindowControllers/Profile Editor/Editor/ProfileEditorUI.swift"; sourceTree = "<group>"; };
@@ -374,6 +376,7 @@
 				531540091F1233080060011B /* Constants.swift */,
 				5367E26B1F13ED440027D0D0 /* Alert.swift */,
 				536554DB1F248CA4000543A3 /* Error.swift */,
+				E37397F0205CFA410018180E /* Log.swift */,
 			);
 			name = Utility;
 			sourceTree = "<group>";
@@ -617,6 +620,7 @@
 			files = (
 				535CB4571F2B1CD300A746F6 /* PayloadLibrarySplitView.swift in Sources */,
 				E32767E61F3F71B700B4670C /* PayloadCellViewFile.swift in Sources */,
+				E37397F1205CFA410018180E /* Log.swift in Sources */,
 				5383C1981F2C919A004EBE9B /* PayloadLibraryCellViewProfile.swift in Sources */,
 				534732DD1F10C3BB00770446 /* MainWindowOutlineView.swift in Sources */,
 				E3036614202F3A930051040D /* PreferencesLibrary.swift in Sources */,

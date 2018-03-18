@@ -81,7 +81,7 @@ class PreferencesProfileDefaultsView: NSView {
         lastTextField = lastSubview
         
         lastSubview = addTextField(label: "Organization Identifier",
-                                   placeholderValue: "com.github.erikberglund.ProfileCreator",
+                                   placeholderValue: StringConstant.domain,
                                    keyPath: PreferenceKey.defaultOrganizationIdentifier,
                                    toView: self,
                                    lastSubview: lastSubview,
@@ -143,6 +143,40 @@ class PreferencesProfileDefaultsView: NSView {
         lastSubview = addCheckbox(title: "Show Enable/Disable",
                                   bindTo: UserDefaults.standard,
                                   bindKeyPath: PreferenceKey.editorColumnEnable,
+                                  toView: self,
+                                  lastSubview: lastSubview,
+                                  height: &frameHeight,
+                                  indent: preferencesIndent,
+                                  constraints: &constraints)
+        
+        lastSubview = addHeader(title: "Platform",
+                                withSeparator: true,
+                                toView: self,
+                                lastSubview: lastSubview,
+                                height: &frameHeight,
+                                constraints: &constraints)
+        
+        lastSubview = addCheckbox(title: "iOS",
+                                  bindTo: UserDefaults.standard,
+                                  bindKeyPath: PreferenceKey.editorShowIOS,
+                                  toView: self,
+                                  lastSubview: lastSubview,
+                                  height: &frameHeight,
+                                  indent: preferencesIndent,
+                                  constraints: &constraints)
+        
+        lastSubview = addCheckbox(title: "macOS",
+                                  bindTo: UserDefaults.standard,
+                                  bindKeyPath: PreferenceKey.editorShowMacOS,
+                                  toView: self,
+                                  lastSubview: lastSubview,
+                                  height: &frameHeight,
+                                  indent: preferencesIndent,
+                                  constraints: &constraints)
+        
+        lastSubview = addCheckbox(title: "tvOS",
+                                  bindTo: UserDefaults.standard,
+                                  bindKeyPath: PreferenceKey.editorShowTvOS,
                                   toView: self,
                                   lastSubview: lastSubview,
                                   height: &frameHeight,

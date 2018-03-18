@@ -85,7 +85,6 @@ extension Notification.Name {
     static let emptyNotification = Notification.Name("emptyNotification")
     static let exportProfile = Notification.Name("exportProfile")
     static let noProfileConfigured = Notification.Name("noProfileConfigured")
-    static let removeProfile = Notification.Name("removeProfile")
 }
 
 extension NSPasteboard.PasteboardType {
@@ -104,6 +103,7 @@ struct FileExtension {
 
 // This needs to be renamed after more items are added, to make it easier to understand and use.
 struct StringConstant {
+    static let domain = "com.github.erikberglund.ProfileCreator"
     static let defaultProfileName = "Untitled"
 }
 
@@ -151,6 +151,9 @@ struct PreferenceKey {
     static let editorShowDisabledKeys = "EditorShowDisabledKeys"
     static let editorShowSupervisedKeys = "EditorShowSupervisedKeys"
     static let editorShowHiddenKeys = "EditorShowHiddenKeys"
+    static let editorShowMacOS = "EditorShowMacOS"
+    static let editorShowIOS = "EditorShowIOS"
+    static let editorShowTvOS = "EditorShowTvOS"
 }
 
 struct SidebarGroupTitle {

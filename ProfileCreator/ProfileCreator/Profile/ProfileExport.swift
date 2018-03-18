@@ -335,13 +335,11 @@ class ProfileExport {
         // ---------------------------------------------------------------------
         //  Verify this subkey and it's parents are enabled
         // ---------------------------------------------------------------------
-        let enabled = self.isEnabled(subkey: subkey, typeSettings: typeSettings, domainSettings: domainSettings, viewTypeSettings: viewTypeSettings, viewDomainSettings: viewDomainSettings)
-        let enabledParents = self.isEnabledParents(subkey: subkey, typeSettings: typeSettings, domainSettings: domainSettings, viewTypeSettings: viewTypeSettings, viewDomainSettings: viewDomainSettings)
+        if self.isEnabled(subkey: subkey, typeSettings: typeSettings, domainSettings: domainSettings, viewTypeSettings: viewTypeSettings, viewDomainSettings: viewDomainSettings) {
+            return self.isEnabledParents(subkey: subkey, typeSettings: typeSettings, domainSettings: domainSettings, viewTypeSettings: viewTypeSettings, viewDomainSettings: viewDomainSettings)
+        }
         
-        // ---------------------------------------------------------------------
-        //  Only export enabled payloads
-        // ---------------------------------------------------------------------
-        return enabled && enabledParents
+        return false
     }
     
     

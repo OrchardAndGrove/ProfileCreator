@@ -26,6 +26,9 @@ class ProfileEditor: NSObject {
     let editorShowDisabledSelector: String
     let editorShowHiddenSelector: String
     let editorShowSupervisedSelector: String
+    let editorShowIOSSelector: String
+    let editorShowMacOSSelector: String
+    let editorShowTvOSSelector: String
     
     public let editorView = NSView()
     
@@ -50,6 +53,9 @@ class ProfileEditor: NSObject {
         self.editorShowDisabledSelector = NSStringFromSelector(#selector(getter: profile.editorShowDisabled))
         self.editorShowHiddenSelector = NSStringFromSelector(#selector(getter: profile.editorShowHidden))
         self.editorShowSupervisedSelector = NSStringFromSelector(#selector(getter: profile.editorShowSupervised))
+        self.editorShowIOSSelector = NSStringFromSelector(#selector(getter: profile.editorShowIOS))
+        self.editorShowMacOSSelector = NSStringFromSelector(#selector(getter: profile.editorShowMacOS))
+        self.editorShowTvOSSelector = NSStringFromSelector(#selector(getter: profile.editorShowTvOS))
         
         self.settings = ProfileEditorSettings(profile: profile)
         self.headerView = ProfileEditorHeaderView(profile: profile)
@@ -84,6 +90,9 @@ class ProfileEditor: NSObject {
         self.profile?.addObserver(self, forKeyPath: self.editorShowDisabledSelector, options: .new, context: nil)
         self.profile?.addObserver(self, forKeyPath: self.editorShowHiddenSelector, options: .new, context: nil)
         self.profile?.addObserver(self, forKeyPath: self.editorShowSupervisedSelector, options: .new, context: nil)
+        self.profile?.addObserver(self, forKeyPath: self.editorShowIOSSelector, options: .new, context: nil)
+        self.profile?.addObserver(self, forKeyPath: self.editorShowMacOSSelector, options: .new, context: nil)
+        self.profile?.addObserver(self, forKeyPath: self.editorShowTvOSSelector, options: .new, context: nil)
         
         // ---------------------------------------------------------------------
         //  Activate layout constraints
@@ -104,11 +113,21 @@ class ProfileEditor: NSObject {
         self.profile?.removeObserver(self, forKeyPath: self.editorShowDisabledSelector, context: nil)
         self.profile?.removeObserver(self, forKeyPath: self.editorShowHiddenSelector, context: nil)
         self.profile?.removeObserver(self, forKeyPath: self.editorShowSupervisedSelector, context: nil)
+        self.profile?.removeObserver(self, forKeyPath: self.editorShowIOSSelector, context: nil)
+        self.profile?.removeObserver(self, forKeyPath: self.editorShowMacOSSelector, context: nil)
+        self.profile?.removeObserver(self, forKeyPath: self.editorShowTvOSSelector, context: nil)
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         switch keyPath ?? "" {
-        case self.editorShowDisabledSelector, self.editorShowHiddenSelector, self.editorShowSupervisedSelector, self.editorDisableOptionalKeysSelector:
+        case self.editorShowDisabledSelector,
+             self.editorShowHiddenSelector,
+             self.editorShowSupervisedSelector,
+             self.editorDisableOptionalKeysSelector,
+             self.editorShowIOSSelector,
+             self.editorShowMacOSSelector,
+             self.editorShowTvOSSelector:
+            
             self.reloadTableView(updateCellViews: true)
         case self.editorColumnEnableSelector:
             if let tableColumnLeading = self.tableView.tableColumn(withIdentifier: .tableColumnPayloadEnableLeading), let show = change?[.newKey] as? Bool {
@@ -151,7 +170,7 @@ class ProfileEditor: NSObject {
     
     func updatePayloadSettings(value: Any?, key: String, subkey: PayloadSourceSubkey) {
         self.profile?.updatePayloadSettings(value: value, key: key, subkey: subkey, updateComplete: { (successful, error) in
-            Swift.print("Class: \(self.self), Function: \(#function), PayloadSettings Changed with status: \(successful)")
+            Swift.print("Class: \(self.self), Function: \(#function), PayloadSettings Key: \(key) Changed with status: \(successful)")
         })
     }
     
@@ -159,8 +178,6 @@ class ProfileEditor: NSObject {
         switch view {
         case EditorViewTag.profileCreator.rawValue:
             guard self.scrollView.documentView != self.tableView else { return }
-            
-            Swift.print("Profile Creator")
             self.scrollView.documentView = self.tableView
         case EditorViewTag.source.rawValue:
             guard
@@ -169,9 +186,8 @@ class ProfileEditor: NSObject {
             self.updateTextView(payloadPlaceholder: selectedPayloadPlaceholder)
             self.scrollView.documentView = self.textView
         default:
-            Swift.print("Unknown Tag!")
+            Swift.print("Unknown View Tag: \(view)")
         }
-        Swift.print("Show: \(view)")
     }
     
     func updateTextView(payloadPlaceholder: PayloadPlaceholder) {
@@ -249,7 +265,7 @@ class ProfileEditor: NSObject {
         try? FileManager.default.removeItem(at: tmpURL)
         
         // ---------------------------------------------------------------------
-        //  If file contents wasn't empty, then remove the plist header and tag
+        //  If file contents wasn't empty, then remove the plist header and ending tag
         // ---------------------------------------------------------------------
         if let string = plistString {
             

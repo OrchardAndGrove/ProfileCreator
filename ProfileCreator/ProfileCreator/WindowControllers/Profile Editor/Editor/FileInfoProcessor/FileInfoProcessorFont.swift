@@ -77,7 +77,7 @@ class FileInfoProcessorFont: FileInfoProcessor {
             // Icon
             icon = NSWorkspace.shared.icon(forFileType: self.fileUTI)
             
-            // FIXME: Need to fix defaults here
+            // Get FileInfo
             self.fileInfoVar = FileInfo(title: title,
                                         topLabel: topLabel,
                                         topContent: topContent,

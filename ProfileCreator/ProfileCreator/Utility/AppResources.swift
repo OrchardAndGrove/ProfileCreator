@@ -14,7 +14,7 @@ enum Folder {
 
 func applicationFolder(_ folder: Folder) -> URL? {
     switch folder {
-    case Folder.applicationSupport:
+    case .applicationSupport:
         do {
             let userApplicationSupport = try FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
             return userApplicationSupport.appendingPathComponent("ProfileCreator", isDirectory: true)
@@ -22,7 +22,7 @@ func applicationFolder(_ folder: Folder) -> URL? {
             Swift.print("Function: \(#function), Error: \(error)")
         }
         break
-    case Folder.profiles:
+    case .profiles:
         if let userApplicationSupport = applicationFolder(Folder.applicationSupport) {
             let profileFolder = userApplicationSupport.appendingPathComponent("Profiles", isDirectory: true)
             if !FileManager.default.fileExists(atPath: profileFolder.path) {
@@ -35,17 +35,17 @@ func applicationFolder(_ folder: Folder) -> URL? {
             return profileFolder
         }
         break
-    case Folder.groups:
+    case .groups:
         if let userApplicationSupport = applicationFolder(Folder.applicationSupport) {
             return userApplicationSupport.appendingPathComponent("Groups", isDirectory: true)
         }
         break
-    case Folder.groupLibrary:
+    case .groupLibrary:
         if let groups = applicationFolder(Folder.groups) {
             return groups.appendingPathComponent("Library", isDirectory: true)
         }
         break
-    case Folder.groupSmartGroups:
+    case .groupSmartGroups:
         if let groups = applicationFolder(Folder.groups) {
             return groups.appendingPathComponent("SmartGroups", isDirectory: true)
         }
