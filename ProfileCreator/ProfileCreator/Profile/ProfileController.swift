@@ -2,8 +2,8 @@
 //  ProfileController.swift
 //  ProfileCreator
 //
-//  Created by Erik Berglund on 2017-07-15.
-//  Copyright © 2017 Erik Berglund. All rights reserved.
+//  Created by Erik Berglund.
+//  Copyright © 2018 Erik Berglund. All rights reserved.
 //
 
 import Cocoa
@@ -127,9 +127,7 @@ class ProfileController: NSDocumentController {
     // MARK: Load Profiles
     
     private func loadSavedProfiles() {
-        #if DEBUG
-            Log.shared.debug(message: "Loading saved profiles")
-        #endif
+        Log.shared.log(message: "Loading saved profiles")
         
         // ---------------------------------------------------------------------
         //  Get path to default profile save folder
@@ -213,9 +211,7 @@ class ProfileController: NSDocumentController {
     // MARK: Edit Profiles
     
     public func editProfile(withIdentifier identifier: UUID) {
-        #if DEBUG
-            Log.shared.debug(message: "Edit profile with identifier: \(identifier)")
-        #endif
+        Log.shared.info(message: "Edit profile with identifier: \(identifier)")
         
         if let profile = self.profile(withIdentifier: identifier) {
             profile.edit()
@@ -226,9 +222,7 @@ class ProfileController: NSDocumentController {
     // MARK: Export Profiles
     
     public func export(profile: Profile) {
-        #if DEBUG
-            Log.shared.debug(message: "Export profile with identifier: \(profile.identifier)")
-        #endif
+        Log.shared.log(message: "Export profile with identifier: \(profile.identifier)")
         
         // ---------------------------------------------------------------------
         //  Get a reference to the main window to attach dialogs to

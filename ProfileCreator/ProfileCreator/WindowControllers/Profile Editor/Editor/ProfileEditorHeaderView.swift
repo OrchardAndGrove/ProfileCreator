@@ -3,7 +3,7 @@
 //  ProfileCreator
 //
 //  Created by Erik Berglund on 2017-10-27.
-//  Copyright © 2017 Erik Berglund. All rights reserved.
+//  Copyright © 2018 Erik Berglund. All rights reserved.
 //
 
 import Foundation
