@@ -80,10 +80,10 @@ class PayloadCellViews {
         if let payloadCellViews = cellViews as? [PayloadCellView] {
             
             // Sort cellViews with enabled subkeys at the top
-            let sortedCellViews = payloadCellViews.sorted(by: { profile.subkeyIsEnabled(subkey: $0.subkey!) && !profile.subkeyIsEnabled(subkey: $1.subkey!) })
+            let sortedCellViews = payloadCellViews.sorted(by: { profile.subkeyIsEnabled(subkey: $0.subkey!, onlyByUser: false) && !profile.subkeyIsEnabled(subkey: $1.subkey!, onlyByUser: false) })
             
             // Get the index of the first disabled subkey
-            if let indexDisabled = sortedCellViews.index(where: { !profile.subkeyIsEnabled(subkey: $0.subkey!) } ) {
+            if let indexDisabled = sortedCellViews.index(where: { !profile.subkeyIsEnabled(subkey: $0.subkey!, onlyByUser: false) } ) {
                 cellViews = sortedCellViews
                 
                 let cellView = PayloadCellViewTitle(title: "Disabled Keys", description: "The payload keys below will not be included in the exported profile")
@@ -148,7 +148,7 @@ class PayloadCellViews {
         }
         
         // Check if subkey is enabled
-        if !showDisabled, !profile.subkeyIsEnabled(subkey: subkey) {
+        if !showDisabled, !profile.subkeyIsEnabled(subkey: subkey, onlyByUser: false) {
             disabledCount += 1
             return nil
         }

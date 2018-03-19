@@ -226,12 +226,12 @@ public class Profile: NSDocument {
             Log.shared.debug(message: "The key: \(key) saved value: \(valueArray)")
             Log.shared.debug(message: "The key: \(key) new value: \(newValueArray)")
             /*
-            if valueArray != newValueArray {
-                Swift.print("This key has changed: \(key) (Array)")
-                Swift.print("Saved Value: \(valueArray)")
-                Swift.print("Edited Value: \(newValueArray)")
-            }
- */
+             if valueArray != newValueArray {
+             Swift.print("This key has changed: \(key) (Array)")
+             Swift.print("Saved Value: \(valueArray)")
+             Swift.print("Edited Value: \(newValueArray)")
+             }
+             */
             return
         } else if let valueFloat = value as? Float,
             let newValueFloat = newValue as? Float {
@@ -557,22 +557,32 @@ public class Profile: NSDocument {
     // MARK: -
     // MARK: Subkey Check
     
-    func subkeyIsEnabled(subkey: PayloadSourceSubkey) -> Bool {
+    func subkeyIsEnabled(subkey: PayloadSourceSubkey, onlyByUser: Bool) -> Bool {
+        
+        var parentIsEnabled = true
+        if !onlyByUser, let parentSubkeys = subkey.parentSubkeys {
+            for parentSubkey in parentSubkeys {
+                if !self.subkeyIsEnabled(subkey: parentSubkey, onlyByUser: false) {
+                    parentIsEnabled = false
+                }
+            }
+        }
+        
         var isEnabled = !self.editorDisableOptionalKeys
-        if subkey.require == .always {
+        if !onlyByUser, parentIsEnabled, subkey.require == .always {
             return true
         } else if
             let domainViewSettings = self.payloadViewTypeSettings(type: subkey.payloadSourceType)[subkey.domain] as? Dictionary<String, Any>,
             let viewSettings = domainViewSettings[subkey.keyPath] as? Dictionary<String, Any>,
             let enabled = viewSettings[SettingsKey.enabled] as? Bool {
             isEnabled = enabled
-        } else if let enabledDefault = subkey.enabledDefault {
+        } else if !onlyByUser, parentIsEnabled, let enabledDefault = subkey.enabledDefault {
             isEnabled = enabledDefault
         }
         
         if !isEnabled {
             for childSubkey in subkey.subkeys {
-                if self.subkeyIsEnabled(subkey: childSubkey) {
+                if self.subkeyIsEnabled(subkey: childSubkey, onlyByUser: true) {
                     isEnabled = true
                     break
                 }

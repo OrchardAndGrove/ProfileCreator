@@ -113,11 +113,11 @@ class PayloadCellView: NSTableCellView {
             
             self.updateHeight(7.0 + viewBelow.intrinsicContentSize.height)
         } else if let textFieldTitle = self.textFieldTitle {
-            self.cellViewConstraints.append(NSLayoutConstraint(item: textFieldTitle,
-                                                               attribute: .bottom,
-                                                               relatedBy: .equal,
-                                                               toItem: viewBelow,
+            self.cellViewConstraints.append(NSLayoutConstraint(item: viewBelow,
                                                                attribute: .top,
+                                                               relatedBy: .equal,
+                                                               toItem: textFieldTitle,
+                                                               attribute: .bottom,
                                                                multiplier: 1.0,
                                                                constant: 7.0))
             

@@ -515,20 +515,17 @@ class ProfileExport {
         
         if value == nil, let userValue = domainSettings[subkey.keyPath] {
             value = userValue
-        }
-        
-        // If no user value was found, get default value or use an empty value
-        if value == nil {
+        } else {
             value = subkey.valueDefault ?? PayloadUtility.emptyValue(valueType: subkey.type)
+            
+            // Special case when the PayloadIdentifier isn't manually entered
+            if subkey.key == PayloadKey.payloadIdentifier, let payloadIdentifier = value as? String {
+                value = self.payloadIdentifier(payloadIdentifier: payloadIdentifier, typeSettings: typeSettings, domainSettings: domainSettings)
+            }
         }
         
         // Verify the value is valid for the subkey
         try self.verify(value: value, forSubkey: subkey)
-        
-        // Special Cases
-        if subkey.key == PayloadKey.payloadIdentifier, let payloadIdentifier = value as? String {
-            return self.payloadIdentifier(payloadIdentifier: payloadIdentifier, typeSettings: typeSettings, domainSettings: domainSettings)
-        }
         
         return value
     }
@@ -622,12 +619,14 @@ class ProfileExport {
                                                        parentPayloadContent: payloadContent[rootSubkey.key]) {
                 payloadContent[rootSubkey.key] = rootSubkeyValue
             } else {
+                Log.shared.error(message: "No value returned for the root subkey")
                 // FIXME: Add Correct Error
-                Swift.print("Got nothing for the root subkey!")
                 throw ProfileExportError.unknownError
             }
         } else if let value = try self.getValue(forSubkey: subkey, typeSettings: typeSettings, domainSettings: domainSettings, parentDomainSettings: nil) {
-            Swift.print("Setting: \(subkey.key) = \(value)")
+            #if DEBUG
+                Log.shared.debug(message: "Setting: \(subkey.key) = \(value)")
+            #endif
             payloadContent[subkey.key] = value
         } else {
             // FIXME: Add correct error

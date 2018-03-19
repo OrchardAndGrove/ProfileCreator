@@ -48,7 +48,7 @@ class PayloadCellViewEnable: NSTableCellView, CheckboxCellView {
         //  Set Value
         // ---------------------------------------------------------------------
         if let profile = editor.profile {
-            self.checkbox?.state = (profile.subkeyIsEnabled(subkey: subkey)) ? .on : .off
+            self.checkbox?.state = (profile.subkeyIsEnabled(subkey: subkey, onlyByUser: false)) ? .on : .off
         }
         
         // ---------------------------------------------------------------------
