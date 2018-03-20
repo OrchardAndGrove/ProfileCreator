@@ -567,16 +567,20 @@ public class Profile: NSDocument {
                 }
             }
         }
+        // Log.shared.debug(message: "Subkey parent is enabled: \(parentIsEnabled)", category: #function)
         
         var isEnabled = !self.editorDisableOptionalKeys
         if !onlyByUser, parentIsEnabled, subkey.require == .always {
+            // Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(true) (required)", category: #function)
             return true
         } else if
             let domainViewSettings = self.payloadViewTypeSettings(type: subkey.payloadSourceType)[subkey.domain] as? Dictionary<String, Any>,
             let viewSettings = domainViewSettings[subkey.keyPath] as? Dictionary<String, Any>,
             let enabled = viewSettings[SettingsKey.enabled] as? Bool {
+            // Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(enabled) (user)", category: #function)
             isEnabled = enabled
         } else if !onlyByUser, parentIsEnabled, let enabledDefault = subkey.enabledDefault {
+            // Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(enabledDefault) (default)", category: #function)
             isEnabled = enabledDefault
         }
         

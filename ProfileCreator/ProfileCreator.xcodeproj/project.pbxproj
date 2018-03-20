@@ -252,8 +252,8 @@
 				531852211F2295B000529E6B /* ProfileEditorSplitView.swift */,
 				E34A527B2036E36C00A9508F /* Settings */,
 				5370780B1F232D8500570090 /* Toolbar */,
-				539A164B1F267742009CA7B6 /* Editor */,
 				535CB4531F2B1A0900A746F6 /* Payload Library */,
+				539A164B1F267742009CA7B6 /* Editor */,
 			);
 			name = "Profile Editor";
 			sourceTree = "<group>";
