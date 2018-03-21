@@ -40,7 +40,7 @@ class PayloadLibrarySplitView: NSSplitView {
         // ---------------------------------------------------------------------
         //  Setup Variables
         // ---------------------------------------------------------------------
-        self.tableViews = PayloadLibraryTableViews(editor: editor, splitView: self)
+        self.tableViews = PayloadLibraryTableViews(profile: profile, editor: editor, splitView: self)
         self.noPayloads = PayloadLibraryNoPayloads(draggingDestination: self.tableViews!, draggingTypes: [.payload])
         
         // ---------------------------------------------------------------------

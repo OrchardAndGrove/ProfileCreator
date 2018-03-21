@@ -2,7 +2,7 @@
 //  ProfilePayloads.h
 //  ProfilePayloads
 //
-//  Created by Erik Berglund on 2017-08-17.
+//  Created by Erik Berglund.
 //  Copyright © 2017 Erik Berglund. All rights reserved.
 //
 

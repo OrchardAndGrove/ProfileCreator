@@ -28,24 +28,42 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
     private var selectedPayloadPlaceholder: PayloadPlaceholder?
     private var generalPayloadPlaceholder: PayloadPlaceholder?
     
+    private let editorShowIOSSelector: String
+    private let editorShowMacOSSelector: String
+    private let editorShowTvOSSelector: String
+    
+    private var selectedPlatforms: Platforms = []
+    
+    private weak var profile: Profile?
     private weak var editor: ProfileEditor?
     private weak var librarySplitView: PayloadLibrarySplitView?
     
-    init(editor: ProfileEditor, splitView: PayloadLibrarySplitView) {
+    init(profile: Profile, editor: ProfileEditor, splitView: PayloadLibrarySplitView) {
+        
+        self.editorShowIOSSelector = NSStringFromSelector(#selector(getter: profile.editorShowIOS))
+        self.editorShowMacOSSelector = NSStringFromSelector(#selector(getter: profile.editorShowMacOS))
+        self.editorShowTvOSSelector = NSStringFromSelector(#selector(getter: profile.editorShowTvOS))
+        
         super.init()
         
+        self.profile = profile
         self.editor = editor
         self.librarySplitView = splitView
         
         self.setupProfilePayloads()
         self.setupLibraryPayloads()
-        
-        self.reloadTableviews()
-        
+
         // ---------------------------------------------------------------------
         //  Setup Notification Observers
         // ---------------------------------------------------------------------
         NotificationCenter.default.addObserver(self, selector: #selector(changePayloadSelected(_:)), name: .changePayloadSelected, object: nil)
+        self.profile?.addObserver(self, forKeyPath: self.editorShowIOSSelector, options: .new, context: nil)
+        self.profile?.addObserver(self, forKeyPath: self.editorShowMacOSSelector, options: .new, context: nil)
+        self.profile?.addObserver(self, forKeyPath: self.editorShowTvOSSelector, options: .new, context: nil)
+        
+        self.updateSelectedPlatforms()
+        
+        self.reloadTableviews()
         
         // ---------------------------------------------------------------------
         //  Add and enable the general settings
@@ -73,6 +91,54 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         self.profilePayloadsTableView.delegate = nil
         
         NotificationCenter.default.removeObserver(self, name: .changePayloadSelected, object: nil)
+        
+        self.profile?.removeObserver(self, forKeyPath: self.editorShowIOSSelector, context: nil)
+        self.profile?.removeObserver(self, forKeyPath: self.editorShowMacOSSelector, context: nil)
+        self.profile?.removeObserver(self, forKeyPath: self.editorShowTvOSSelector, context: nil)
+    }
+    
+    func updateSelectedPlatforms() {
+        guard let profile = self.profile else { return }
+        
+        var newSelectedPlatforms: Platforms = []
+        
+        if profile.editorShowIOS {
+            newSelectedPlatforms.insert(.iOS)
+        }
+        
+        if profile.editorShowMacOS {
+            newSelectedPlatforms.insert(.macOS)
+        }
+        
+        if profile.editorShowTvOS {
+            newSelectedPlatforms.insert(.tvOS)
+        }
+        
+        if self.selectedPlatforms != newSelectedPlatforms {
+            self.selectedPlatforms = newSelectedPlatforms
+            if let selectedLibraryTag = self.selectedLibraryTag {
+                self.updateLibraryPayloads(tag: selectedLibraryTag)
+            }
+        }
+    }
+    
+    func updateLibraryPayloads(tag: LibraryTag) {
+        self.libraryPayloads = self.placeholders(tag: tag) ?? [PayloadPlaceholder]()
+        if let librarySplitView = self.librarySplitView {
+            librarySplitView.noPayloads(show: self.libraryPayloads.isEmpty)
+        }
+        self.reloadTableviews()
+    }
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        switch keyPath ?? "" {
+        case self.editorShowIOSSelector,
+             self.editorShowMacOSSelector,
+             self.editorShowTvOSSelector:
+            self.updateSelectedPlatforms()
+        default:
+            Swift.print("Class: \(self.self), Function: \(#function), observeValueforKeyPath: \(String(describing: keyPath))")
+        }
     }
     
     @objc func changePayloadSelected(_ notification: NSNotification?) {
@@ -127,15 +193,7 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
     func selectLibrary(tag: LibraryTag, sender: Any?) {
         if self.selectedLibraryTag != tag {
             self.selectedLibraryTag = tag
-            
-            self.libraryPayloads = self.placeholders(tag: tag) ?? [PayloadPlaceholder]()
-            // FIXME: Here remove all items that already exist in profilePayloads, probably with a filter.
-            
-            if let librarySplitView = self.librarySplitView {
-                librarySplitView.noPayloads(show: self.libraryPayloads.isEmpty)
-            }
-            
-            self.reloadTableviews()
+            self.updateLibraryPayloads(tag: tag)
         }
     }
     
@@ -143,7 +201,8 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         switch tag {
         case .appleDomains:
             if let manifestPlaceholders = ProfilePayloads.shared.manifestPlaceholders() {
-                return Array(Set(manifestPlaceholders).subtracting(self.profilePayloads))
+                let selectedManifestPlaceholders = manifestPlaceholders.filter({ !$0.payloadSource.platforms.isDisjoint(with: self.selectedPlatforms) })
+                return Array(Set(selectedManifestPlaceholders).subtracting(self.profilePayloads))
             } else { return nil }
         case .appleCollections:
             return ProfilePayloads.shared.collectionPlaceholders()

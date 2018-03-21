@@ -485,7 +485,6 @@ class ProfileExport {
                 var childPayloadContent: Any?
                 if let theChildSubkey = childSubkey {
                     childSettings = domainSettings[theChildSubkey.keyPath]
-                    Swift.print("child: \(theChildSubkey.keyPath) settings: \(String(describing: childSettings))")
                     
                     childPayloadContent = parentPayloadContent[theChildSubkey.key]
                     Swift.print("childPayloadContent: \(String(describing: childPayloadContent))")
