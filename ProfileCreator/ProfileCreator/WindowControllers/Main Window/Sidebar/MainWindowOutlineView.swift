@@ -36,6 +36,10 @@ class MainWindowOutlineViewController: NSObject {
     var alert: Alert?
     var selectedItem: OutlineViewChildItem?
     var parents = [OutlineViewParentItem]()
+    
+    let parentLibrary: MainWindowLibrary = MainWindowLibrary(title: SidebarGroupTitle.library, group: .library, groupFolderURL: nil)
+    let parentLibraryJSS: MainWindowLibraryJSS = MainWindowLibraryJSS()
+    
     var allProfilesGroup: OutlineViewChildItem?
     
     weak var selectionDelegate: MainWindowOutlineViewSelectionDelegate?
@@ -130,8 +134,14 @@ class MainWindowOutlineViewController: NSObject {
         // ---------------------------------------------------------------------
         //  Add parent item: "Library"
         // ---------------------------------------------------------------------
-        let library = MainWindowLibrary()
-        self.parents.append(library)
+        self.parents.append(self.parentLibrary)
+        
+        // ---------------------------------------------------------------------
+        //  Add parent item: "JSS"
+        // ---------------------------------------------------------------------
+        if !self.parentLibraryJSS.children.isEmpty {
+            self.parents.append(self.parentLibraryJSS)
+        }
         
         // TODO: - Add more parent groups here like:
         //         JSS/MDM Profiles
@@ -178,18 +188,18 @@ class MainWindowOutlineViewController: NSObject {
             //  Try to remove each group
             // -----------------------------------------------------------------
             for group in itemsToRemove {
-                let (removed, error) = group.removeFromDisk()
-                if removed {
-                    if let selectedItem = self.selectedItem, group.title == selectedItem.title {
-                        self.selectedItem = nil
-                    }
-                    
-                    if let index = parent.children.index(where: {$0.title == group.title}) {
-                        parent.children.remove(at: index)
-                    }
-                } else {
-                    // TODO: Proper logging
-                    Swift.print("Class: \(self.self), Function: \(#function), Error: \(String(describing: error))")
+                do {
+                    try group.removeFromDisk()
+                } catch {
+                    Log.shared.error(message: "Failed to remove group: \(group.title) from disk with error: \(error)", category: String(describing: self))
+                }
+                
+                if let selectedItem = self.selectedItem, group.title == selectedItem.title {
+                    self.selectedItem = nil
+                }
+                
+                if let index = parent.children.index(where: {$0.title == group.title}) {
+                    parent.children.remove(at: index)
                 }
             }
             
@@ -209,6 +219,19 @@ class MainWindowOutlineViewController: NSObject {
             return
         }
         
+        if !self.parents.contains(where: { $0.group == sender.group } ) {
+            self.parents.append(sender)
+        }
+        
+        // ---------------------------------------------------------------------
+        //  Get the group that was added
+        // ---------------------------------------------------------------------
+        guard
+            let userInfo = notification?.userInfo,
+            let group = userInfo[NotificationKey.group] as? OutlineViewChildItem else {
+                return
+        }
+        
         // FIXME: Only checking identifiers feels weak, but as the protocol doesn't support equatable, this will do
         if self.parents.contains(where: { $0.identifier == sender.identifier }) {
             reloadOutlineView()
@@ -226,11 +249,6 @@ class MainWindowOutlineViewController: NSObject {
             // -----------------------------------------------------------------
             //  Select the user added group
             // -----------------------------------------------------------------
-            guard let userInfo = notification?.userInfo,
-                let group = userInfo[SettingsKey.group] as? OutlineViewChildItem else {
-                    return
-            }
-            
             let row = self.outlineView.row(forItem: group)
             if 0 <= row {
                 self.outlineView.selectRowIndexes(IndexSet(integer: row), byExtendingSelection: false)
@@ -396,8 +414,8 @@ extension MainWindowOutlineViewController: NSOutlineViewDelegate {
     }
     
     func outlineView(_ outlineView: NSOutlineView, shouldShowOutlineCellForItem item: Any) -> Bool {
-        if item is MainWindowLibrary {
-            return false
+        if let library = item as? MainWindowLibrary {
+            return library.group != .library
         }
         return true
     }

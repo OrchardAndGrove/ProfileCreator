@@ -19,11 +19,13 @@ protocol OutlineViewItem: class {
 }
 
 protocol OutlineViewParentItem: OutlineViewItem {
+    var group: SidebarGroup { get }
     var children: [OutlineViewChildItem] { get set }
     var cellView: OutlineViewParentCellView? { get }
 }
 
 protocol OutlineViewChildItem: OutlineViewItem, NSTextFieldDelegate {
+    var group: SidebarGroup { get }
     var isEditing: Bool { get }
     var icon: NSImage? { get }
     var profileIdentifiers: [UUID] { get }
@@ -32,8 +34,8 @@ protocol OutlineViewChildItem: OutlineViewItem, NSTextFieldDelegate {
     func addProfiles(withIdentifiers: [UUID])
     func removeProfiles(withIdentifiers: [UUID])
     func removeProfiles(atIndexes: IndexSet, withIdentifiers: [UUID])
-    func removeFromDisk() -> (Bool, Error?)
-    func writeToDisk(title: String) -> (Bool, Error?)
+    func removeFromDisk() throws
+    func writeToDisk(title: String) throws
 }
 
 // MARK: -

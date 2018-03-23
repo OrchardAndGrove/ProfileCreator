@@ -185,6 +185,16 @@ class MainWindowToolbarItemAddButton: NSButton {
         menuItemNewGroup.target = self
         menuItemNewGroup.action = #selector(newGroup(menuItem:))
         self.buttonMenu.addItem(menuItemNewGroup)
+        
+        // ---------------------------------------------------------------------
+        //  Add item: "New Group JSS"
+        // ---------------------------------------------------------------------
+        let menuItemNewGroupJSS = NSMenuItem()
+        menuItemNewGroupJSS.title = NSLocalizedString("New Group JSS", comment: "")
+        menuItemNewGroupJSS.isEnabled = true
+        menuItemNewGroupJSS.target = self
+        menuItemNewGroupJSS.action = #selector(newGroupJSS(menuItem:))
+        self.buttonMenu.addItem(menuItemNewGroupJSS)
     }
     
     // MARK: -
@@ -204,6 +214,10 @@ class MainWindowToolbarItemAddButton: NSButton {
     
     @objc func newGroup(menuItem: NSMenuItem?) {
         NotificationCenter.default.post(name: .addGroup, object: self, userInfo: [NotificationKey.parentTitle : SidebarGroupTitle.library])
+    }
+    
+    @objc func newGroupJSS(menuItem: NSMenuItem?) {
+        NotificationCenter.default.post(name: .addGroup, object: self, userInfo: [NotificationKey.parentTitle : SidebarGroupTitle.jss])
     }
     
     // MARK: -

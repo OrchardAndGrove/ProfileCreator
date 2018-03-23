@@ -13,17 +13,29 @@ class MainWindowLibrary: NSObject, OutlineViewParentItem, NSTextFieldDelegate {
     // MARK: -
     // MARK: Variables
     
+    let isEditable = true
+    let identifier = UUID()
+    let title: String
+    let group: SidebarGroup
+    let groupFolderURL: URL
+    
     var alert: Alert?
-    var isEditable = true
-    var identifier = UUID()
-    var title = SidebarGroupTitle.library
     var children = [OutlineViewChildItem]()
     var cellView: OutlineViewParentCellView?
     
     // MARK: -
     // MARK: Initialization
     
-    override init() {
+    init(title: String, group: SidebarGroup, groupFolderURL: URL?) {
+        
+        self.title = title
+        self.group = group
+        if let groupURL = groupFolderURL {
+            self.groupFolderURL = groupURL
+        } else {
+            self.groupFolderURL = applicationFolder(.groupLibrary) ?? URL(fileURLWithPath: "/")
+        }
+        
         super.init()
         
         // ---------------------------------------------------------------------
@@ -44,7 +56,7 @@ class MainWindowLibrary: NSObject, OutlineViewParentItem, NSTextFieldDelegate {
     }
     
     deinit {
-        NotificationCenter.default.removeObserver(self, name: .didAddGroup, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .addGroup, object: nil)
         NotificationCenter.default.removeObserver(self, name: .didRemoveProfiles, object: nil)
     }
     
@@ -53,20 +65,15 @@ class MainWindowLibrary: NSObject, OutlineViewParentItem, NSTextFieldDelegate {
     
     private func loadSavedGroups() {
         
-        guard let groupFolderURL = applicationFolder(Folder.groupLibrary) else {
-            // TODO: Error
-            return
-        }
-        
         var groupURLs = [URL]()
         
         // ---------------------------------------------------------------------
         //  Put all items from group folder into array
         // ---------------------------------------------------------------------
         do {
-            groupURLs = try FileManager.default.contentsOfDirectory(at: groupFolderURL, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
+            groupURLs = try FileManager.default.contentsOfDirectory(at: self.groupFolderURL, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
         } catch {
-            Swift.print("Class: \(self.self), Function: \(#function), Error: \(error)")
+            Log.shared.error(message: "Failed to read the contents of directory: \(self.groupFolderURL.path) with error: \(error)", category: String(describing: self))
             return
         }
         
@@ -83,45 +90,88 @@ class MainWindowLibrary: NSObject, OutlineViewParentItem, NSTextFieldDelegate {
                 let groupData = try Data(contentsOf: groupURL)
                 let groupDict = try PropertyListSerialization.propertyList(from: groupData, options: [], format: nil) as! [String : Any]
                 if !groupDict.isEmpty {
-                    if let title = groupDict[SettingsKey.title] as? String {
-                        var uuid: UUID? = nil
-                        if let uuidString = groupDict[SettingsKey.identifier] as? String,
-                            let theUUID = UUID(uuidString: uuidString) {
-                            uuid = theUUID
-                        }
-                        
-                        var uuids = [UUID]()
-                        if let uuidStrings = groupDict[SettingsKey.identifiers] as? [String] {
-                            for uuidString in uuidStrings {
-                                if let theUUID = UUID(uuidString: uuidString) {
-                                    uuids.append(theUUID)
-                                }
+                    
+                    // Get Title
+                    var title: String = ""
+                    if let groupTitle = groupDict[SettingsKey.title] as? String { title = groupTitle }
+                    
+                    // Get Identifier
+                    let identifier: UUID
+                    if let uuidString = groupDict[SettingsKey.identifier] as? String,
+                        let theUUID = UUID(uuidString: uuidString) {
+                        identifier = theUUID
+                    } else { identifier = UUID() }
+                    
+                    // Get Profile Identifiers
+                    var profileIdentifiers = [UUID]()
+                    if let uuidStrings = groupDict[SettingsKey.identifiers] as? [String] {
+                        for uuidString in uuidStrings {
+                            if let theUUID = UUID(uuidString: uuidString) {
+                                profileIdentifiers.append(theUUID)
                             }
                         }
-                        addGroup(title: title, identifier: uuid, profileIdentifiers: uuids)
                     }
+                    
+                    self.addGroup(title: title, identifier: identifier, profileIdentifiers: profileIdentifiers, dict: groupDict, writeToDisk: false)
                 }
             } catch {
-                Swift.print("Class: \(self.self), Function: \(#function), Error: \(error)")
+                Log.shared.error(message: "Failed to read the contents of group settings at: \(groupURL.path) with error: \(error)", category: String(describing: self))
             }
         }
     }
     
-    func addGroup(title: String, identifier: UUID?, profileIdentifiers: [UUID]?) {
+    func newGroup(title: String, identifier: UUID) -> MainWindowLibraryGroup {
+        return MainWindowLibraryGroup(title: title, identifier: identifier, parent: self)
+    }
+    
+    func addGroup(title: String, identifier: UUID, profileIdentifiers: [UUID], dict: Dictionary<String, Any>, writeToDisk: Bool) {
+        let group = self.newGroup(title: title, identifier: identifier)
+        group.addProfiles(withIdentifiers: profileIdentifiers)
         
-        let group = MainWindowLibraryGroup(title: title, identifier: identifier, parent: self)
-        
-        if let identifiers = profileIdentifiers {
-            group.addProfiles(withIdentifiers: identifiers)
-        }
-        
-        let (result, error) = group.writeToDisk(title: title)
-        if result {
-            self.children.append(group)
-            NotificationCenter.default.post(name: .didAddGroup, object: self, userInfo: [SettingsKey.group : group])
+        if writeToDisk {
+            self.save(group: group)
         } else {
-            Swift.print("Class: \(self.self), Function: \(#function), Error: \(String(describing: error))")
+            self.children.append(group)
         }
+    }
+    
+    func save(group: MainWindowLibraryGroup) {
+        do {
+            try group.writeToDisk(title: self.title)
+        } catch {
+            Log.shared.error(message: "Failed to write group to disk with error: \(error)", category: String(describing: self))
+        }
+        
+        self.children.append(group)
+        NotificationCenter.default.post(name: .didAddGroup, object: self, userInfo: [NotificationKey.group : group])
+    }
+    
+    func showAlertNewGroup(window: NSWindow) {
+        
+        // ---------------------------------------------------------------------
+        //  Show add group alert with text field to user
+        // ---------------------------------------------------------------------
+        self.alert = Alert()
+        self.alert!.showAlert(message: NSLocalizedString("New Library Group", comment: ""),
+                              informativeText: NSLocalizedString("Enter a name for new library group to be created.", comment: ""),
+                              window: window,
+                              defaultString: nil,
+                              placeholderString: nil,
+                              firstButtonTitle: ButtonTitle.ok,
+                              secondButtonTitle: ButtonTitle.cancel,
+                              thirdButtonTitle: nil,
+                              firstButtonState: true,
+                              sender: self,
+                              returnValue: { (title, response) in
+                                if response == .alertFirstButtonReturn {
+                                    self.addGroup(title: title, identifier: UUID(), profileIdentifiers: [], dict: [:], writeToDisk: true)
+                                }
+        })
+        
+        // ---------------------------------------------------------------------
+        //  Select the text field in the alert sheet
+        // ---------------------------------------------------------------------
+        self.alert!.textFieldInput!.selectText(self)
     }
     
     // MARK: -
@@ -144,30 +194,7 @@ class MainWindowLibrary: NSObject, OutlineViewParentItem, NSTextFieldDelegate {
             return
         }
         
-        // ---------------------------------------------------------------------
-        //  Show add group alert with text field to user
-        // ---------------------------------------------------------------------
-        self.alert = Alert()
-        self.alert!.showAlert(message: NSLocalizedString("New Library Group", comment: ""),
-                              informativeText: NSLocalizedString("Enter a name for new library group to be created.", comment: ""),
-                              window: mainWindow,
-                              defaultString: nil,
-                              placeholderString: nil,
-                              firstButtonTitle: ButtonTitle.ok,
-                              secondButtonTitle: ButtonTitle.cancel,
-                              thirdButtonTitle: nil,
-                              firstButtonState: true,
-                              sender: self,
-                              returnValue: { (title, response) in
-                                if response == .alertFirstButtonReturn {
-                                    self.addGroup(title: title, identifier: nil, profileIdentifiers: [UUID(), UUID(), UUID()])
-                                }
-        })
-        
-        // ---------------------------------------------------------------------
-        //  Select the text field in the alert sheet
-        // ---------------------------------------------------------------------
-        self.alert!.textFieldInput!.selectText(self)
+        self.showAlertNewGroup(window: mainWindow)
     }
     
     @objc func didRemoveProfiles(_ notification: NSNotification?) {
@@ -229,6 +256,9 @@ class MainWindowLibraryGroup: NSObject, OutlineViewChildItem {
     var icon = NSImage(named: NSImage.Name(rawValue: "SidebarFolder"))
     var identifier: UUID
     var title: String
+    
+    let group: SidebarGroup
+    
     var profileIdentifiers = [UUID]()
     var cellView: OutlineViewChildCellView?
     
@@ -237,6 +267,7 @@ class MainWindowLibraryGroup: NSObject, OutlineViewChildItem {
     
     init(title: String, identifier: UUID?, parent: OutlineViewParentItem) {
         
+        self.group = parent.group
         self.title = title
         self.identifier = (identifier != nil) ? identifier! : UUID()
         
@@ -251,13 +282,7 @@ class MainWindowLibraryGroup: NSObject, OutlineViewChildItem {
     // MARK: -
     // MARK: Instance Functions
     
-    func writeToDisk(title: String) -> (Bool, Error?) {
-        
-        // ---------------------------------------------------------------------
-        //  Get url to save at
-        // ---------------------------------------------------------------------
-        let (url, urlError) = self.url()
-        if url == nil { return (false, urlError) }
+    func groupDict() -> Dictionary<String, Any> {
         
         // ---------------------------------------------------------------------
         //  Get all profile identifiers in group that have been saved to disk
@@ -289,38 +314,39 @@ class MainWindowLibraryGroup: NSObject, OutlineViewChildItem {
                                          SettingsKey.identifier : self.identifier.uuidString,
                                          SettingsKey.identifiers : profileIdentifierStrings]
         
+        return groupDict
+    }
+    
+    func writeToDisk(title: String) throws {
+        
+        // ---------------------------------------------------------------------
+        //  Get url to save at
+        // ---------------------------------------------------------------------
+        // TODO: Proper Error
+        guard let url = try self.url() else { throw NSError(domain: NSOSStatusErrorDomain, code: unimpErr, userInfo: nil) }
+        let groupDict = self.groupDict()
+        
         // ---------------------------------------------------------------------
         //  Try to write the group dict to disk
         // ---------------------------------------------------------------------
-        do {
-            let groupData = try PropertyListSerialization.data(fromPropertyList: groupDict, format: .xml, options: 0)
-            try groupData.write(to: url!)
-            return (true, nil)
-        } catch {
-            return (false, error)
-        }
+        let groupData = try PropertyListSerialization.data(fromPropertyList: groupDict, format: .xml, options: 0)
+        try groupData.write(to: url)
     }
     
-    private func url() -> (URL?, Error?) {
+    private func url() throws -> URL? {
         
         // ---------------------------------------------------------------------
         //  Get path to group save folder
         // ---------------------------------------------------------------------
-        if let groupFolderURL = applicationFolder(Folder.groupLibrary) {
-            do {
-                
-                // -------------------------------------------------------------
-                //  Try to create the folder if it doesn't exist
-                // -------------------------------------------------------------
-                try FileManager.default.createDirectory(at: groupFolderURL, withIntermediateDirectories: true, attributes: nil)
-                return (groupFolderURL.appendingPathComponent(self.identifier.uuidString).appendingPathExtension(FileExtension.group), nil)
-            } catch {
-                return (nil, error)
-            }
-        } else {
-            // TODO: Proper logging
-            return (nil, nil)
+        if let groupFolderURL = applicationFolder(.groupLibrary) {
+            
+            // -------------------------------------------------------------
+            //  Try to create the folder if it doesn't exist
+            // -------------------------------------------------------------
+            try FileManager.default.createDirectory(at: groupFolderURL, withIntermediateDirectories: true, attributes: nil)
+            return groupFolderURL.appendingPathComponent(self.identifier.uuidString).appendingPathExtension(FileExtension.group)
         }
+        return nil
     }
     
     // MARK: -
@@ -336,10 +362,10 @@ class MainWindowLibraryGroup: NSObject, OutlineViewChildItem {
         // ---------------------------------------------------------------------
         //  Save the new group contents to disk
         // ---------------------------------------------------------------------
-        let (success, error) = writeToDisk(title: self.title)
-        if !success {
-            // TODO: Proper logging
-            Swift.print("Class: \(self.self), Function: \(#function), Error: \(String(describing: error))")
+        do {
+            try self.writeToDisk(title: self.title)
+        } catch {
+            Log.shared.error(message: "Failed to write group to disk with error: \(error)", category: String(describing: self))
         }
     }
     
@@ -364,10 +390,10 @@ class MainWindowLibraryGroup: NSObject, OutlineViewChildItem {
             // -----------------------------------------------------------------
             //  Save the new group contents to disk
             // -----------------------------------------------------------------
-            let (success, error) = writeToDisk(title: self.title)
-            if !success {
-                // TODO: Proper logging
-                Swift.print("Class: \(self.self), Function: \(#function), Error: \(String(describing: error))")
+            do {
+                try self.writeToDisk(title: self.title)
+            } catch {
+                Log.shared.error(message: "Failed to write group to disk with error: \(error)", category: String(describing: self))
             }
             
             // -----------------------------------------------------------------
@@ -395,7 +421,7 @@ class MainWindowLibraryGroup: NSObject, OutlineViewChildItem {
             } else {
                 indexes = atIndexes
             }
-
+            
             // -----------------------------------------------------------------
             //  Remove the passed identifiers
             // -----------------------------------------------------------------
@@ -404,10 +430,10 @@ class MainWindowLibraryGroup: NSObject, OutlineViewChildItem {
             // -----------------------------------------------------------------
             //  Save the new group contents to disk
             // -----------------------------------------------------------------
-            let (success, error) = writeToDisk(title: self.title)
-            if !success {
-                // TODO: Proper logging
-                Swift.print("Class: \(self.self), Function: \(#function), Error: \(String(describing: error))")
+            do {
+                try self.writeToDisk(title: self.title)
+            } catch {
+                Log.shared.error(message: "Failed to write group to disk with error: \(error)", category: String(describing: self))
             }
             
             // -----------------------------------------------------------------
@@ -417,28 +443,20 @@ class MainWindowLibraryGroup: NSObject, OutlineViewChildItem {
         }
     }
     
-    func removeFromDisk() -> (Bool, Error?) {
-        
-        var error: Error?
-        
+    func removeFromDisk() throws {
+       
         // ---------------------------------------------------------------------
         //  Get path to remove
         // ---------------------------------------------------------------------
-        let (url, urlError) = self.url()
-        if url == nil { return (false, urlError) }
+        // TODO: Proper Error
+        guard let url = try self.url() else { throw NSError(domain: NSOSStatusErrorDomain, code: unimpErr, userInfo: nil) }
         
         // ---------------------------------------------------------------------
         //  Try to remove item at url
         // ---------------------------------------------------------------------
-        if FileManager.default.fileExists(atPath: url!.path) {
-            do {
-                try FileManager.default.removeItem(at: url!)
-                return (true, nil)
-            } catch let removeError as NSError {
-                error = removeError
-            }
+        if FileManager.default.fileExists(atPath: url.path) {
+            try FileManager.default.removeItem(at: url)
         }
-        return (false, error)
     }
     
     // MARK: -
@@ -458,12 +476,11 @@ class MainWindowLibraryGroup: NSObject, OutlineViewChildItem {
             let fieldEditor = userInfo["NSFieldEditor"] as? NSTextView,
             let string = fieldEditor.textStorage?.string,
             !string.isEmpty {
-            let (success, error) = writeToDisk(title: string)
-            if success {
+            do {
+                try self.writeToDisk(title: string)
                 self.title = string
-            } else {
-                // TODO: Proper logging
-                Swift.print("Class: \(self.self), Function: \(#function), Error: \(String(describing: error))")
+            } catch {
+                Log.shared.error(message: "Failed to write group to disk with error: \(error)", category: String(describing: self))
             }
         }
         self.isEditing = false

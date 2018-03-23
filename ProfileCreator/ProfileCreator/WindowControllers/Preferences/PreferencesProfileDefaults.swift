@@ -183,6 +183,31 @@ class PreferencesProfileDefaultsView: NSView {
                                   indent: preferencesIndent,
                                   constraints: &constraints)
         
+        lastSubview = addHeader(title: "Scope",
+                                withSeparator: true,
+                                toView: self,
+                                lastSubview: lastSubview,
+                                height: &frameHeight,
+                                constraints: &constraints)
+        
+        lastSubview = addCheckbox(title: "User",
+                                  bindTo: UserDefaults.standard,
+                                  bindKeyPath: PreferenceKey.editorShowScopeUser,
+                                  toView: self,
+                                  lastSubview: lastSubview,
+                                  height: &frameHeight,
+                                  indent: preferencesIndent,
+                                  constraints: &constraints)
+        
+        lastSubview = addCheckbox(title: "System",
+                                  bindTo: UserDefaults.standard,
+                                  bindKeyPath: PreferenceKey.editorShowScopeSystem,
+                                  toView: self,
+                                  lastSubview: lastSubview,
+                                  height: &frameHeight,
+                                  indent: preferencesIndent,
+                                  constraints: &constraints)
+        
         // ---------------------------------------------------------------------
         //  Add constraints to last view
         // ---------------------------------------------------------------------

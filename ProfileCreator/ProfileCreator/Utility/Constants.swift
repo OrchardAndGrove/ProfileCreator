@@ -129,6 +129,7 @@ struct FileInfoKey {
 }
 
 struct NotificationKey {
+    static let group = "Group"
     static let identifier = "Identifier"
     static let identifiers = "Identifiers"
     static let indexSet = "IndexSet"
@@ -154,20 +155,30 @@ struct PreferenceKey {
     static let editorShowMacOS = "EditorShowMacOS"
     static let editorShowIOS = "EditorShowIOS"
     static let editorShowTvOS = "EditorShowTvOS"
+    static let editorShowScopeUser = "EditorShowScopeUser"
+    static let editorShowScopeSystem = "EditorShowScopeSystem"
+}
+
+enum SidebarGroup {
+    case allProfiles
+    case library
+    case jss
 }
 
 struct SidebarGroupTitle {
     static let allProfiles = "All Profiles"
     static let library = "Library"
+    static let jss = "JAMF JSS"
 }
 
 public struct SettingsKey {
     static let enabled = "Enabled"
     static let fileInfo = "FileInfo"
     static let hash = "Hash"
-    static let group = "Group"
     static let identifier = "Identifier"
     static let identifiers = "Identifiers"
+    static let jssUsername = "JSSUsername"
+    static let jssURL = "JSSURL"
     static let payloadSettings = "PayloadSettings"
     static let selected = "Selected"
     static let sign = "Sign"

@@ -132,7 +132,7 @@ class ProfileController: NSDocumentController {
         // ---------------------------------------------------------------------
         //  Get path to default profile save folder
         // ---------------------------------------------------------------------
-        guard let profileFolderURL = applicationFolder(Folder.profiles) else {
+        guard let profileFolderURL = applicationFolder(.profiles) else {
             Log.shared.error(message: "No default profile save folder was found")
             return
         }

@@ -9,7 +9,7 @@
 import Foundation
 
 enum Folder {
-    case applicationSupport, profiles, groups, groupLibrary, groupSmartGroups
+    case applicationSupport, profiles, groups, groupLibrary, groupSmartGroups, jss
 }
 
 func applicationFolder(_ folder: Folder) -> URL? {
@@ -23,7 +23,7 @@ func applicationFolder(_ folder: Folder) -> URL? {
         }
         break
     case .profiles:
-        if let userApplicationSupport = applicationFolder(Folder.applicationSupport) {
+        if let userApplicationSupport = applicationFolder(.applicationSupport) {
             let profileFolder = userApplicationSupport.appendingPathComponent("Profiles", isDirectory: true)
             if !FileManager.default.fileExists(atPath: profileFolder.path) {
                 do {
@@ -36,20 +36,24 @@ func applicationFolder(_ folder: Folder) -> URL? {
         }
         break
     case .groups:
-        if let userApplicationSupport = applicationFolder(Folder.applicationSupport) {
+        if let userApplicationSupport = applicationFolder(.applicationSupport) {
             return userApplicationSupport.appendingPathComponent("Groups", isDirectory: true)
         }
         break
     case .groupLibrary:
-        if let groups = applicationFolder(Folder.groups) {
+        if let groups = applicationFolder(.groups) {
             return groups.appendingPathComponent("Library", isDirectory: true)
         }
         break
     case .groupSmartGroups:
-        if let groups = applicationFolder(Folder.groups) {
+        if let groups = applicationFolder(.groups) {
             return groups.appendingPathComponent("SmartGroups", isDirectory: true)
         }
         break
+    case .jss:
+        if let groups = applicationFolder(.groups) {
+            return groups.appendingPathComponent("JSS", isDirectory: true)
+        }
     }
     return nil
 }

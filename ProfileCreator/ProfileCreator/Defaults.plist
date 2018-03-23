@@ -32,5 +32,9 @@
 	<true/>
 	<key>EditorShowTvOS</key>
 	<true/>
+	<key>EditorShowScopeUser</key>
+	<true/>
+	<key>EditorShowScopeSystem</key>
+	<true/>
 </dict>
 </plist>

@@ -13,9 +13,10 @@ class MainWindowAllProfiles: NSObject, OutlineViewParentItem {
     // MARK: -
     // MARK: Variables
     
-    var isEditable = false
-    var identifier = UUID()
-    var title = SidebarGroupTitle.allProfiles
+    let isEditable = false
+    let identifier = UUID()
+    let group: SidebarGroup = .allProfiles
+    let title = SidebarGroupTitle.allProfiles
     var children = [OutlineViewChildItem]()
     var cellView: OutlineViewParentCellView?
     
@@ -47,6 +48,7 @@ class MainWindowAllProfilesGroup: NSObject, OutlineViewChildItem {
     // MARK: -
     // MARK: Variables
     
+    let group: SidebarGroup = .allProfiles
     var isEditable = false
     var isEditing = false
     var icon: NSImage?
@@ -138,11 +140,11 @@ class MainWindowAllProfilesGroup: NSObject, OutlineViewChildItem {
         ProfileController.sharedInstance.removeProfiles(atIndexes: atIndexes, withIdentifiers: withIdentifiers)
     }
     
-    func removeFromDisk() -> (Bool, Error?) {
+    func removeFromDisk() throws {
         fatalError("All Profiles should never call removeFromDisk()")
     }
     
-    func writeToDisk(title: String) -> (Bool, Error?) {
+    func writeToDisk(title: String) throws {
         fatalError("All Profiles should never call writeToDisk(title:)")
     }
     

@@ -50,6 +50,18 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         self.editor = editor
         self.librarySplitView = splitView
         
+        // ---------------------------------------------------------------------
+        //  Add and enable the general settings
+        // ---------------------------------------------------------------------
+        if
+            let payloadManifestGeneral = ProfilePayloads.shared.manifest(domain: ManifestDomain.general),
+            let payloadPlaceholderGeneral = payloadManifestGeneral.placeholder {
+            self.generalPayloadPlaceholder = payloadPlaceholderGeneral
+            
+            // Add the "Selected" state to the general settings
+            editor.updatePayloadSelection(selected: true, payloadSource: payloadManifestGeneral)
+        }
+        
         self.setupProfilePayloads()
         self.setupLibraryPayloads()
 
@@ -66,17 +78,9 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         self.reloadTableviews()
         
         // ---------------------------------------------------------------------
-        //  Add and enable the general settings
+        //  Select the general settings in the editor
         // ---------------------------------------------------------------------
-        if
-            let payloadManifestGeneral = ProfilePayloads.shared.manifest(domain: ManifestDomain.general),
-            let payloadPlaceholderGeneral = payloadManifestGeneral.placeholder {
-            self.generalPayloadPlaceholder = payloadPlaceholderGeneral
-            
-            // Add the "Selected" state to the general settings
-            editor.updatePayloadSelection(selected: true, payloadSource: payloadManifestGeneral)
-            
-            // Select the general settings in the editor
+        if let payloadPlaceholderGeneral = self.generalPayloadPlaceholder {
             self.select(payloadPlaceholder: payloadPlaceholderGeneral, in: self.profilePayloadsTableView)
         }
     }
@@ -201,6 +205,7 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         switch tag {
         case .appleDomains:
             if let manifestPlaceholders = ProfilePayloads.shared.manifestPlaceholders() {
+                Swift.print("self.profilePayloads: \(self.profilePayloads)")
                 let selectedManifestPlaceholders = manifestPlaceholders.filter({ !$0.payloadSource.platforms.isDisjoint(with: self.selectedPlatforms) })
                 return Array(Set(selectedManifestPlaceholders).subtracting(self.profilePayloads))
             } else { return nil }
@@ -348,6 +353,12 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
                         }
                     }
                 }
+            }
+            
+            if
+                !self.profilePayloads.contains(where: {$0.domain == ManifestDomain.general}),
+                let generalPayloadPlaceholder = self.generalPayloadPlaceholder {
+                self.profilePayloads.append(generalPayloadPlaceholder)
             }
         }
     }

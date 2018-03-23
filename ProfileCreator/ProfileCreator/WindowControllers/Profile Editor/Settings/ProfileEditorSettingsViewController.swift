@@ -161,6 +161,31 @@ class ProfileEditorSettigsView: NSView {
                                   indent: editorPreferencesIndent,
                                   constraints: &constraints)
         
+        lastSubview = addHeader(title: "Scope",
+                                withSeparator: true,
+                                toView: self,
+                                lastSubview: lastSubview,
+                                height: &frameHeight,
+                                constraints: &constraints)
+        
+        lastSubview = addCheckbox(title: "User",
+                                  bindTo: profile,
+                                  bindKeyPath: "editorShowScopeUser",
+                                  toView: self,
+                                  lastSubview: lastSubview,
+                                  height: &frameHeight,
+                                  indent: editorPreferencesIndent,
+                                  constraints: &constraints)
+        
+        lastSubview = addCheckbox(title: "System",
+                                  bindTo: profile,
+                                  bindKeyPath: "editorShowScopeSystem",
+                                  toView: self,
+                                  lastSubview: lastSubview,
+                                  height: &frameHeight,
+                                  indent: editorPreferencesIndent,
+                                  constraints: &constraints)
+        
         // ---------------------------------------------------------------------
         //  Add constraints to last view
         // ---------------------------------------------------------------------

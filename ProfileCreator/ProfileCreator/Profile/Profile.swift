@@ -38,6 +38,10 @@ public class Profile: NSDocument {
     @objc public var editorShowSupervised: Bool = false
     @objc public var editorShowDisabled: Bool = false
     
+    // Scope
+    @objc public var editorShowScopeUser: Bool = false
+    @objc public var editorShowScopeSystem: Bool = false
+    
     // Platform
     @objc public var editorShowIOS: Bool = false
     @objc public var editorShowMacOS: Bool = false
@@ -133,6 +137,16 @@ public class Profile: NSDocument {
         if let editorShowTvOS = viewSettings[PreferenceKey.editorShowTvOS] as? Bool {
             self.editorShowTvOS = editorShowTvOS
         } else { self.editorShowTvOS = true }
+        
+        // Editor Show Scope User
+        if let editorShowScopeUser = viewSettings[PreferenceKey.editorShowScopeUser] as? Bool {
+            self.editorShowScopeUser = editorShowScopeUser
+        } else { self.editorShowScopeUser = true }
+        
+        // Editor Show Scope System
+        if let editorShowScopeSystem = viewSettings[PreferenceKey.editorShowScopeSystem] as? Bool {
+            self.editorShowScopeSystem = editorShowScopeSystem
+        } else { self.editorShowScopeSystem = true }
     }
     
     private func saveDict() -> [String : Any] {
@@ -155,6 +169,8 @@ public class Profile: NSDocument {
         viewSettings[PreferenceKey.editorShowIOS] = self.editorShowIOS
         viewSettings[PreferenceKey.editorShowMacOS] = self.editorShowMacOS
         viewSettings[PreferenceKey.editorShowTvOS] = self.editorShowTvOS
+        viewSettings[PreferenceKey.editorShowScopeUser] = self.editorShowScopeUser
+        viewSettings[PreferenceKey.editorShowScopeSystem] = self.editorShowScopeSystem
         
         profileDict[SettingsKey.viewSettings] = viewSettings
         
@@ -522,7 +538,7 @@ public class Profile: NSDocument {
         // ---------------------------------------------------------------------
         //  Get path to profile save folder
         // ---------------------------------------------------------------------
-        guard let profileFolderURL = applicationFolder(Folder.profiles) else {
+        guard let profileFolderURL = applicationFolder(.profiles) else {
             // TODO: Proper logging
             return
         }
@@ -604,7 +620,12 @@ public class Profile: NSDocument {
                  PreferenceKey.editorColumnEnable : UserDefaults.standard.bool(forKey: PreferenceKey.editorColumnEnable),
                  PreferenceKey.editorShowDisabledKeys : UserDefaults.standard.bool(forKey: PreferenceKey.editorShowDisabledKeys),
                  PreferenceKey.editorShowHiddenKeys : UserDefaults.standard.bool(forKey: PreferenceKey.editorShowHiddenKeys),
-                 PreferenceKey.editorShowSupervisedKeys : UserDefaults.standard.bool(forKey: PreferenceKey.editorShowSupervisedKeys) ]
+                 PreferenceKey.editorShowSupervisedKeys : UserDefaults.standard.bool(forKey: PreferenceKey.editorShowSupervisedKeys),
+                 PreferenceKey.editorShowMacOS : UserDefaults.standard.bool(forKey: PreferenceKey.editorShowMacOS),
+                 PreferenceKey.editorShowIOS : UserDefaults.standard.bool(forKey: PreferenceKey.editorShowIOS),
+                 PreferenceKey.editorShowTvOS : UserDefaults.standard.bool(forKey: PreferenceKey.editorShowTvOS),
+                 PreferenceKey.editorShowScopeUser : UserDefaults.standard.bool(forKey: PreferenceKey.editorShowScopeUser),
+                 PreferenceKey.editorShowScopeSystem : UserDefaults.standard.bool(forKey: PreferenceKey.editorShowScopeSystem) ]
     }
     
     func payloadViewTypeSettings(type: PayloadSourceType) -> Dictionary<String, Any> {

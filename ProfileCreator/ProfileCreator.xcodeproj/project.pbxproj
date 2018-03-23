@@ -90,6 +90,7 @@
 		E391A21820316C3800CCE71C /* ProfileEditorUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = E391A21720316C3800CCE71C /* ProfileEditorUI.swift */; };
 		E39287111F49BB01005383CC /* PayloadCellViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = E39287101F49BB01005383CC /* PayloadCellViews.swift */; };
 		E393D1E7203984A900F8076D /* PayloadCellViewFooter.swift in Sources */ = {isa = PBXBuildFile; fileRef = E393D1E6203984A900F8076D /* PayloadCellViewFooter.swift */; };
+		E3B77A4B2062E11C002779CF /* MainWindowLibraryJSS.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3B77A4A2062E11C002779CF /* MainWindowLibraryJSS.swift */; };
 		E3BFD6701F4DC8E9001120DB /* PayloadCellViewTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3BFD66F1F4DC8E9001120DB /* PayloadCellViewTableView.swift */; };
 		E3C8D5401F3EEA3A0083DA5F /* PayloadCellViewItemPopUpButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C8D53F1F3EEA3A0083DA5F /* PayloadCellViewItemPopUpButton.swift */; };
 		E3C8D5421F3EED1E0083DA5F /* PayloadCellViewPopUpButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C8D5411F3EED1E0083DA5F /* PayloadCellViewPopUpButton.swift */; };
@@ -199,6 +200,7 @@
 		E39287101F49BB01005383CC /* PayloadCellViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViews.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViews.swift"; sourceTree = "<group>"; };
 		E39287151F4A27DE005383CC /* ProfilePayloads.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ProfilePayloads.framework; path = Frameworks/ProfilePayloads.framework; sourceTree = "<group>"; };
 		E393D1E6203984A900F8076D /* PayloadCellViewFooter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PayloadCellViewFooter.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViewFooter.swift"; sourceTree = "<group>"; };
+		E3B77A4A2062E11C002779CF /* MainWindowLibraryJSS.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MainWindowLibraryJSS.swift; path = "WindowControllers/Main Window/Sidebar/MainWindowLibraryJSS.swift"; sourceTree = "<group>"; };
 		E3BFD66F1F4DC8E9001120DB /* PayloadCellViewTableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PayloadCellViewTableView.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViewTableView.swift"; sourceTree = "<group>"; };
 		E3C8D53F1F3EEA3A0083DA5F /* PayloadCellViewItemPopUpButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewItemPopUpButton.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViewItems/PayloadCellViewItemPopUpButton.swift"; sourceTree = "<group>"; };
 		E3C8D5411F3EED1E0083DA5F /* PayloadCellViewPopUpButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewPopUpButton.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViewPopUpButton.swift"; sourceTree = "<group>"; };
@@ -287,6 +289,7 @@
 				5315400E1F127F280060011B /* MainWindowOutlineViewItems.swift */,
 				5315400C1F127B340060011B /* MainWindowAllProfiles.swift */,
 				53DADB4B1F137A110045CB3F /* MainWindowLibrary.swift */,
+				E3B77A4A2062E11C002779CF /* MainWindowLibraryJSS.swift */,
 			);
 			name = Sidebar;
 			sourceTree = "<group>";
@@ -645,6 +648,7 @@
 				E3C8D5421F3EED1E0083DA5F /* PayloadCellViewPopUpButton.swift in Sources */,
 				E3577C1A204A74E9007D9FE9 /* FileInfo.swift in Sources */,
 				5326D2291F2DD2AC00D93C67 /* PayloadLibraryNoPayloadsView.swift in Sources */,
+				E3B77A4B2062E11C002779CF /* MainWindowLibraryJSS.swift in Sources */,
 				538D2C491F1BCB2500FF6051 /* PreferencesProfileDefaults.swift in Sources */,
 				536554DC1F248CA4000543A3 /* Error.swift in Sources */,
 				5383C1A41F2D0B7C004EBE9B /* PayloadCellViewTitle.swift in Sources */,
