@@ -71,20 +71,24 @@ class PreferencesGeneralView: NSView {
                                 height: &frameHeight,
                                 constraints: &constraints)
         
-        lastSubview = addCheckbox(title: "Show Profile Count",
+        lastSubview = addCheckbox(label: nil,
+                                  title: "Show Profile Count",
                                   bindTo: UserDefaults.standard,
                                   bindKeyPath: PreferenceKey.showProfileCount,
                                   toView: self,
                                   lastSubview: lastSubview,
+                                  lastTextField: nil,
                                   height: &frameHeight,
                                   indent: preferencesIndent,
                                   constraints: &constraints)
         
-        lastSubview = addCheckbox(title: "Show Group Icons",
+        lastSubview = addCheckbox(label: nil,
+                                  title: "Show Group Icons",
                                   bindTo: UserDefaults.standard,
                                   bindKeyPath: PreferenceKey.showGroupIcons,
                                   toView: self,
                                   lastSubview: lastSubview,
+                                  lastTextField: nil,
                                   height: &frameHeight,
                                   indent: preferencesIndent,
                                   constraints: &constraints)

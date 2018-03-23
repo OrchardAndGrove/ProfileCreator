@@ -32,6 +32,7 @@ public class Profile: NSDocument {
     public var distribution: String? // Change to distribution enum
     public var sign = false
     
+    @objc public var editorDistributionMethod: String = DistributionString.any
     @objc public var editorDisableOptionalKeys: Bool = false
     
     @objc public var editorShowHidden: Bool = false
@@ -103,6 +104,11 @@ public class Profile: NSDocument {
             self.editorDisableOptionalKeys = editorDisableOptionalKeys
         } else { self.editorDisableOptionalKeys = false }
         
+        // Distribution Method
+        if let editorDistributionMethod = viewSettings[PreferenceKey.editorDistributionMethod] as? String {
+            self.editorDistributionMethod = editorDistributionMethod
+        } else { self.editorDistributionMethod = DistributionString.any }
+        
         // Editor Row Enable
         if let editorColumnEnable = viewSettings[PreferenceKey.editorColumnEnable] as? Bool {
             self.editorColumnEnable = editorColumnEnable
@@ -162,6 +168,7 @@ public class Profile: NSDocument {
         profileDict[SettingsKey.payloadSettings] = self.payloadSettings
         
         var viewSettings = self.viewSettings
+        viewSettings[PreferenceKey.editorDistributionMethod] = self.editorDistributionMethod
         viewSettings[PreferenceKey.editorDisableOptionalKeys] = self.editorDisableOptionalKeys
         viewSettings[PreferenceKey.editorShowDisabledKeys] = self.editorShowDisabled
         viewSettings[PreferenceKey.editorShowHiddenKeys] = self.editorShowHidden
@@ -616,7 +623,8 @@ public class Profile: NSDocument {
     // MARK: View Settings
     
     class func defaultViewSettings() -> Dictionary<String, Any> {
-        return [ PreferenceKey.editorDisableOptionalKeys : UserDefaults.standard.bool(forKey: PreferenceKey.editorDisableOptionalKeys),
+        return [ PreferenceKey.editorDistributionMethod : UserDefaults.standard.string(forKey: PreferenceKey.editorDistributionMethod) ?? DistributionString.any,
+                 PreferenceKey.editorDisableOptionalKeys : UserDefaults.standard.bool(forKey: PreferenceKey.editorDisableOptionalKeys),
                  PreferenceKey.editorColumnEnable : UserDefaults.standard.bool(forKey: PreferenceKey.editorColumnEnable),
                  PreferenceKey.editorShowDisabledKeys : UserDefaults.standard.bool(forKey: PreferenceKey.editorShowDisabledKeys),
                  PreferenceKey.editorShowHiddenKeys : UserDefaults.standard.bool(forKey: PreferenceKey.editorShowHiddenKeys),

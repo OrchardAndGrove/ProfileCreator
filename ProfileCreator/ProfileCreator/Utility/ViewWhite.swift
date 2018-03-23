@@ -11,6 +11,7 @@ import Cocoa
 class ViewWhite: NSView {
     
     let acceptFirstResponder: Bool
+    var showBackground: Bool = true
     
     private weak var draggingDestination: NSDraggingDestination?
     
@@ -23,7 +24,8 @@ class ViewWhite: NSView {
         super.init(frame: NSZeroRect)
     }
     
-    init(draggingDestination: NSDraggingDestination, draggingTypes: [NSPasteboard.PasteboardType], acceptsFirstResponder: Bool = true) {
+    init(draggingDestination: NSDraggingDestination, draggingTypes: [NSPasteboard.PasteboardType], acceptsFirstResponder: Bool = true, showBackground: Bool) {
+        self.showBackground = showBackground
         self.acceptFirstResponder = acceptsFirstResponder
         super.init(frame: NSZeroRect)
         self.draggingDestination = draggingDestination
@@ -32,8 +34,12 @@ class ViewWhite: NSView {
     }
     
     override func draw(_ dirtyRect: NSRect) {
-        NSColor.white.set()
-        self.bounds.fill()
+        if self.showBackground {
+            NSColor.white.set()
+            self.bounds.fill()
+        } else {
+            super.draw(dirtyRect)
+        }
     }
     
     override func draggingEntered(_ sender: NSDraggingInfo) -> NSDragOperation {
@@ -44,7 +50,7 @@ class ViewWhite: NSView {
     }
     
     override func draggingExited(_ sender: NSDraggingInfo?) {
-        if let draggingExited = self.draggingDestination?.draggingExited{
+        if let draggingExited = self.draggingDestination?.draggingExited {
             draggingExited(sender)
         }
     }

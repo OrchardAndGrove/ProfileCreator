@@ -17,8 +17,13 @@ class PayloadLibrarySplitView: NSSplitView {
     private var noPayloads: PayloadLibraryNoPayloads?
     private var noPayloadsConstraints = [NSLayoutConstraint]()
     
+    private var noProfilePayloads: PayloadLibraryNoProfilePayloads?
+    private var noProfilePayloadsConstraints = [NSLayoutConstraint]()
+    
     fileprivate let libraryView = NSView()
     fileprivate var libraryViewCollapsed: Bool = false
+    
+    fileprivate let profileView = NSView()
     
     private let libraryMenu = PayloadLibraryMenu()
     private let libraryMenuSeparator = NSBox()
@@ -41,7 +46,8 @@ class PayloadLibrarySplitView: NSSplitView {
         //  Setup Variables
         // ---------------------------------------------------------------------
         self.tableViews = PayloadLibraryTableViews(profile: profile, editor: editor, splitView: self)
-        self.noPayloads = PayloadLibraryNoPayloads(draggingDestination: self.tableViews!, draggingTypes: [.payload])
+        self.noPayloads = PayloadLibraryNoPayloads(string: NSLocalizedString("No Payloads", comment: ""), withBackground: true, draggingDestination: self.tableViews!, draggingTypes: [.payload])
+        self.noProfilePayloads = PayloadLibraryNoProfilePayloads(string: NSLocalizedString("Add payloads here from the Library below", comment: ""), withBackground: false, draggingDestination: self.tableViews!, draggingTypes: [.payload])
         
         // ---------------------------------------------------------------------
         //  Setup Delegate
@@ -65,6 +71,7 @@ class PayloadLibrarySplitView: NSSplitView {
         setupSplitViewProfilePayloads(constraints: &constraints)
         setupSplitViewLibraryPayloads(constraints: &constraints)
         setupSplitViewNoPayloads(constraints: &constraints)
+        setupSplitViewNoProfilePayloads(constraints: &constraints)
         
         // ---------------------------------------------------------------------
         //  Activate layout constraints
@@ -77,6 +84,11 @@ class PayloadLibrarySplitView: NSSplitView {
         if self.tableViews!.libraryPayloads.isEmpty {
             self.noPayloads(show: true)
         }
+        
+        if self.tableViews!.profilePayloads.count == 1 {
+            self.noProfilePayloads(show: true)
+        }
+
         
         // ---------------------------------------------------------------------
         //  Select most left button in menu
@@ -127,6 +139,34 @@ class PayloadLibrarySplitView: NSSplitView {
                 // -----------------------------------------------------------------
                 self.libraryView.addSubview(libraryPayloadsScrollView)
                 NSLayoutConstraint.activate(self.libraryPayloadsConstraints)
+            }
+        }
+    }
+    
+    func noProfilePayloads(show: Bool) {
+        Swift.print("noProfilePayloads: \(show)")
+        guard
+            let noPayloadsView = self.noProfilePayloads?.view else {
+                // TODO: Proper Logging
+                return
+        }
+        
+        if show {
+            if !self.profileView.subviews.contains(noPayloadsView) {
+                
+                // -----------------------------------------------------------------
+                //  Insert No Payloads View and activate saved Constraints
+                // -----------------------------------------------------------------
+                self.profileView.addSubview(noPayloadsView)
+                NSLayoutConstraint.activate(self.noProfilePayloadsConstraints)
+            }
+        } else {
+            if self.profileView.subviews.contains(noPayloadsView) {
+                
+                // -----------------------------------------------------------------
+                //  Remove No Payloads View
+                // -----------------------------------------------------------------
+                noPayloadsView.removeFromSuperview()
             }
         }
     }
@@ -183,21 +223,67 @@ class PayloadLibrarySplitView: NSSplitView {
     private func setupSplitViewProfilePayloads(constraints: inout [NSLayoutConstraint]) {
         
         if let profilePayloadsScrollView = self.tableViews?.profilePayloadsScrollView {
-            self.addSubview(profilePayloadsScrollView)
-            self.setHoldingPriority(NSLayoutConstraint.Priority.defaultLow, forSubviewAt: 0)
+            
+            // ---------------------------------------------------------------------
+            //  Setup Library View
+            // ---------------------------------------------------------------------
+            self.profileView.translatesAutoresizingMaskIntoConstraints = false
+            
+            // ---------------------------------------------------------------------
+            //  Add Menu to Library View
+            // ---------------------------------------------------------------------
+            self.profileView.addSubview(profilePayloadsScrollView)
             
             // ---------------------------------------------------------------------
             //  Add constraints
             // ---------------------------------------------------------------------
+            // Top
+            self.libraryPayloadsConstraints.append(NSLayoutConstraint(item: profilePayloadsScrollView,
+                                                                      attribute: .top,
+                                                                      relatedBy: .equal,
+                                                                      toItem: self.profileView,
+                                                                      attribute: .top,
+                                                                      multiplier: 1,
+                                                                      constant: 0))
             
             // Height Min
-            constraints.append(NSLayoutConstraint(item: profilePayloadsScrollView,
-                                                  attribute: .height,
-                                                  relatedBy: .greaterThanOrEqual,
-                                                  toItem: nil,
-                                                  attribute: .notAnAttribute,
-                                                  multiplier: 1,
-                                                  constant: 96))
+            self.libraryPayloadsConstraints.append(NSLayoutConstraint(item: profilePayloadsScrollView,
+                                                                      attribute: .height,
+                                                                      relatedBy: .greaterThanOrEqual,
+                                                                      toItem: nil,
+                                                                      attribute: .notAnAttribute,
+                                                                      multiplier: 1,
+                                                                      constant: 96))
+            
+            // Leading
+            self.libraryPayloadsConstraints.append(NSLayoutConstraint(item: profilePayloadsScrollView,
+                                                                      attribute: .leading,
+                                                                      relatedBy: .equal,
+                                                                      toItem: self.profileView,
+                                                                      attribute: .leading,
+                                                                      multiplier: 1,
+                                                                      constant: 0))
+            
+            // Trailing
+            self.libraryPayloadsConstraints.append(NSLayoutConstraint(item: profilePayloadsScrollView,
+                                                                      attribute: .trailing,
+                                                                      relatedBy: .equal,
+                                                                      toItem: self.profileView,
+                                                                      attribute: .trailing,
+                                                                      multiplier: 1,
+                                                                      constant: 0))
+            
+            // Bottom
+            self.libraryPayloadsConstraints.append(NSLayoutConstraint(item: profilePayloadsScrollView,
+                                                                      attribute: .bottom,
+                                                                      relatedBy: .equal,
+                                                                      toItem: self.profileView,
+                                                                      attribute: .bottom,
+                                                                      multiplier: 1,
+                                                                      constant: 0))
+            
+            self.addSubview(self.profileView)
+            self.setHoldingPriority(NSLayoutConstraint.Priority.defaultLow, forSubviewAt: 0)
         }
     }
     
@@ -406,6 +492,50 @@ class PayloadLibrarySplitView: NSSplitView {
                                                                  attribute: .bottom,
                                                                  multiplier: 1,
                                                                  constant: 0))
+        }
+    }
+    
+    private func setupSplitViewNoProfilePayloads(constraints: inout [NSLayoutConstraint]) {
+        
+        // ---------------------------------------------------------------------
+        //  Add constraints
+        // ---------------------------------------------------------------------
+        if let noPayloadsView = self.noProfilePayloads?.view {
+            // Top
+            self.noProfilePayloadsConstraints.append(NSLayoutConstraint(item: noPayloadsView,
+                                                                        attribute: .top,
+                                                                        relatedBy: .equal,
+                                                                        toItem: self.profileView,
+                                                                        attribute: .top,
+                                                                        multiplier: 1.0,
+                                                                        constant: 77.0))
+
+            // Leading
+            self.noProfilePayloadsConstraints.append(NSLayoutConstraint(item: noPayloadsView,
+                                                                        attribute: .leading,
+                                                                        relatedBy: .equal,
+                                                                        toItem: self.profileView,
+                                                                        attribute: .leading,
+                                                                        multiplier: 1,
+                                                                        constant: 0))
+            
+            // Trailing
+            self.noProfilePayloadsConstraints.append(NSLayoutConstraint(item: noPayloadsView,
+                                                                        attribute: .trailing,
+                                                                        relatedBy: .equal,
+                                                                        toItem: self.profileView,
+                                                                        attribute: .trailing,
+                                                                        multiplier: 1,
+                                                                        constant: 0))
+            
+            // Bottom
+            self.noProfilePayloadsConstraints.append(NSLayoutConstraint(item: noPayloadsView,
+                                                                        attribute: .bottom,
+                                                                        relatedBy: .equal,
+                                                                        toItem: self.profileView,
+                                                                        attribute: .bottom,
+                                                                        multiplier: 1,
+                                                                        constant: 0))
         }
     }
 }

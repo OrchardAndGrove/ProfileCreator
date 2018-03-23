@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import ProfilePayloads
 
 class ProfileEditorSettingsViewController: NSViewController {
     
@@ -63,125 +64,144 @@ class ProfileEditorSettigsView: NSView {
         var constraints = [NSLayoutConstraint]()
         var frameHeight: CGFloat = 0.0
         var lastSubview: NSView?
+        var lastTextField: NSView?
         
         // ---------------------------------------------------------------------
         //  Add Preferences "Sidebar"
         // ---------------------------------------------------------------------
-        lastSubview = addHeader(title: "Payload Keys",
+        lastSubview = addHeader(title: "Profile Settings",
                                 withSeparator: true,
                                 toView: self,
                                 lastSubview: nil,
                                 height: &frameHeight,
                                 constraints: &constraints)
         
-        lastSubview = addCheckbox(title: "Disable Optional Keys",
+        lastSubview = addCheckbox(label: "Disable Optional Keys",
+                                  title: "",
                                   bindTo: profile,
                                   bindKeyPath: "editorDisableOptionalKeys",
                                   toView: self,
                                   lastSubview: lastSubview,
+                                  lastTextField: nil,
                                   height: &frameHeight,
                                   indent: editorPreferencesIndent,
                                   constraints: &constraints)
         
-        lastSubview = addCheckbox(title: "Show Hidden",
-                                  bindTo: profile,
-                                  bindKeyPath: "editorShowHidden",
-                                  toView: self,
-                                  lastSubview: lastSubview,
-                                  height: &frameHeight,
-                                  indent: editorPreferencesIndent,
-                                  constraints: &constraints)
-        
-        
-        lastSubview = addCheckbox(title: "Show Disabled",
-                                  bindTo: profile,
-                                  bindKeyPath: "editorShowDisabled",
-                                  toView: self,
-                                  lastSubview: lastSubview,
-                                  height: &frameHeight,
-                                  indent: editorPreferencesIndent,
-                                  constraints: &constraints)
-        
-        lastSubview = addCheckbox(title: "Show Supervised",
-                                  bindTo: profile,
-                                  bindKeyPath: "editorShowSupervised",
-                                  toView: self,
-                                  lastSubview: lastSubview,
-                                  height: &frameHeight,
-                                  indent: editorPreferencesIndent,
-                                  constraints: &constraints)
-        
-        lastSubview = addHeader(title: "Editor Rows",
+        lastSubview = addPopUpButton(label: "Distribution:",
+                                     titles: [DistributionString.any, DistributionString.manual, DistributionString.push],
+                                     bindTo: profile,
+                                     bindKeyPath: "editorDistributionMethod",
+                                     toView: self,
+                                     lastSubview: lastSubview,
+                                     lastTextField: lastSubview,
+                                     height: &frameHeight,
+                                     indent: editorPreferencesIndent,
+                                     constraints: &constraints)
+        lastTextField = lastSubview
+
+        lastSubview = addHeader(title: "Profile Display Settings",
                                 withSeparator: true,
                                 toView: self,
                                 lastSubview: lastSubview,
                                 height: &frameHeight,
                                 constraints: &constraints)
         
-        lastSubview = addCheckbox(title: "Show Enable/Disable",
+        lastSubview = addCheckbox(label: "Show Editor Rows",
+                                  title: "Enable/Disable",
                                   bindTo: profile,
                                   bindKeyPath: "editorColumnEnable",
                                   toView: self,
                                   lastSubview: lastSubview,
+                                  lastTextField: lastTextField,
                                   height: &frameHeight,
                                   indent: editorPreferencesIndent,
                                   constraints: &constraints)
         
-        lastSubview = addHeader(title: "Platform",
-                                withSeparator: true,
-                                toView: self,
-                                lastSubview: lastSubview,
-                                height: &frameHeight,
-                                constraints: &constraints)
+        lastSubview = addCheckbox(label: "Show Payload Keys",
+                                  title: "Hidden",
+                                  bindTo: profile,
+                                  bindKeyPath: "editorShowHidden",
+                                  toView: self,
+                                  lastSubview: lastSubview,
+                                  lastTextField: lastSubview,
+                                  height: &frameHeight,
+                                  indent: editorPreferencesIndent,
+                                  constraints: &constraints)
         
-        lastSubview = addCheckbox(title: "iOS",
+        
+        lastSubview = addCheckbox(label: nil,
+                                  title: "Disabled",
+                                  bindTo: profile,
+                                  bindKeyPath: "editorShowDisabled",
+                                  toView: self,
+                                  lastSubview: lastSubview,
+                                  lastTextField: lastSubview,
+                                  height: &frameHeight,
+                                  indent: editorPreferencesIndent,
+                                  constraints: &constraints)
+    
+        lastSubview = addCheckbox(label: nil,
+                                  title: "Supervised",
+                                  bindTo: profile,
+                                  bindKeyPath: "editorShowSupervised",
+                                  toView: self,
+                                  lastSubview: lastSubview,
+                                  lastTextField: lastSubview,
+                                  height: &frameHeight,
+                                  indent: editorPreferencesIndent,
+                                  constraints: &constraints)
+        
+        lastSubview = addCheckbox(label: "Show Platform",
+                                  title: "iOS",
                                   bindTo: profile,
                                   bindKeyPath: "editorShowIOS",
                                   toView: self,
                                   lastSubview: lastSubview,
+                                  lastTextField: lastSubview,
                                   height: &frameHeight,
                                   indent: editorPreferencesIndent,
                                   constraints: &constraints)
         
-        lastSubview = addCheckbox(title: "macOS",
+        lastSubview = addCheckbox(label: nil,
+                                  title: "macOS",
                                   bindTo: profile,
                                   bindKeyPath: "editorShowMacOS",
                                   toView: self,
                                   lastSubview: lastSubview,
+                                  lastTextField: lastSubview,
                                   height: &frameHeight,
                                   indent: editorPreferencesIndent,
                                   constraints: &constraints)
         
-        lastSubview = addCheckbox(title: "tvOS",
+        lastSubview = addCheckbox(label: nil,
+                                  title: "tvOS",
                                   bindTo: profile,
                                   bindKeyPath: "editorShowTvOS",
                                   toView: self,
                                   lastSubview: lastSubview,
+                                  lastTextField: lastSubview,
                                   height: &frameHeight,
                                   indent: editorPreferencesIndent,
                                   constraints: &constraints)
         
-        lastSubview = addHeader(title: "Scope",
-                                withSeparator: true,
-                                toView: self,
-                                lastSubview: lastSubview,
-                                height: &frameHeight,
-                                constraints: &constraints)
-        
-        lastSubview = addCheckbox(title: "User",
+        lastSubview = addCheckbox(label: "Show Scope",
+                                  title: "User",
                                   bindTo: profile,
                                   bindKeyPath: "editorShowScopeUser",
                                   toView: self,
                                   lastSubview: lastSubview,
+                                  lastTextField: lastSubview,
                                   height: &frameHeight,
                                   indent: editorPreferencesIndent,
                                   constraints: &constraints)
         
-        lastSubview = addCheckbox(title: "System",
+        lastSubview = addCheckbox(label: nil,
+                                  title: "System",
                                   bindTo: profile,
                                   bindKeyPath: "editorShowScopeSystem",
                                   toView: self,
                                   lastSubview: lastSubview,
+                                  lastTextField: lastSubview,
                                   height: &frameHeight,
                                   indent: editorPreferencesIndent,
                                   constraints: &constraints)

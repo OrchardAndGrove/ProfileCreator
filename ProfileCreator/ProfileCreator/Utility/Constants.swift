@@ -11,7 +11,7 @@ import Cocoa
 let preferencesWindowWidth: CGFloat = 450.0
 let preferencesIndent: CGFloat = 40.0
 
-let editorPreferencesWindowWidth: CGFloat = 200.0
+let editorPreferencesWindowWidth: CGFloat = 300.0
 let editorPreferencesIndent: CGFloat = 22.0
 
 let editorTableViewColumnPaddingWidth: CGFloat = 24.0
@@ -149,6 +149,7 @@ struct PreferenceKey {
     static let showPayloadLibraryApplications = "ShowPayloadLibraryApplications"
     static let showPayloadLibraryDeveloper = "ShowPayloadLibraryDeveloper"
     static let editorDisableOptionalKeys = "EditorDisableOptionalKeys"
+    static let editorDistributionMethod = "EditorDistributionMethod"
     static let editorColumnEnable = "EditorColumnEnable"
     static let editorShowDisabledKeys = "EditorShowDisabledKeys"
     static let editorShowSupervisedKeys = "EditorShowSupervisedKeys"

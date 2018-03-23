@@ -162,6 +162,7 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         self.libraryPayloads = self.placeholders(tag: tag) ?? [PayloadPlaceholder]()
         if let librarySplitView = self.librarySplitView {
             librarySplitView.noPayloads(show: self.libraryPayloads.isEmpty)
+            librarySplitView.noProfilePayloads(show: self.profilePayloads.count == 1)
         }
         self.reloadTableviews()
     }
@@ -296,6 +297,7 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         // ---------------------------------------------------------------------
         if let librarySplitView = self.librarySplitView {
             librarySplitView.noPayloads(show: self.libraryPayloads.isEmpty)
+            librarySplitView.noProfilePayloads(show: self.profilePayloads.count == 1)
         }
         
         // ---------------------------------------------------------------------
@@ -566,10 +568,16 @@ extension PayloadLibraryTableViews: NSDraggingDestination {
     }
     
     func performDragOperation(_ sender: NSDraggingInfo) -> Bool {
-        if let data = sender.draggingPasteboard().data(forType: .payload) {
+        if
+            let data = sender.draggingPasteboard().data(forType: .payload),
+            let sourceTableView = sender.draggingSource() as? NSTableView {
             do {
                 let payloadPlaceholders = try JSONDecoder().decode([PayloadPlaceholder].self, from: data)
-                self.move(payloadPlaceholders: payloadPlaceholders, from: TableViewTag.profilePayloads, to: TableViewTag.libraryPayloads)
+                if sourceTableView.tag == TableViewTag.profilePayloads.rawValue {
+                    self.move(payloadPlaceholders: payloadPlaceholders, from: .profilePayloads, to: .libraryPayloads)
+                } else if sourceTableView.tag == TableViewTag.libraryPayloads.rawValue {
+                    self.move(payloadPlaceholders: payloadPlaceholders, from: .libraryPayloads, to: .profilePayloads)
+                }
             } catch {
                 // TODO: Proper Logging
                 Swift.print("Class: \(self.self), Function: \(#function), Could not decode dropped items")

@@ -18,6 +18,8 @@
 	<false/>
 	<key>EditorDisableOptionalKeys</key>
 	<false/>
+	<key>EditorDistributionMethod</key>
+	<string>Any</string>
 	<key>EditorColumnEnable</key>
 	<false/>
 	<key>EditorShowDisabledKeys</key>

@@ -16,12 +16,12 @@ struct PayloadLibraryNoPayloads {
     let view: ViewWhite
     let textField = NSTextField()
     
-    init(draggingDestination: NSDraggingDestination, draggingTypes: [NSPasteboard.PasteboardType]) {
+    init(string: String, withBackground: Bool, draggingDestination: NSDraggingDestination, draggingTypes: [NSPasteboard.PasteboardType]) {
         
         // ---------------------------------------------------------------------
         //  Setup Variables
         // ---------------------------------------------------------------------
-        self.view = ViewWhite(draggingDestination: draggingDestination, draggingTypes: draggingTypes, acceptsFirstResponder: false)
+        self.view = ViewWhite(draggingDestination: draggingDestination, draggingTypes: draggingTypes, acceptsFirstResponder: false, showBackground: withBackground)
         var constraints = [NSLayoutConstraint]()
         
         // ---------------------------------------------------------------------
@@ -39,9 +39,9 @@ struct PayloadLibraryNoPayloads {
         self.textField.drawsBackground = false
         self.textField.isEditable = false
         self.textField.isSelectable = false
-        self.textField.stringValue = NSLocalizedString("No Payloads", comment: "")
+        self.textField.stringValue = string
         self.textField.textColor = NSColor.tertiaryLabelColor
-        self.textField.font = NSFont.systemFont(ofSize: 14, weight: NSFont.Weight.medium)
+        self.textField.font = NSFont.systemFont(ofSize: 14, weight: .medium)
         self.textField.alignment = .center
         setupTextField(constraints: &constraints)
         
@@ -82,5 +82,82 @@ struct PayloadLibraryNoPayloads {
                                               multiplier: 1.0,
                                               constant: 0))
     }
+}
+
+struct PayloadLibraryNoProfilePayloads {
     
+    // MARK: -
+    // MARK: Variables
+    
+    let view: ViewWhite
+    let textField = NSTextField()
+    
+    init(string: String, withBackground: Bool, draggingDestination: NSDraggingDestination, draggingTypes: [NSPasteboard.PasteboardType]) {
+        
+        // ---------------------------------------------------------------------
+        //  Setup Variables
+        // ---------------------------------------------------------------------
+        self.view = ViewWhite(draggingDestination: draggingDestination, draggingTypes: draggingTypes, acceptsFirstResponder: false, showBackground: withBackground)
+        var constraints = [NSLayoutConstraint]()
+        
+        // ---------------------------------------------------------------------
+        //  Setup View
+        // ---------------------------------------------------------------------
+        self.view.translatesAutoresizingMaskIntoConstraints = false
+        
+        // ---------------------------------------------------------------------
+        //  Setup TextField
+        // ---------------------------------------------------------------------
+        self.textField.translatesAutoresizingMaskIntoConstraints = false
+        self.textField.lineBreakMode = .byWordWrapping
+        self.textField.isBordered = false
+        self.textField.isBezeled = false
+        self.textField.drawsBackground = false
+        self.textField.isEditable = false
+        self.textField.isSelectable = false
+        self.textField.stringValue = string
+        self.textField.textColor = NSColor.tertiaryLabelColor
+        self.textField.font = NSFont.systemFont(ofSize: 14, weight: .medium)
+        self.textField.alignment = .center
+        self.textField.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        self.textField.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        setupTextField(constraints: &constraints)
+        
+        // ---------------------------------------------------------------------
+        //  Activate layout constraints
+        // ---------------------------------------------------------------------
+        NSLayoutConstraint.activate(constraints)
+    }
+    
+    private func setupTextField(constraints: inout [NSLayoutConstraint]) {
+        
+        self.view.addSubview(self.textField)
+        
+        // Leading
+        constraints.append(NSLayoutConstraint(item: self.textField,
+                                              attribute: .leading,
+                                              relatedBy: .equal,
+                                              toItem: self.view,
+                                              attribute: .leading,
+                                              multiplier: 1.0,
+                                              constant: 0))
+        
+        // Trailing
+        constraints.append(NSLayoutConstraint(item: self.textField,
+                                              attribute: .trailing,
+                                              relatedBy: .equal,
+                                              toItem: self.view,
+                                              attribute: .trailing,
+                                              multiplier: 1.0,
+                                              constant: 0))
+        
+        // Bottom
+        constraints.append(NSLayoutConstraint(item: self.view,
+                                              attribute: .bottom,
+                                              relatedBy: .equal,
+                                              toItem: self.textField,
+                                              attribute: .bottom,
+                                              multiplier: 1.0,
+                                              constant: 10.0))
+    }
 }

@@ -71,38 +71,46 @@ class PreferencesLibraryView: NSView {
                                 height: &frameHeight,
                                 constraints: &constraints)
         
-        lastSubview = addCheckbox(title: "Show Apple Collections",
+        lastSubview = addCheckbox(label: "Payload Library",
+                                  title: "Show Apple Collections",
                                   bindTo: UserDefaults.standard,
                                   bindKeyPath: PreferenceKey.showPayloadLibraryAppleCollections,
                                   toView: self,
                                   lastSubview: lastSubview,
+                                  lastTextField: nil,
                                   height: &frameHeight,
                                   indent: preferencesIndent,
                                   constraints: &constraints)
         
-        lastSubview = addCheckbox(title: "Show Apple Domains",
+        lastSubview = addCheckbox(label: nil,
+                                  title: "Show Apple Domains",
                                   bindTo: UserDefaults.standard,
                                   bindKeyPath: PreferenceKey.showPayloadLibraryAppleDomains,
                                   toView: self,
                                   lastSubview: lastSubview,
+                                  lastTextField: nil,
                                   height: &frameHeight,
                                   indent: preferencesIndent,
                                   constraints: &constraints)
         
-        lastSubview = addCheckbox(title: "Show Applications",
+        lastSubview = addCheckbox(label: nil,
+                                  title: "Show Applications",
                                   bindTo: UserDefaults.standard,
                                   bindKeyPath: PreferenceKey.showPayloadLibraryApplications,
                                   toView: self,
                                   lastSubview: lastSubview,
+                                  lastTextField: nil,
                                   height: &frameHeight,
                                   indent: preferencesIndent,
                                   constraints: &constraints)
         
-        lastSubview = addCheckbox(title: "Show Developer",
+        lastSubview = addCheckbox(label: nil,
+                                  title: "Show Developer",
                                   bindTo: UserDefaults.standard,
                                   bindKeyPath: PreferenceKey.showPayloadLibraryDeveloper,
                                   toView: self,
                                   lastSubview: lastSubview,
+                                  lastTextField: nil,
                                   height: &frameHeight,
                                   indent: preferencesIndent,
                                   constraints: &constraints)
