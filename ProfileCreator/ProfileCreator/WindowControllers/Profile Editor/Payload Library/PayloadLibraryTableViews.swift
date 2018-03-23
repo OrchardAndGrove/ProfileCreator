@@ -32,7 +32,11 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
     private let editorShowMacOSSelector: String
     private let editorShowTvOSSelector: String
     
+    private let editorShowScopeUserSelector: String
+    private let editorShowScopeSystemSelector: String
+    
     private var selectedPlatforms: Platforms = []
+    private var selectedScope: Targets = []
     
     private weak var profile: Profile?
     private weak var editor: ProfileEditor?
@@ -43,6 +47,8 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         self.editorShowIOSSelector = NSStringFromSelector(#selector(getter: profile.editorShowIOS))
         self.editorShowMacOSSelector = NSStringFromSelector(#selector(getter: profile.editorShowMacOS))
         self.editorShowTvOSSelector = NSStringFromSelector(#selector(getter: profile.editorShowTvOS))
+        self.editorShowScopeUserSelector = NSStringFromSelector(#selector(getter: profile.editorShowScopeUser))
+        self.editorShowScopeSystemSelector = NSStringFromSelector(#selector(getter: profile.editorShowScopeSystem))
         
         super.init()
         
@@ -64,7 +70,7 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         
         self.setupProfilePayloads()
         self.setupLibraryPayloads()
-
+        
         // ---------------------------------------------------------------------
         //  Setup Notification Observers
         // ---------------------------------------------------------------------
@@ -72,8 +78,11 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         self.profile?.addObserver(self, forKeyPath: self.editorShowIOSSelector, options: .new, context: nil)
         self.profile?.addObserver(self, forKeyPath: self.editorShowMacOSSelector, options: .new, context: nil)
         self.profile?.addObserver(self, forKeyPath: self.editorShowTvOSSelector, options: .new, context: nil)
+        self.profile?.addObserver(self, forKeyPath: self.editorShowScopeUserSelector, options: .new, context: nil)
+        self.profile?.addObserver(self, forKeyPath: self.editorShowScopeSystemSelector, options: .new, context: nil)
         
         self.updateSelectedPlatforms()
+        self.updateSelectedScope()
         
         self.reloadTableviews()
         
@@ -99,6 +108,29 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         self.profile?.removeObserver(self, forKeyPath: self.editorShowIOSSelector, context: nil)
         self.profile?.removeObserver(self, forKeyPath: self.editorShowMacOSSelector, context: nil)
         self.profile?.removeObserver(self, forKeyPath: self.editorShowTvOSSelector, context: nil)
+        self.profile?.removeObserver(self, forKeyPath: self.editorShowScopeUserSelector, context: nil)
+        self.profile?.removeObserver(self, forKeyPath: self.editorShowScopeSystemSelector, context: nil)
+    }
+    
+    func updateSelectedScope() {
+        guard let profile = self.profile else { return }
+        
+        var newSelectedScope: Targets = []
+        
+        if profile.editorShowScopeUser {
+            newSelectedScope.insert(.user)
+        }
+        
+        if profile.editorShowScopeSystem {
+            newSelectedScope.insert(.system)
+        }
+        
+        if self.selectedScope != newSelectedScope {
+            self.selectedScope = newSelectedScope
+            if let selectedLibraryTag = self.selectedLibraryTag {
+                self.updateLibraryPayloads(tag: selectedLibraryTag)
+            }
+        }
     }
     
     func updateSelectedPlatforms() {
@@ -140,6 +172,9 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
              self.editorShowMacOSSelector,
              self.editorShowTvOSSelector:
             self.updateSelectedPlatforms()
+        case self.editorShowScopeUserSelector,
+             self.editorShowScopeSystemSelector:
+            self.updateSelectedScope()
         default:
             Swift.print("Class: \(self.self), Function: \(#function), observeValueforKeyPath: \(String(describing: keyPath))")
         }
@@ -205,8 +240,8 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         switch tag {
         case .appleDomains:
             if let manifestPlaceholders = ProfilePayloads.shared.manifestPlaceholders() {
-                Swift.print("self.profilePayloads: \(self.profilePayloads)")
-                let selectedManifestPlaceholders = manifestPlaceholders.filter({ !$0.payloadSource.platforms.isDisjoint(with: self.selectedPlatforms) })
+                var selectedManifestPlaceholders = manifestPlaceholders.filter({ !$0.payloadSource.platforms.isDisjoint(with: self.selectedPlatforms) })
+                selectedManifestPlaceholders = selectedManifestPlaceholders.filter({ !$0.payloadSource.targets.isDisjoint(with: self.selectedScope) })
                 return Array(Set(selectedManifestPlaceholders).subtracting(self.profilePayloads))
             } else { return nil }
         case .appleCollections:
@@ -246,7 +281,7 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
             //  Post a notification that the payload has changed enabled state
             // ---------------------------------------------------------------------
             NotificationCenter.default.post(name: .didChangePayloadSelected, object: self, userInfo: [NotificationKey.payloadPlaceholder : payloadPlaceholder,
-                                                                                                    NotificationKey.payloadSelected : selected ])
+                                                                                                      NotificationKey.payloadSelected : selected ])
         }
         
         // ---------------------------------------------------------------------

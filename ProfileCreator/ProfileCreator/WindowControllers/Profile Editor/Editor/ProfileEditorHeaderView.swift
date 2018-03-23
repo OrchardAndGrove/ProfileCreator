@@ -19,8 +19,14 @@ class ProfileEditorHeaderView: NSObject {
     let headerView = NSView()
     let textFieldTitle = NSTextField()
     let textFieldTitleTopIndent: CGFloat = 28.0
+    
     let textFieldDescription = NSTextField()
     let textFieldDescriptionTopIndent: CGFloat = 4.0
+    
+    let textFieldPlatforms = NSTextField()
+    
+    let textFieldScope = NSTextField()
+    
     let imageViewIcon = NSImageView()
     let buttonAddRemove = NSButton()
     
@@ -60,6 +66,8 @@ class ProfileEditorHeaderView: NSObject {
         self.setupHeaderView(constraints: &constraints)
         self.setupTextFieldTitle(constraints: &constraints)
         self.setupTextFieldDescription(constraints: &constraints)
+        self.setupTextPlatforms(constraints: &constraints)
+        self.setupTextScope(constraints: &constraints)
         self.setupButtonAddRemove(constraints: &constraints)
         
         // ---------------------------------------------------------------------
@@ -131,15 +139,21 @@ class ProfileEditorHeaderView: NSObject {
                 self.updateHeight(self.textFieldDescriptionTopIndent + self.textFieldDescription.intrinsicContentSize.height)
             }
             
+            self.textFieldPlatforms.stringValue = PayloadUtility.string(fromPlatforms: payloadPlaceholder.payloadSource.platforms)
+            self.textFieldScope.stringValue = PayloadUtility.string(fromTargets: payloadPlaceholder.payloadSource.targets)
+            Swift.print("self.textFieldScope: \(self.textFieldScope.intrinsicContentSize.width)")
+            Swift.print("self.textFieldPlatforms: \(self.textFieldPlatforms.intrinsicContentSize.width)")
             // Add spacing
             self.updateHeight(12.0)
             layoutConstraintHeight.constant = self.height
         }
     }
-    
-    // MARK: -
-    // MARK: Setup Layout Constraints
-    
+}
+
+// MARK: -
+// MARK: Setup NSLayoutConstraints
+
+extension ProfileEditorHeaderView {
     private func setupHeaderView(constraints: inout [NSLayoutConstraint]) {
         self.headerView.translatesAutoresizingMaskIntoConstraints = false
     }
@@ -181,6 +195,104 @@ class ProfileEditorHeaderView: NSObject {
                                               constant: 24.0))
     }
     
+    private func setupTextPlatforms(constraints: inout [NSLayoutConstraint]) {
+        self.textFieldPlatforms.translatesAutoresizingMaskIntoConstraints = false
+        self.textFieldPlatforms.lineBreakMode = .byWordWrapping
+        self.textFieldPlatforms.isBordered = false
+        self.textFieldPlatforms.isBezeled = false
+        self.textFieldPlatforms.drawsBackground = false
+        self.textFieldPlatforms.isEditable = false
+        self.textFieldPlatforms.isSelectable = false
+        self.textFieldPlatforms.textColor = NSColor.tertiaryLabelColor
+        self.textFieldPlatforms.preferredMaxLayoutWidth = editorTableViewColumnPayloadWidth
+        self.textFieldPlatforms.alignment = .right
+        self.textFieldPlatforms.font = NSFont.systemFont(ofSize: 12, weight: .regular)
+        
+        // ---------------------------------------------------------------------
+        //  Add TextField to TableCellView
+        // ---------------------------------------------------------------------
+        self.headerView.addSubview(self.textFieldPlatforms)
+        
+        // ---------------------------------------------------------------------
+        //  Add constraints
+        // ---------------------------------------------------------------------
+        // Top
+        constraints.append(NSLayoutConstraint(item: self.textFieldPlatforms,
+                                              attribute: .top,
+                                              relatedBy: .equal,
+                                              toItem: self.buttonAddRemove,
+                                              attribute: .bottom,
+                                              multiplier: 1.0,
+                                              constant: 6.0))
+        
+        // Width
+        constraints.append(NSLayoutConstraint(item: self.textFieldPlatforms,
+                                              attribute: .width,
+                                              relatedBy: .equal,
+                                              toItem: nil,
+                                              attribute: .notAnAttribute,
+                                              multiplier: 1.0,
+                                              constant: 97.0))
+        
+        // Trailing
+        constraints.append(NSLayoutConstraint(item: self.headerView,
+                                              attribute: .trailing,
+                                              relatedBy: .equal,
+                                              toItem: self.textFieldPlatforms,
+                                              attribute: .trailing,
+                                              multiplier: 1.0,
+                                              constant: 24.0))
+    }
+    
+    private func setupTextScope(constraints: inout [NSLayoutConstraint]) {
+        self.textFieldScope.translatesAutoresizingMaskIntoConstraints = false
+        self.textFieldScope.lineBreakMode = .byWordWrapping
+        self.textFieldScope.isBordered = false
+        self.textFieldScope.isBezeled = false
+        self.textFieldScope.drawsBackground = false
+        self.textFieldScope.isEditable = false
+        self.textFieldScope.isSelectable = false
+        self.textFieldScope.textColor = NSColor.tertiaryLabelColor
+        self.textFieldScope.preferredMaxLayoutWidth = editorTableViewColumnPayloadWidth
+        self.textFieldScope.alignment = .right
+        self.textFieldScope.font = NSFont.systemFont(ofSize: 12, weight: .regular)
+        
+        // ---------------------------------------------------------------------
+        //  Add TextField to TableCellView
+        // ---------------------------------------------------------------------
+        self.headerView.addSubview(self.textFieldScope)
+        
+        // ---------------------------------------------------------------------
+        //  Add constraints
+        // ---------------------------------------------------------------------
+        // Top
+        constraints.append(NSLayoutConstraint(item: self.textFieldScope,
+                                              attribute: .top,
+                                              relatedBy: .equal,
+                                              toItem: self.textFieldPlatforms,
+                                              attribute: .bottom,
+                                              multiplier: 1.0,
+                                              constant: 1.0))
+        
+        // Width
+        constraints.append(NSLayoutConstraint(item: self.textFieldScope,
+                                              attribute: .width,
+                                              relatedBy: .equal,
+                                              toItem: nil,
+                                              attribute: .notAnAttribute,
+                                              multiplier: 1.0,
+                                              constant: 76.0))
+        
+        // Trailing
+        constraints.append(NSLayoutConstraint(item: self.headerView,
+                                              attribute: .trailing,
+                                              relatedBy: .equal,
+                                              toItem: self.textFieldScope,
+                                              attribute: .trailing,
+                                              multiplier: 1.0,
+                                              constant: 24.0))
+    }
+    
     private func setupTextFieldTitle(constraints: inout [NSLayoutConstraint]) {
         self.textFieldTitle.translatesAutoresizingMaskIntoConstraints = false
         self.textFieldTitle.lineBreakMode = .byWordWrapping
@@ -193,7 +305,7 @@ class ProfileEditorHeaderView: NSObject {
         self.textFieldTitle.preferredMaxLayoutWidth = editorTableViewColumnPayloadWidth
         self.textFieldTitle.alignment = .left
         self.textFieldTitle.stringValue = "Title"
-        self.textFieldTitle.font = NSFont.systemFont(ofSize: 28, weight: NSFont.Weight.heavy)
+        self.textFieldTitle.font = NSFont.systemFont(ofSize: 28, weight: .heavy)
         
         // ---------------------------------------------------------------------
         //  Add TextField to TableCellView
@@ -282,13 +394,13 @@ class ProfileEditorHeaderView: NSObject {
                                               constant: 24.0))
         
         // Trailing
-        constraints.append(NSLayoutConstraint(item: self.headerView,
-                                              attribute: .trailing,
-                                              relatedBy: .equal,
+        constraints.append(NSLayoutConstraint(item: self.textFieldPlatforms,
+                                              attribute: .leading,
+                                              relatedBy: .greaterThanOrEqual,
                                               toItem: self.textFieldDescription,
                                               attribute: .trailing,
                                               multiplier: 1.0,
-                                              constant: 24.0))
+                                              constant: 4.0))
         
         //self.updateHeight(description.intrinsicContentSize.height)
     }

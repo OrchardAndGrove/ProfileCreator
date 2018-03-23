@@ -10,11 +10,11 @@ import Cocoa
 
 class  EditorFileView {
     
-    class func view(acceptedFileUTIs: [String]?,
+    class func view(allowedFileTypes: [String]?,
                     constraints: inout [NSLayoutConstraint],
                     cellView: PayloadCellView) -> FileView {
         
-        let fileView = FileView(delegate: cellView, acceptedFileUTIs: acceptedFileUTIs, constraints: &constraints)
+        let fileView = FileView(delegate: cellView, allowedFileTypes: allowedFileTypes, constraints: &constraints)
         
         // ---------------------------------------------------------------------
         //  Add FileView to TableCellView
@@ -45,7 +45,7 @@ class FileView: NSView {
     // MARK: Instance Variables
     
     var delegate: PayloadCellView?
-    var acceptedFileUTIs: [String]?
+    var allowedFileTypes: [String]?
     
     let imageViewIcon = NSImageView()
     let textFieldTitle = NSTextField()
@@ -71,11 +71,11 @@ class FileView: NSView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    init(delegate: PayloadCellView, acceptedFileUTIs: [String]?, constraints: inout [NSLayoutConstraint]) {
+    init(delegate: PayloadCellView, allowedFileTypes: [String]?, constraints: inout [NSLayoutConstraint]) {
         super.init(frame: NSZeroRect)
         
         self.delegate = delegate
-        self.acceptedFileUTIs = acceptedFileUTIs
+        self.allowedFileTypes = allowedFileTypes
         
         self.translatesAutoresizingMaskIntoConstraints = false
         self.wantsLayer = true
@@ -116,9 +116,9 @@ class FileView: NSView {
     }
     
     private func pasteboardReadingOptions() -> [NSPasteboard.ReadingOptionKey: Any]? {
-        if let acceptedFileUTIs = self.acceptedFileUTIs, !acceptedFileUTIs.isEmpty {
+        if let allowedFileTypes = self.allowedFileTypes?.filter({$0.hasPrefix("public.")}), !allowedFileTypes.isEmpty {
             return [NSPasteboard.ReadingOptionKey.urlReadingFileURLsOnly : true,
-                    NSPasteboard.ReadingOptionKey.urlReadingContentsConformToTypes : acceptedFileUTIs]
+                    NSPasteboard.ReadingOptionKey.urlReadingContentsConformToTypes : allowedFileTypes]
         } else {
             return [NSPasteboard.ReadingOptionKey.urlReadingFileURLsOnly : true]
         }

@@ -36,7 +36,7 @@ class PayloadCellViewFile: PayloadCellView, ProfileCreatorCellView {
         // ---------------------------------------------------------------------
         //  Setup Custom View Content
         // ---------------------------------------------------------------------
-        self.fileView = EditorFileView.view(acceptedFileUTIs: nil, constraints: &self.cellViewConstraints, cellView: self)
+        self.fileView = EditorFileView.view(allowedFileTypes: subkey.allowedFileTypes, constraints: &self.cellViewConstraints, cellView: self)
         self.setupFileView()
         self.setupButtonAdd()
         
@@ -98,7 +98,7 @@ class PayloadCellViewFile: PayloadCellView, ProfileCreatorCellView {
         //  Get open dialog allowed file types
         // ---------------------------------------------------------------------
         // FIXME: Read these from the collection manifest
-        let allowedFileTypes = [String]()
+        
         
         // ---------------------------------------------------------------------
         //  Setup open dialog
@@ -110,7 +110,7 @@ class PayloadCellViewFile: PayloadCellView, ProfileCreatorCellView {
         openPanel.canCreateDirectories = false
         openPanel.allowsMultipleSelection = false
         
-        if 0 < allowedFileTypes.count {
+        if let allowedFileTypes = self.subkey?.allowedFileTypes {
             openPanel.allowedFileTypes = allowedFileTypes
         }
         
