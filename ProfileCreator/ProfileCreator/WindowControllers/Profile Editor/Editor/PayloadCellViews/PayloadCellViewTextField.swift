@@ -45,11 +45,7 @@ class PayloadCellViewTextField: PayloadCellView, ProfileCreatorCellView, NSTextF
         // ---------------------------------------------------------------------
         //  Set Placeholder Value
         // ---------------------------------------------------------------------
-        if let valuePlaceholder = subkey.valuePlaceholder as? String {
-            self.textFieldInput?.placeholderString = valuePlaceholder
-        } else if subkey.require == .always {
-            self.textFieldInput?.placeholderString = NSLocalizedString("Required", comment: "")
-        }
+        self.textFieldInput?.placeholderString = subkey.placehoderString()
         
         // ---------------------------------------------------------------------
         //  Set Value

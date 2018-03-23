@@ -22,7 +22,7 @@ class FileInfoProcessors {
             let fileUTIs = try? url.resourceValues(forKeys: Set([.typeIdentifierKey])),
             let fileUTI = fileUTIs.typeIdentifier {
             
-            if NSWorkspace.shared.type(fileUTI, conformsToType: "public.x509-certificate") {
+            if NSWorkspace.shared.type(fileUTI, conformsToType: "public.x509-certificate") || NSWorkspace.shared.type(fileUTI, conformsToType: "com.rsa.pkcs-12") {
                 return FileInfoProcessorCertificate(fileURL: url)
             } else if NSWorkspace.shared.type(fileUTI, conformsToType: "public.font") {
                 return FileInfoProcessorFont(fileURL: url)
@@ -34,7 +34,7 @@ class FileInfoProcessors {
     public func processorFor(data: Data, fileInfo: Dictionary<String, Any>) -> FileInfoProcessor? {
         if let fileUTI = fileInfo[FileInfoKey.fileUTI] as? String {
             
-            if NSWorkspace.shared.type(fileUTI, conformsToType: "public.x509-certificate") {
+            if NSWorkspace.shared.type(fileUTI, conformsToType: "public.x509-certificate") || NSWorkspace.shared.type(fileUTI, conformsToType: "com.rsa.pkcs-12") {
                 return FileInfoProcessorCertificate(data: data, fileInfo: fileInfo)
             } else if NSWorkspace.shared.type(fileUTI, conformsToType: "public.font") {
                 return FileInfoProcessorFont(data: data, fileInfo: fileInfo)

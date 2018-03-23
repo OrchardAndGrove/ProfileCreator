@@ -118,6 +118,7 @@ struct FileInfoViewKey {
     static let bottomLabel = "BottomLabel"
     static let bottomContent = "BottomContent"
     static let bottomError = "BottomError"
+    static let message = "Message"
     static let iconPath = "IconPath"
 }
 

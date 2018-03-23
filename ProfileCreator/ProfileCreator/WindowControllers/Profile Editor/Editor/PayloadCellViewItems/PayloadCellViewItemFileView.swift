@@ -62,6 +62,9 @@ class FileView: NSView {
     let textFieldBottomContent = NSTextField()
     let textFieldBottomLabel = NSTextField()
     
+    // Message
+    let textFieldMessage = NSTextField()
+    
     let textFieldPropmpt = NSTextField()
     
     // MARK: -
@@ -85,26 +88,29 @@ class FileView: NSView {
         self.registerForDraggedTypes([NSPasteboard.PasteboardType(kUTTypeURL as String)])
         
         // Prompt
-        setupPrompt(constraints: &constraints)
+        self.setupPrompt(constraints: &constraints)
         
         // ImageView
-        setupImageView(constraints: &constraints)
+        self.setupImageView(constraints: &constraints)
         
         // Title
-        setupTitle(constraints: &constraints)
+        self.setupTitle(constraints: &constraints)
         
         // Description Top
-        setupLabel(textField: self.textFieldTopLabel, previousLabel: nil, constraints: &constraints)
-        setupContent(textField: self.textFieldTopContent, label: self.textFieldTopLabel, constraints: &constraints)
+        self.setupLabel(textField: self.textFieldTopLabel, previousLabel: nil, constraints: &constraints)
+        self.setupContent(textField: self.textFieldTopContent, label: self.textFieldTopLabel, constraints: &constraints)
         
         // Description Center
-        setupLabel(textField: self.textFieldCenterLabel, previousLabel: self.textFieldTopLabel, constraints: &constraints)
-        setupContent(textField: self.textFieldCenterContent, label: self.textFieldCenterLabel, constraints: &constraints)
+        self.setupLabel(textField: self.textFieldCenterLabel, previousLabel: self.textFieldTopLabel, constraints: &constraints)
+        self.setupContent(textField: self.textFieldCenterContent, label: self.textFieldCenterLabel, constraints: &constraints)
         
         // Description Bottom
-        setupLabel(textField: self.textFieldBottomLabel, previousLabel: self.textFieldCenterLabel, constraints: &constraints)
-        setupContent(textField: self.textFieldBottomContent, label: self.textFieldBottomLabel, constraints: &constraints)
+        self.setupLabel(textField: self.textFieldBottomLabel, previousLabel: self.textFieldCenterLabel, constraints: &constraints)
+        self.setupContent(textField: self.textFieldBottomContent, label: self.textFieldBottomLabel, constraints: &constraints)
 
+        // Message
+        self.setupMessage(constraints: &constraints)
+        
         self.textFieldPropmpt.stringValue = NSLocalizedString("Add File", comment: "")
     }
     
@@ -116,7 +122,7 @@ class FileView: NSView {
     }
     
     private func pasteboardReadingOptions() -> [NSPasteboard.ReadingOptionKey: Any]? {
-        if let allowedFileTypes = self.allowedFileTypes?.filter({$0.hasPrefix("public.")}), !allowedFileTypes.isEmpty {
+        if let allowedFileTypes = self.allowedFileTypes?.filter({$0.contains(".")}), !allowedFileTypes.isEmpty {
             return [NSPasteboard.ReadingOptionKey.urlReadingFileURLsOnly : true,
                     NSPasteboard.ReadingOptionKey.urlReadingContentsConformToTypes : allowedFileTypes]
         } else {
@@ -298,6 +304,41 @@ extension FileView {
                                               attribute: .trailing,
                                               multiplier: 1.0,
                                               constant: 14.0))
+    }
+    
+    private func setupMessage(constraints: inout [NSLayoutConstraint]) {
+        self.setup(textField: self.textFieldMessage, fontWeight: .medium, fontSize: (NSFont.systemFontSize(for: .small) + 1), fontColor: .secondaryLabelColor)
+        self.textFieldMessage.setContentCompressionResistancePriority(.required, for: .horizontal)
+        self.textFieldMessage.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        self.textFieldMessage.lineBreakMode = .byWordWrapping
+        self.addSubview(self.textFieldMessage)
+        
+        // Top
+        constraints.append(NSLayoutConstraint(item: self.textFieldMessage,
+                                              attribute: .top,
+                                              relatedBy: .equal,
+                                              toItem: self.textFieldTitle,
+                                              attribute: .bottom,
+                                              multiplier: 1.0,
+                                              constant: 3.0))
+        
+        // Leading
+        constraints.append(NSLayoutConstraint(item: self.textFieldMessage,
+                                              attribute: .leading,
+                                              relatedBy: .equal,
+                                              toItem: self.imageViewIcon,
+                                              attribute: .trailing,
+                                              multiplier: 1.0,
+                                              constant: 14.0))
+        
+        // Trailing
+        constraints.append(NSLayoutConstraint(item: self,
+                                              attribute: .trailing,
+                                              relatedBy: .equal,
+                                              toItem: self.textFieldMessage,
+                                              attribute: .trailing,
+                                              multiplier: 1.0,
+                                              constant: 12.0))
     }
     
     private func setupContent(textField: NSTextField, label: NSTextField, constraints: inout [NSLayoutConstraint]) {

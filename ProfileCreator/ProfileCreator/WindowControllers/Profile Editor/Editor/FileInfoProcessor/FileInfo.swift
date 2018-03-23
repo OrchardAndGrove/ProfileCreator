@@ -23,6 +23,8 @@ struct FileInfo {
     let bottomContent: String?
     let bottomError: Bool
     
+    let message: String?
+    
     let icon: NSImage?
     let iconPath: String?
     
@@ -36,6 +38,7 @@ struct FileInfo {
          bottomLabel: String? = nil,
          bottomContent: String? = nil,
          bottomError: Bool,
+         message: String? = nil,
          icon: NSImage? = nil,
          iconPath: String? = nil) {
         self.title = title
@@ -48,6 +51,7 @@ struct FileInfo {
         self.bottomLabel = bottomLabel
         self.bottomContent = bottomContent
         self.bottomError = bottomError
+        self.message = message
         self.iconPath = iconPath
         self.icon = icon
     }
@@ -104,6 +108,11 @@ struct FileInfo {
             self.bottomError = bottomError
         } else { self.bottomError = false }
         
+        // Message
+        if let message = infoDict[FileInfoViewKey.message] as? String {
+            self.message = message
+        } else { self.message = nil }
+        
         // Icon
         if let iconPath = infoDict[FileInfoViewKey.iconPath] as? String {
             self.iconPath = iconPath
@@ -135,6 +144,9 @@ struct FileInfo {
         
         // Bottom Description
         if let bottomContent = self.bottomContent { infoDict[FileInfoViewKey.bottomContent] = bottomContent }
+        
+        // Message
+        if let message = self.message { infoDict[FileInfoViewKey.message] = message }
         
         // Icon Path
         if let iconPath = self.iconPath { infoDict[FileInfoViewKey.iconPath] = iconPath }

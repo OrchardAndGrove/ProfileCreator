@@ -86,6 +86,7 @@ class PayloadCellViewFile: PayloadCellView, ProfileCreatorCellView {
         fileView.textFieldCenterContent.isHidden = show
         fileView.textFieldBottomLabel.isHidden = show
         fileView.textFieldBottomContent.isHidden = show
+        fileView.textFieldMessage.isHidden = show
         fileView.textFieldPropmpt.isHidden = !show
     }
     
@@ -146,7 +147,7 @@ class PayloadCellViewFile: PayloadCellView, ProfileCreatorCellView {
         guard let fileData = fileInfoProcessor.fileData() else { completionHandler(false); return }
         let fileInfo = fileInfoProcessor.fileInfo()
         let fileInfoDict = fileInfoProcessor.fileInfoDict()
-        Swift.print("This is the fileInfoDict: \(fileInfoDict)")
+        
         // ---------------------------------------------------------------------
         //  Verify the file size is reasonable (< 1.0 MB)
         // ---------------------------------------------------------------------
@@ -250,6 +251,9 @@ class PayloadCellViewFile: PayloadCellView, ProfileCreatorCellView {
             fileView.textFieldBottomLabel.textColor = .secondaryLabelColor
             fileView.textFieldBottomContent.textColor = .controlShadowColor
         }
+        
+        // Message
+        fileView.textFieldMessage.stringValue = fileInfo.message ?? ""
         
         // Icon
         fileView.imageViewIcon.image = fileInfo.icon

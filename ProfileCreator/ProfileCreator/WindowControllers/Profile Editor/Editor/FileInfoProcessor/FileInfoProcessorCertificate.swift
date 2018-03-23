@@ -124,6 +124,7 @@ class FileInfoProcessorCertificate: FileInfoProcessor {
             var centerLabel: String?
             var bottomLabel: String?
             var bottomError = false
+            var message: String?
             var icon: NSImage?
             var iconPath: String?
             
@@ -139,8 +140,8 @@ class FileInfoProcessorCertificate: FileInfoProcessor {
                 // Title
                 title = NSLocalizedString("Personal Information Exchange", comment: "")
                 
-                // Top
-                topLabel = NSLocalizedString("This content is stored in Personal Information Exchange (PKCS12) format, and is password protected. No information can be displayed.", comment: "")
+                // Message
+                message = NSLocalizedString("This content is stored in Personal Information Exchange (PKCS12) format, and is password protected.\nNo information can be displayed.", comment: "")
                 
             } else if
                 let fileData = self.fileData(),
@@ -280,6 +281,7 @@ class FileInfoProcessorCertificate: FileInfoProcessor {
                                         bottomLabel: bottomLabel,
                                         bottomContent: nil,
                                         bottomError: bottomError,
+                                        message: message,
                                         icon: icon,
                                         iconPath: iconPath)
             return self.fileInfoVar!

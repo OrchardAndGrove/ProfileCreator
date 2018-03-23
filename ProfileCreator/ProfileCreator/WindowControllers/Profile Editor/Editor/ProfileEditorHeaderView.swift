@@ -141,8 +141,7 @@ class ProfileEditorHeaderView: NSObject {
             
             self.textFieldPlatforms.stringValue = PayloadUtility.string(fromPlatforms: payloadPlaceholder.payloadSource.platforms)
             self.textFieldScope.stringValue = PayloadUtility.string(fromTargets: payloadPlaceholder.payloadSource.targets)
-            Swift.print("self.textFieldScope: \(self.textFieldScope.intrinsicContentSize.width)")
-            Swift.print("self.textFieldPlatforms: \(self.textFieldPlatforms.intrinsicContentSize.width)")
+            
             // Add spacing
             self.updateHeight(12.0)
             layoutConstraintHeight.constant = self.height
@@ -160,7 +159,7 @@ extension ProfileEditorHeaderView {
     
     private func setupButtonAddRemove(constraints: inout [NSLayoutConstraint]) {
         self.buttonAddRemove.translatesAutoresizingMaskIntoConstraints = false
-        self.buttonAddRemove.title = "Add"
+        self.buttonAddRemove.title = self.buttonTitleEnable
         self.buttonAddRemove.bezelStyle = .roundRect
         self.buttonAddRemove.setButtonType(.momentaryPushIn)
         self.buttonAddRemove.isBordered = true
@@ -203,7 +202,7 @@ extension ProfileEditorHeaderView {
         self.textFieldPlatforms.drawsBackground = false
         self.textFieldPlatforms.isEditable = false
         self.textFieldPlatforms.isSelectable = false
-        self.textFieldPlatforms.textColor = NSColor.tertiaryLabelColor
+        self.textFieldPlatforms.textColor = NSColor.controlShadowColor
         self.textFieldPlatforms.preferredMaxLayoutWidth = editorTableViewColumnPayloadWidth
         self.textFieldPlatforms.alignment = .right
         self.textFieldPlatforms.font = NSFont.systemFont(ofSize: 12, weight: .regular)
@@ -252,7 +251,7 @@ extension ProfileEditorHeaderView {
         self.textFieldScope.drawsBackground = false
         self.textFieldScope.isEditable = false
         self.textFieldScope.isSelectable = false
-        self.textFieldScope.textColor = NSColor.tertiaryLabelColor
+        self.textFieldScope.textColor = NSColor.controlShadowColor
         self.textFieldScope.preferredMaxLayoutWidth = editorTableViewColumnPayloadWidth
         self.textFieldScope.alignment = .right
         self.textFieldScope.font = NSFont.systemFont(ofSize: 12, weight: .regular)
@@ -365,7 +364,7 @@ extension ProfileEditorHeaderView {
         self.textFieldDescription.preferredMaxLayoutWidth = editorTableViewColumnPayloadWidth
         self.textFieldDescription.alignment = .left
         self.textFieldDescription.stringValue = "Description"
-        self.textFieldDescription.font = NSFont.systemFont(ofSize: 17, weight: NSFont.Weight.ultraLight)
+        self.textFieldDescription.font = NSFont.systemFont(ofSize: 17, weight: .ultraLight)
         
         // ---------------------------------------------------------------------
         //  Add TextField to TableCellView
