@@ -31,7 +31,7 @@ class LibraryTextField {
         textField.isEditable = false
         textField.isSelectable = false
         textField.controlSize = .regular
-        textField.textColor = NSColor.controlTextColor
+        textField.textColor = .controlTextColor
         textField.alignment = .left
         textField.font = NSFont.systemFont(ofSize: 10)
         textField.stringValue = string ?? ""
@@ -98,7 +98,7 @@ class LibraryTextField {
         textField.isEditable = false
         textField.isSelectable = false
         textField.controlSize = .regular
-        textField.textColor = NSColor.controlTextColor
+        textField.textColor = .controlTextColor
         textField.alignment = .left
         textField.font = NSFont.systemFont(ofSize: fontSize, weight: NSFont.Weight(rawValue: fontWeight))
         textField.stringValue = string ?? ""

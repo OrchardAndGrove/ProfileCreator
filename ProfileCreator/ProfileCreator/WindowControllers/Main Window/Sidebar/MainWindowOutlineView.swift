@@ -79,7 +79,7 @@ class MainWindowOutlineViewController: NSObject {
         
         // Things I've tried to remove the separator between the views in the outline view
         /*
-         self.outlineView.gridColor = NSColor.clear
+         self.outlineView.gridColor = .clear
          self.outlineView.gridStyleMask = NSTableViewGridLineStyle(rawValue: 0)
          self.outlineView.intercellSpacing = NSZeroSize
          */

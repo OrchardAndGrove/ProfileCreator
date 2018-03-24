@@ -29,7 +29,7 @@ class EditorTextView {
         textView.isEditable = true
         textView.isSelectable = true
         textView.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .regular))
-        textView.textColor = NSColor.controlTextColor
+        textView.textColor = .controlTextColor
         textView.delegate = cellView
         textView.string = string ?? ""
         

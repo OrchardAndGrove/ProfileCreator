@@ -39,6 +39,12 @@ class PayloadCellViewPopUpButton: PayloadCellView, ProfileCreatorCellView, PopUp
         self.popUpButton = EditorPopUpButton.withTitles(titles: titles, cellView: self)
         self.setupPopUpButton()
 
+        // ---------------------------------------------------------------------
+        //  Setup Message if it is set
+        // ---------------------------------------------------------------------
+        if let textFieldMessage = self.textFieldMessage {
+            super.setup(textFieldMessage: textFieldMessage, belowView: self.popUpButton!)
+        }
         
         // ---------------------------------------------------------------------
         //  Set Default Value

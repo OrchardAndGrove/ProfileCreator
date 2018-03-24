@@ -43,6 +43,7 @@ class PayloadCellView: NSTableCellView {
     
     var textFieldTitle: NSTextField?
     var textFieldDescription: NSTextField?
+    var textFieldMessage: NSTextField?
     var leadingKeyView: NSView?
     var trailingKeyView: NSView?
     var isEnabled = false
@@ -80,6 +81,10 @@ class PayloadCellView: NSTableCellView {
             self.textFieldDescription = textFieldDescription
         }
         
+        if let textFieldMessage = EditorTextField.message(subkey: subkey, indent: self.indent, constraints: &self.cellViewConstraints, cellView: self) {
+            self.textFieldMessage = textFieldMessage
+        }
+        
         // ---------------------------------------------------------------------
         //  Add spacing to bottom
         // ---------------------------------------------------------------------
@@ -97,10 +102,34 @@ class PayloadCellView: NSTableCellView {
     func indentValue() -> CGFloat {
         return 8.0 + (16.0 * CGFloat(self.indent))
     }
-    
-    // MARK: -
-    // MARK: Add Layout Constraints
-    
+}
+
+// MARK: -
+// MARK: Setup NSLayoytConstraints
+
+extension PayloadCellView {
+    func setup(textFieldMessage: NSTextField, belowView: NSView) {
+        
+        // ---------------------------------------------------------------------
+        //  Add constraints
+        // ---------------------------------------------------------------------
+        // Top
+        self.cellViewConstraints.append(NSLayoutConstraint(item: textFieldMessage,
+                                                           attribute: .top,
+                                                           relatedBy: .equal,
+                                                           toItem: belowView,
+                                                           attribute: .bottom,
+                                                           multiplier: 1.0,
+                                                           constant: 4.0))
+        
+        self.updateHeight(4.0 + textFieldMessage.intrinsicContentSize.height)
+    }
+}
+
+// MARK: -
+// MARK: Add NSLayoytConstraints
+
+extension PayloadCellView {
     func addConstraints(forViewBelow viewBelow: NSView) {
         if let textFieldDescription = self.textFieldDescription {
             self.cellViewConstraints.append(NSLayoutConstraint(item: viewBelow,
@@ -154,10 +183,12 @@ class PayloadCellView: NSTableCellView {
                                                            multiplier: 1.0,
                                                            constant: 8.0))
     }
-    
-    // MARK: -
-    // MARK: Update Layout Constraints
-    
+}
+
+// MARK: -
+// MARK: Update NSLayoytConstraints
+
+extension PayloadCellView {
     func updateConstraints(forViewLeadingTitle viewLeading: NSView) {
         
         guard let textFieldTitle = self.textFieldTitle else { return }

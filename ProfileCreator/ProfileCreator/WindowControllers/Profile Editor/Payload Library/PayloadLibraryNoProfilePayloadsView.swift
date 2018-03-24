@@ -40,7 +40,7 @@ struct PayloadLibraryNoProfilePayloads {
         self.textField.isEditable = false
         self.textField.isSelectable = false
         self.textField.stringValue = string
-        self.textField.textColor = NSColor.tertiaryLabelColor
+        self.textField.textColor = .tertiaryLabelColor
         self.textField.font = NSFont.systemFont(ofSize: 14, weight: .medium)
         self.textField.alignment = .center
         self.textField.setContentHuggingPriority(.defaultLow, for: .horizontal)

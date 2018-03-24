@@ -160,7 +160,7 @@ class MainWindowProfilePreviewViewController: NSObject {
         self.textFieldTitle.drawsBackground = false
         self.textFieldTitle.isEditable = false
         self.textFieldTitle.font = NSFont.boldSystemFont(ofSize: 30)
-        self.textFieldTitle.textColor = NSColor.labelColor
+        self.textFieldTitle.textColor = .labelColor
         self.textFieldTitle.alignment = .center
         self.textFieldTitle.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         setupTextFieldTitle(constraints: &constraints)
@@ -254,7 +254,7 @@ class MainWindowProfilePreviewInfoViewController: NSObject {
         self.textField.drawsBackground = false
         self.textField.isEditable = false
         self.textField.font = NSFont.systemFont(ofSize: 19)
-        self.textField.textColor = NSColor.tertiaryLabelColor
+        self.textField.textColor = .tertiaryLabelColor
         self.textField.alignment = .center
         setupTextField(constraints: &constraints)
         

@@ -202,7 +202,7 @@ extension ProfileEditorHeaderView {
         self.textFieldPlatforms.drawsBackground = false
         self.textFieldPlatforms.isEditable = false
         self.textFieldPlatforms.isSelectable = false
-        self.textFieldPlatforms.textColor = NSColor.controlShadowColor
+        self.textFieldPlatforms.textColor = .controlShadowColor
         self.textFieldPlatforms.preferredMaxLayoutWidth = editorTableViewColumnPayloadWidth
         self.textFieldPlatforms.alignment = .right
         self.textFieldPlatforms.font = NSFont.systemFont(ofSize: 12, weight: .regular)
@@ -251,7 +251,7 @@ extension ProfileEditorHeaderView {
         self.textFieldScope.drawsBackground = false
         self.textFieldScope.isEditable = false
         self.textFieldScope.isSelectable = false
-        self.textFieldScope.textColor = NSColor.controlShadowColor
+        self.textFieldScope.textColor = .controlShadowColor
         self.textFieldScope.preferredMaxLayoutWidth = editorTableViewColumnPayloadWidth
         self.textFieldScope.alignment = .right
         self.textFieldScope.font = NSFont.systemFont(ofSize: 12, weight: .regular)
@@ -300,7 +300,7 @@ extension ProfileEditorHeaderView {
         self.textFieldTitle.drawsBackground = false
         self.textFieldTitle.isEditable = false
         self.textFieldTitle.isSelectable = false
-        self.textFieldTitle.textColor = NSColor.labelColor
+        self.textFieldTitle.textColor = .labelColor
         self.textFieldTitle.preferredMaxLayoutWidth = editorTableViewColumnPayloadWidth
         self.textFieldTitle.alignment = .left
         self.textFieldTitle.stringValue = "Title"
@@ -360,7 +360,7 @@ extension ProfileEditorHeaderView {
         self.textFieldDescription.drawsBackground = false
         self.textFieldDescription.isEditable = false
         self.textFieldDescription.isSelectable = false
-        self.textFieldDescription.textColor = NSColor.labelColor
+        self.textFieldDescription.textColor = .labelColor
         self.textFieldDescription.preferredMaxLayoutWidth = editorTableViewColumnPayloadWidth
         self.textFieldDescription.alignment = .left
         self.textFieldDescription.stringValue = "Description"

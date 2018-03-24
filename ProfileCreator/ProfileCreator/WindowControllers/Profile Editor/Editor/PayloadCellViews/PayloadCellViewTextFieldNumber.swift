@@ -122,9 +122,9 @@ extension PayloadCellViewTextFieldNumber {
             let fieldEditor = userInfo["NSFieldEditor"] as? NSTextView,
             let newString = fieldEditor.textStorage?.string {
             if let format = subkey.format, !newString.matches(format) {
-                self.textFieldInput?.textColor = NSColor.red
+                self.textFieldInput?.textColor = .red
             } else {
-                self.textFieldInput?.textColor = NSColor.black
+                self.textFieldInput?.textColor = .black
             }
             self.editor?.updatePayloadSettings(value: newString, subkey: subkey)
         }
@@ -220,6 +220,6 @@ extension PayloadCellViewTextFieldNumber {
         // ---------------------------------------------------------------------
         guard let textFieldMinMax = self.textFieldMinMax else { return }
         
-        textFieldMinMax.textColor = NSColor.controlShadowColor
+        textFieldMinMax.textColor = .controlShadowColor
     }
 }

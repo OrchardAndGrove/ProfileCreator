@@ -368,7 +368,7 @@ extension ProfileEditor: NSTableViewDelegate {
         let isEnabled = profile.subkeyIsEnabled(subkey: subkey, onlyByUser: false)
         
         if !isEnabled {
-            rowView.backgroundColor = NSColor.quaternaryLabelColor
+            rowView.backgroundColor = .quaternaryLabelColor
         }
         
         cellView.enable(isEnabled)

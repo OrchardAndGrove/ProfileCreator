@@ -86,7 +86,7 @@ class EditorTableViewCellViewTextField: NSTableCellView {
         textField.drawsBackground = false
         textField.isEditable = true
         textField.isSelectable = true
-        textField.textColor = NSColor.controlTextColor
+        textField.textColor = .controlTextColor
         textField.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .regular))
         textField.stringValue = stringValue ?? ""
         textField.placeholderString = placeholderString ?? ""
@@ -177,7 +177,7 @@ class EditorTableViewCellViewTextFieldNumber: NSTableCellView {
         textField.drawsBackground = false
         textField.isEditable = true
         textField.isSelectable = true
-        textField.textColor = NSColor.controlTextColor
+        textField.textColor = .controlTextColor
         textField.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .regular))
         textField.stringValue = value?.stringValue ?? ""
         textField.placeholderString = placeholderValue?.stringValue ?? ""

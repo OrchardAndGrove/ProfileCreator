@@ -70,9 +70,9 @@ class PayloadCellViewTextView: PayloadCellView, ProfileCreatorCellView, NSTextFi
         //  Set TextColor (red if not matching format)
         // ---------------------------------------------------------------------
         if let format = subkey.format, !valueString.matches(format) {
-            self.textView?.textColor = NSColor.red
+            self.textView?.textColor = .red
         } else {
-            self.textView?.textColor = NSColor.black
+            self.textView?.textColor = .black
         }
         
         // ---------------------------------------------------------------------
@@ -109,9 +109,9 @@ extension PayloadCellViewTextView {
             let fieldEditor = userInfo["NSFieldEditor"] as? NSTextView,
             let newString = fieldEditor.textStorage?.string {
             if let format = subkey.format, !newString.matches(format) {
-                self.textView?.textColor = NSColor.red
+                self.textView?.textColor = .red
             } else {
-                self.textView?.textColor = NSColor.black
+                self.textView?.textColor = .black
             }
             self.editor?.updatePayloadSettings(value: newString, subkey: subkey)
         }

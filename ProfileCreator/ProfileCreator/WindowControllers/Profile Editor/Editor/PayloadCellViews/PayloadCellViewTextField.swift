@@ -36,6 +36,13 @@ class PayloadCellViewTextField: PayloadCellView, ProfileCreatorCellView, NSTextF
         self.setupTextFieldInput()
         
         // ---------------------------------------------------------------------
+        //  Setup Message if it is set
+        // ---------------------------------------------------------------------
+        if let textFieldMessage = self.textFieldMessage {
+            super.setup(textFieldMessage: textFieldMessage, belowView: self.textFieldInput!)
+        }
+        
+        // ---------------------------------------------------------------------
         //  Set Default Value
         // ---------------------------------------------------------------------
         if let valueDefault = subkey.valueDefault as? String {
@@ -64,9 +71,9 @@ class PayloadCellViewTextField: PayloadCellView, ProfileCreatorCellView, NSTextF
         //  Set TextColor (red if not matching format)
         // ---------------------------------------------------------------------
         if let format = subkey.format, !valueString.matches(format) {
-            self.textFieldInput?.textColor = NSColor.red
+            self.textFieldInput?.textColor = .red
         } else {
-            self.textFieldInput?.textColor = NSColor.black
+            self.textFieldInput?.textColor = .black
         }
         
         // ---------------------------------------------------------------------
@@ -104,9 +111,9 @@ extension PayloadCellViewTextField {
             let fieldEditor = userInfo["NSFieldEditor"] as? NSTextView,
             let newString = fieldEditor.textStorage?.string {
             if let format = subkey.format, !newString.matches(format) {
-                self.textFieldInput?.textColor = NSColor.red
+                self.textFieldInput?.textColor = .red
             } else {
-                self.textFieldInput?.textColor = NSColor.black
+                self.textFieldInput?.textColor = .black
             }
             self.editor?.updatePayloadSettings(value: newString, subkey: subkey)
         }

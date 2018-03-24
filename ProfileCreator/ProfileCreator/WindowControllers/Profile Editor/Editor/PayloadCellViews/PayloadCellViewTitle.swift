@@ -100,7 +100,7 @@ extension PayloadCellViewTitle {
         textFieldTitle.drawsBackground = false
         textFieldTitle.isEditable = false
         textFieldTitle.isSelectable = false
-        textFieldTitle.textColor = NSColor.labelColor
+        textFieldTitle.textColor = .labelColor
         textFieldTitle.preferredMaxLayoutWidth = editorTableViewColumnPayloadWidth
         textFieldTitle.stringValue = title
         textFieldTitle.alignment = .center
@@ -155,7 +155,7 @@ extension PayloadCellViewTitle {
         textFieldDescription.drawsBackground = false
         textFieldDescription.isEditable = false
         textFieldDescription.isSelectable = false
-        textFieldDescription.textColor = NSColor.labelColor
+        textFieldDescription.textColor = .labelColor
         textFieldDescription.preferredMaxLayoutWidth = editorTableViewColumnPayloadWidth
         textFieldDescription.stringValue = description
         textFieldDescription.alignment = .center

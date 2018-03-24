@@ -27,7 +27,7 @@ public func addHeader(title: String,
     textFieldTitle.isEditable = false
     textFieldTitle.isSelectable = false
     textFieldTitle.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .regular))
-    textFieldTitle.textColor = NSColor.labelColor
+    textFieldTitle.textColor = .labelColor
     textFieldTitle.alignment = .left
     textFieldTitle.stringValue = title
     toView.addSubview(textFieldTitle)
@@ -140,7 +140,7 @@ func setupLabel(string: String?, toView: NSView, indent: CGFloat, constraints: i
     textFieldLabel.isEditable = false
     textFieldLabel.isSelectable = true
     textFieldLabel.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .regular))
-    textFieldLabel.textColor = NSColor.labelColor
+    textFieldLabel.textColor = .labelColor
     textFieldLabel.alignment = .right
     textFieldLabel.stringValue = labelString
     toView.addSubview(textFieldLabel)
@@ -409,7 +409,7 @@ public func addTextField(label: String?,
         textFieldLabel.isEditable = false
         textFieldLabel.isSelectable = true
         textFieldLabel.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .regular))
-        textFieldLabel.textColor = NSColor.labelColor
+        textFieldLabel.textColor = .labelColor
         textFieldLabel.alignment = .right
         textFieldLabel.stringValue = labelString
         toView.addSubview(textFieldLabel)
@@ -437,7 +437,7 @@ public func addTextField(label: String?,
     textField.isEditable = true
     textField.isSelectable = true
     textField.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .regular))
-    textField.textColor = NSColor.labelColor
+    textField.textColor = .labelColor
     textField.alignment = .left
     textField.placeholderString = placeholderValue
     toView.addSubview(textField)

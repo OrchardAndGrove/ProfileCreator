@@ -33,7 +33,7 @@ class EditorTextField {
         textField.drawsBackground = false
         textField.isEditable = false
         textField.isSelectable = false
-        textField.textColor = NSColor.labelColor
+        textField.textColor = .labelColor
         textField.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .regular), weight: .bold)
         textField.preferredMaxLayoutWidth = editorTableViewColumnPayloadWidth
         textField.stringValue = title
@@ -103,7 +103,7 @@ class EditorTextField {
         textField.drawsBackground = false
         textField.isEditable = false
         textField.isSelectable = false
-        textField.textColor = NSColor.controlShadowColor
+        textField.textColor = .controlShadowColor
         textField.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .regular))
         textField.preferredMaxLayoutWidth = editorTableViewColumnPayloadWidth
         textField.stringValue = description
@@ -168,6 +168,103 @@ class EditorTextField {
         return textField
     }
     
+    class func message(subkey: PayloadSourceSubkey,
+                           indent: Int,
+                           constraints: inout [NSLayoutConstraint],
+                           cellView: PayloadCellView) -> NSTextField? {
+        
+        guard let message = subkey.message, !message.isEmpty else { return nil }
+        
+        // ---------------------------------------------------------------------
+        //  Create and setup TextField
+        // ---------------------------------------------------------------------
+        let textField = NSTextField()
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.lineBreakMode = .byWordWrapping
+        textField.isBordered = false
+        textField.isBezeled = false
+        textField.drawsBackground = false
+        textField.isEditable = false
+        textField.isSelectable = false
+        textField.textColor = .orange
+        textField.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .regular))
+        textField.preferredMaxLayoutWidth = editorTableViewColumnPayloadWidth
+        textField.stringValue = message
+        
+        // ---------------------------------------------------------------------
+        //  Add text field to cell view
+        // ---------------------------------------------------------------------
+        cellView.addSubview(textField)
+        
+        // ---------------------------------------------------------------------
+        //  Setup Layout Constraings for TextField
+        // ---------------------------------------------------------------------
+        /*
+        if cellView.textFieldDescription != nil {
+            
+            // Top
+            constraints.append(NSLayoutConstraint(item: textField,
+                                                  attribute: .top,
+                                                  relatedBy: .equal,
+                                                  toItem: cellView.textFieldDescription,
+                                                  attribute: .bottom,
+                                                  multiplier: 1.0,
+                                                  constant: 2.0))
+            
+            cellView.updateHeight(2.0 + textField.intrinsicContentSize.height)
+        } else if cellView.textFieldTitle != nil {
+            
+            // Top
+            constraints.append(NSLayoutConstraint(item: textField,
+                                                  attribute: .top,
+                                                  relatedBy: .equal,
+                                                  toItem: cellView.textFieldTitle,
+                                                  attribute: .bottom,
+                                                  multiplier: 1.0,
+                                                  constant: 2.0))
+            
+            cellView.updateHeight(2.0 + textField.intrinsicContentSize.height)
+            
+        } else {
+            
+            // Top
+            constraints.append(NSLayoutConstraint(item: textField,
+                                                  attribute: .top,
+                                                  relatedBy: .equal,
+                                                  toItem: cellView,
+                                                  attribute: .top,
+                                                  multiplier: 1.0,
+                                                  constant: 8.0))
+            
+            cellView.updateHeight(8.0 + textField.intrinsicContentSize.height)
+        }
+        */
+        // -------------------------------------------------------------------------
+        //  Calculate Indent
+        // -------------------------------------------------------------------------
+        let indentValue: CGFloat = 8.0 + (16.0 * CGFloat(indent))
+        
+        // Leading
+        constraints.append(NSLayoutConstraint(item: textField,
+                                              attribute: .leading,
+                                              relatedBy: .equal,
+                                              toItem: cellView,
+                                              attribute: .leading,
+                                              multiplier: 1.0,
+                                              constant: indentValue))
+        
+        // Trailing
+        constraints.append(NSLayoutConstraint(item: cellView,
+                                              attribute: .trailing,
+                                              relatedBy: .equal,
+                                              toItem: textField,
+                                              attribute: .trailing,
+                                              multiplier: 1.0,
+                                              constant: 8.0))
+        
+        return textField
+    }
+    
     class func input(defaultString: String?,
                      placeholderString: String?,
                      cellView: PayloadCellView) -> PayloadTextField {
@@ -184,8 +281,8 @@ class EditorTextField {
         textField.drawsBackground = false
         textField.isEditable = true
         textField.isSelectable = true
-        textField.textColor = NSColor.controlTextColor
-        textField.backgroundColor = NSColor.controlBackgroundColor
+        textField.textColor = .controlTextColor
+        textField.backgroundColor = .controlBackgroundColor
         textField.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .regular))
         textField.stringValue = defaultString ?? ""
         textField.placeholderString = placeholderString ?? ""
@@ -219,7 +316,7 @@ class EditorTextField {
         textField.drawsBackground = false
         textField.isEditable = false
         textField.isSelectable = false
-        textField.textColor = NSColor.labelColor
+        textField.textColor = .labelColor
         textField.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .regular), weight: fontWeight ?? NSFont.Weight.bold)
         textField.preferredMaxLayoutWidth = editorTableViewColumnPayloadWidth
         textField.stringValue = string ?? ""

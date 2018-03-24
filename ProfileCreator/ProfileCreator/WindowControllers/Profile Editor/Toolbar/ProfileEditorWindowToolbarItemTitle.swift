@@ -46,7 +46,7 @@ class ProfileEditorWindowToolbarItemTitle: NSView {
         self.textFieldTitle.drawsBackground = false
         self.textFieldTitle.isEditable = false
         self.textFieldTitle.font = NSFont.systemFont(ofSize: 18, weight: NSFont.Weight.light)
-        self.textFieldTitle.textColor = NSColor.controlTextColor
+        self.textFieldTitle.textColor = .controlTextColor
         self.textFieldTitle.alignment = .center
         self.textFieldTitle.lineBreakMode = .byTruncatingTail
         self.textFieldTitle.stringValue = profile.title

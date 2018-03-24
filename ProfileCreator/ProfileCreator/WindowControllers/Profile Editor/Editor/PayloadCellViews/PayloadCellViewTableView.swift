@@ -221,9 +221,9 @@ class PayloadCellViewTableView: PayloadCellView, ProfileCreatorCellView, TableVi
         if let tableViewSubkey = subkey.subkeys.first, let textFieldSubkey = tableViewSubkey.subkeys.first(where: {$0.keyPath == keyPath}) {
             if let format = textFieldSubkey.format, !stringValue.matches(format) {
                 Swift.print("textField: \(textField)")
-                textField.textColor = NSColor.red
+                textField.textColor = .red
             } else {
-                textField.textColor = NSColor.black
+                textField.textColor = .black
             }
         }
         

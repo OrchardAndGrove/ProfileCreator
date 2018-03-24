@@ -46,7 +46,7 @@ class MainWindowWelcomeViewController: NSObject {
         self.textFieldTitle.isEditable = false
         self.textFieldTitle.isSelectable = false
         self.textFieldTitle.stringValue = NSLocalizedString("Welcome to ProfileCreator", comment: "")
-        self.textFieldTitle.textColor = NSColor.labelColor
+        self.textFieldTitle.textColor = .labelColor
         self.textFieldTitle.font = NSFont.boldSystemFont(ofSize: 28)
         self.textFieldTitle.alignment = .center
         setupTextFieldTitle(constraints: &constraints)
@@ -62,7 +62,7 @@ class MainWindowWelcomeViewController: NSObject {
         self.textFieldInfo.isEditable = false
         self.textFieldInfo.isSelectable = false
         self.textFieldInfo.stringValue = NSLocalizedString("To create your first profile, click the ", comment: "")
-        self.textFieldInfo.textColor = NSColor.secondaryLabelColor
+        self.textFieldInfo.textColor = .secondaryLabelColor
         self.textFieldInfo.font = NSFont.systemFont(ofSize: 16)
         self.textFieldInfo.alignment = .center
         setupTextFieldInfo(constraints: &constraints)

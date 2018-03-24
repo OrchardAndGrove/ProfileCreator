@@ -38,7 +38,7 @@ class MainWindowTableViewCellView {
         textFieldTitle.drawsBackground = false
         textFieldTitle.isEditable = false
         textFieldTitle.font = NSFont.boldSystemFont(ofSize: 12)
-        textFieldTitle.textColor = NSColor.controlTextColor
+        textFieldTitle.textColor = .controlTextColor
         textFieldTitle.alignment = .left
         textFieldTitle.stringValue = title
         setup(textFieldTitle: textFieldTitle, cellView: cellView, constraints: &constraints)
@@ -54,7 +54,7 @@ class MainWindowTableViewCellView {
         textFieldDescription.drawsBackground = false
         textFieldDescription.isEditable = false
         textFieldDescription.font = NSFont.systemFont(ofSize: 10)
-        textFieldDescription.textColor = NSColor.controlShadowColor
+        textFieldDescription.textColor = .controlShadowColor
         textFieldDescription.alignment = .left
         if payloadCount == 1 {
             textFieldDescription.stringValue = NSLocalizedString("\(payloadCount) Payload", comment: "")

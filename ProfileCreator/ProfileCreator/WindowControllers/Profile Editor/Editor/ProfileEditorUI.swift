@@ -107,7 +107,7 @@ extension ProfileEditor {
         self.textView.isSelectable = true
         
         self.textView.font = NSFont(name: "Menlo Regular", size: NSFont.systemFontSize(for: .regular))
-        self.textView.textColor = NSColor.controlTextColor
+        self.textView.textColor = .controlTextColor
         self.textView.string = "This is a test string"
     
         self.textView.textContainerInset = NSSize(width: 50, height: 30)
