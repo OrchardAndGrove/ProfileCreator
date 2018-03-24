@@ -29,7 +29,7 @@ public class Profile: NSDocument {
     // View Settings
     public var viewSettings: Dictionary<String, Any>
     public var scope: String? // Change to scope enum
-    public var distribution: String? // Change to distribution enum
+    // public var distribution: Distribution // Change to distribution enum
     public var sign = false
     
     @objc public var editorDistributionMethod: String = DistributionString.any

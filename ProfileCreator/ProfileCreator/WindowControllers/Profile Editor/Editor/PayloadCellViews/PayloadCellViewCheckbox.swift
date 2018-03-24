@@ -16,6 +16,7 @@ class PayloadCellViewCheckbox: PayloadCellView, ProfileCreatorCellView, Checkbox
     
     var checkbox: NSButton?
     var valueDefault: Bool = false
+    var valueInverted: Bool = false
     
     // MARK: -
     // MARK: Initialization
@@ -41,14 +42,19 @@ class PayloadCellViewCheckbox: PayloadCellView, ProfileCreatorCellView, Checkbox
         }
         
         // ---------------------------------------------------------------------
+        //  Set Value Inverted
+        // ---------------------------------------------------------------------
+        self.valueInverted = subkey.valueInverted
+        
+        // ---------------------------------------------------------------------
         //  Set Value
         // ---------------------------------------------------------------------
         if
             let domainSettings = settings[subkey.domain] as? Dictionary<String, Any>,
             let value = domainSettings[subkey.keyPath] as? Bool {
-            self.checkbox?.state = value ? .on : .off
+            self.checkbox?.state = self.state(forValue: value)
         } else {
-            self.checkbox?.state = self.valueDefault ? .on : .off
+            self.checkbox?.state = self.state(forValue: self.valueDefault)
         }
         
         // ---------------------------------------------------------------------
@@ -64,6 +70,25 @@ class PayloadCellViewCheckbox: PayloadCellView, ProfileCreatorCellView, Checkbox
     }
     
     // MARK: -
+    // MARK: Value Inverted Functions
+    
+    func state(forValue value: Bool) -> NSControl.StateValue {
+        if self.valueInverted {
+            return value ? .off : .on
+        } else {
+            return value ? .on : .off
+        }
+    }
+    
+    func value(forState state: NSControl.StateValue) -> Bool {
+        if self.valueInverted {
+            return state == .on ? false : true
+        } else {
+            return state == .on ? true : false
+        }
+    }
+    
+    // MARK: -
     // MARK: PayloadCellView Functions
     
     override func enable(_ enable: Bool) {
@@ -76,7 +101,7 @@ class PayloadCellViewCheckbox: PayloadCellView, ProfileCreatorCellView, Checkbox
     
     func clicked(_ checkbox: NSButton) {
         guard let subkey = self.subkey else { return }
-        self.editor?.updatePayloadSettings(value: checkbox.state == .on ? true : false, subkey: subkey)
+        self.editor?.updatePayloadSettings(value: self.value(forState: checkbox.state), subkey: subkey)
     }
 }
 
