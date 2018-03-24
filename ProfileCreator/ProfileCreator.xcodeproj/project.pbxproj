@@ -70,6 +70,7 @@
 		E30CC5E0205273F0006F113D /* PayloadCellViewDictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = E30CC5DF205273F0006F113D /* PayloadCellViewDictionary.swift */; };
 		E31FA8D21F4D59DE00F6B6BD /* PayloadCellViewTextFieldNumber.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31FA8D11F4D59DE00F6B6BD /* PayloadCellViewTextFieldNumber.swift */; };
 		E31FFE63205BAE8A0027D40A /* FileInfoProcessorCertificate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31FFE62205BAE8A0027D40A /* FileInfoProcessorCertificate.swift */; };
+		E3204F152066359D002DEACC /* PayloadLibraryNoProfilePayloadsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3204F142066359D002DEACC /* PayloadLibraryNoProfilePayloadsView.swift */; };
 		E32767E61F3F71B700B4670C /* PayloadCellViewFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32767E51F3F71B700B4670C /* PayloadCellViewFile.swift */; };
 		E32767E81F3F736B00B4670C /* PayloadCellViewItemFileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32767E71F3F736B00B4670C /* PayloadCellViewItemFileView.swift */; };
 		E331A46C1FB2EAB800F98477 /* ProfileExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = E331A46B1FB2EAB800F98477 /* ProfileExport.swift */; };
@@ -181,6 +182,7 @@
 		E30CC5DF205273F0006F113D /* PayloadCellViewDictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PayloadCellViewDictionary.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViewDictionary.swift"; sourceTree = "<group>"; };
 		E31FA8D11F4D59DE00F6B6BD /* PayloadCellViewTextFieldNumber.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PayloadCellViewTextFieldNumber.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViewTextFieldNumber.swift"; sourceTree = "<group>"; };
 		E31FFE62205BAE8A0027D40A /* FileInfoProcessorCertificate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FileInfoProcessorCertificate.swift; path = "WindowControllers/Profile Editor/Editor/FileInfoProcessor/FileInfoProcessorCertificate.swift"; sourceTree = "<group>"; };
+		E3204F142066359D002DEACC /* PayloadLibraryNoProfilePayloadsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PayloadLibraryNoProfilePayloadsView.swift; path = "WindowControllers/Profile Editor/Payload Library/PayloadLibraryNoProfilePayloadsView.swift"; sourceTree = "<group>"; };
 		E32767E51F3F71B700B4670C /* PayloadCellViewFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewFile.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViewFile.swift"; sourceTree = "<group>"; };
 		E32767E71F3F736B00B4670C /* PayloadCellViewItemFileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewItemFileView.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViewItems/PayloadCellViewItemFileView.swift"; sourceTree = "<group>"; };
 		E331A46B1FB2EAB800F98477 /* ProfileExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProfileExport.swift; path = Profile/ProfileExport.swift; sourceTree = "<group>"; };
@@ -302,6 +304,7 @@
 				535CB4561F2B1CD300A746F6 /* PayloadLibrarySplitView.swift */,
 				535CB4581F2B1E4100A746F6 /* PayloadLibraryTableViews.swift */,
 				5326D2281F2DD2AC00D93C67 /* PayloadLibraryNoPayloadsView.swift */,
+				E3204F142066359D002DEACC /* PayloadLibraryNoProfilePayloadsView.swift */,
 				5383C1941F2C90DB004EBE9B /* PayloadLibraryCellViews */,
 				5383C19B1F2C934C004EBE9B /* PayloadLibraryCellViewItems */,
 			);
@@ -694,6 +697,7 @@
 				5370780D1F232DAA00570090 /* ProfileEditorWindowToolbarItemTitle.swift in Sources */,
 				5365F4881F0F71850064C02A /* MainWindowToolbarItemAdd.swift in Sources */,
 				E30CC5E0205273F0006F113D /* PayloadCellViewDictionary.swift in Sources */,
+				E3204F152066359D002DEACC /* PayloadLibraryNoProfilePayloadsView.swift in Sources */,
 				5367E26C1F13ED440027D0D0 /* Alert.swift in Sources */,
 				E37C67AD1F415D5D00B3D4CB /* PayloadCellViewItemDatePicker.swift in Sources */,
 				5383C1961F2C9127004EBE9B /* PayloadLibraryCellView.swift in Sources */,

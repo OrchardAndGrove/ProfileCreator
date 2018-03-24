@@ -8,7 +8,7 @@
 
 import Cocoa
 
-struct PayloadLibraryNoPayloads {
+struct PayloadLibraryNoProfilePayloads {
     
     // MARK: -
     // MARK: Variables
@@ -43,6 +43,8 @@ struct PayloadLibraryNoPayloads {
         self.textField.textColor = NSColor.tertiaryLabelColor
         self.textField.font = NSFont.systemFont(ofSize: 14, weight: .medium)
         self.textField.alignment = .center
+        self.textField.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        self.textField.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         setupTextField(constraints: &constraints)
         
         // ---------------------------------------------------------------------
@@ -62,24 +64,24 @@ struct PayloadLibraryNoPayloads {
                                               toItem: self.view,
                                               attribute: .leading,
                                               multiplier: 1.0,
-                                              constant: 0))
+                                              constant: 5.0))
         
         // Trailing
-        constraints.append(NSLayoutConstraint(item: self.textField,
+        constraints.append(NSLayoutConstraint(item: self.view,
                                               attribute: .trailing,
                                               relatedBy: .equal,
-                                              toItem: self.view,
+                                              toItem: self.textField,
                                               attribute: .trailing,
                                               multiplier: 1.0,
-                                              constant: 0))
+                                              constant: 5.0))
         
-        // Center Y
-        constraints.append(NSLayoutConstraint(item: self.textField,
-                                              attribute: .centerY,
+        // Bottom
+        constraints.append(NSLayoutConstraint(item: self.view,
+                                              attribute: .bottom,
                                               relatedBy: .equal,
-                                              toItem: self.view,
-                                              attribute: .centerY,
+                                              toItem: self.textField,
+                                              attribute: .bottom,
                                               multiplier: 1.0,
-                                              constant: 0))
+                                              constant: 10.0))
     }
 }
