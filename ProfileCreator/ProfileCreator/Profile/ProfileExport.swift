@@ -532,7 +532,13 @@ class ProfileExport {
         if value == nil, let userValue = domainSettings[subkey.keyPath] {
             value = userValue
         } else {
-            value = subkey.valueDefault ?? PayloadUtility.emptyValue(valueType: subkey.type)
+            if let valueDefault = subkey.valueDefault {
+                value = valueDefault
+            } else if let valueRangeList = subkey.rangeList?.first {
+                value = valueRangeList
+            } else {
+                value = PayloadUtility.emptyValue(valueType: subkey.type)
+            }
             
             // Special case when the PayloadIdentifier isn't manually entered
             if subkey.key == PayloadKey.payloadIdentifier, let payloadIdentifier = value as? String {
