@@ -142,6 +142,7 @@ class ProfileEditor: NSObject {
             if let tableColumnTrailing = self.tableView.tableColumn(withIdentifier: .tableColumnPayloadEnableTrailing), let show = change?[.newKey] as? Bool {
                 tableColumnTrailing.isHidden = !show
             }
+            self.reloadTableView(updateCellViews: true)
         default:
             Swift.print("Class: \(self.self), Function: \(#function), observeValueforKeyPath: \(String(describing: keyPath))")
         }

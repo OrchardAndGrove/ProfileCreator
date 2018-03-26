@@ -15,8 +15,14 @@ class PayloadCellViewNoKeys: NSTableCellView, ProfileCreatorCellView {
     // MARK: PayloadCellView Variables
     
     var height: CGFloat = 0.0
-    var textFieldTitle: NSTextField?
-    var textFieldDescription: NSTextField?
+    let textFieldTitle = NSTextField()
+    var textFieldDescription: NSTextField? // Unused
+    let buttonShowDisabled = NSButton()
+    
+    let editorColumnEnableSelector: String
+    let editorShowDisabledSelector: String
+    
+    weak var profile: Profile?
     
     // MARK: -
     // MARK: Initialization
@@ -25,23 +31,32 @@ class PayloadCellViewNoKeys: NSTableCellView, ProfileCreatorCellView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    init(title titleString: String?, description descriptionString: String?) {
+    init(title titleString: String, description descriptionString: String?, profile: Profile) {
+        
+        self.editorColumnEnableSelector = NSStringFromSelector(#selector(getter: profile.editorColumnEnable))
+        self.editorShowDisabledSelector = NSStringFromSelector(#selector(getter: profile.editorShowDisabled))
+        
         super.init(frame: NSZeroRect)
         
         // ---------------------------------------------------------------------
         //  Setup Variables
         // ---------------------------------------------------------------------
         var constraints = [NSLayoutConstraint]()
+        self.profile = profile
         
         // ---------------------------------------------------------------------
         //  Setup Static View Content
         // ---------------------------------------------------------------------
-        if let title = titleString, !title.isEmpty {
-            self.setupTextField(title: title, constraints: &constraints)
-        }
+        self.setupTextField(title: titleString, constraints: &constraints)
         
         if let description = descriptionString, !description.isEmpty {
             self.setupTextField(description: description, constraints: &constraints)
+        }
+        
+        if profile.editorShowDisabled == false {
+            self.setupButtonShowDisabled(title: NSLocalizedString("Show Disabled Keys", comment: ""), constraints: &constraints)
+        } else if profile.editorColumnEnable == false {
+            self.setupButtonShowDisabled(title: NSLocalizedString("Show Column Enable Key ", comment: ""), constraints: &constraints)
         }
         
         // ---------------------------------------------------------------------
@@ -55,8 +70,8 @@ class PayloadCellViewNoKeys: NSTableCellView, ProfileCreatorCellView {
         NSLayoutConstraint.activate(constraints)
     }
     
-    convenience init(payloadSource: PayloadSource) {
-        self.init(title: payloadSource.title, description: payloadSource.description)
+    convenience init(payloadSource: PayloadSource, profile: Profile) {
+        self.init(title: payloadSource.title, description: payloadSource.description, profile: profile)
     }
     
     // MARK: -
@@ -64,6 +79,14 @@ class PayloadCellViewNoKeys: NSTableCellView, ProfileCreatorCellView {
     
     func updateHeight(_ h: CGFloat) {
         self.height += h
+    }
+    
+    // MARK: -
+    // MARK: Button Actions
+    @objc func showDisabled(_ button: NSButton) {
+        guard let profile = self.profile else { return }
+        profile.setValue(true, forKeyPath: self.editorColumnEnableSelector)
+        profile.setValue(true, forKeyPath: self.editorShowDisabledSelector)
     }
 }
 
@@ -73,42 +96,39 @@ class PayloadCellViewNoKeys: NSTableCellView, ProfileCreatorCellView {
 extension PayloadCellViewNoKeys {
     
     private func setupTextField(title: String, constraints: inout [NSLayoutConstraint]) {
-        
-        let textFieldTitle = NSTextField()
-        textFieldTitle.translatesAutoresizingMaskIntoConstraints = false
-        textFieldTitle.lineBreakMode = .byWordWrapping
-        textFieldTitle.isBordered = false
-        textFieldTitle.isBezeled = false
-        textFieldTitle.drawsBackground = false
-        textFieldTitle.isEditable = false
-        textFieldTitle.isSelectable = false
-        textFieldTitle.textColor = .tertiaryLabelColor
-        textFieldTitle.preferredMaxLayoutWidth = editorTableViewColumnPayloadWidth
-        textFieldTitle.stringValue = title
-        textFieldTitle.alignment = .center
-        textFieldTitle.font = NSFont.systemFont(ofSize: 20, weight: .bold)
-        self.textFieldTitle = textFieldTitle
+        self.textFieldTitle.translatesAutoresizingMaskIntoConstraints = false
+        self.textFieldTitle.lineBreakMode = .byWordWrapping
+        self.textFieldTitle.isBordered = false
+        self.textFieldTitle.isBezeled = false
+        self.textFieldTitle.drawsBackground = false
+        self.textFieldTitle.isEditable = false
+        self.textFieldTitle.isSelectable = false
+        self.textFieldTitle.textColor = .tertiaryLabelColor
+        self.textFieldTitle.preferredMaxLayoutWidth = editorTableViewColumnPayloadWidth
+        self.textFieldTitle.stringValue = title
+        self.textFieldTitle.alignment = .center
+        self.textFieldTitle.font = NSFont.systemFont(ofSize: 20, weight: .bold)
         
         // ---------------------------------------------------------------------
         //  Add TextField to TableCellView
         // ---------------------------------------------------------------------
-        self.addSubview(textFieldTitle)
+        self.addSubview(self.textFieldTitle)
         
         // ---------------------------------------------------------------------
         //  Add constraints
         // ---------------------------------------------------------------------
         // Top
-        constraints.append(NSLayoutConstraint(item: textFieldTitle,
+        constraints.append(NSLayoutConstraint(item: self.textFieldTitle,
                                               attribute: .top,
                                               relatedBy: .equal,
                                               toItem: self,
                                               attribute: .top,
                                               multiplier: 1.0,
                                               constant: 8.0))
-        self.updateHeight(8 + textFieldTitle.intrinsicContentSize.height)
+        self.updateHeight(8 + self.textFieldTitle.intrinsicContentSize.height)
         
         // Leading
-        constraints.append(NSLayoutConstraint(item: textFieldTitle,
+        constraints.append(NSLayoutConstraint(item: self.textFieldTitle,
                                               attribute: .leading,
                                               relatedBy: .equal,
                                               toItem: self,
@@ -120,7 +140,7 @@ extension PayloadCellViewNoKeys {
         constraints.append(NSLayoutConstraint(item: self,
                                               attribute: .trailing,
                                               relatedBy: .equal,
-                                              toItem: textFieldTitle,
+                                              toItem: self.textFieldTitle,
                                               attribute: .trailing,
                                               multiplier: 1.0,
                                               constant: 8.0))
@@ -128,7 +148,6 @@ extension PayloadCellViewNoKeys {
     
     
     private func setupTextField(description: String, constraints: inout [NSLayoutConstraint]) {
-        
         let textFieldDescription = NSTextField()
         textFieldDescription.translatesAutoresizingMaskIntoConstraints = false
         textFieldDescription.lineBreakMode = .byWordWrapping
@@ -153,25 +172,14 @@ extension PayloadCellViewNoKeys {
         //  Add constraints
         // ---------------------------------------------------------------------
         // Top
-        if let textFieldTitle = self.textFieldTitle {
-            constraints.append(NSLayoutConstraint(item: textFieldDescription,
-                                                  attribute: .top,
-                                                  relatedBy: .equal,
-                                                  toItem: textFieldTitle,
-                                                  attribute: .bottom,
-                                                  multiplier: 1.0,
-                                                  constant: 6.0))
-            self.updateHeight(6 + textFieldDescription.intrinsicContentSize.height)
-        } else {
-            constraints.append(NSLayoutConstraint(item: textFieldDescription,
-                                                  attribute: .top,
-                                                  relatedBy: .equal,
-                                                  toItem: self,
-                                                  attribute: .top,
-                                                  multiplier: 1.0,
-                                                  constant: 8.0))
-            self.updateHeight(8 + textFieldDescription.intrinsicContentSize.height)
-        }
+        constraints.append(NSLayoutConstraint(item: textFieldDescription,
+                                              attribute: .top,
+                                              relatedBy: .equal,
+                                              toItem: self.textFieldTitle,
+                                              attribute: .bottom,
+                                              multiplier: 1.0,
+                                              constant: 6.0))
+        self.updateHeight(6 + textFieldDescription.intrinsicContentSize.height)
         
         // Leading
         constraints.append(NSLayoutConstraint(item: textFieldDescription,
@@ -190,5 +198,46 @@ extension PayloadCellViewNoKeys {
                                               attribute: .trailing,
                                               multiplier: 1.0,
                                               constant: 8.0))
+    }
+    
+    private func setupButtonShowDisabled(title: String, constraints: inout [NSLayoutConstraint]) {
+        self.buttonShowDisabled.translatesAutoresizingMaskIntoConstraints = false
+        self.buttonShowDisabled.bezelStyle = .rounded
+        self.buttonShowDisabled.setButtonType(.momentaryPushIn)
+        self.buttonShowDisabled.isBordered = true
+        self.buttonShowDisabled.isTransparent = false
+        self.buttonShowDisabled.title = title
+        self.buttonShowDisabled.target = self
+        self.buttonShowDisabled.action = #selector(self.showDisabled(_:))
+        self.buttonShowDisabled.sizeToFit()
+        self.buttonShowDisabled.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        
+        // ---------------------------------------------------------------------
+        //  Add Button to TableCellView
+        // ---------------------------------------------------------------------
+        self.addSubview(self.buttonShowDisabled)
+        
+        // ---------------------------------------------------------------------
+        //  Add constraints
+        // ---------------------------------------------------------------------
+        // Top
+        constraints.append(NSLayoutConstraint(item: self.buttonShowDisabled,
+                                                           attribute: .top,
+                                                           relatedBy: .equal,
+                                                           toItem: self.textFieldTitle,
+                                                           attribute: .bottom,
+                                                           multiplier: 1.0,
+                                                           constant: 8.0))
+        
+        // Center X
+        constraints.append(NSLayoutConstraint(item: self.buttonShowDisabled,
+                                                           attribute: .centerX,
+                                                           relatedBy: .equal,
+                                                           toItem: self,
+                                                           attribute: .centerX,
+                                                           multiplier: 1.0,
+                                                           constant: 0.0))
+        
+        self.updateHeight((8 + self.buttonShowDisabled.intrinsicContentSize.height))
     }
 }
