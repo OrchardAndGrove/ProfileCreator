@@ -215,6 +215,8 @@ extension PayloadCellViewTitle {
     
     private func setup(separator: NSBox, alignment: NSLayoutConstraint.Attribute, constraints: inout [NSLayoutConstraint]) {
         
+        guard let textFieldTitle = self.textFieldTitle else { return }
+        
         // ---------------------------------------------------------------------
         //  Add TextField to TableCellView
         // ---------------------------------------------------------------------
@@ -241,7 +243,7 @@ extension PayloadCellViewTitle {
                                                   constant: 8.0))
             
             // Trailing
-            constraints.append(NSLayoutConstraint(item: self.textFieldTitle,
+            constraints.append(NSLayoutConstraint(item: textFieldTitle,
                                                   attribute: .leading,
                                                   relatedBy: .equal,
                                                   toItem: separator,
@@ -254,7 +256,7 @@ extension PayloadCellViewTitle {
             constraints.append(NSLayoutConstraint(item: separator,
                                                   attribute: .leading,
                                                   relatedBy: .equal,
-                                                  toItem: self.textFieldTitle,
+                                                  toItem: textFieldTitle,
                                                   attribute: .trailing,
                                                   multiplier: 1,
                                                   constant: 8.0))
@@ -269,7 +271,5 @@ extension PayloadCellViewTitle {
                                                   constant: 8.0))
             
         }
-        
-        // self.updateHeight(14 + separatorTop.intrinsicContentSize.height)
     }
 }

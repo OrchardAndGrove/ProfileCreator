@@ -54,9 +54,7 @@ class PayloadCellViewEnable: NSTableCellView, CheckboxCellView {
         // ---------------------------------------------------------------------
         //  Set Required
         // ---------------------------------------------------------------------
-        if subkey.require == .always {
-            self.checkbox?.isHidden = true
-        }
+        self.checkbox?.isHidden = editor.profile?.subkeyIsRequired(subkey: subkey) ?? false
         
         // ---------------------------------------------------------------------
         //  Activate Layout Constraints

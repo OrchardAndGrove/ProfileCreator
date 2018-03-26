@@ -92,6 +92,7 @@ class PayloadCellViews {
                 cellViews.insert(cellView, at: indexDisabled)
             }
             
+            // Get all SHOWN enabled cellViews. (This works because the root manifest subkeys are all required and will always be enabled, even if they aren't shown.
             let enabledCellViewKeys = sortedCellViews.flatMap({ if profile.subkeyIsEnabled(subkey: $0.subkey!, onlyByUser: false) { return $0.subkey!.key } else { return nil } })
             
             if enabledCellViewKeys.count == 0 || Array(Set(enabledCellViewKeys).subtracting(manifestSubkeysIgnored)).count == 0 {

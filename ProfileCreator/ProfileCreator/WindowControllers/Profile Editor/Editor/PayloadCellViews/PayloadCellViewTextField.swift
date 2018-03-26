@@ -52,7 +52,7 @@ class PayloadCellViewTextField: PayloadCellView, ProfileCreatorCellView, NSTextF
         // ---------------------------------------------------------------------
         //  Set Placeholder Value
         // ---------------------------------------------------------------------
-        self.textFieldInput?.placeholderString = subkey.placehoderString()
+        self.textFieldInput?.placeholderString = editor.profile?.subkeyPlaceholderString(subkey: subkey) ?? ""
         
         // ---------------------------------------------------------------------
         //  Set Value

@@ -63,7 +63,7 @@ class PayloadCellViewTableView: PayloadCellView, ProfileCreatorCellView, TableVi
         if let valuePlaceholder = subkey.valuePlaceholder {
             Swift.print("This is the valuePlaceholder: \(valuePlaceholder)")
             // self.textFieldInput?.placeholderString = valuePlaceholder
-        } else if subkey.require == .always {
+        } else if editor.profile?.subkeyIsRequired(subkey: subkey) ?? false {
             Swift.print("This key is REQUIRED, should add the required placeholder")
             // self.textFieldInput?.placeholderString = NSLocalizedString("Required", comment: "")
         }

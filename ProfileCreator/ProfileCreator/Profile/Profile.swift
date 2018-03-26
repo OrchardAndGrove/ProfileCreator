@@ -580,7 +580,35 @@ public class Profile: NSDocument {
     // MARK: -
     // MARK: Subkey Check
     
+    func subkeyPlaceholderString(subkey: PayloadSourceSubkey) -> String? {
+        if let valuePlaceholder = subkey.valuePlaceholder as? String {
+            return valuePlaceholder
+        } else if self.subkeyIsRequired(subkey: subkey) {
+            return NSLocalizedString("Required", comment: "")
+        } else if subkey.require == .push {
+            return NSLocalizedString("Set On Device", comment: "")
+        }
+        return nil
+    }
+    
     func subkeyIsExcluded(subkey: PayloadSourceSubkey) -> Bool {
+        return false
+    }
+    
+    func subkeyIsRequired(subkey: PayloadSourceSubkey) -> Bool {
+        if subkey.require == .always {
+            return true
+        }
+        
+        let isDistributionMethodPush = self.editorDistributionMethod == DistributionString.push
+        
+        if isDistributionMethodPush, subkey.require == .push {
+            return true
+        }
+        
+        let conditionals = subkey.conditionals
+        Swift.print("IS REQUIRED CONDITIONALS: \(conditionals)")
+        
         return false
     }
     
@@ -597,7 +625,7 @@ public class Profile: NSDocument {
         //Log.shared.debug(message: "Subkey parent is enabled: \(parentIsEnabled)", category: #function)
         
         var isEnabled = !self.editorDisableOptionalKeys
-        if !onlyByUser, parentIsEnabled, subkey.require == .always {
+        if !onlyByUser, parentIsEnabled, self.subkeyIsRequired(subkey: subkey) {
             //Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(true) (required)", category: #function)
             return true
         } else if

@@ -607,7 +607,8 @@ class ProfileExport {
         // ---------------------------------------------------------------------
         //  Get if this subkey is required
         // ---------------------------------------------------------------------
-        let isRequired = (subkey.require == .always) ? true : false
+        guard let profile = self.profile else { return }
+        let isRequired = profile.subkeyIsRequired(subkey: subkey) ? true : false
         
         // ---------------------------------------------------------------------
         //  Get if this subkey is required
