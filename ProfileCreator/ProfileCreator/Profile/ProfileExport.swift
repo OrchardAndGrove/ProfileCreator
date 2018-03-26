@@ -139,6 +139,15 @@ class ProfileExport {
                                     viewTypeSettings: viewTypeSettings,
                                     payloadContent: &payloadContent)
                     continue
+                } else if subkey.type == .dictionary, subkey.subkeys.contains(where: { $0.key == ManifestKeyPlaceholder.key }) {
+                    try self.export(profile: profile,
+                                    subkeys: subkey.subkeys,
+                                    domainSettings: domainSettings,
+                                    typeSettings: typeSettings,
+                                    viewDomainSettings: viewDomainSettings,
+                                    viewTypeSettings: viewTypeSettings,
+                                    payloadContent: &payloadContent)
+                    continue
                 }
                 
                 // ---------------------------------------------------------------------
@@ -349,48 +358,55 @@ class ProfileExport {
     // MARK: -
     // MARK: Verify
     /* IGNORE FOR NOW, SHOULD BE ABLE TO DELETE
-    func isEnabled(subkey: PayloadSourceSubkey, typeSettings: Dictionary<String, Any>, domainSettings: Dictionary<String, Any>, viewTypeSettings: Dictionary<String, Any>, viewDomainSettings: Dictionary<String, Any>) -> Bool {
-        var enabled = false
-        if subkey.require == .always {
-            enabled = true
-        } else if
-            let viewSettings = viewDomainSettings[subkey.keyPath] as? Dictionary<String, Any> {
-            if let isEnabled = viewSettings[SettingsKey.enabled] as? Bool { enabled = isEnabled }
-        }
-        return enabled
-    }
-    
-    func isEnabledParents(subkey: PayloadSourceSubkey, typeSettings: Dictionary<String, Any>, domainSettings: Dictionary<String, Any>, viewTypeSettings: Dictionary<String, Any>, viewDomainSettings: Dictionary<String, Any>) -> Bool {
-        guard let parentSubkeys = subkey.parentSubkeys else { return true }
-        
-        // FIXME: This requires some fixing depending on how the view settings will be saved
-        
-        // Default to true only for testing
-        //var enabled = true
-        //var parentViewDomainSettings: Any?
-        for parentSubkey in parentSubkeys {
-            if !self.isEnabled(subkey: parentSubkey, typeSettings: typeSettings, domainSettings: domainSettings, viewTypeSettings: viewTypeSettings, viewDomainSettings: viewDomainSettings) {
-                return false
-            }
-        }
-        
-        return true
-    }
-    */
+     func isEnabled(subkey: PayloadSourceSubkey, typeSettings: Dictionary<String, Any>, domainSettings: Dictionary<String, Any>, viewTypeSettings: Dictionary<String, Any>, viewDomainSettings: Dictionary<String, Any>) -> Bool {
+     var enabled = false
+     if subkey.require == .always {
+     enabled = true
+     } else if
+     let viewSettings = viewDomainSettings[subkey.keyPath] as? Dictionary<String, Any> {
+     if let isEnabled = viewSettings[SettingsKey.enabled] as? Bool { enabled = isEnabled }
+     }
+     return enabled
+     }
+     
+     func isEnabledParents(subkey: PayloadSourceSubkey, typeSettings: Dictionary<String, Any>, domainSettings: Dictionary<String, Any>, viewTypeSettings: Dictionary<String, Any>, viewDomainSettings: Dictionary<String, Any>) -> Bool {
+     guard let parentSubkeys = subkey.parentSubkeys else { return true }
+     
+     // FIXME: This requires some fixing depending on how the view settings will be saved
+     
+     // Default to true only for testing
+     //var enabled = true
+     //var parentViewDomainSettings: Any?
+     for parentSubkey in parentSubkeys {
+     if !self.isEnabled(subkey: parentSubkey, typeSettings: typeSettings, domainSettings: domainSettings, viewTypeSettings: viewTypeSettings, viewDomainSettings: viewDomainSettings) {
+     return false
+     }
+     }
+     
+     return true
+     }
+     */
     func shouldExport(profile: Profile, subkey: PayloadSourceSubkey, typeSettings: Dictionary<String, Any>, domainSettings: Dictionary<String, Any>, viewTypeSettings: Dictionary<String, Any>, viewDomainSettings: Dictionary<String, Any>) -> Bool {
         
-        return profile.subkeyIsEnabled(subkey: subkey, onlyByUser: false)
+        if !profile.subkeyIsEnabled(subkey: subkey, onlyByUser: false) { return false }
+        
+        // Special case for dynamic dictionaries
+        if subkey.key == ManifestKeyPlaceholder.key { return false }
+        
+        // profile.subkeyIsExcluded
+        //
         
         /*
-        // ---------------------------------------------------------------------
-        //  Verify this subkey and it's parents are enabled
-        // ---------------------------------------------------------------------
-        if self.isEnabled(subkey: subkey, typeSettings: typeSettings, domainSettings: domainSettings, viewTypeSettings: viewTypeSettings, viewDomainSettings: viewDomainSettings) {
-            return self.isEnabledParents(subkey: subkey, typeSettings: typeSettings, domainSettings: domainSettings, viewTypeSettings: viewTypeSettings, viewDomainSettings: viewDomainSettings)
-        }
- 
-        return false
- */
+         // ---------------------------------------------------------------------
+         //  Verify this subkey and it's parents are enabled
+         // ---------------------------------------------------------------------
+         if self.isEnabled(subkey: subkey, typeSettings: typeSettings, domainSettings: domainSettings, viewTypeSettings: viewTypeSettings, viewDomainSettings: viewDomainSettings) {
+         return self.isEnabledParents(subkey: subkey, typeSettings: typeSettings, domainSettings: domainSettings, viewTypeSettings: viewTypeSettings, viewDomainSettings: viewDomainSettings)
+         }
+         
+         return false
+         */
+        return true
     }
     
     
@@ -477,7 +493,6 @@ class ProfileExport {
                 //  Get the parent subkey payload content
                 // ---------------------------------------------------------------------
                 var parentPayloadContent = pPayloadContent as? Dictionary<String, Any> ?? Dictionary<String, Any>()
-                Swift.print("parentPayloadContent: \(parentPayloadContent)")
                 
                 // FIXME: This needs checking for every different possibility. Currently it's not really used. Need to really look into this and clear it up with better comments
                 
@@ -504,7 +519,17 @@ class ProfileExport {
                         }
                     }
                 } else if let value = try self.getValue(forSubkey: subkey, typeSettings: typeSettings, domainSettings: domainSettings, parentDomainSettings: parentSettings) {
-                    parentPayloadContent[subkey.key] = value
+                    if let valueArray = value as? [Any], let parentSubkeySettings = parentSettings as? [Dictionary<String, Any>], subkey.key == ManifestKeyPlaceholder.value {
+                        for (index, valueItem) in valueArray.enumerated() {
+                            // Get the key
+                            guard let key = parentSubkeySettings[index]["\(parentSubkey.key).\(ManifestKeyPlaceholder.key)"] as? String else { continue }
+                            Swift.print("Adding this to parent payload: \(key): \(valueItem)")
+                            parentPayloadContent[key] = valueItem
+                        }
+                    } else {
+                        Swift.print("Adding this to parent payload: \(subkey.key): \(value)")
+                        parentPayloadContent[subkey.key] = value
+                    }
                 } else {
                     // FIXME: Add correct error
                     throw ProfileExportError.unknownError
@@ -527,22 +552,26 @@ class ProfileExport {
             let parentDomainSettings = parentSettings as? Dictionary<String, Any>,
             let userValue = parentDomainSettings[subkey.keyPath] {
             value = userValue
+        } else if let parentDomainSettingsArray = parentSettings as? [Dictionary<String, Any>] {
+            value = parentDomainSettingsArray.map({$0[subkey.keyPath]})
         }
         
-        if value == nil, let userValue = domainSettings[subkey.keyPath] {
-            value = userValue
-        } else {
-            if let valueDefault = subkey.valueDefault {
-                value = valueDefault
-            } else if let valueRangeList = subkey.rangeList?.first {
-                value = valueRangeList
+        if value == nil {
+            if let userValue = domainSettings[subkey.keyPath] {
+                value = userValue
             } else {
-                value = PayloadUtility.emptyValue(valueType: subkey.type)
-            }
-            
-            // Special case when the PayloadIdentifier isn't manually entered
-            if subkey.key == PayloadKey.payloadIdentifier, let payloadIdentifier = value as? String {
-                value = self.payloadIdentifier(payloadIdentifier: payloadIdentifier, typeSettings: typeSettings, domainSettings: domainSettings)
+                if let valueDefault = subkey.valueDefault {
+                    value = valueDefault
+                } else if let valueRangeList = subkey.rangeList?.first {
+                    value = valueRangeList
+                } else {
+                    value = PayloadUtility.emptyValue(valueType: subkey.type)
+                }
+                
+                // Special case when the PayloadIdentifier isn't manually entered
+                if subkey.key == PayloadKey.payloadIdentifier, let payloadIdentifier = value as? String {
+                    value = self.payloadIdentifier(payloadIdentifier: payloadIdentifier, typeSettings: typeSettings, domainSettings: domainSettings)
+                }
             }
         }
         
@@ -560,7 +589,8 @@ class ProfileExport {
         // ---------------------------------------------------------------------
         //  If variable ignoreErrorInvalidValue is set to true, don't verify the value
         // ---------------------------------------------------------------------
-        if self.ignoreErrorInvalidValue { return }
+        // FIXME: This is just a quick solution for dynamic dictionaries, should probably do a more robust thing that doesn't have to check for this when exporting every key and value
+        if self.ignoreErrorInvalidValue || subkey.key == ManifestKeyPlaceholder.value { return }
         
         // ---------------------------------------------------------------------
         //  Create the error to return if any check fails
@@ -663,13 +693,13 @@ class ProfileExport {
     }
     
     func payloadIdentifier(payloadIdentifier identifier: String, typeSettings: Dictionary<String, Any>, domainSettings: Dictionary<String, Any>) -> String? {
-
+        
         var payloadIdentifier = identifier
         
         if let payloadUUID = domainSettings[PayloadKey.payloadUUID] as? String {
             payloadIdentifier = payloadIdentifier + ".\(payloadUUID)"
         }
-
+        
         if
             let generalSettings = typeSettings[ManifestDomain.general] as? Dictionary<String, Any>,
             let profilePayloadIdentifier = generalSettings[PayloadKey.payloadIdentifier] as? String {

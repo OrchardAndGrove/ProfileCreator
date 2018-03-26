@@ -180,7 +180,11 @@ class PayloadCellViews {
         case .data:
             return PayloadCellViewFile(subkey: subkey, editor: profileEditor, settings: typeSettings)
         case .dictionary:
-            return PayloadCellViewDictionary(subkey: subkey, editor: profileEditor, settings: typeSettings)
+            if subkey.subkeys.contains(where: { $0.key == ManifestKeyPlaceholder.key }) {
+                return PayloadCellViewTableView(subkey: subkey, editor: profileEditor, settings: typeSettings)
+            } else {
+                return PayloadCellViewDictionary(subkey: subkey, editor: profileEditor, settings: typeSettings)
+            }
         default:
             Swift.print("Class: \(self.self), Function: \(#function), Unknown Manifest Type: \(subkey.type)")
         }

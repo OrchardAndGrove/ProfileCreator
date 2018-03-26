@@ -54,7 +54,6 @@ class PayloadCellViewTableView: PayloadCellView, ProfileCreatorCellView, TableVi
         //  Set Default Value
         // ---------------------------------------------------------------------
         if let valueDefault = subkey.valueDefault as? [Dictionary<String, Any>] {
-            Swift.print("This is the valueDefault: \(valueDefault)")
             self.valueDefault = valueDefault
         }
         
@@ -142,7 +141,6 @@ class PayloadCellViewTableView: PayloadCellView, ProfileCreatorCellView, TableVi
         } else {
             self.tableViewContent.append(newRow)
             self.editor?.updatePayloadSettings(value: self.tableViewContent, subkey: subkey)
-            
             self.tableView?.reloadData()
         }
     }
@@ -164,6 +162,14 @@ class PayloadCellViewTableView: PayloadCellView, ProfileCreatorCellView, TableVi
         }
     }
     
+    private func tableColumn(forSubkey subkey: PayloadSourceSubkey) -> NSTableColumn {
+        let tableColumn = NSTableColumn(identifier: NSUserInterfaceItemIdentifier(subkey.keyPath))
+        tableColumn.isEditable = true
+        tableColumn.title = subkey.title ?? subkey.key
+        tableColumn.headerToolTip = subkey.description
+        return tableColumn
+    }
+    
     private func setupTableViewContent(subkey: PayloadSourceSubkey) {
         
         // FIXME: Highly temporary implementation
@@ -171,17 +177,12 @@ class PayloadCellViewTableView: PayloadCellView, ProfileCreatorCellView, TableVi
             if tableViewSubkey.type == PayloadValueType.dictionary {
                 guard let tableView = self.tableView else { return }
                 for tableViewColumnSubkey in tableViewSubkey.subkeys {
-                    
                     self.tableViewColumns.append(tableViewColumnSubkey)
                     
                     // ---------------------------------------------------------------------
                     //  Setup TableColumn
                     // ---------------------------------------------------------------------
-                    let tableColumn = NSTableColumn(identifier: NSUserInterfaceItemIdentifier(tableViewColumnSubkey.keyPath))
-                    tableColumn.isEditable = true
-                    tableColumn.title = tableViewColumnSubkey.key
-                    tableColumn.headerToolTip = tableViewColumnSubkey.description
-                    tableView.addTableColumn(tableColumn)
+                    tableView.addTableColumn(self.tableColumn(forSubkey: tableViewColumnSubkey))
                 }
                 
                 if tableViewSubkey.subkeys.count < 2 {
@@ -190,6 +191,22 @@ class PayloadCellViewTableView: PayloadCellView, ProfileCreatorCellView, TableVi
                 }
             } else {
                 Swift.print("Class: \(self.self), Function: \(#function), Type is: \(tableViewSubkey.type), need to implement this!")
+            }
+        } else if subkey.subkeys.contains(where: { $0.key == ManifestKeyPlaceholder.key }) {
+            guard let tableView = self.tableView else { return }
+            for tableViewColumnSubkey in subkey.subkeys.filter({ $0.key == ManifestKeyPlaceholder.key || $0.key == ManifestKeyPlaceholder.value }) {
+                self.tableViewColumns.append(tableViewColumnSubkey)
+                
+                // ---------------------------------------------------------------------
+                //  Setup TableColumn
+                // ---------------------------------------------------------------------
+                tableView.addTableColumn(self.tableColumn(forSubkey: tableViewColumnSubkey))
+                
+            }
+            
+            if subkey.subkeys.count < 2 {
+                self.tableView?.headerView = nil
+                self.tableView?.toolTip = subkey.subkeys.first?.description
             }
         } else {
             Swift.print("Class: \(self.self), Function: \(#function), Subkey count is: \(subkey.subkeys.count)")
@@ -220,7 +237,6 @@ class PayloadCellViewTableView: PayloadCellView, ProfileCreatorCellView, TableVi
         // ---------------------------------------------------------------------
         if let tableViewSubkey = subkey.subkeys.first, let textFieldSubkey = tableViewSubkey.subkeys.first(where: {$0.keyPath == keyPath}) {
             if let format = textFieldSubkey.format, !stringValue.matches(format) {
-                Swift.print("textField: \(textField)")
                 textField.textColor = .red
             } else {
                 textField.textColor = .black
@@ -238,8 +254,6 @@ class PayloadCellViewTableView: PayloadCellView, ProfileCreatorCellView, TableVi
         // ---------------------------------------------------------------------
         rowContent[keyPath] = stringValue
         tableViewContent[textField.tag] = rowContent
-        
-        Swift.print("self.tableViewContent: \(self.tableViewContent)")
         
         // ---------------------------------------------------------------------
         //  Save the changes internally and to the payloadSettings
@@ -342,23 +356,25 @@ extension PayloadCellViewTableView: NSTableViewDelegate {
         return 21.0
     }
     
-    func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
-        
+    func tableView(_ tableView: NSTableView, viewFor column: NSTableColumn?, row: Int) -> NSView? {
         guard
             row <= self.tableViewContent.count,
-            let tableColumnTitle = tableColumn?.title,
-            let tableColumnIdentifier = tableColumn?.identifier.rawValue,
-            let tableViewColumn = self.tableViewColumns.first(where: {$0.key == tableColumnTitle}) else { return nil }
+            let tableColumn = column,
+            let tableColumnSubkey = self.tableViewColumns.first(where: {$0.keyPath == tableColumn.identifier.rawValue}) else { return nil }
         
         let rowContent = self.tableViewContent[row]
         
-        switch tableViewColumn.type {
+        switch tableColumnSubkey.type {
         case .string:
-            if let columnContent = rowContent[tableColumnIdentifier] as? String {
-                return EditorTableViewCellViewTextField(cellView: self, keyPath: tableViewColumn.keyPath, stringValue: columnContent, placeholderString: tableColumnTitle, row: row)
+            if let columnContent = rowContent[tableColumn.identifier.rawValue] as? String {
+                return EditorTableViewCellViewTextField(cellView: self,
+                                                        keyPath: tableColumnSubkey.keyPath,
+                                                        stringValue: columnContent,
+                                                        placeholderString: tableColumnSubkey.valuePlaceholder as? String ?? tableColumn.title,
+                                                        row: row)
             }
         default:
-            Swift.print("Class: \(self.self), Function: \(#function), Unknown tableViewColumn.type: \(tableViewColumn.type)")
+            Log.shared.error(message: "Unknown TableColumn Subkey Type: \(tableColumnSubkey.type)", category: String(describing: self))
         }
         /*
          if tableViewColumn.type == .string {
