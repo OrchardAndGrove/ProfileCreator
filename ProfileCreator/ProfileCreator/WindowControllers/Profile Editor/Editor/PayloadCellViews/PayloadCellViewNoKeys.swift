@@ -9,7 +9,7 @@
 import Cocoa
 import ProfilePayloads
 
-class PayloadCellViewTitle: NSTableCellView, ProfileCreatorCellView {
+class PayloadCellViewNoKeys: NSTableCellView, ProfileCreatorCellView {
     
     // MARK: -
     // MARK: PayloadCellView Variables
@@ -17,7 +17,6 @@ class PayloadCellViewTitle: NSTableCellView, ProfileCreatorCellView {
     var height: CGFloat = 0.0
     var textFieldTitle: NSTextField?
     var textFieldDescription: NSTextField?
-    var separatorTop: NSBox?
     
     // MARK: -
     // MARK: Initialization
@@ -45,20 +44,10 @@ class PayloadCellViewTitle: NSTableCellView, ProfileCreatorCellView {
             self.setupTextField(description: description, constraints: &constraints)
         }
         
-        let separatorLeft = NSBox(frame: NSRect(x: 250.0, y: 15.0, width: preferencesWindowWidth - (20.0 + 20.0), height: 250.0))
-        separatorLeft.translatesAutoresizingMaskIntoConstraints = false
-        separatorLeft.boxType = .separator
-        self.setup(separator: separatorLeft, alignment: .left, constraints: &constraints)
-        
-        let separatorRight = NSBox(frame: NSRect(x: 250.0, y: 15.0, width: preferencesWindowWidth - (20.0 + 20.0), height: 250.0))
-        separatorRight.translatesAutoresizingMaskIntoConstraints = false
-        separatorRight.boxType = .separator
-        self.setup(separator: separatorRight, alignment: .right, constraints: &constraints)
-        
         // ---------------------------------------------------------------------
         //  Add spacing to bottom
         // ---------------------------------------------------------------------
-        self.updateHeight(14.0)
+        self.updateHeight(20.0)
         
         // ---------------------------------------------------------------------
         //  Activate Layout Constraints
@@ -81,7 +70,7 @@ class PayloadCellViewTitle: NSTableCellView, ProfileCreatorCellView {
 // MARK: -
 // MARK: Setup NSLayoutConstraints
 
-extension PayloadCellViewTitle {
+extension PayloadCellViewNoKeys {
     
     private func setupTextField(title: String, constraints: inout [NSLayoutConstraint]) {
         
@@ -93,7 +82,7 @@ extension PayloadCellViewTitle {
         textFieldTitle.drawsBackground = false
         textFieldTitle.isEditable = false
         textFieldTitle.isSelectable = false
-        textFieldTitle.textColor = .labelColor
+        textFieldTitle.textColor = .tertiaryLabelColor
         textFieldTitle.preferredMaxLayoutWidth = editorTableViewColumnPayloadWidth
         textFieldTitle.stringValue = title
         textFieldTitle.alignment = .center
@@ -118,20 +107,10 @@ extension PayloadCellViewTitle {
                                               constant: 8.0))
         self.updateHeight(8 + textFieldTitle.intrinsicContentSize.height)
         
-        // Center X
-        constraints.append(NSLayoutConstraint(item: textFieldTitle,
-                                              attribute: .centerX,
-                                              relatedBy: .equal,
-                                              toItem: self,
-                                              attribute: .centerX,
-                                              multiplier: 1.0,
-                                              constant: 0.0))
-        
-        
         // Leading
         constraints.append(NSLayoutConstraint(item: textFieldTitle,
                                               attribute: .leading,
-                                              relatedBy: .greaterThanOrEqual,
+                                              relatedBy: .equal,
                                               toItem: self,
                                               attribute: .leading,
                                               multiplier: 1.0,
@@ -140,7 +119,7 @@ extension PayloadCellViewTitle {
         // Trailing
         constraints.append(NSLayoutConstraint(item: self,
                                               attribute: .trailing,
-                                              relatedBy: .greaterThanOrEqual,
+                                              relatedBy: .equal,
                                               toItem: textFieldTitle,
                                               attribute: .trailing,
                                               multiplier: 1.0,
@@ -211,65 +190,5 @@ extension PayloadCellViewTitle {
                                               attribute: .trailing,
                                               multiplier: 1.0,
                                               constant: 8.0))
-    }
-    
-    private func setup(separator: NSBox, alignment: NSLayoutConstraint.Attribute, constraints: inout [NSLayoutConstraint]) {
-        
-        // ---------------------------------------------------------------------
-        //  Add TextField to TableCellView
-        // ---------------------------------------------------------------------
-        self.addSubview(separator)
-        
-        // Center Y
-        constraints.append(NSLayoutConstraint(item: separator,
-                                              attribute: .centerY,
-                                              relatedBy: .equal,
-                                              toItem: self.textFieldTitle,
-                                              attribute: .centerY,
-                                              multiplier: 1,
-                                              constant: 0.0))
-        
-        if alignment == .left {
-            
-            // Leading
-            constraints.append(NSLayoutConstraint(item: separator,
-                                                  attribute: .leading,
-                                                  relatedBy: .equal,
-                                                  toItem: self,
-                                                  attribute: .leading,
-                                                  multiplier: 1,
-                                                  constant: 8.0))
-            
-            // Trailing
-            constraints.append(NSLayoutConstraint(item: self.textFieldTitle,
-                                                  attribute: .leading,
-                                                  relatedBy: .equal,
-                                                  toItem: separator,
-                                                  attribute: .trailing,
-                                                  multiplier: 1,
-                                                  constant: 8.0))
-        } else {
-            
-            // Leading
-            constraints.append(NSLayoutConstraint(item: separator,
-                                                  attribute: .leading,
-                                                  relatedBy: .equal,
-                                                  toItem: self.textFieldTitle,
-                                                  attribute: .trailing,
-                                                  multiplier: 1,
-                                                  constant: 8.0))
-            
-            // Trailing
-            constraints.append(NSLayoutConstraint(item: separator,
-                                                  attribute: .trailing,
-                                                  relatedBy: .equal,
-                                                  toItem: self,
-                                                  attribute: .trailing,
-                                                  multiplier: 1,
-                                                  constant: 8.0))
-            
-        }
-        
-        // self.updateHeight(14 + separatorTop.intrinsicContentSize.height)
     }
 }

@@ -76,6 +76,8 @@ class PayloadCellViews {
             break
         }
         
+        let notShownCount = hiddenCount + disabledCount + supervisedCount
+        
         // Sort Enabled at top
         if let payloadCellViews = cellViews as? [PayloadCellView] {
             
@@ -89,10 +91,17 @@ class PayloadCellViews {
                 let cellView = PayloadCellViewTitle(title: "Disabled Keys", description: "The payload keys below will not be included in the exported profile")
                 cellViews.insert(cellView, at: indexDisabled)
             }
+            
+            let enabledCellViewKeys = sortedCellViews.flatMap({ if profile.subkeyIsEnabled(subkey: $0.subkey!, onlyByUser: false) { return $0.subkey!.key } else { return nil } })
+            
+            if enabledCellViewKeys.count == 0 || Array(Set(enabledCellViewKeys).subtracting(manifestSubkeysIgnored)).count == 0 {
+                let cellView = PayloadCellViewNoKeys(title: "No Payload Keys Enabled", description: "")
+                cellViews.insert(cellView, at: 0)
+            }
         }
         
         // TODO: This is for adding a note that x keys have been disabled, hidden etc.
-        if 0 < hiddenCount + disabledCount + supervisedCount {
+        if 0 < notShownCount {
             /*
              var row2String = ""
              if 0 < hiddenCount {
@@ -118,7 +127,7 @@ class PayloadCellViews {
              let cellViewFooter = PayloadCellViewFooter(row1: "\(hiddenCount + disabledCount + supervisedCount) payload keys are not shown. ( \(row2String) )", row2: nil)
              */
             
-            let cellViewFooter = PayloadCellViewFooter(row1: "\(hiddenCount + disabledCount + supervisedCount) payload keys are not shown", row2: nil)
+            let cellViewFooter = PayloadCellViewFooter(row1: "\(notShownCount) payload keys are not shown", row2: nil)
             cellViews.append(cellViewFooter)
         }
         
@@ -224,7 +233,7 @@ class PayloadCellViews {
                 cellViews.append(cellView)
             }
             
-            if let subkeySubkeys = subkey.subkeys as? [PayloadApplicationSubkey] {
+            if let subkeySubkeys = subkey.subkeys as? [PayloadApplicationSubkey], !subkeySubkeys.contains(where: {$0.key == ManifestKeyPlaceholder.key}) {
                 self.addPayloadApplicationCellViews(profile: profile,
                                                     applicationSubkeys: subkeySubkeys,
                                                     profileEditor: profileEditor,
@@ -270,7 +279,7 @@ class PayloadCellViews {
                 cellViews.append(cellView)
             }
             
-            if let subkeySubkeys = subkey.subkeys as? [PayloadCollectionSubkey] {
+            if let subkeySubkeys = subkey.subkeys as? [PayloadCollectionSubkey], !subkeySubkeys.contains(where: {$0.key == ManifestKeyPlaceholder.key}) {
                 self.addPayloadCollectionCellViews(profile: profile,
                                                    collectionSubkeys: subkeySubkeys,
                                                    profileEditor: profileEditor,
@@ -317,7 +326,7 @@ class PayloadCellViews {
                 cellViews.append(cellView)
             }
             
-            if let subkeySubkeys = subkey.subkeys as? [PayloadManifestSubkey] {
+            if let subkeySubkeys = subkey.subkeys as? [PayloadManifestSubkey], !subkeySubkeys.contains(where: {$0.key == ManifestKeyPlaceholder.key}) {
                 self.addPayloadManifestCellViews(profile: profile,
                                                  manifestSubkeys: subkeySubkeys,
                                                  profileEditor: profileEditor,

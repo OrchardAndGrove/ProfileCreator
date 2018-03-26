@@ -78,6 +78,7 @@
 		E347E4C22057C9F3008F5137 /* xml.png in Resources */ = {isa = PBXBuildFile; fileRef = E347E4C12057C9F3008F5137 /* xml.png */; };
 		E34A527D2036E39E00A9508F /* ProfileEditorSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E34A527C2036E39E00A9508F /* ProfileEditorSettings.swift */; };
 		E34A527F2036E3B600A9508F /* ProfileEditorSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E34A527E2036E3B600A9508F /* ProfileEditorSettingsViewController.swift */; };
+		E34DC51D2068DC5400D7A87E /* PayloadCellViewNoKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = E34DC51C2068DC5400D7A87E /* PayloadCellViewNoKeys.swift */; };
 		E3505C951F4AB82B00FC39AD /* ProfilePayloads.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E39287151F4A27DE005383CC /* ProfilePayloads.framework */; };
 		E3505C961F4AB82B00FC39AD /* ProfilePayloads.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E39287151F4A27DE005383CC /* ProfilePayloads.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E3577C1A204A74E9007D9FE9 /* FileInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3577C19204A74E9007D9FE9 /* FileInfo.swift */; };
@@ -190,6 +191,7 @@
 		E347E4C12057C9F3008F5137 /* xml.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = xml.png; sourceTree = "<group>"; };
 		E34A527C2036E39E00A9508F /* ProfileEditorSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProfileEditorSettings.swift; path = "WindowControllers/Profile Editor/Settings/ProfileEditorSettings.swift"; sourceTree = "<group>"; };
 		E34A527E2036E3B600A9508F /* ProfileEditorSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProfileEditorSettingsViewController.swift; path = "WindowControllers/Profile Editor/Settings/ProfileEditorSettingsViewController.swift"; sourceTree = "<group>"; };
+		E34DC51C2068DC5400D7A87E /* PayloadCellViewNoKeys.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PayloadCellViewNoKeys.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViewNoKeys.swift"; sourceTree = "<group>"; };
 		E3577C19204A74E9007D9FE9 /* FileInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FileInfo.swift; path = "WindowControllers/Profile Editor/Editor/FileInfoProcessor/FileInfo.swift"; sourceTree = "<group>"; };
 		E3577C1B204A7536007D9FE9 /* FileInfoProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = FileInfoProcessor.swift; path = "WindowControllers/Profile Editor/Editor/FileInfoProcessor/FileInfoProcessor.swift"; sourceTree = "<group>"; };
 		E35C696B1FA2FFC4008BE451 /* ProfileEditorHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProfileEditorHeaderView.swift; path = "WindowControllers/Profile Editor/Editor/ProfileEditorHeaderView.swift"; sourceTree = "<group>"; };
@@ -483,6 +485,7 @@
 				E31FA8D11F4D59DE00F6B6BD /* PayloadCellViewTextFieldNumber.swift */,
 				E3C8D5471F3F31850083DA5F /* PayloadCellViewTextView.swift */,
 				5383C1A31F2D0B7C004EBE9B /* PayloadCellViewTitle.swift */,
+				E34DC51C2068DC5400D7A87E /* PayloadCellViewNoKeys.swift */,
 				E393D1E6203984A900F8076D /* PayloadCellViewFooter.swift */,
 			);
 			name = PayloadCellViews;
@@ -640,6 +643,7 @@
 				E3C8D5401F3EEA3A0083DA5F /* PayloadCellViewItemPopUpButton.swift in Sources */,
 				E31FA8D21F4D59DE00F6B6BD /* PayloadCellViewTextFieldNumber.swift in Sources */,
 				53C4B3611F27D0B300457CB5 /* PayloadCellView.swift in Sources */,
+				E34DC51D2068DC5400D7A87E /* PayloadCellViewNoKeys.swift in Sources */,
 				535CB45D1F2B97A600A746F6 /* PayloadLibraryMenu.swift in Sources */,
 				E3577C1C204A7536007D9FE9 /* FileInfoProcessor.swift in Sources */,
 				531852221F2295B000529E6B /* ProfileEditorSplitView.swift in Sources */,
