@@ -50,13 +50,17 @@ public class Profile: NSDocument {
     // MARK: -
     // MARK: Key/Value Observing Variables
     
+    // Disable Optional Keys
+    @objc public var editorDisableOptionalKeys: Bool = false
+    public let editorDisableOptionalKeysSelector: String
+    
     // Distribution Method
     @objc public var editorDistributionMethod: String = DistributionString.any
     public let editorDistributionMethodSelector: String
     
-    // Disable Optional Keys
-    @objc public var editorDisableOptionalKeys: Bool = false
-    public let editorDisableOptionalKeysSelector: String
+    // Show Disabled
+    @objc public var editorShowDisabled: Bool = false
+    public let editorShowDisabledSelector: String
     
     // Show Hidden
     @objc public var editorShowHidden: Bool = false
@@ -65,10 +69,6 @@ public class Profile: NSDocument {
     // Show Supervised
     @objc public var editorShowSupervised: Bool = false
     public let editorShowSupervisedSelector: String
-    
-    // Show Disabled
-    @objc public var editorShowDisabled: Bool = false
-    public let editorShowDisabledSelector: String
     
     // Show Platform iOS
     @objc public var editorShowIOS: Bool = false
@@ -102,7 +102,6 @@ public class Profile: NSDocument {
     }
     
     init(title: String?, identifier: UUID?, payloadSettings: Dictionary<String, Dictionary<String, Dictionary<String, Any>>>?, viewSettings: Dictionary<String, Any>?) {
-        
         let profileIdentifier = identifier ?? UUID()
         self.identifier = profileIdentifier
         self.payloadSettings = payloadSettings ?? Profile.defaultPayloadSettings(uuid: profileIdentifier)
@@ -159,47 +158,47 @@ public class Profile: NSDocument {
             self.editorDistributionMethod = editorDistributionMethod
         } else { self.editorDistributionMethod = DistributionString.any }
         
-        // Editor Row Enable
+        // Editor Column Enable
         if let editorColumnEnable = viewSettings[PreferenceKey.editorColumnEnable] as? Bool {
             self.editorColumnEnable = editorColumnEnable
         } else { self.editorColumnEnable = false }
         
-        // Editor Show Disabled
+        // Show Disabled
         if let editorShowDisabled = viewSettings[PreferenceKey.editorShowDisabledKeys] as? Bool {
             self.editorShowDisabled = editorShowDisabled
         } else { self.editorShowDisabled = false }
         
-        // Editor Show Hidden
+        // Show Hidden
         if let editorShowHidden = viewSettings[PreferenceKey.editorShowHiddenKeys] as? Bool {
             self.editorShowHidden = editorShowHidden
         } else { self.editorShowHidden = false }
         
-        // Editor Show Supervised
+        // Show Supervised
         if let editorShowSupervised = viewSettings[PreferenceKey.editorShowSupervisedKeys] as? Bool {
             self.editorShowSupervised = editorShowSupervised
         } else { self.editorShowSupervised = false }
         
-        // Editor Show iOS
+        // Show Platform iOS
         if let editorShowIOS = viewSettings[PreferenceKey.editorShowIOS] as? Bool {
             self.editorShowIOS = editorShowIOS
         } else { self.editorShowIOS = true }
         
-        // Editor Show macOS
+        // Show Platform  macOS
         if let editorShowMacOS = viewSettings[PreferenceKey.editorShowMacOS] as? Bool {
             self.editorShowMacOS = editorShowMacOS
         } else { self.editorShowMacOS = true }
         
-        // Editor Show tvOS
+        // Show Platform  tvOS
         if let editorShowTvOS = viewSettings[PreferenceKey.editorShowTvOS] as? Bool {
             self.editorShowTvOS = editorShowTvOS
         } else { self.editorShowTvOS = true }
         
-        // Editor Show Scope User
+        // Show Scope User
         if let editorShowScopeUser = viewSettings[PreferenceKey.editorShowScopeUser] as? Bool {
             self.editorShowScopeUser = editorShowScopeUser
         } else { self.editorShowScopeUser = true }
         
-        // Editor Show Scope System
+        // Show Scope System
         if let editorShowScopeSystem = viewSettings[PreferenceKey.editorShowScopeSystem] as? Bool {
             self.editorShowScopeSystem = editorShowScopeSystem
         } else { self.editorShowScopeSystem = true }

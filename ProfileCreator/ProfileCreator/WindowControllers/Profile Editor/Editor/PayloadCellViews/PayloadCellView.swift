@@ -81,7 +81,7 @@ class PayloadCellView: NSTableCellView {
             self.textFieldDescription = textFieldDescription
         }
         
-        if let textFieldMessage = EditorTextField.message(subkey: subkey, indent: self.indent, constraints: &self.cellViewConstraints, cellView: self) {
+        if let profile = editor.profile, let textFieldMessage = EditorTextField.message(profile: profile, subkey: subkey, indent: self.indent, constraints: &self.cellViewConstraints, cellView: self) {
             self.textFieldMessage = textFieldMessage
         }
         

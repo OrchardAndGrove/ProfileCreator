@@ -168,12 +168,22 @@ class EditorTextField {
         return textField
     }
     
-    class func message(subkey: PayloadSourceSubkey,
-                           indent: Int,
-                           constraints: inout [NSLayoutConstraint],
-                           cellView: PayloadCellView) -> NSTextField? {
+    class func message(profile: Profile,
+                       subkey: PayloadSourceSubkey,
+                       indent: Int,
+                       constraints: inout [NSLayoutConstraint],
+                       cellView: PayloadCellView) -> NSTextField? {
         
-        guard let message = subkey.message, !message.isEmpty else { return nil }
+        var message: String
+        if let subkeyMessage = subkey.message {
+            message = subkeyMessage
+        } else if
+            let sensitiveMessage = subkey.sensitiveMessage,
+            profile.isEnabled(subkey: subkey, onlyByUser: false) {
+            message = sensitiveMessage
+        } else {
+            return nil
+        }
         
         // ---------------------------------------------------------------------
         //  Create and setup TextField
@@ -196,49 +206,6 @@ class EditorTextField {
         // ---------------------------------------------------------------------
         cellView.addSubview(textField)
         
-        // ---------------------------------------------------------------------
-        //  Setup Layout Constraings for TextField
-        // ---------------------------------------------------------------------
-        /*
-        if cellView.textFieldDescription != nil {
-            
-            // Top
-            constraints.append(NSLayoutConstraint(item: textField,
-                                                  attribute: .top,
-                                                  relatedBy: .equal,
-                                                  toItem: cellView.textFieldDescription,
-                                                  attribute: .bottom,
-                                                  multiplier: 1.0,
-                                                  constant: 2.0))
-            
-            cellView.updateHeight(2.0 + textField.intrinsicContentSize.height)
-        } else if cellView.textFieldTitle != nil {
-            
-            // Top
-            constraints.append(NSLayoutConstraint(item: textField,
-                                                  attribute: .top,
-                                                  relatedBy: .equal,
-                                                  toItem: cellView.textFieldTitle,
-                                                  attribute: .bottom,
-                                                  multiplier: 1.0,
-                                                  constant: 2.0))
-            
-            cellView.updateHeight(2.0 + textField.intrinsicContentSize.height)
-            
-        } else {
-            
-            // Top
-            constraints.append(NSLayoutConstraint(item: textField,
-                                                  attribute: .top,
-                                                  relatedBy: .equal,
-                                                  toItem: cellView,
-                                                  attribute: .top,
-                                                  multiplier: 1.0,
-                                                  constant: 8.0))
-            
-            cellView.updateHeight(8.0 + textField.intrinsicContentSize.height)
-        }
-        */
         // -------------------------------------------------------------------------
         //  Calculate Indent
         // -------------------------------------------------------------------------
