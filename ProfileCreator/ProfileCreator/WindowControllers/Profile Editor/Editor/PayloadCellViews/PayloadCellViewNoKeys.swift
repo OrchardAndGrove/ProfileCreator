@@ -56,7 +56,8 @@ class PayloadCellViewNoKeys: NSTableCellView, ProfileCreatorCellView {
         if profile.editorShowDisabled == false {
             self.setupButtonShowDisabled(title: NSLocalizedString("Show Disabled Keys", comment: ""), constraints: &constraints)
         } else if profile.editorColumnEnable == false {
-            self.setupButtonShowDisabled(title: NSLocalizedString("Show Column Enable Key ", comment: ""), constraints: &constraints)
+            // FIXME: Need a better name or description for this
+            self.setupButtonShowDisabled(title: NSLocalizedString("Show Enable Key Checkbox", comment: ""), constraints: &constraints)
         }
         
         // ---------------------------------------------------------------------

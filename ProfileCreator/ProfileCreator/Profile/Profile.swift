@@ -606,10 +606,77 @@ public class Profile: NSDocument {
             return true
         }
         
-        let conditionals = subkey.conditionals
-        Swift.print("IS REQUIRED CONDITIONALS: \(conditionals)")
+        let requiredConditionals = subkey.conditionals.flatMap({ $0.require != .none ? $0 : nil })
+        if !requiredConditionals.isEmpty {
+            return self.subkeyMatchConditionals(conditionals: requiredConditionals)
+        }
         
         return false
+    }
+    
+    func subkeyMatchConditionals(conditionals: [PayloadSourceCondition]) -> Bool {
+        var match = false
+        for sourceCondition in conditionals {
+            for targetCondition in sourceCondition.conditions {
+                
+                // Reset match var
+                match = false
+                
+                guard let targetSubkey = targetCondition.targetSubkey() else { return false }
+                
+                // Present
+                if let isPresent = targetCondition.isPresent, isPresent {
+                    match = self.subkeyIsEnabled(subkey: targetSubkey, onlyByUser: false)
+                }
+                
+                // Contains Any
+                if let containsAny = targetCondition.containsAny {
+                    
+                    let export = ProfileExport()
+                    export.ignoreSave = true
+                    export.ignoreErrorInvalidValue = true
+                    
+                    var payloadContent = Dictionary<String, Any>()
+                    
+                    do {
+                        try export.updatePayloadContent(subkey: targetSubkey,
+                                                        typeSettings: self.payloadTypeSettings(type: targetSubkey.payloadSourceType),
+                                                        domainSettings: self.payloadDomainSettings(domain: targetSubkey.domain, type: targetSubkey.payloadSourceType),
+                                                        payloadContent: &payloadContent)
+                    } catch {
+                        Swift.print("Error: \(error)")
+                    }
+                    
+                    if let targetValue = payloadContent[targetSubkey.key] {
+                        
+                        if
+                            targetSubkey.type == .bool,
+                            let containsAnyBool = containsAny as? [Bool],
+                            let targetValueBool = targetValue as? Bool {
+                            
+                            if containsAnyBool.contains(targetValueBool) {
+                                match = true
+                            }
+                        }
+                        Swift.print("payloadContent: \(payloadContent)")
+                        Swift.print("containsAny: \(containsAny)")
+                    }
+                }
+                
+                if !match {
+                    return false
+                }
+            }
+        }
+        return match
+    }
+    
+    func subkeyViewSettings(subkey: PayloadSourceSubkey) -> Dictionary<String, Any>? {
+        if
+            let domainViewSettings = self.payloadViewTypeSettings(type: subkey.payloadSourceType)[subkey.domain] as? Dictionary<String, Any>,
+            let viewSettings = domainViewSettings[subkey.keyPath] as? Dictionary<String, Any> {
+            return viewSettings
+        } else { return nil }
     }
     
     func subkeyIsEnabled(subkey: PayloadSourceSubkey, onlyByUser: Bool) -> Bool {
@@ -629,8 +696,7 @@ public class Profile: NSDocument {
             //Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(true) (required)", category: #function)
             return true
         } else if
-            let domainViewSettings = self.payloadViewTypeSettings(type: subkey.payloadSourceType)[subkey.domain] as? Dictionary<String, Any>,
-            let viewSettings = domainViewSettings[subkey.keyPath] as? Dictionary<String, Any>,
+            let viewSettings = self.subkeyViewSettings(subkey: subkey),
             let enabled = viewSettings[SettingsKey.enabled] as? Bool {
             //Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(enabled) (user)", category: #function)
             isEnabled = enabled
