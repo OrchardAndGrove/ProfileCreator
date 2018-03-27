@@ -35,6 +35,11 @@ extension Profile {
     
     func setPayloadTypeSettings(settings: Dictionary<String, Dictionary<String, Any>>, type: PayloadSourceType) {
         self.payloadSettings[String(type.rawValue)] = settings
+        
+        // ---------------------------------------------------------------------
+        //  Reset any cached condition results as updated settings might change those
+        // ---------------------------------------------------------------------
+        self.resetConditionResults()
     }
     
     // MARK: -
@@ -88,6 +93,11 @@ extension Profile {
         if key == PayloadKey.payloadDisplayName, type == .manifest, let title = value as? String {
             self.title = title
         }
+        
+        // ---------------------------------------------------------------------
+        //  Reset any cached condition results as updated settings might change those
+        // ---------------------------------------------------------------------
+        self.resetConditionResults()
         
         // ---------------------------------------------------------------------
         //  Using closure for the option of a longer save time if needed in the future for more checking etc.

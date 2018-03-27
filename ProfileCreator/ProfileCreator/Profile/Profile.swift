@@ -26,29 +26,14 @@ public class Profile: NSDocument {
     
     var alert: Alert?
     
+    var conditionResults = Dictionary<String, Any>()
+    weak var conditionSubkey: PayloadSourceSubkey?
+    
     // View Settings
     public var viewSettings: Dictionary<String, Any>
     public var scope: String? // Change to scope enum
     // public var distribution: Distribution // Change to distribution enum
     public var sign = false
-    
-    @objc public var editorDistributionMethod: String = DistributionString.any
-    @objc public var editorDisableOptionalKeys: Bool = false
-    
-    @objc public var editorShowHidden: Bool = false
-    @objc public var editorShowSupervised: Bool = false
-    @objc public var editorShowDisabled: Bool = false
-    
-    // Scope
-    @objc public var editorShowScopeUser: Bool = false
-    @objc public var editorShowScopeSystem: Bool = false
-    
-    // Platform
-    @objc public var editorShowIOS: Bool = false
-    @objc public var editorShowMacOS: Bool = false
-    @objc public var editorShowTvOS: Bool = false
-    
-    @objc public var editorColumnEnable: Bool = false
     
     public var enabledPayloadsCount: Int {
         var count = 0
@@ -62,6 +47,53 @@ public class Profile: NSDocument {
         return count
     }
     
+    // MARK: -
+    // MARK: Key/Value Observing Variables
+    
+    // Distribution Method
+    @objc public var editorDistributionMethod: String = DistributionString.any
+    public let editorDistributionMethodSelector: String
+    
+    // Disable Optional Keys
+    @objc public var editorDisableOptionalKeys: Bool = false
+    public let editorDisableOptionalKeysSelector: String
+    
+    // Show Hidden
+    @objc public var editorShowHidden: Bool = false
+    public let editorShowHiddenSelector: String
+    
+    // Show Supervised
+    @objc public var editorShowSupervised: Bool = false
+    public let editorShowSupervisedSelector: String
+    
+    // Show Disabled
+    @objc public var editorShowDisabled: Bool = false
+    public let editorShowDisabledSelector: String
+    
+    // Show Platform iOS
+    @objc public var editorShowIOS: Bool = false
+    public let editorShowIOSSelector: String
+    
+    // Show Platform macOS
+    @objc public var editorShowMacOS: Bool = false
+    public let editorShowMacOSSelector: String
+    
+    // Show Platform tvOS
+    @objc public var editorShowTvOS: Bool = false
+    public let editorShowTvOSSelector: String
+
+    // Show Column Enable
+    @objc public var editorColumnEnable: Bool = false
+    public let editorColumnEnableSelector: String
+    
+    // Show Scope User
+    @objc public var editorShowScopeUser: Bool = false
+    public let editorShowScopeUserSelector: String
+    
+    // Show Scope System
+    @objc public var editorShowScopeSystem: Bool = false
+    public let editorShowScopeSystemSelector: String
+
     // MARK: -
     // MARK: Initialization
     
@@ -79,6 +111,21 @@ public class Profile: NSDocument {
         self.title = title ?? StringConstant.defaultProfileName
         
         // ---------------------------------------------------------------------
+        //  Initialize Key/Value Observing Selector Strings
+        // ---------------------------------------------------------------------
+        self.editorDistributionMethodSelector = NSStringFromSelector(#selector(getter: self.editorDistributionMethod))
+        self.editorDisableOptionalKeysSelector = NSStringFromSelector(#selector(getter: self.editorDisableOptionalKeys))
+        self.editorColumnEnableSelector = NSStringFromSelector(#selector(getter: self.editorColumnEnable))
+        self.editorShowDisabledSelector = NSStringFromSelector(#selector(getter: self.editorShowDisabled))
+        self.editorShowHiddenSelector = NSStringFromSelector(#selector(getter: self.editorShowHidden))
+        self.editorShowSupervisedSelector = NSStringFromSelector(#selector(getter: self.editorShowSupervised))
+        self.editorShowIOSSelector = NSStringFromSelector(#selector(getter: self.editorShowIOS))
+        self.editorShowMacOSSelector = NSStringFromSelector(#selector(getter: self.editorShowMacOS))
+        self.editorShowTvOSSelector = NSStringFromSelector(#selector(getter: self.editorShowTvOS))
+        self.editorShowScopeUserSelector = NSStringFromSelector(#selector(getter: self.editorShowScopeUser))
+        self.editorShowScopeSystemSelector = NSStringFromSelector(#selector(getter: self.editorShowScopeSystem))
+        
+        // ---------------------------------------------------------------------
         //  Initialize Self
         // ---------------------------------------------------------------------
         super.init()
@@ -92,11 +139,14 @@ public class Profile: NSDocument {
         //  Initialize Saved Settings
         // ---------------------------------------------------------------------
         self.savedSettings = self.saveDict()
+        
+        // ---------------------------------------------------------------------
+        //  Setup Notification Observers
+        // ---------------------------------------------------------------------
+        self.addObserver(self, forKeyPath: self.editorDistributionMethodSelector, options: .new, context: nil)
+        self.addObserver(self, forKeyPath: self.editorDisableOptionalKeysSelector, options: .new, context: nil)
     }
-    
-    // MARK: -
-    // MARK: Private Functions
-    
+        
     private func initialize(viewSettings: Dictionary<String, Any>) {
         
         // Disable Optional Keys
@@ -155,6 +205,27 @@ public class Profile: NSDocument {
         } else { self.editorShowScopeSystem = true }
     }
     
+    deinit {
+        self.removeObserver(self, forKeyPath: self.editorDistributionMethodSelector, context: nil)
+        self.removeObserver(self, forKeyPath: self.editorDisableOptionalKeysSelector, context: nil)
+    }
+    
+    // MARK: -
+    // MARK: Key/Value Observing Functions
+    
+    override public func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        switch keyPath ?? "" {
+        case self.editorDistributionMethodSelector,
+             self.editorDisableOptionalKeysSelector:
+            self.resetConditionResults()
+        default:
+            Swift.print("Class: \(self.self), Function: \(#function), observeValueforKeyPath: \(String(describing: keyPath))")
+        }
+    }
+    
+    // MARK: -
+    // MARK: Private Functions
+
     private func saveDict() -> [String : Any] {
         
         // ---------------------------------------------------------------------
@@ -618,6 +689,8 @@ extension Profile {
             return true
         }
         
+        if let conditionSubkey = self.conditionSubkey, conditionSubkey == subkey { Swift.print("This is an infinite loop, returning false"); return false }
+            
         let requiredConditionals = subkey.conditionals.flatMap({ $0.require != .none ? $0 : nil })
         if !requiredConditionals.isEmpty {
             return self.subkeyMatchConditionals(conditionals: requiredConditionals)
@@ -652,7 +725,7 @@ extension Profile {
             isEnabled = enabledDefault
         } else if !onlyByUser, parentIsEnabled, subkey.parentSubkey?.type == .dictionary, (subkey.key == ManifestKeyPlaceholder.key || subkey.key == ManifestKeyPlaceholder.value) {
             //Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(true) (dynamic dictionary)", category: #function)
-            isEnabled = true
+            return true
         }
         
         if !isEnabled {
@@ -681,54 +754,63 @@ extension Profile {
         return nil
     }
     
+    func subkeyMatch(targetCondition: PayloadSourceTargetCondition) -> Bool {
+        
+        // Check cached value
+        if let conditionResult = self.conditionResults[targetCondition.identifier] as? Bool {
+            #if DEBUG
+                Log.shared.debug(message: "Returning cached condition result: \(conditionResult)", category: String(describing: self))
+            #endif
+            return conditionResult
+        }
+        
+        // Verify we got a targetSubkey
+        guard let targetSubkey = targetCondition.targetSubkey() else { return false }
+        self.conditionSubkey = targetSubkey
+        
+        // Set match var
+        var match = false
+        
+        // Present
+        if let isPresent = targetCondition.isPresent, isPresent {
+            match = self.isEnabled(subkey: targetSubkey, onlyByUser: false)
+        }
+        
+        // Contains Any
+        if let containsAny = targetCondition.containsAny {
+            
+            let export = ProfileExport()
+            export.ignoreSave = true
+            export.ignoreErrorInvalidValue = true
+            
+            var payloadContent = Dictionary<String, Any>()
+            
+            do {
+                try export.updatePayloadContent(subkey: targetSubkey,
+                                                typeSettings: self.getPayloadTypeSettings(type: targetSubkey.payloadSourceType),
+                                                domainSettings: self.getPayloadDomainSettings(domain: targetSubkey.domain, type: targetSubkey.payloadSourceType),
+                                                payloadContent: &payloadContent)
+                
+                if let targetValue = payloadContent[targetSubkey.key] {
+                    match = containsAny.contains(value: targetValue, ofType: targetSubkey.type)
+                }
+            } catch { Log.shared.error(message: "Failed to get payload content for subkey with keyPath: \(targetSubkey.keyPath)", category: String(describing: self)) }
+        }
+        
+        // Cache the condition result
+        self.conditionResults[targetCondition.identifier] = match
+        
+        return match
+    }
+    
     func subkeyMatchConditionals(conditionals: [PayloadSourceCondition]) -> Bool {
         var match = false
         for sourceCondition in conditionals {
             for targetCondition in sourceCondition.conditions {
+                match = self.subkeyMatch(targetCondition: targetCondition)
                 
-                // Reset match var
-                match = false
-                
-                guard let targetSubkey = targetCondition.targetSubkey() else { return false }
-                
-                // Present
-                if let isPresent = targetCondition.isPresent, isPresent {
-                    match = self.isEnabled(subkey: targetSubkey, onlyByUser: false)
-                }
-                
-                // Contains Any
-                if let containsAny = targetCondition.containsAny {
-                    
-                    let export = ProfileExport()
-                    export.ignoreSave = true
-                    export.ignoreErrorInvalidValue = true
-                    
-                    var payloadContent = Dictionary<String, Any>()
-                    
-                    do {
-                        try export.updatePayloadContent(subkey: targetSubkey,
-                                                        typeSettings: self.getPayloadTypeSettings(type: targetSubkey.payloadSourceType),
-                                                        domainSettings: self.getPayloadDomainSettings(domain: targetSubkey.domain, type: targetSubkey.payloadSourceType),
-                                                        payloadContent: &payloadContent)
-                    } catch {
-                        Swift.print("Error: \(error)")
-                    }
-                    
-                    if let targetValue = payloadContent[targetSubkey.key] {
-                        
-                        if
-                            targetSubkey.type == .bool,
-                            let containsAnyBool = containsAny as? [Bool],
-                            let targetValueBool = targetValue as? Bool {
-                            
-                            if containsAnyBool.contains(targetValueBool) {
-                                match = true
-                            }
-                        }
-                        Swift.print("payloadContent: \(payloadContent)")
-                        Swift.print("containsAny: \(containsAny)")
-                    }
-                }
+                // Reset subkey
+                self.conditionSubkey = nil
                 
                 if !match {
                     return false
@@ -736,6 +818,10 @@ extension Profile {
             }
         }
         return match
+    }
+    
+    func resetConditionResults() {
+        self.conditionResults = Dictionary<String, Any>()
     }
     
     func subkeyViewSettings(subkey: PayloadSourceSubkey) -> Dictionary<String, Any>? {

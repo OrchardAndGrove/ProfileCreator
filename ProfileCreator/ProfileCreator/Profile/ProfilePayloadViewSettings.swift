@@ -30,6 +30,11 @@ extension Profile {
     
     func setPayloadViewTypeSettings(settings: Dictionary<String, Any>, type: PayloadSourceType) {
         self.viewSettings[String(type.rawValue)] = settings
+        
+        // ---------------------------------------------------------------------
+        //  Reset any cached condition results as updated settings might change those
+        // ---------------------------------------------------------------------
+        self.resetConditionResults()
     }
     
     // MARK: -

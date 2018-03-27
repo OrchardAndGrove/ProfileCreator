@@ -19,9 +19,6 @@ class PayloadCellViewNoKeys: NSTableCellView, ProfileCreatorCellView {
     var textFieldDescription: NSTextField? // Unused
     let buttonShowDisabled = NSButton()
     
-    let editorColumnEnableSelector: String
-    let editorShowDisabledSelector: String
-    
     weak var profile: Profile?
     
     // MARK: -
@@ -32,10 +29,6 @@ class PayloadCellViewNoKeys: NSTableCellView, ProfileCreatorCellView {
     }
     
     init(title titleString: String, description descriptionString: String?, profile: Profile) {
-        
-        self.editorColumnEnableSelector = NSStringFromSelector(#selector(getter: profile.editorColumnEnable))
-        self.editorShowDisabledSelector = NSStringFromSelector(#selector(getter: profile.editorShowDisabled))
-        
         super.init(frame: NSZeroRect)
         
         // ---------------------------------------------------------------------
@@ -86,8 +79,8 @@ class PayloadCellViewNoKeys: NSTableCellView, ProfileCreatorCellView {
     // MARK: Button Actions
     @objc func showDisabled(_ button: NSButton) {
         guard let profile = self.profile else { return }
-        profile.setValue(true, forKeyPath: self.editorColumnEnableSelector)
-        profile.setValue(true, forKeyPath: self.editorShowDisabledSelector)
+        profile.setValue(true, forKeyPath: profile.editorColumnEnableSelector)
+        profile.setValue(true, forKeyPath: profile.editorShowDisabledSelector)
     }
 }
 

@@ -20,17 +20,7 @@ class ProfileEditor: NSObject {
     let scrollView = NSScrollView()
     let separator = NSBox(frame: NSZeroRect)
     let settings: ProfileEditorSettings
-    
-    let editorDistributionMethodSelector: String
-    let editorDisableOptionalKeysSelector: String
-    let editorColumnEnableSelector: String
-    let editorShowDisabledSelector: String
-    let editorShowHiddenSelector: String
-    let editorShowSupervisedSelector: String
-    let editorShowIOSSelector: String
-    let editorShowMacOSSelector: String
-    let editorShowTvOSSelector: String
-    
+
     public let editorView = NSView()
     
     private let payloadCellViews = PayloadCellViews()
@@ -48,17 +38,7 @@ class ProfileEditor: NSObject {
     // MARK: Initialization
     
     init(profile: Profile) {
-        
-        self.editorDistributionMethodSelector = NSStringFromSelector(#selector(getter: profile.editorDistributionMethod))
-        self.editorDisableOptionalKeysSelector = NSStringFromSelector(#selector(getter: profile.editorDisableOptionalKeys))
-        self.editorColumnEnableSelector = NSStringFromSelector(#selector(getter: profile.editorColumnEnable))
-        self.editorShowDisabledSelector = NSStringFromSelector(#selector(getter: profile.editorShowDisabled))
-        self.editorShowHiddenSelector = NSStringFromSelector(#selector(getter: profile.editorShowHidden))
-        self.editorShowSupervisedSelector = NSStringFromSelector(#selector(getter: profile.editorShowSupervised))
-        self.editorShowIOSSelector = NSStringFromSelector(#selector(getter: profile.editorShowIOS))
-        self.editorShowMacOSSelector = NSStringFromSelector(#selector(getter: profile.editorShowMacOS))
-        self.editorShowTvOSSelector = NSStringFromSelector(#selector(getter: profile.editorShowTvOS))
-        
+
         self.settings = ProfileEditorSettings(profile: profile)
         self.headerView = ProfileEditorHeaderView(profile: profile)
         
@@ -87,15 +67,15 @@ class ProfileEditor: NSObject {
         // ---------------------------------------------------------------------
         //  Setup Notification Observers
         // ---------------------------------------------------------------------
-        self.profile?.addObserver(self, forKeyPath: self.editorDistributionMethodSelector, options: .new, context: nil)
-        self.profile?.addObserver(self, forKeyPath: self.editorDisableOptionalKeysSelector, options: .new, context: nil)
-        self.profile?.addObserver(self, forKeyPath: self.editorColumnEnableSelector, options: .new, context: nil)
-        self.profile?.addObserver(self, forKeyPath: self.editorShowDisabledSelector, options: .new, context: nil)
-        self.profile?.addObserver(self, forKeyPath: self.editorShowHiddenSelector, options: .new, context: nil)
-        self.profile?.addObserver(self, forKeyPath: self.editorShowSupervisedSelector, options: .new, context: nil)
-        self.profile?.addObserver(self, forKeyPath: self.editorShowIOSSelector, options: .new, context: nil)
-        self.profile?.addObserver(self, forKeyPath: self.editorShowMacOSSelector, options: .new, context: nil)
-        self.profile?.addObserver(self, forKeyPath: self.editorShowTvOSSelector, options: .new, context: nil)
+        profile.addObserver(self, forKeyPath: profile.editorDistributionMethodSelector, options: .new, context: nil)
+        profile.addObserver(self, forKeyPath: profile.editorDisableOptionalKeysSelector, options: .new, context: nil)
+        profile.addObserver(self, forKeyPath: profile.editorColumnEnableSelector, options: .new, context: nil)
+        profile.addObserver(self, forKeyPath: profile.editorShowDisabledSelector, options: .new, context: nil)
+        profile.addObserver(self, forKeyPath: profile.editorShowHiddenSelector, options: .new, context: nil)
+        profile.addObserver(self, forKeyPath: profile.editorShowSupervisedSelector, options: .new, context: nil)
+        profile.addObserver(self, forKeyPath: profile.editorShowIOSSelector, options: .new, context: nil)
+        profile.addObserver(self, forKeyPath: profile.editorShowMacOSSelector, options: .new, context: nil)
+        profile.addObserver(self, forKeyPath: profile.editorShowTvOSSelector, options: .new, context: nil)
         
         // ---------------------------------------------------------------------
         //  Activate layout constraints
@@ -112,30 +92,33 @@ class ProfileEditor: NSObject {
         self.tableView.dataSource = nil
         self.tableView.delegate = nil
         
-        self.profile?.removeObserver(self, forKeyPath: self.editorDistributionMethodSelector, context: nil)
-        self.profile?.removeObserver(self, forKeyPath: self.editorDisableOptionalKeysSelector, context: nil)
-        self.profile?.removeObserver(self, forKeyPath: self.editorColumnEnableSelector, context: nil)
-        self.profile?.removeObserver(self, forKeyPath: self.editorShowDisabledSelector, context: nil)
-        self.profile?.removeObserver(self, forKeyPath: self.editorShowHiddenSelector, context: nil)
-        self.profile?.removeObserver(self, forKeyPath: self.editorShowSupervisedSelector, context: nil)
-        self.profile?.removeObserver(self, forKeyPath: self.editorShowIOSSelector, context: nil)
-        self.profile?.removeObserver(self, forKeyPath: self.editorShowMacOSSelector, context: nil)
-        self.profile?.removeObserver(self, forKeyPath: self.editorShowTvOSSelector, context: nil)
+        if let profile = self.profile {
+            profile.removeObserver(self, forKeyPath: profile.editorDistributionMethodSelector, context: nil)
+            profile.removeObserver(self, forKeyPath: profile.editorDisableOptionalKeysSelector, context: nil)
+            profile.removeObserver(self, forKeyPath: profile.editorColumnEnableSelector, context: nil)
+            profile.removeObserver(self, forKeyPath: profile.editorShowDisabledSelector, context: nil)
+            profile.removeObserver(self, forKeyPath: profile.editorShowHiddenSelector, context: nil)
+            profile.removeObserver(self, forKeyPath: profile.editorShowSupervisedSelector, context: nil)
+            profile.removeObserver(self, forKeyPath: profile.editorShowIOSSelector, context: nil)
+            profile.removeObserver(self, forKeyPath: profile.editorShowMacOSSelector, context: nil)
+            profile.removeObserver(self, forKeyPath: profile.editorShowTvOSSelector, context: nil)
+        }
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        guard let profile = self.profile else { return }
         switch keyPath ?? "" {
-        case self.editorDistributionMethodSelector,
-             self.editorShowDisabledSelector,
-             self.editorShowHiddenSelector,
-             self.editorShowSupervisedSelector,
-             self.editorDisableOptionalKeysSelector,
-             self.editorShowIOSSelector,
-             self.editorShowMacOSSelector,
-             self.editorShowTvOSSelector:
+        case profile.editorDistributionMethodSelector,
+             profile.editorShowDisabledSelector,
+             profile.editorShowHiddenSelector,
+             profile.editorShowSupervisedSelector,
+             profile.editorDisableOptionalKeysSelector,
+             profile.editorShowIOSSelector,
+             profile.editorShowMacOSSelector,
+             profile.editorShowTvOSSelector:
             
             self.reloadTableView(updateCellViews: true)
-        case self.editorColumnEnableSelector:
+        case profile.editorColumnEnableSelector:
             if let tableColumnLeading = self.tableView.tableColumn(withIdentifier: .tableColumnPayloadEnableLeading), let show = change?[.newKey] as? Bool {
                 tableColumnLeading.isHidden = !show
             }
