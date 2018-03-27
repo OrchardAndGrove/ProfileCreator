@@ -60,10 +60,10 @@ class PayloadCellViews {
         if let payloadCellViews = cellViews as? [PayloadCellView] {
             
             // Sort cellViews with enabled subkeys at the top
-            let sortedCellViews = payloadCellViews.sorted(by: { profile.subkeyIsEnabled(subkey: $0.subkey!, onlyByUser: false) && !profile.subkeyIsEnabled(subkey: $1.subkey!, onlyByUser: false) })
+            let sortedCellViews = payloadCellViews.sorted(by: { profile.isEnabled(subkey: $0.subkey!, onlyByUser: false) && !profile.isEnabled(subkey: $1.subkey!, onlyByUser: false) })
             
             // Get the index of the first disabled subkey
-            if let indexDisabled = sortedCellViews.index(where: { !profile.subkeyIsEnabled(subkey: $0.subkey!, onlyByUser: false) } ) {
+            if let indexDisabled = sortedCellViews.index(where: { !profile.isEnabled(subkey: $0.subkey!, onlyByUser: false) } ) {
                 cellViews = sortedCellViews
                 
                 let cellView = PayloadCellViewTitle(title: "Disabled Keys", description: "The payload keys below will not be included in the exported profile")
@@ -72,7 +72,7 @@ class PayloadCellViews {
             
             if payloadPlaceholder.domain != ManifestDomain.general {
                 // Get all SHOWN enabled cellViews. (This works because the root manifest subkeys are all required and will always be enabled, even if they aren't shown.
-                let enabledCellViewKeys = sortedCellViews.flatMap({ profile.subkeyIsEnabled(subkey: $0.subkey!, onlyByUser: false) ? $0.subkey!.key : nil })
+                let enabledCellViewKeys = sortedCellViews.flatMap({ profile.isEnabled(subkey: $0.subkey!, onlyByUser: false) ? $0.subkey!.key : nil })
                 
                 if enabledCellViewKeys.count == 0 || Array(Set(enabledCellViewKeys).subtracting(manifestSubkeysIgnored)).count == 0 {
                     let cellView = PayloadCellViewNoKeys(title: "No Payload Keys Enabled", description: "", profile: profile)
@@ -100,7 +100,7 @@ class PayloadCellViews {
         }
         
         // Check if subkey is enabled
-        if !profile.editorShowDisabled, !profile.subkeyIsEnabled(subkey: subkey, onlyByUser: false) {
+        if !profile.editorShowDisabled, !profile.isEnabled(subkey: subkey, onlyByUser: false) {
             return nil
         }
         
@@ -109,7 +109,7 @@ class PayloadCellViews {
         }
         
         // Get the current settings, should be better handled if an error getting the settings is presented
-        let typeSettings = profile.payloadTypeSettings(type: subkey.payloadSourceType)
+        let typeSettings = profile.getPayloadTypeSettings(type: subkey.payloadSourceType)
         
         // If both range min and max are specified, and the range isn't more that 19, then use a popUpButton instead
         if let rangeList = subkey.rangeList, rangeList.count <= 20 {

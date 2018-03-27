@@ -209,9 +209,9 @@ class ProfileEditor: NSObject {
             try profileExport.export(profile: profile,
                                      domain: payloadPlaceholder.domain,
                                      type: payloadPlaceholder.payloadSourceType,
-                                     domainSettings: profile.payloadDomainSettings(domain: payloadPlaceholder.domain,
+                                     domainSettings: profile.getPayloadDomainSettings(domain: payloadPlaceholder.domain,
                                                                                    type: payloadPlaceholder.payloadSourceType),
-                                     typeSettings: profile.payloadTypeSettings(type: payloadPlaceholder.payloadSourceType),
+                                     typeSettings: profile.getPayloadTypeSettings(type: payloadPlaceholder.payloadSourceType),
                                      payloadContent: &payloadContent)
         } catch let error {
             Swift.print("Export failed: \(error)")
@@ -372,7 +372,7 @@ extension ProfileEditor: NSTableViewDelegate {
             let cellView = self.cellViews[rowNumber] as? PayloadCellView,
             let subkey = cellView.subkey else { return }
         
-        let isEnabled = profile.subkeyIsEnabled(subkey: subkey, onlyByUser: false)
+        let isEnabled = profile.isEnabled(subkey: subkey, onlyByUser: false)
         
         if !isEnabled {
             rowView.backgroundColor = .quaternaryLabelColor
@@ -391,7 +391,7 @@ extension ProfileEditor: NSTableViewDelegate {
             }
             return self.cellViews[row]
         } else if tableColumn?.identifier == .tableColumnPayloadEnableLeading {
-            if let cellView = self.cellViews[row] as? PayloadCellView, let subkey = cellView.subkey, let viewSettings = self.profile?.payloadViewTypeSettings(type: subkey.payloadSourceType) {
+            if let cellView = self.cellViews[row] as? PayloadCellView, let subkey = cellView.subkey, let viewSettings = self.profile?.getPayloadViewTypeSettings(type: subkey.payloadSourceType) {
                 return PayloadCellViewEnable(subkey: subkey, editor: self, settings: viewSettings)
             }
         }

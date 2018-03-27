@@ -49,7 +49,7 @@ class PayloadCellViewTextView: PayloadCellView, ProfileCreatorCellView, NSTextFi
         // ---------------------------------------------------------------------
         if let valuePlaceholder = subkey.valuePlaceholder as? String {
             self.textView?.string = valuePlaceholder
-        } else if editor.profile?.subkeyIsRequired(subkey: subkey) ?? false {
+        } else if editor.profile?.isRequired(subkey: subkey) ?? false {
             self.textView?.string = NSLocalizedString("Required", comment: "")
         }
         

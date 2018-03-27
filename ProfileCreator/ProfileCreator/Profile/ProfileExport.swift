@@ -76,7 +76,7 @@ class ProfileExport {
             // ---------------------------------------------------------------------
             //  Get the view settings for the current domain
             // ---------------------------------------------------------------------
-            let viewTypeSettings = profile.payloadViewTypeSettings(type: type)
+            let viewTypeSettings = profile.getPayloadViewTypeSettings(type: type)
             let viewDomainSettings = viewTypeSettings[domain] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
             
             // ---------------------------------------------------------------------
@@ -186,13 +186,13 @@ class ProfileExport {
             // ---------------------------------------------------------------------
             //  Get the type settings for the current domain
             // ---------------------------------------------------------------------
-            let typeSettings = profile.payloadTypeSettings(type: .manifest)
+            let typeSettings = profile.getPayloadTypeSettings(type: .manifest)
             let domainSettings = typeSettings[ManifestDomain.general] ?? Dictionary<String, Any>()
             
             // ---------------------------------------------------------------------
             //  Get the view settings for the current domain
             // ---------------------------------------------------------------------
-            let viewTypeSettings = profile.payloadViewTypeSettings(type: .manifest)
+            let viewTypeSettings = profile.getPayloadViewTypeSettings(type: .manifest)
             let viewDomainSettings = viewTypeSettings[ManifestDomain.general] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
             
             // ---------------------------------------------------------------------
@@ -388,7 +388,7 @@ class ProfileExport {
      */
     func shouldExport(profile: Profile, subkey: PayloadSourceSubkey, typeSettings: Dictionary<String, Any>, domainSettings: Dictionary<String, Any>, viewTypeSettings: Dictionary<String, Any>, viewDomainSettings: Dictionary<String, Any>) -> Bool {
         
-        if !profile.subkeyIsEnabled(subkey: subkey, onlyByUser: false) { return false }
+        if !profile.isEnabled(subkey: subkey, onlyByUser: false) { return false }
         
         // Special case for dynamic dictionaries
         if subkey.key == ManifestKeyPlaceholder.key { return false }
@@ -608,7 +608,7 @@ class ProfileExport {
         //  Get if this subkey is required
         // ---------------------------------------------------------------------
         guard let profile = self.profile else { return }
-        let isRequired = profile.subkeyIsRequired(subkey: subkey) ? true : false
+        let isRequired = profile.isRequired(subkey: subkey) ? true : false
         
         // ---------------------------------------------------------------------
         //  Get if this subkey is required

@@ -72,7 +72,7 @@ class PayloadCellViewTextFieldNumber: PayloadCellView, ProfileCreatorCellView, N
         // ---------------------------------------------------------------------
         if let valuePlaceholder = subkey.valuePlaceholder as? String {
             self.textFieldInput?.placeholderString = valuePlaceholder
-        } else if editor.profile?.subkeyIsRequired(subkey: subkey) ?? false {
+        } else if editor.profile?.isRequired(subkey: subkey) ?? false {
             self.textFieldInput?.placeholderString = NSLocalizedString("Required", comment: "")
         }
         

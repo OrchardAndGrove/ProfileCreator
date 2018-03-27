@@ -19,7 +19,7 @@ public class Profile: NSDocument {
     public var identifier: UUID
     @objc public dynamic var title: String = ""
     
-    private var savedSettings = Dictionary<String, Any>()
+    internal var savedSettings = Dictionary<String, Any>()
     
     public var payloadSettings: Dictionary<String, Dictionary<String, Dictionary<String, Any>>>
     public var profilePayloads: String? // Change to payloads framework class. Unsure if it should be used like this.
@@ -194,12 +194,22 @@ public class Profile: NSDocument {
         if self.fileURL == nil { return false }
         
         // ---------------------------------------------------------------------
-        //  Check that all current settings match those on disk
+        //  Get dictionary to sae to disk
         // ---------------------------------------------------------------------
         let saveDict = self.saveDict()
-        for (key, value) in self.savedSettings {
-            self.saveCheck(key: key, value: value, newValue: saveDict[key])
-        }
+        
+        // ---------------------------------------------------------------------
+        //  DEBUG: Check that all current settings match those on disk
+        // ---------------------------------------------------------------------
+        #if DEBUG
+            for (key, value) in self.savedSettings {
+                self.saveCheck(key: key, value: value, newValue: saveDict[key])
+            }
+        #endif
+        
+        // ---------------------------------------------------------------------
+        //  Update savedSettings variable with the saved dictionary
+        // ---------------------------------------------------------------------
         return self.savedSettings == self.saveDict()
     }
     
@@ -486,7 +496,7 @@ public class Profile: NSDocument {
         // ---------------------------------------------------------------------
         //  Get the current domain settings or create an empty set if they doesn't exist
         // ---------------------------------------------------------------------
-        var typeSettings = self.payloadTypeSettings(type: payloadSource.type)
+        var typeSettings = self.getPayloadTypeSettings(type: payloadSource.type)
         var domainSettings = typeSettings[payloadSource.domain] ?? Dictionary<String, Any>()
         
         // ---------------------------------------------------------------------
@@ -569,33 +579,35 @@ public class Profile: NSDocument {
             } else { completionHandler(saveError) }
         }
     }
-    
-    func update(title: String) {
-        
-        // TODO: Update title and displayname in settings
-        
-        self.title = title
-    }
+}
+
+// MARK: -
+// MARK: Payload Source
+
+extension Profile {
     
     // MARK: -
-    // MARK: Subkey Check
+    // MARK: Payload Source: Check
     
-    func subkeyPlaceholderString(subkey: PayloadSourceSubkey) -> String? {
-        if let valuePlaceholder = subkey.valuePlaceholder as? String {
-            return valuePlaceholder
-        } else if self.subkeyIsRequired(subkey: subkey) {
-            return NSLocalizedString("Required", comment: "")
-        } else if subkey.require == .push {
-            return NSLocalizedString("Set On Device", comment: "")
-        }
-        return nil
+    func isEnabled(payloadSource: PayloadSource) -> Bool {
+        let domainSettings = self.getPayloadDomainSettings(domain: payloadSource.domain, type: payloadSource.type)
+        return domainSettings[SettingsKey.enabled] as? Bool ?? false
     }
+}
+
+// MARK: -
+// MARK: Payload Subkey
+
+extension Profile {
     
-    func subkeyIsExcluded(subkey: PayloadSourceSubkey) -> Bool {
+    // MARK: -
+    // MARK: Payload Subkey: Check
+    
+    func isExcluded(subkey: PayloadSourceSubkey) -> Bool {
         return false
     }
     
-    func subkeyIsRequired(subkey: PayloadSourceSubkey) -> Bool {
+    func isRequired(subkey: PayloadSourceSubkey) -> Bool {
         if subkey.require == .always {
             return true
         }
@@ -614,6 +626,61 @@ public class Profile: NSDocument {
         return false
     }
     
+    func isEnabled(subkey: PayloadSourceSubkey, onlyByUser: Bool) -> Bool {
+        
+        var parentIsEnabled = true
+        if !onlyByUser, let parentSubkeys = subkey.parentSubkeys {
+            for parentSubkey in parentSubkeys {
+                if !self.isEnabled(subkey: parentSubkey, onlyByUser: false) {
+                    parentIsEnabled = false
+                }
+            }
+        }
+        //Log.shared.debug(message: "Subkey parent is enabled: \(parentIsEnabled)", category: #function)
+        
+        var isEnabled = !self.editorDisableOptionalKeys
+        if !onlyByUser, parentIsEnabled, self.isRequired(subkey: subkey) {
+            //Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(true) (required)", category: #function)
+            return true
+        } else if
+            let viewSettings = self.subkeyViewSettings(subkey: subkey),
+            let enabled = viewSettings[SettingsKey.enabled] as? Bool {
+            //Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(enabled) (user)", category: #function)
+            isEnabled = enabled
+        } else if !onlyByUser, parentIsEnabled, let enabledDefault = subkey.enabledDefault {
+            //Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(enabledDefault) (default)", category: #function)
+            isEnabled = enabledDefault
+        } else if !onlyByUser, parentIsEnabled, subkey.parentSubkey?.type == .dictionary, (subkey.key == ManifestKeyPlaceholder.key || subkey.key == ManifestKeyPlaceholder.value) {
+            //Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(true) (dynamic dictionary)", category: #function)
+            isEnabled = true
+        }
+        
+        if !isEnabled {
+            for childSubkey in subkey.subkeys {
+                if self.isEnabled(subkey: childSubkey, onlyByUser: true) {
+                    isEnabled = true
+                    break
+                }
+            }
+        }
+        
+        return isEnabled
+    }
+    
+    // MARK: -
+    // MARK: Payload Subkey: Get Value
+    
+    func getPlaceholderString(subkey: PayloadSourceSubkey) -> String? {
+        if let valuePlaceholder = subkey.valuePlaceholder as? String {
+            return valuePlaceholder
+        } else if self.isRequired(subkey: subkey) {
+            return NSLocalizedString("Required", comment: "")
+        } else if subkey.require == .push {
+            return NSLocalizedString("Set On Device", comment: "")
+        }
+        return nil
+    }
+    
     func subkeyMatchConditionals(conditionals: [PayloadSourceCondition]) -> Bool {
         var match = false
         for sourceCondition in conditionals {
@@ -626,7 +693,7 @@ public class Profile: NSDocument {
                 
                 // Present
                 if let isPresent = targetCondition.isPresent, isPresent {
-                    match = self.subkeyIsEnabled(subkey: targetSubkey, onlyByUser: false)
+                    match = self.isEnabled(subkey: targetSubkey, onlyByUser: false)
                 }
                 
                 // Contains Any
@@ -640,8 +707,8 @@ public class Profile: NSDocument {
                     
                     do {
                         try export.updatePayloadContent(subkey: targetSubkey,
-                                                        typeSettings: self.payloadTypeSettings(type: targetSubkey.payloadSourceType),
-                                                        domainSettings: self.payloadDomainSettings(domain: targetSubkey.domain, type: targetSubkey.payloadSourceType),
+                                                        typeSettings: self.getPayloadTypeSettings(type: targetSubkey.payloadSourceType),
+                                                        domainSettings: self.getPayloadDomainSettings(domain: targetSubkey.domain, type: targetSubkey.payloadSourceType),
                                                         payloadContent: &payloadContent)
                     } catch {
                         Swift.print("Error: \(error)")
@@ -673,234 +740,16 @@ public class Profile: NSDocument {
     
     func subkeyViewSettings(subkey: PayloadSourceSubkey) -> Dictionary<String, Any>? {
         if
-            let domainViewSettings = self.payloadViewTypeSettings(type: subkey.payloadSourceType)[subkey.domain] as? Dictionary<String, Any>,
-            let viewSettings = domainViewSettings[subkey.keyPath] as? Dictionary<String, Any> {
+            let payloadViewDomainSettings = self.getPayloadViewDomainSettings(domain: subkey.domain, type: subkey.payloadSourceType),
+            let viewSettings = payloadViewDomainSettings[subkey.keyPath] as? Dictionary<String, Any> {
             return viewSettings
         } else { return nil }
-    }
-    
-    func subkeyIsEnabled(subkey: PayloadSourceSubkey, onlyByUser: Bool) -> Bool {
-        
-        var parentIsEnabled = true
-        if !onlyByUser, let parentSubkeys = subkey.parentSubkeys {
-            for parentSubkey in parentSubkeys {
-                if !self.subkeyIsEnabled(subkey: parentSubkey, onlyByUser: false) {
-                    parentIsEnabled = false
-                }
-            }
-        }
-        //Log.shared.debug(message: "Subkey parent is enabled: \(parentIsEnabled)", category: #function)
-        
-        var isEnabled = !self.editorDisableOptionalKeys
-        if !onlyByUser, parentIsEnabled, self.subkeyIsRequired(subkey: subkey) {
-            //Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(true) (required)", category: #function)
-            return true
-        } else if
-            let viewSettings = self.subkeyViewSettings(subkey: subkey),
-            let enabled = viewSettings[SettingsKey.enabled] as? Bool {
-            //Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(enabled) (user)", category: #function)
-            isEnabled = enabled
-        } else if !onlyByUser, parentIsEnabled, let enabledDefault = subkey.enabledDefault {
-            //Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(enabledDefault) (default)", category: #function)
-            isEnabled = enabledDefault
-        } else if !onlyByUser, parentIsEnabled, subkey.parentSubkey?.type == .dictionary, (subkey.key == ManifestKeyPlaceholder.key || subkey.key == ManifestKeyPlaceholder.value) {
-            //Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(true) (dynamic dictionary)", category: #function)
-            isEnabled = true
-        }
-        
-        if !isEnabled {
-            for childSubkey in subkey.subkeys {
-                if self.subkeyIsEnabled(subkey: childSubkey, onlyByUser: true) {
-                    isEnabled = true
-                    break
-                }
-            }
-        }
-        
-        return isEnabled
-    }
-    
-    // MARK: -
-    // MARK: View Settings
-    
-    class func defaultViewSettings() -> Dictionary<String, Any> {
-        return [ PreferenceKey.editorDistributionMethod : UserDefaults.standard.string(forKey: PreferenceKey.editorDistributionMethod) ?? DistributionString.any,
-                 PreferenceKey.editorDisableOptionalKeys : UserDefaults.standard.bool(forKey: PreferenceKey.editorDisableOptionalKeys),
-                 PreferenceKey.editorColumnEnable : UserDefaults.standard.bool(forKey: PreferenceKey.editorColumnEnable),
-                 PreferenceKey.editorShowDisabledKeys : UserDefaults.standard.bool(forKey: PreferenceKey.editorShowDisabledKeys),
-                 PreferenceKey.editorShowHiddenKeys : UserDefaults.standard.bool(forKey: PreferenceKey.editorShowHiddenKeys),
-                 PreferenceKey.editorShowSupervisedKeys : UserDefaults.standard.bool(forKey: PreferenceKey.editorShowSupervisedKeys),
-                 PreferenceKey.editorShowMacOS : UserDefaults.standard.bool(forKey: PreferenceKey.editorShowMacOS),
-                 PreferenceKey.editorShowIOS : UserDefaults.standard.bool(forKey: PreferenceKey.editorShowIOS),
-                 PreferenceKey.editorShowTvOS : UserDefaults.standard.bool(forKey: PreferenceKey.editorShowTvOS),
-                 PreferenceKey.editorShowScopeUser : UserDefaults.standard.bool(forKey: PreferenceKey.editorShowScopeUser),
-                 PreferenceKey.editorShowScopeSystem : UserDefaults.standard.bool(forKey: PreferenceKey.editorShowScopeSystem) ]
-    }
-    
-    func payloadViewTypeSettings(type: PayloadSourceType) -> Dictionary<String, Any> {
-        return self.viewSettings[String(type.rawValue)] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
-    }
-    
-    func setPayloadViewTypeSettings(settings: Dictionary<String, Any>, type: PayloadSourceType) {
-        self.viewSettings[String(type.rawValue)] = settings
-    }
-    
-    func updateViewSettings(value: Any?, key: String, subkey: PayloadSourceSubkey, updateComplete: @escaping (Bool, Error?) -> ()) {
-        self.updateViewSettings(value: value, key: key, keyPath: subkey.keyPath, domain: subkey.domain, type: subkey.payloadSourceType, updateComplete: updateComplete)
-    }
-    
-    func updateViewSettings(value: Any?, key: String, keyPath: String?, domain: String, type: PayloadSourceType, updateComplete: @escaping (Bool, Error?) -> ()) {
-        
-        // ---------------------------------------------------------------------
-        //  Get the current domain settings or create an empty set if they doesn't exist
-        // ---------------------------------------------------------------------
-        var typeSettings = self.payloadViewTypeSettings(type: type)
-        var domainSettings = typeSettings[domain] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
-        
-        // ---------------------------------------------------------------------
-        //  Set the new value
-        // ---------------------------------------------------------------------
-        if let payloadKeyPath = keyPath {
-            var keySettings = domainSettings[payloadKeyPath] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
-            keySettings[key] = value
-            domainSettings[payloadKeyPath] = keySettings
-            typeSettings[domain] = domainSettings
-        } else {
-            domainSettings[key] = value
-            typeSettings[domain] = domainSettings
-        }
-        
-        // ---------------------------------------------------------------------
-        //  Save the the changes to the current settings
-        // ---------------------------------------------------------------------
-        self.setPayloadViewTypeSettings(settings: typeSettings, type: type)
-        
-        updateComplete(true, nil)
-    }
-    
-    func isEnabled(payloadSource: PayloadSource) -> Bool {
-        let domainSettings = self.payloadDomainSettings(domain: payloadSource.domain, type: payloadSource.type)
-        return domainSettings[SettingsKey.enabled] as? Bool ?? false
-    }
-    
-    // MARK: -
-    // MARK: Payload Settings
-    
-    class func defaultPayloadSettings(uuid: UUID) -> Dictionary<String, Dictionary<String, Dictionary<String, Any>>> {
-        
-        let defaultOrganizationName = UserDefaults.standard.string(forKey: PreferenceKey.defaultOrganization) ?? "ProfileCreator"
-        
-        let defaultOrganizationIdentifier = UserDefaults.standard.string(forKey: PreferenceKey.defaultOrganizationIdentifier) ?? "com.profilecreator"
-        let defaultIdentifier = defaultOrganizationIdentifier + ".\(uuid.uuidString)"
-        
-        let payloadDomainSettings: Dictionary<String, Any> = [
-            PayloadKey.payloadVersion : 1,
-            PayloadKey.payloadUUID : uuid.uuidString,
-            PayloadKey.payloadIdentifier : defaultIdentifier,
-            PayloadKey.payloadOrganization : defaultOrganizationName,
-            PayloadKey.payloadDisplayName : StringConstant.defaultProfileName
-        ]
-        
-        let payloadTypeSettings: Dictionary<String, Dictionary<String, Any>> = [
-            ManifestDomain.general : payloadDomainSettings
-        ]
-        
-        return [String(PayloadSourceType.manifest.rawValue) : payloadTypeSettings]
-    }
-    
-    func payloadDomainSettings(domain: String, type: PayloadSourceType) -> Dictionary<String, Any> {
-        let payloadTypeSettings = self.payloadTypeSettings(type: type)
-        return payloadTypeSettings[domain] ?? Dictionary<String, Any>()
-    }
-    
-    func payloadTypeSettings(type: PayloadSourceType) -> Dictionary<String, Dictionary<String, Any>> {
-        return self.payloadSettings[String(type.rawValue)] ?? Dictionary<String, Dictionary<String, Any>>()
-    }
-    
-    func setPayloadTypeSettings(settings: Dictionary<String, Dictionary<String, Any>>, type: PayloadSourceType) {
-        self.payloadSettings[String(type.rawValue)] = settings
-    }
-    
-    func updatePayloadSettings(value: Any?, subkey: PayloadSourceSubkey, updateComplete: @escaping (Bool, Error?) -> ()) {
-        self.updatePayloadSettings(value: value, key: subkey.keyPath, domain: subkey.domain, type: subkey.payloadSourceType, updateComplete: updateComplete)
-    }
-    
-    func updatePayloadSettings(value: Any?, key: String, subkey: PayloadSourceSubkey, updateComplete: @escaping (Bool, Error?) -> ()) {
-        var keyPath = key
-        var subkeyPathArray = subkey.keyPath.components(separatedBy: ".")
-        if 1 < subkeyPathArray.count {
-            subkeyPathArray.removeLast()
-            keyPath = "\(subkeyPathArray.joined(separator: ".")).\(key)"
-        }
-        self.updatePayloadSettings(value: value, key: keyPath, domain: subkey.domain, type: subkey.payloadSourceType, updateComplete: updateComplete)
-    }
-    
-    // For getting the currently in memory value
-    func getPayloadSetting(key: String, domain: String, type: PayloadSourceType) -> Any? {
-        var typeSettings = self.payloadTypeSettings(type: type)
-        var domainSettings = typeSettings[domain] ?? Dictionary<String, Any>()
-        return domainSettings[key]
-    }
-    
-    func updatePayloadSettings(value: Any?, key: String, domain: String, type: PayloadSourceType, updateComplete: @escaping (Bool, Error?) -> ()) {
-        
-        // ---------------------------------------------------------------------
-        //  Get the current domain settings or create an empty set if they doesn't exist
-        // ---------------------------------------------------------------------
-        var typeSettings = self.payloadTypeSettings(type: type)
-        var domainSettings = typeSettings[domain] ?? Dictionary<String, Any>()
-        
-        // ---------------------------------------------------------------------
-        //  Set the new value
-        // ---------------------------------------------------------------------
-        domainSettings[key] = value
-        
-        // ---------------------------------------------------------------------
-        //  Verify the domain has the required settings
-        // ---------------------------------------------------------------------
-        self.updateDomainSettings(&domainSettings)
-        
-        // ---------------------------------------------------------------------
-        //
-        // ---------------------------------------------------------------------
-        typeSettings[domain] = domainSettings
-        
-        // ---------------------------------------------------------------------
-        //  Save the the changes to the current settings
-        // ---------------------------------------------------------------------
-        self.setPayloadTypeSettings(settings: typeSettings, type: type)
-        
-        // ---------------------------------------------------------------------
-        //  If this is the payload name setting, then update the profile title
-        // ---------------------------------------------------------------------
-        if key == PayloadKey.payloadDisplayName, type == .manifest, let title = value as? String {
-            self.title = title
-        }
-        
-        // ---------------------------------------------------------------------
-        //  Using closure for the option of a longer save time if needed in the future for more checking etc.
-        // ---------------------------------------------------------------------
-        updateComplete(true, nil)
-    }
-    
-    // MARK: -
-    // MARK: Saved Settings
-    
-    func savedPayloadTypeSettings(type: PayloadSourceType) -> Dictionary<String, Any> {
-        let savedPayloadSettings = self.savedSettings[SettingsKey.payloadSettings] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
-        return savedPayloadSettings[String(type.rawValue)] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
-    }
-    
-    // For getting the currently saved on disk value
-    func getSavedPayloadSetting(key: String, domain: String, type: PayloadSourceType) -> Any? {
-        var typeSettings = self.savedPayloadTypeSettings(type: type)
-        var domainSettings = typeSettings[domain] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
-        return domainSettings[key]
     }
 }
 
 // MARK: -
 // MARK: NSTextFieldDelegate Functions
+
 extension Profile: NSTextFieldDelegate {
     
     // -------------------------------------------------------------------------

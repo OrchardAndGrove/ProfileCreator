@@ -101,6 +101,8 @@
 		E3C8D54A1F3F31CE0083DA5F /* PayloadCellViewItemTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3C8D5491F3F31CE0083DA5F /* PayloadCellViewItemTextView.swift */; };
 		E3CBFE0D20343874006037D4 /* ProfileEditorWindowToolbarItemSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CBFE0C20343874006037D4 /* ProfileEditorWindowToolbarItemSettings.swift */; };
 		E3CE1ACC205C019A00B3B012 /* FileInfoProcessorFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CE1ACB205C019A00B3B012 /* FileInfoProcessorFont.swift */; };
+		E3E2C76E206A42A3008B45DD /* ProfilePayloadSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3E2C76D206A42A3008B45DD /* ProfilePayloadSettings.swift */; };
+		E3E2C770206A433E008B45DD /* ProfilePayloadViewSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3E2C76F206A433E008B45DD /* ProfilePayloadViewSettings.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -213,6 +215,8 @@
 		E3C8D5491F3F31CE0083DA5F /* PayloadCellViewItemTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewItemTextView.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViewItems/PayloadCellViewItemTextView.swift"; sourceTree = "<group>"; };
 		E3CBFE0C20343874006037D4 /* ProfileEditorWindowToolbarItemSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditorWindowToolbarItemSettings.swift; sourceTree = "<group>"; };
 		E3CE1ACB205C019A00B3B012 /* FileInfoProcessorFont.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FileInfoProcessorFont.swift; path = "WindowControllers/Profile Editor/Editor/FileInfoProcessor/FileInfoProcessorFont.swift"; sourceTree = "<group>"; };
+		E3E2C76D206A42A3008B45DD /* ProfilePayloadSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProfilePayloadSettings.swift; path = Profile/ProfilePayloadSettings.swift; sourceTree = "<group>"; };
+		E3E2C76F206A433E008B45DD /* ProfilePayloadViewSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProfilePayloadViewSettings.swift; path = Profile/ProfilePayloadViewSettings.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -245,6 +249,8 @@
 			isa = PBXGroup;
 			children = (
 				5309D3021F19E537002133A0 /* Profile.swift */,
+				E3E2C76D206A42A3008B45DD /* ProfilePayloadSettings.swift */,
+				E3E2C76F206A433E008B45DD /* ProfilePayloadViewSettings.swift */,
 				5309D3041F1A430F002133A0 /* ProfileController.swift */,
 				E331A46B1FB2EAB800F98477 /* ProfileExport.swift */,
 			);
@@ -644,6 +650,7 @@
 				E31FA8D21F4D59DE00F6B6BD /* PayloadCellViewTextFieldNumber.swift in Sources */,
 				53C4B3611F27D0B300457CB5 /* PayloadCellView.swift in Sources */,
 				E34DC51D2068DC5400D7A87E /* PayloadCellViewNoKeys.swift in Sources */,
+				E3E2C770206A433E008B45DD /* ProfilePayloadViewSettings.swift in Sources */,
 				535CB45D1F2B97A600A746F6 /* PayloadLibraryMenu.swift in Sources */,
 				E3577C1C204A7536007D9FE9 /* FileInfoProcessor.swift in Sources */,
 				531852221F2295B000529E6B /* ProfileEditorSplitView.swift in Sources */,
@@ -651,6 +658,7 @@
 				5309D3051F1A430F002133A0 /* ProfileController.swift in Sources */,
 				E31FFE63205BAE8A0027D40A /* FileInfoProcessorCertificate.swift in Sources */,
 				E331A46C1FB2EAB800F98477 /* ProfileExport.swift in Sources */,
+				E3E2C76E206A42A3008B45DD /* ProfilePayloadSettings.swift in Sources */,
 				53DADB501F13ACF90045CB3F /* AppResources.swift in Sources */,
 				E3C8D5421F3EED1E0083DA5F /* PayloadCellViewPopUpButton.swift in Sources */,
 				E3577C1A204A74E9007D9FE9 /* FileInfo.swift in Sources */,
