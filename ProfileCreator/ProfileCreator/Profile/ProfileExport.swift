@@ -367,38 +367,7 @@ class ProfileExport {
             }
         }
     }
-    
-    // MARK: -
-    // MARK: Verify
-    /* IGNORE FOR NOW, SHOULD BE ABLE TO DELETE
-     func isEnabled(subkey: PayloadSourceSubkey, typeSettings: Dictionary<String, Any>, domainSettings: Dictionary<String, Any>, viewTypeSettings: Dictionary<String, Any>, viewDomainSettings: Dictionary<String, Any>) -> Bool {
-     var enabled = false
-     if subkey.require == .always {
-     enabled = true
-     } else if
-     let viewSettings = viewDomainSettings[subkey.keyPath] as? Dictionary<String, Any> {
-     if let isEnabled = viewSettings[SettingsKey.enabled] as? Bool { enabled = isEnabled }
-     }
-     return enabled
-     }
-     
-     func isEnabledParents(subkey: PayloadSourceSubkey, typeSettings: Dictionary<String, Any>, domainSettings: Dictionary<String, Any>, viewTypeSettings: Dictionary<String, Any>, viewDomainSettings: Dictionary<String, Any>) -> Bool {
-     guard let parentSubkeys = subkey.parentSubkeys else { return true }
-     
-     // FIXME: This requires some fixing depending on how the view settings will be saved
-     
-     // Default to true only for testing
-     //var enabled = true
-     //var parentViewDomainSettings: Any?
-     for parentSubkey in parentSubkeys {
-     if !self.isEnabled(subkey: parentSubkey, typeSettings: typeSettings, domainSettings: domainSettings, viewTypeSettings: viewTypeSettings, viewDomainSettings: viewDomainSettings) {
-     return false
-     }
-     }
-     
-     return true
-     }
-     */
+
     func shouldExport(profile: Profile, subkey: PayloadSourceSubkey, typeSettings: Dictionary<String, Any>, domainSettings: Dictionary<String, Any>, viewTypeSettings: Dictionary<String, Any>, viewDomainSettings: Dictionary<String, Any>) -> Bool {
         
         if !profile.isEnabled(subkey: subkey, onlyByUser: false) { return false }
@@ -407,18 +376,7 @@ class ProfileExport {
         if subkey.key == ManifestKeyPlaceholder.key { return false }
         
         // profile.subkeyIsExcluded
-        //
         
-        /*
-         // ---------------------------------------------------------------------
-         //  Verify this subkey and it's parents are enabled
-         // ---------------------------------------------------------------------
-         if self.isEnabled(subkey: subkey, typeSettings: typeSettings, domainSettings: domainSettings, viewTypeSettings: viewTypeSettings, viewDomainSettings: viewDomainSettings) {
-         return self.isEnabledParents(subkey: subkey, typeSettings: typeSettings, domainSettings: domainSettings, viewTypeSettings: viewTypeSettings, viewDomainSettings: viewDomainSettings)
-         }
-         
-         return false
-         */
         return true
     }
     
@@ -485,7 +443,7 @@ class ProfileExport {
                     }
                     return parentPayloadContent
                 }
-
+                
                 // ---------------------------------------------------------------------
                 //  Get the parent subkey settings
                 // ---------------------------------------------------------------------
@@ -569,20 +527,25 @@ class ProfileExport {
                         }
                     }
                 } else if let value = try self.getValue(forSubkey: subkey, typeSettings: typeSettings, domainSettings: domainSettings, parentDomainSettings: parentSettings) {
-                    if let valueArray = value as? [Any], let parentSubkeySettings = parentSettings as? [Dictionary<String, Any>], subkey.key == ManifestKeyPlaceholder.value {
-                        for (index, valueItem) in valueArray.enumerated() {
-                            // Get the key
-                            guard let key = parentSubkeySettings[index]["\(parentSubkey.key).\(ManifestKeyPlaceholder.key)"] as? String else { continue }
-                            Swift.print("Adding this to parent payload: \(key): \(valueItem)")
-                            parentPayloadContent[key] = valueItem
+                    if subkey.key == ManifestKeyPlaceholder.value {
+                        if let valueArray = value as? [Any], let parentSubkeySettings = parentSettings as? [Dictionary<String, Any>] {
+                            for (index, valueItem) in valueArray.enumerated() {
+                                // Get the key
+                                guard let key = parentSubkeySettings[index]["\(parentSubkey.key).\(ManifestKeyPlaceholder.key)"] as? String, !key.isEmpty else { continue }
+                                Swift.print("Adding this to parent payload: \(key): \(valueItem)")
+                            
+                                parentPayloadContent[key] = valueItem
+                            }
                         }
                     } else {
                         Swift.print("Adding this to parent payload: \(subkey.key): \(value)")
                         parentPayloadContent[subkey.key] = value
                     }
                 } else {
-                    // FIXME: Add correct error
-                    throw ProfileExportError.unknownError
+                    #if DEBUG
+                    #endif
+                    
+                    throw ProfileExportError.unknownError // FIXME: Add Correct Error
                 }
                 Swift.print("parentPayloadContent: \(String(describing: parentPayloadContent))")
                 return parentPayloadContent
@@ -672,8 +635,7 @@ class ProfileExport {
             if isRequired, valueString.isEmpty {
                 throw errorInvalid
             } else if let format = subkey.format, !valueString.matches(format) {
-                // FIXME: Add correct error here
-                throw errorInvalid
+                throw errorInvalid // FIXME: Add Correct Error
             }
         case .undefined:
             Swift.print("undefined")

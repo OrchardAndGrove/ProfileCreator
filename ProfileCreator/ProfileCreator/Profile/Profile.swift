@@ -696,35 +696,45 @@ extension Profile {
         
         var parentIsEnabled = true
         if !onlyByUser, let parentSubkeys = subkey.parentSubkeys {
-            if !(parentSubkeys.count == 1 && parentSubkeys.first?.rootSubkey == nil && parentSubkeys.first?.type == .dictionary) {
+            //if !(parentSubkeys.count == 1 && parentSubkeys.first?.rootSubkey == nil && parentSubkeys.first?.type == .dictionary) {
                 for parentSubkey in parentSubkeys {
                     if !self.isEnabled(subkey: parentSubkey, onlyByUser: false) {
                         parentIsEnabled = false
                     }
                 }
-            }
+            //}
         }
         
         if parentIsEnabled, subkey.parentSubkey?.type == .array {
             return true
         }
         
-        //Log.shared.debug(message: "Subkey parent is enabled: \(parentIsEnabled)", category: #function)
+        #if DEBUG
+            Log.shared.debug(message: "Subkey: \(subkey.keyPath) parent is enabled: \(parentIsEnabled)", category: String(describing: self))
+        #endif
         
         var isEnabled = !self.editorDisableOptionalKeys
         if !onlyByUser, parentIsEnabled, self.isRequired(subkey: subkey) {
-            //Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(true) (required)", category: #function)
+            #if DEBUG
+                Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(true) (required)", category: String(describing: self))
+            #endif
             return true
         } else if
             let viewSettings = self.subkeyViewSettings(subkey: subkey),
             let enabled = viewSettings[SettingsKey.enabled] as? Bool {
-            //Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(enabled) (user)", category: #function)
+            #if DEBUG
+                Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(enabled) (user)", category: String(describing: self))
+            #endif
             isEnabled = enabled
         } else if !onlyByUser, parentIsEnabled, let enabledDefault = subkey.enabledDefault {
-            //Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(enabledDefault) (default)", category: #function)
+            #if DEBUG
+                Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(enabledDefault) (default)", category: String(describing: self))
+            #endif
             isEnabled = enabledDefault
         } else if !onlyByUser, parentIsEnabled, subkey.parentSubkey?.type == .dictionary, (subkey.key == ManifestKeyPlaceholder.key || subkey.key == ManifestKeyPlaceholder.value) {
-            //Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(true) (dynamic dictionary)", category: #function)
+            #if DEBUG
+                Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(true) (dynamic dictionary)", category: String(describing: self))
+            #endif
             return true
         }
         
