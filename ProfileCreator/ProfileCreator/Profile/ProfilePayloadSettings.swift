@@ -45,21 +45,21 @@ extension Profile {
     // MARK: -
     // MARK: Payload Settings: Update
     
-    func updatePayloadSettings(value: Any?, subkey: PayloadSourceSubkey, updateComplete: @escaping (Bool, Error?) -> ()) {
-        self.updatePayloadSettings(value: value, key: subkey.keyPath, domain: subkey.domain, type: subkey.payloadSourceType, updateComplete: updateComplete)
+    func updatePayloadSettings(value: Any?, subkey: PayloadSourceSubkey) {
+        self.updatePayloadSettings(value: value, key: subkey.keyPath, domain: subkey.domain, type: subkey.payloadSourceType)
     }
     
-    func updatePayloadSettings(value: Any?, key: String, subkey: PayloadSourceSubkey, updateComplete: @escaping (Bool, Error?) -> ()) {
+    func updatePayloadSettings(value: Any?, key: String, subkey: PayloadSourceSubkey) {
         var keyPath = key
         var subkeyPathArray = subkey.keyPath.components(separatedBy: ".")
         if 1 < subkeyPathArray.count {
             subkeyPathArray.removeLast()
             keyPath = "\(subkeyPathArray.joined(separator: ".")).\(key)"
         }
-        self.updatePayloadSettings(value: value, key: keyPath, domain: subkey.domain, type: subkey.payloadSourceType, updateComplete: updateComplete)
+        self.updatePayloadSettings(value: value, key: keyPath, domain: subkey.domain, type: subkey.payloadSourceType)
     }
     
-    func updatePayloadSettings(value: Any?, key: String, domain: String, type: PayloadSourceType, updateComplete: @escaping (Bool, Error?) -> ()) {
+    func updatePayloadSettings(value: Any?, key: String, domain: String, type: PayloadSourceType) {
         
         // ---------------------------------------------------------------------
         //  Get the current domain settings or create an empty set if they doesn't exist
@@ -98,11 +98,6 @@ extension Profile {
         //  Reset any cached condition results as updated settings might change those
         // ---------------------------------------------------------------------
         self.resetConditionResults()
-        
-        // ---------------------------------------------------------------------
-        //  Using closure for the option of a longer save time if needed in the future for more checking etc.
-        // ---------------------------------------------------------------------
-        updateComplete(true, nil)
     }
     
     // MARK: -

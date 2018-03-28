@@ -153,15 +153,15 @@ class ProfileEditor: NSObject {
     }
     
     func updatePayloadSettings(value: Any?, subkey: PayloadSourceSubkey) {
-        self.profile?.updatePayloadSettings(value: value, subkey: subkey, updateComplete: { (successful, error) in
-            Swift.print("Class: \(self.self), Function: \(#function), PayloadSettings Changed with status: \(successful)")
-        })
+        if let profile = self.profile {
+            profile.updatePayloadSettings(value: value, subkey: subkey)
+        }
     }
     
     func updatePayloadSettings(value: Any?, key: String, subkey: PayloadSourceSubkey) {
-        self.profile?.updatePayloadSettings(value: value, key: key, subkey: subkey, updateComplete: { (successful, error) in
-            Swift.print("Class: \(self.self), Function: \(#function), PayloadSettings Key: \(key) Changed with status: \(successful)")
-        })
+        if let profile = self.profile {
+            profile.updatePayloadSettings(value: value, key: key, subkey: subkey)
+        }
     }
     
     func select(view: Int) {
@@ -354,7 +354,7 @@ extension ProfileEditor: NSTableViewDelegate {
             let profile = self.profile,
             let cellView = self.cellViews[rowNumber] as? PayloadCellView,
             let subkey = cellView.subkey else { return }
-        
+
         let isEnabled = profile.isEnabled(subkey: subkey, onlyByUser: false)
         
         if !isEnabled {

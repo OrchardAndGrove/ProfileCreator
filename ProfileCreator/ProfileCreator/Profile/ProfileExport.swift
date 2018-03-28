@@ -115,13 +115,18 @@ class ProfileExport {
             if self.shouldExport(profile: profile, subkey: subkey, typeSettings: typeSettings, domainSettings: domainSettings, viewTypeSettings: viewTypeSettings, viewDomainSettings: viewDomainSettings) {
                 
                 #if DEBUG
-                    Log.shared.debug(message: "Should export subkey: \(subkey.key): true")
+                    Log.shared.debug(message: "Should export subkey: \(subkey.keyPath) of type: \(subkey.type): true", category: String(describing: self))
                 #endif
                 
                 // ---------------------------------------------------------------------
                 //  If this is an array, then move to the next subkey as the contents will be set by the "lowest" ( or highest? ) key in the tree
                 // ---------------------------------------------------------------------
                 if subkey.type == .array, !subkey.subkeys.isEmpty {
+                    
+                    #if DEBUG
+                        Log.shared.debug(message: "Subkey is an array, will ignore this subkey and continue with it's subkeys", category: String(describing: self))
+                    #endif
+                    
                     try self.export(profile: profile,
                                     subkeys: subkey.subkeys,
                                     domainSettings: domainSettings,
@@ -131,6 +136,11 @@ class ProfileExport {
                                     payloadContent: &payloadContent)
                     continue
                 } else if let parentSubkey = subkey.parentSubkey, (parentSubkey.type == .array || parentSubkey.type == .dictionary), !subkey.subkeys.isEmpty {
+                    
+                    #if DEBUG
+                        Log.shared.debug(message: "Subkey parent is an array or dictionary, will ignore this subkey and continue with it's subkeys", category: String(describing: self))
+                    #endif
+                    
                     try self.export(profile: profile,
                                     subkeys: subkey.subkeys,
                                     domainSettings: domainSettings,
@@ -140,6 +150,11 @@ class ProfileExport {
                                     payloadContent: &payloadContent)
                     continue
                 } else if subkey.type == .dictionary, subkey.subkeys.contains(where: { $0.key == ManifestKeyPlaceholder.key }) {
+                    
+                    #if DEBUG
+                        Log.shared.debug(message: "Subkey is a dictinoary with dynamic key/values, will ignore this subkey and continue with it's subkeys", category: String(describing: self))
+                    #endif
+                    
                     try self.export(profile: profile,
                                     subkeys: subkey.subkeys,
                                     domainSettings: domainSettings,
@@ -156,7 +171,7 @@ class ProfileExport {
                 try self.updatePayloadContent(subkey: subkey, typeSettings: typeSettings, domainSettings: domainSettings, payloadContent: &payloadContent)
             } else {
                 #if DEBUG
-                    Log.shared.debug(message: "Should export subkey: \(subkey.key): false")
+                    Log.shared.debug(message: "Should export subkey: \(subkey.keyPath) of type: \(subkey.type): false", category: String(describing: self))
                 #endif
             }
             
@@ -339,9 +354,7 @@ class ProfileExport {
             let newPayloadVersion = lastPayloadVersion + 1
             payloadContent[PayloadKey.payloadVersion] = newPayloadVersion
             if !self.ignoreSave {
-                profile.updatePayloadSettings(value: newPayloadVersion, key: PayloadKey.payloadVersion, domain: domain, type: type, updateComplete: { (success, error) in
-                    if success { profile.save(self) }
-                })
+                profile.updatePayloadSettings(value: newPayloadVersion, key: PayloadKey.payloadVersion, domain: domain, type: type)
                 
                 // ---------------------------------------------------------------------
                 //  Update Payload Hash
@@ -422,12 +435,18 @@ class ProfileExport {
                   payloadContent: Dictionary<String, Any>,
                   parentPayloadContent pPayloadContent: Any?) throws -> Any? {
         
+        #if DEBUG
+            Log.shared.debug(message: "Getting value for subkey: \(subkey.keyPath) of type: \(subkey.type)", category: String(describing: self))
+        #endif
+        
         // ---------------------------------------------------------------------
         //  Check if we got a parent subkey
         // ---------------------------------------------------------------------
         if let parentSubkey = pSubkey {
             
-            Log.shared.debug(message: "Parent subkey: \(parentSubkey.keyPath)")
+            #if DEBUG
+                Log.shared.debug(message: "Subkey: \(subkey.keyPath) has parent subkey: \(parentSubkey.keyPath) of type: \(parentSubkey.type)", category: String(describing: self))
+            #endif
             
             // ---------------------------------------------------------------------
             //  Get it's child subkey
@@ -439,8 +458,11 @@ class ProfileExport {
                 childSubkey = parentSubkeys[(parentSubkeyIndex + 1)]
             }
             
-            Log.shared.debug(message: "Child subkey: \(String(describing: childSubkey?.keyPath))")
-            Log.shared.debug(message: "Parent subkey type: \(parentSubkey.type)")
+            #if DEBUG
+                if let cSubkey = childSubkey {
+                    Log.shared.debug(message: "Parent subkey: \(parentSubkey.keyPath) has child subkey: \(cSubkey.keyPath) of type: \(cSubkey.type)", category: String(describing: self))
+                }
+            #endif
             
             // ---------------------------------------------------------------------
             //  Get the settings for the parent subkey
@@ -448,6 +470,22 @@ class ProfileExport {
             switch parentSubkey.type {
             case .array:
                 
+                // ---------------------------------------------------------------------
+                //  Get the parent subkey payload content
+                // ---------------------------------------------------------------------
+                var parentPayloadContent = pPayloadContent as? [Any] ?? [Any]()
+                
+                #if DEBUG
+                    Log.shared.debug(message: "Parent subkey: \(parentSubkey.keyPath) has payloadContent: \(parentPayloadContent)", category: String(describing: self))
+                #endif
+                
+                if let pSettings = parentSettings as? Dictionary<String, Any> {
+                    if let value = try self.getValue(forSubkey: subkey, typeSettings: typeSettings, domainSettings: domainSettings, parentDomainSettings: pSettings) {
+                        parentPayloadContent.append(value)
+                    }
+                    return parentPayloadContent
+                }
+
                 // ---------------------------------------------------------------------
                 //  Get the parent subkey settings
                 // ---------------------------------------------------------------------
@@ -459,21 +497,23 @@ class ProfileExport {
                 }
                 
                 // ---------------------------------------------------------------------
-                //  Get the parent subkey payload content
-                // ---------------------------------------------------------------------
-                var parentPayloadContent = pPayloadContent as? [Any] ?? [Any]()
-                
-                // ---------------------------------------------------------------------
                 //  Loop over all parent settings to get each setting for subkey
                 // ---------------------------------------------------------------------
                 for (index, childSettings) in parentSubkeySettings.enumerated() {
-                    Swift.print("Parent Subkey Settings at index: \(index): settings: \(childSettings)")
+                    
+                    #if DEBUG
+                        Log.shared.debug(message: "Parent subkey: \(parentSubkey.keyPath) has settings: \(childSettings) at index: \(index)", category: String(describing: self))
+                        Log.shared.debug(message: "Parent subkey: \(parentSubkey.keyPath) has payloadContent: \(parentPayloadContent) at index: \(index)", category: String(describing: self))
+                    #endif
                     
                     var childPayloadContent: Any?
                     if (index + 1) <= parentPayloadContent.count {
                         childPayloadContent = parentPayloadContent[index]
                     }
-                    Swift.print("childPayloadContent: \(String(describing: childPayloadContent))")
+                    
+                    #if DEBUG
+                        Log.shared.debug(message: "Child subkey: \(childSubkey?.keyPath ?? "nil") has payloadContent: \(childPayloadContent ?? "nil") at index: \(index)", category: String(describing: self))
+                    #endif
                     
                     if let subkeyValue = try self.getValue(forSubkey: subkey,
                                                            parentSubkey: childSubkey,
@@ -482,7 +522,17 @@ class ProfileExport {
                                                            parentSettings: childSettings,
                                                            payloadContent: payloadContent,
                                                            parentPayloadContent: childPayloadContent) {
-                        parentPayloadContent.insert(subkeyValue, at: index)
+                        
+                        #if DEBUG
+                            Log.shared.debug(message: "Setting: \(subkeyValue) at index: \(index)", category: String(describing: self))
+                        #endif
+                        if childPayloadContent == nil {
+                            parentPayloadContent.insert(subkeyValue, at: index)
+                        } else if (index + 1) <= parentPayloadContent.count {
+                            parentPayloadContent[index] = subkeyValue
+                        } else {
+                            Log.shared.error(message: "Failed to update parent payload content for subkey: \(parentSubkey.keyPath) at index: \(index)", category: String(describing: self))
+                        }
                     }
                 }
                 
@@ -659,15 +709,18 @@ class ProfileExport {
     
     func updatePayloadContent(subkey: PayloadSourceSubkey, typeSettings: Dictionary<String, Any>, domainSettings: Dictionary<String, Any>, payloadContent: inout Dictionary<String, Any>) throws {
         
+        #if DEBUG
+            Log.shared.debug(message: "Updating payload content for subkey: \(subkey.keyPath) of type: \(subkey.type)", category: String(describing: self))
+        #endif
+        
         // ---------------------------------------------------------------------
         //  If subkey has parents, need to update to parent settings
         // ---------------------------------------------------------------------
         if let rootSubkey = subkey.rootSubkey {
             
             #if DEBUG
-                Log.shared.debug(message: "Subkey: \(subkey.keyPath) has root subkey: \(rootSubkey.keyPath)")
+                Log.shared.debug(message: "Subkey: \(subkey.keyPath) has root subkey: \(rootSubkey.keyPath)", category: String(describing: self))
             #endif
-            
             if let rootSubkeyValue = try self.getValue(forSubkey: subkey,
                                                        parentSubkey: rootSubkey,
                                                        typeSettings: typeSettings,
@@ -675,21 +728,25 @@ class ProfileExport {
                                                        parentSettings: domainSettings[rootSubkey.keyPath],
                                                        payloadContent: payloadContent,
                                                        parentPayloadContent: payloadContent[rootSubkey.key]) {
-                Log.shared.debug(message: "Root subkey value: \(rootSubkeyValue)")
+                #if DEBUG
+                    Log.shared.debug(message: "Setting: \(rootSubkey.key) = \(rootSubkeyValue)", category: String(describing: self))
+                #endif
+                
                 payloadContent[rootSubkey.key] = rootSubkeyValue
             } else {
-                Log.shared.error(message: "No value returned for the root subkey")
-                // FIXME: Add Correct Error
-                throw ProfileExportError.unknownError
+                Log.shared.error(message: "No value returned for the root subkey: \(rootSubkey.keyPath)", category: String(describing: self))
+                throw ProfileExportError.unknownError // FIXME: Add Correct Error
             }
         } else if let value = try self.getValue(forSubkey: subkey, typeSettings: typeSettings, domainSettings: domainSettings, parentDomainSettings: nil) {
+            
             #if DEBUG
-                Log.shared.debug(message: "Setting: \(subkey.key) = \(value)")
+                Log.shared.debug(message: "Setting: \(subkey.key) = \(value)", category: String(describing: self))
             #endif
+            
             payloadContent[subkey.key] = value
         } else {
-            // FIXME: Add correct error
-            throw ProfileExportError.unknownError
+            Log.shared.error(message: "No value returned for the subkey: \(subkey.keyPath)", category: String(describing: self))
+            throw ProfileExportError.unknownError // FIXME: Add Correct Error
         }
     }
     

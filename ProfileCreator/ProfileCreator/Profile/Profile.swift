@@ -81,7 +81,7 @@ public class Profile: NSDocument {
     // Show Platform tvOS
     @objc public var editorShowTvOS: Bool = false
     public let editorShowTvOSSelector: String
-
+    
     // Show Column Enable
     @objc public var editorColumnEnable: Bool = false
     public let editorColumnEnableSelector: String
@@ -93,7 +93,7 @@ public class Profile: NSDocument {
     // Show Scope System
     @objc public var editorShowScopeSystem: Bool = false
     public let editorShowScopeSystemSelector: String
-
+    
     // MARK: -
     // MARK: Initialization
     
@@ -145,7 +145,7 @@ public class Profile: NSDocument {
         self.addObserver(self, forKeyPath: self.editorDistributionMethodSelector, options: .new, context: nil)
         self.addObserver(self, forKeyPath: self.editorDisableOptionalKeysSelector, options: .new, context: nil)
     }
-        
+    
     private func initialize(viewSettings: Dictionary<String, Any>) {
         
         // Disable Optional Keys
@@ -224,7 +224,7 @@ public class Profile: NSDocument {
     
     // MARK: -
     // MARK: Private Functions
-
+    
     private func saveDict() -> [String : Any] {
         
         // ---------------------------------------------------------------------
@@ -472,22 +472,16 @@ public class Profile: NSDocument {
                             returnValue: { (newProfileName, response) in
                                 switch response {
                                 case .alertFirstButtonReturn:
-                                    self.updatePayloadSettings(value: newProfileName,
-                                                               key: "PayloadDisplayName", // Somehow I cannot use the PayloadKey.payloadDisplayName here
-                                        domain: ManifestDomain.general,
-                                        type: .manifest, updateComplete: { (success, error) in
-                                            if success {
-                                                self.save(operationType: .saveOperation, completionHandler: { (saveError) in
-                                                    if saveError == nil {
-                                                        if closeWindow {
-                                                            windowController.performSelector(onMainThread: #selector(windowController.windowClose), with: windowController, waitUntilDone: false)
-                                                        }
-                                                        Log.shared.log(message: "Saving profile: \"\(self.title)\" at path: \(self.fileURL?.path ?? "") was successful")
-                                                    } else {
-                                                        Log.shared.error(message: "Saving profile: \(self.title) failed with error: \(String(describing: saveError?.localizedDescription))")
-                                                    }
-                                                })
+                                    self.updatePayloadSettings(value: newProfileName, key: PayloadKey.payloadDisplayName, domain: ManifestDomain.general, type: .manifest)
+                                    self.save(operationType: .saveOperation, completionHandler: { (saveError) in
+                                        if saveError == nil {
+                                            if closeWindow {
+                                                windowController.performSelector(onMainThread: #selector(windowController.windowClose), with: windowController, waitUntilDone: false)
                                             }
+                                            Log.shared.log(message: "Saving profile: \"\(self.title)\" at path: \(self.fileURL?.path ?? "") was successful")
+                                        } else {
+                                            Log.shared.error(message: "Saving profile: \(self.title) failed with error: \(String(describing: saveError?.localizedDescription))")
+                                        }
                                     })
                                 case .alertSecondButtonReturn:
                                     windowController.performSelector(onMainThread: #selector(windowController.windowClose), with: windowController, waitUntilDone: false)
@@ -689,7 +683,7 @@ extension Profile {
         }
         
         if let conditionSubkey = self.conditionSubkey, conditionSubkey == subkey { Swift.print("This is an infinite loop, returning false"); return false }
-            
+        
         let requiredConditionals = subkey.conditionals.flatMap({ $0.require != .none ? $0 : nil })
         if !requiredConditionals.isEmpty {
             return self.subkeyMatchConditionals(conditionals: requiredConditionals)
@@ -702,12 +696,19 @@ extension Profile {
         
         var parentIsEnabled = true
         if !onlyByUser, let parentSubkeys = subkey.parentSubkeys {
-            for parentSubkey in parentSubkeys {
-                if !self.isEnabled(subkey: parentSubkey, onlyByUser: false) {
-                    parentIsEnabled = false
+            if !(parentSubkeys.count == 1 && parentSubkeys.first?.rootSubkey == nil && parentSubkeys.first?.type == .dictionary) {
+                for parentSubkey in parentSubkeys {
+                    if !self.isEnabled(subkey: parentSubkey, onlyByUser: false) {
+                        parentIsEnabled = false
+                    }
                 }
             }
         }
+        
+        if parentIsEnabled, subkey.parentSubkey?.type == .array {
+            return true
+        }
+        
         //Log.shared.debug(message: "Subkey parent is enabled: \(parentIsEnabled)", category: #function)
         
         var isEnabled = !self.editorDisableOptionalKeys

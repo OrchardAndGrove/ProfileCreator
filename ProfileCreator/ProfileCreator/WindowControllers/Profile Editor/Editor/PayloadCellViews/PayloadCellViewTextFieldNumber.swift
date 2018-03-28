@@ -63,15 +63,15 @@ class PayloadCellViewTextFieldNumber: PayloadCellView, ProfileCreatorCellView, N
         // ---------------------------------------------------------------------
         //  Set Default Value
         // ---------------------------------------------------------------------
-        if let valueDefault = subkey.valueDefault as? String {
-            self.valueDefault = valueDefault
+        if let valueDefault = subkey.valueDefault as? NSNumber {
+            self.valueDefault = valueDefault.stringValue
         }
         
         // ---------------------------------------------------------------------
         //  Set Placeholder Value
         // ---------------------------------------------------------------------
-        if let valuePlaceholder = subkey.valuePlaceholder as? String {
-            self.textFieldInput?.placeholderString = valuePlaceholder
+        if let valuePlaceholder = subkey.valuePlaceholder as? NSNumber {
+            self.textFieldInput?.placeholderString = valuePlaceholder.stringValue
         } else if editor.profile?.isRequired(subkey: subkey) ?? false {
             self.textFieldInput?.placeholderString = NSLocalizedString("Required", comment: "")
         }

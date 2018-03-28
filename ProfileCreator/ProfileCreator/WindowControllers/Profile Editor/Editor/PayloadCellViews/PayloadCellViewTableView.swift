@@ -172,10 +172,12 @@ class PayloadCellViewTableView: PayloadCellView, ProfileCreatorCellView, TableVi
     
     private func setupTableViewContent(subkey: PayloadSourceSubkey) {
         
+        guard let tableView = self.tableView else { return }
+        
         // FIXME: Highly temporary implementation
         if subkey.subkeys.count == 1, let tableViewSubkey = subkey.subkeys.first {
-            if tableViewSubkey.type == PayloadValueType.dictionary {
-                guard let tableView = self.tableView else { return }
+            switch tableViewSubkey.type {
+            case .dictionary:
                 for tableViewColumnSubkey in tableViewSubkey.subkeys {
                     self.tableViewColumns.append(tableViewColumnSubkey)
                     
@@ -189,11 +191,25 @@ class PayloadCellViewTableView: PayloadCellView, ProfileCreatorCellView, TableVi
                     self.tableView?.headerView = nil
                     self.tableView?.toolTip = tableViewSubkey.subkeys.first?.description
                 }
-            } else {
+            case .array:
+                // FIXME: Handle arrays in arrays
+                for tableViewColumnSubkey in tableViewSubkey.subkeys {
+                    if tableViewColumnSubkey.type == .array {
+                        for nextSubkey in tableViewColumnSubkey.subkeys {
+                            self.tableViewColumns.append(nextSubkey)
+                            
+                            // ---------------------------------------------------------------------
+                            //  Setup TableColumn
+                            // ---------------------------------------------------------------------
+                            tableView.addTableColumn(self.tableColumn(forSubkey: nextSubkey))
+                        }
+                    }
+                    Swift.print("tableViewColumnSubkey: \(tableViewColumnSubkey.keyPath)")
+                }
+            default:
                 Swift.print("Class: \(self.self), Function: \(#function), Type is: \(tableViewSubkey.type), need to implement this!")
             }
         } else if subkey.subkeys.contains(where: { $0.key == ManifestKeyPlaceholder.key }) {
-            guard let tableView = self.tableView else { return }
             for tableViewColumnSubkey in subkey.subkeys.filter({ $0.key == ManifestKeyPlaceholder.key || $0.key == ManifestKeyPlaceholder.value }) {
                 self.tableViewColumns.append(tableViewColumnSubkey)
                 
@@ -327,12 +343,12 @@ extension PayloadCellViewTableView {
         
         // Top
         self.cellViewConstraints.append(NSLayoutConstraint(item: self.buttonAddRemove,
-                                              attribute: .top,
-                                              relatedBy: .equal,
-                                              toItem: scrollView,
-                                              attribute: .bottom,
-                                              multiplier: 1.0,
-                                              constant: 8.0))
+                                                           attribute: .top,
+                                                           relatedBy: .equal,
+                                                           toItem: scrollView,
+                                                           attribute: .bottom,
+                                                           multiplier: 1.0,
+                                                           constant: 8.0))
         
         self.updateHeight((8 + self.buttonAddRemove.intrinsicContentSize.height))
     }
