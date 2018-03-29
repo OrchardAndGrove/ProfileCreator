@@ -176,7 +176,7 @@ class PayloadCellViewTableView: PayloadCellView, ProfileCreatorCellView, TableVi
         
         // FIXME: Highly temporary implementation
         if subkey.subkeys.count == 1, let tableViewSubkey = subkey.subkeys.first {
-            switch tableViewSubkey.type {
+            switch tableViewSubkey.typeInput {
             case .dictionary:
                 for tableViewColumnSubkey in tableViewSubkey.subkeys {
                     self.tableViewColumns.append(tableViewColumnSubkey)
@@ -207,7 +207,7 @@ class PayloadCellViewTableView: PayloadCellView, ProfileCreatorCellView, TableVi
                     Swift.print("tableViewColumnSubkey: \(tableViewColumnSubkey.keyPath)")
                 }
             default:
-                Swift.print("Class: \(self.self), Function: \(#function), Type is: \(tableViewSubkey.type), need to implement this!")
+                Swift.print("Class: \(self.self), Function: \(#function), Type is: \(tableViewSubkey.typeInput), need to implement this!")
             }
         } else if subkey.subkeys.contains(where: { $0.key == ManifestKeyPlaceholder.key }) {
             for tableViewColumnSubkey in subkey.subkeys.filter({ $0.key == ManifestKeyPlaceholder.key || $0.key == ManifestKeyPlaceholder.value }) {
@@ -380,7 +380,7 @@ extension PayloadCellViewTableView: NSTableViewDelegate {
         
         let rowContent = self.tableViewContent[row]
         
-        switch tableColumnSubkey.type {
+        switch tableColumnSubkey.typeInput {
         case .string:
             if let columnContent = rowContent[tableColumn.identifier.rawValue] as? String {
                 return EditorTableViewCellViewTextField(cellView: self,

@@ -578,13 +578,21 @@ class ProfileExport {
                 } else if let valueRangeList = subkey.rangeList?.first {
                     value = valueRangeList
                 } else {
-                    value = PayloadUtility.emptyValue(valueType: subkey.type)
+                    value = PayloadUtility.emptyValue(valueType: subkey.typeInput)
                 }
                 
                 // Special case when the PayloadIdentifier isn't manually entered
                 if subkey.key == PayloadKey.payloadIdentifier, let payloadIdentifier = value as? String {
                     value = self.payloadIdentifier(payloadIdentifier: payloadIdentifier, typeSettings: typeSettings, domainSettings: domainSettings)
                 }
+            }
+        }
+        
+        // Check if the value should be processed
+        if let valueProcessorIdentifier = subkey.valueProcessor, let valueToProcess = value {
+            let valueProcessor = ValueProcessors.shared.processor(withIdentifier: valueProcessorIdentifier, inputType: subkey.typeInput, outputType: subkey.type)
+            if let valueProcessed = valueProcessor.process(value: valueToProcess) {
+                value = valueProcessed
             }
         }
         

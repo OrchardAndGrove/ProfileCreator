@@ -17,7 +17,7 @@ extension Array where Element: Equatable {
     }
 }
 
-// https://stackoverflow.com/a/33948261
+// From: https://stackoverflow.com/a/33948261
 extension Array {
     func objectsAtIndexes(indexes: IndexSet) -> [Element] {
         let elements: [Element] = indexes.map{ (idx) in

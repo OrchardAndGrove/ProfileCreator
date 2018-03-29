@@ -29,8 +29,7 @@ public class Profile: NSDocument {
     // Cached Operations
     var cacheEnabled = Dictionary<String, Any>()
     var cacheConditionals = Dictionary<String, Any>()
-    
-    
+
     weak var conditionSubkey: PayloadSourceSubkey?
     
     // View Settings
@@ -50,6 +49,10 @@ public class Profile: NSDocument {
         }
         return count
     }
+    
+    // MARK: -
+    // MARK: Settings Variables
+    public var selectedPlatforms: Platforms = []
     
     // MARK: -
     // MARK: Key/Value Observing Variables
@@ -148,6 +151,9 @@ public class Profile: NSDocument {
         // ---------------------------------------------------------------------
         self.addObserver(self, forKeyPath: self.editorDistributionMethodSelector, options: .new, context: nil)
         self.addObserver(self, forKeyPath: self.editorDisableOptionalKeysSelector, options: .new, context: nil)
+        self.addObserver(self, forKeyPath: self.editorShowIOSSelector, options: .new, context: nil)
+        self.addObserver(self, forKeyPath: self.editorShowMacOSSelector, options: .new, context: nil)
+        self.addObserver(self, forKeyPath: self.editorShowTvOSSelector, options: .new, context: nil)
     }
     
     private func initialize(viewSettings: Dictionary<String, Any>) {
@@ -206,11 +212,17 @@ public class Profile: NSDocument {
         if let editorShowScopeSystem = viewSettings[PreferenceKey.editorShowScopeSystem] as? Bool {
             self.editorShowScopeSystem = editorShowScopeSystem
         } else { self.editorShowScopeSystem = true }
+        
+        // Selected Platforms
+        _ = self.updatePayloadSettingsPlatforms()
     }
     
     deinit {
         self.removeObserver(self, forKeyPath: self.editorDistributionMethodSelector, context: nil)
         self.removeObserver(self, forKeyPath: self.editorDisableOptionalKeysSelector, context: nil)
+        self.removeObserver(self, forKeyPath: self.editorShowIOSSelector, context: nil)
+        self.removeObserver(self, forKeyPath: self.editorShowMacOSSelector, context: nil)
+        self.removeObserver(self, forKeyPath: self.editorShowTvOSSelector, context: nil)
     }
     
     // MARK: -
@@ -221,6 +233,10 @@ public class Profile: NSDocument {
         case self.editorDistributionMethodSelector,
              self.editorDisableOptionalKeysSelector:
             self.resetCache()
+        case self.editorShowIOSSelector,
+             self.editorShowMacOSSelector,
+             self.editorShowTvOSSelector:
+            _ = self.updatePayloadSettingsPlatforms()
         default:
             Swift.print("Class: \(self.self), Function: \(#function), observeValueforKeyPath: \(String(describing: keyPath))")
         }

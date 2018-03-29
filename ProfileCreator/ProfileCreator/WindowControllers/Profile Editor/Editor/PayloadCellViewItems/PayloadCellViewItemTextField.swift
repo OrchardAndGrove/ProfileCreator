@@ -18,8 +18,20 @@ class EditorTextField {
         
         guard var title = subkey.title, !title.isEmpty else { return nil }
         
+        // Add Supervised
         if subkey.supervised {
             title = title + " (Supervised)"
+        }
+        
+        // Add Platforms
+        if let platforms = subkey.platforms {
+            let platformsString = PayloadUtility.string(fromPlatforms: platforms)
+            title = title + " (\(platformsString) only)"
+        }
+        
+        if let notPlatforms = subkey.notPlatforms, let payloadSourcePlatforms = subkey.payloadSource?.platforms.subtracting(notPlatforms) {
+            let platformsString = PayloadUtility.string(fromPlatforms: payloadSourcePlatforms)
+            title = title + " (\(platformsString) only)"
         }
         
         // -------------------------------------------------------------------------

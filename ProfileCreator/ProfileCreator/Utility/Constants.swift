@@ -173,6 +173,10 @@ struct SidebarGroupTitle {
     static let jss = "JAMF JSS"
 }
 
+struct ValueProcessorIdentifier {
+    static let hex2data = "hex2data"
+}
+
 public struct SettingsKey {
     static let enabled = "Enabled"
     static let fileInfo = "FileInfo"

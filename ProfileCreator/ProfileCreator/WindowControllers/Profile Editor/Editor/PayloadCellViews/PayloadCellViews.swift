@@ -76,8 +76,18 @@ class PayloadCellViews {
             return nil
         }
         
+        // Check if subkey is only available on supervised devices
         if !profile.editorShowSupervised, subkey.supervised {
             return nil
+        }
+        
+        // Check if subkey is available in the selected platforms
+        if let platforms = subkey.platforms, platforms.isDisjoint(with: profile.selectedPlatforms) {
+                return nil
+        } else if
+            let notPlatforms = subkey.notPlatforms, let payloadSourcePlatforms = subkey.payloadSource?.platforms.subtracting(notPlatforms),
+            profile.selectedPlatforms.isDisjoint(with: payloadSourcePlatforms) {
+                return nil
         }
         
         // Get the current settings, should be better handled if an error getting the settings is presented
@@ -88,7 +98,7 @@ class PayloadCellViews {
             return PayloadCellViewPopUpButton(subkey: subkey, editor: profileEditor, settings: typeSettings)
         }
         
-        switch subkey.type {
+        switch subkey.typeInput {
         case .array:
             return PayloadCellViewTableView(subkey: subkey, editor: profileEditor, settings: typeSettings)
         case .string:
@@ -108,7 +118,7 @@ class PayloadCellViews {
                 return PayloadCellViewDictionary(subkey: subkey, editor: profileEditor, settings: typeSettings)
             }
         default:
-            Swift.print("Class: \(self.self), Function: \(#function), Unknown Manifest Type: \(subkey.type)")
+            Swift.print("Class: \(self.self), Function: \(#function), Unknown Manifest Type: \(subkey.typeInput)")
         }
         return nil
     }

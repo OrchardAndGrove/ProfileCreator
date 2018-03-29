@@ -92,7 +92,7 @@ extension PayloadCellViewEnable {
         // ---------------------------------------------------------------------
         var topConstant: CGFloat = 10.6
         
-        if subkey.type == .bool {
+        if subkey.typeInput == .bool {
             topConstant = 11.29
         }
         

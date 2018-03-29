@@ -45,6 +45,30 @@ extension Profile {
     // MARK: -
     // MARK: Payload Settings: Update
     
+    func updatePayloadSettingsPlatforms() -> Bool {
+        var newSelectedPlatforms: Platforms = []
+        
+        if self.editorShowIOS {
+            newSelectedPlatforms.insert(.iOS)
+        }
+        
+        if self.editorShowMacOS {
+            newSelectedPlatforms.insert(.macOS)
+        }
+        
+        if self.editorShowTvOS {
+            newSelectedPlatforms.insert(.tvOS)
+        }
+        
+        if self.selectedPlatforms != newSelectedPlatforms {
+            #if DEBUG
+                Log.shared.debug(message: "Updating selected platforms to: \(PayloadUtility.string(fromPlatforms: newSelectedPlatforms))", category: String(describing: self))
+            #endif
+            self.selectedPlatforms = newSelectedPlatforms
+            return true
+        } else { return false }
+    }
+    
     func updatePayloadSettings(value: Any?, subkey: PayloadSourceSubkey) {
         self.updatePayloadSettings(value: value, key: subkey.keyPath, domain: subkey.domain, type: subkey.payloadSourceType)
     }
