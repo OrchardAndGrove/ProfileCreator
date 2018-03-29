@@ -594,6 +594,11 @@ class ProfileExport {
             if let valueProcessed = valueProcessor.process(value: valueToProcess) {
                 value = valueProcessed
             }
+        } else if subkey.typeInput != subkey.type, let valueToProcess = value {
+            let valueProcessor = PayloadValueProcessors.shared.processor(inputType: subkey.typeInput, outputType: subkey.type)
+            if let valueProcessed = valueProcessor.process(value: valueToProcess) {
+                value = valueProcessed
+            }
         }
         
         // Verify the value is valid for the subkey

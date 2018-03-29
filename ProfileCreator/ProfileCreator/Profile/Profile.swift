@@ -52,10 +52,13 @@ public class Profile: NSDocument {
     
     // MARK: -
     // MARK: Settings Variables
+    
     public var selectedPlatforms: Platforms = []
     
     // MARK: -
     // MARK: Key/Value Observing Variables
+    @objc public var selectedPlatformsUpdated: Bool = false
+    public let editorSelectedPlatformsUpdatedSelector: String
     
     // Disable Optional Keys
     @objc public var editorDisableOptionalKeys: Bool = false
@@ -130,6 +133,7 @@ public class Profile: NSDocument {
         self.editorShowTvOSSelector = NSStringFromSelector(#selector(getter: self.editorShowTvOS))
         self.editorShowScopeUserSelector = NSStringFromSelector(#selector(getter: self.editorShowScopeUser))
         self.editorShowScopeSystemSelector = NSStringFromSelector(#selector(getter: self.editorShowScopeSystem))
+        self.editorSelectedPlatformsUpdatedSelector = NSStringFromSelector(#selector(getter: self.selectedPlatformsUpdated))
         
         // ---------------------------------------------------------------------
         //  Initialize Self

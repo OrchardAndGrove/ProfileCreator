@@ -73,9 +73,7 @@ class ProfileEditor: NSObject {
         profile.addObserver(self, forKeyPath: profile.editorShowDisabledSelector, options: .new, context: nil)
         profile.addObserver(self, forKeyPath: profile.editorShowHiddenSelector, options: .new, context: nil)
         profile.addObserver(self, forKeyPath: profile.editorShowSupervisedSelector, options: .new, context: nil)
-        profile.addObserver(self, forKeyPath: profile.editorShowIOSSelector, options: .new, context: nil)
-        profile.addObserver(self, forKeyPath: profile.editorShowMacOSSelector, options: .new, context: nil)
-        profile.addObserver(self, forKeyPath: profile.editorShowTvOSSelector, options: .new, context: nil)
+        profile.addObserver(self, forKeyPath: profile.editorSelectedPlatformsUpdatedSelector, options: .new, context: nil)
         
         // ---------------------------------------------------------------------
         //  Activate layout constraints
@@ -99,9 +97,7 @@ class ProfileEditor: NSObject {
             profile.removeObserver(self, forKeyPath: profile.editorShowDisabledSelector, context: nil)
             profile.removeObserver(self, forKeyPath: profile.editorShowHiddenSelector, context: nil)
             profile.removeObserver(self, forKeyPath: profile.editorShowSupervisedSelector, context: nil)
-            profile.removeObserver(self, forKeyPath: profile.editorShowIOSSelector, context: nil)
-            profile.removeObserver(self, forKeyPath: profile.editorShowMacOSSelector, context: nil)
-            profile.removeObserver(self, forKeyPath: profile.editorShowTvOSSelector, context: nil)
+            profile.removeObserver(self, forKeyPath: profile.editorSelectedPlatformsUpdatedSelector, context: nil)
         }
     }
     
@@ -113,9 +109,7 @@ class ProfileEditor: NSObject {
              profile.editorShowHiddenSelector,
              profile.editorShowSupervisedSelector,
              profile.editorDisableOptionalKeysSelector,
-             profile.editorShowIOSSelector,
-             profile.editorShowMacOSSelector,
-             profile.editorShowTvOSSelector:
+             profile.editorSelectedPlatformsUpdatedSelector:
             
             self.reloadTableView(updateCellViews: true)
         case profile.editorColumnEnableSelector:

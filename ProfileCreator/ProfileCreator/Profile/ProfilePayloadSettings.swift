@@ -65,6 +65,7 @@ extension Profile {
                 Log.shared.debug(message: "Updating selected platforms to: \(PayloadUtility.string(fromPlatforms: newSelectedPlatforms))", category: String(describing: self))
             #endif
             self.selectedPlatforms = newSelectedPlatforms
+            self.setValue(!self.selectedPlatformsUpdated, forKeyPath: self.editorSelectedPlatformsUpdatedSelector)
             return true
         } else { return false }
     }
