@@ -26,7 +26,11 @@ public class Profile: NSDocument {
     
     var alert: Alert?
     
-    var conditionResults = Dictionary<String, Any>()
+    // Cached Operations
+    var cacheEnabled = Dictionary<String, Any>()
+    var cacheConditionals = Dictionary<String, Any>()
+    
+    
     weak var conditionSubkey: PayloadSourceSubkey?
     
     // View Settings
@@ -216,7 +220,7 @@ public class Profile: NSDocument {
         switch keyPath ?? "" {
         case self.editorDistributionMethodSelector,
              self.editorDisableOptionalKeysSelector:
-            self.resetConditionResults()
+            self.resetCache()
         default:
             Swift.print("Class: \(self.self), Function: \(#function), observeValueforKeyPath: \(String(describing: keyPath))")
         }
@@ -694,6 +698,13 @@ extension Profile {
     
     func isEnabled(subkey: PayloadSourceSubkey, onlyByUser: Bool) -> Bool {
         
+        if let isEnabledCache = self.cacheEnabled[subkey.keyPath] as? Bool {
+            #if DEBUGISENABLED
+                Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(isEnabledCache) (cache)", category: String(describing: self))
+            #endif
+            return isEnabledCache
+        }
+ 
         var parentIsEnabled = true
         if !onlyByUser, let parentSubkeys = subkey.parentSubkeys {
             //if !(parentSubkeys.count == 1 && parentSubkeys.first?.rootSubkey == nil && parentSubkeys.first?.type == .dictionary) {
@@ -705,48 +716,58 @@ extension Profile {
             //}
         }
         
-        if parentIsEnabled, subkey.parentSubkey?.type == .array {
-            return true
-        }
-        
-        #if DEBUG
+        #if DEBUGISENABLED
             Log.shared.debug(message: "Subkey: \(subkey.keyPath) parent is enabled: \(parentIsEnabled)", category: String(describing: self))
         #endif
         
+        if parentIsEnabled, subkey.parentSubkey?.type == .array {
+            #if DEBUGISENABLED
+                Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(true) (array)", category: String(describing: self))
+            #endif
+            self.cacheEnabled[subkey.keyPath] = true
+            return true
+        }
+        
         var isEnabled = !self.editorDisableOptionalKeys
         if !onlyByUser, parentIsEnabled, self.isRequired(subkey: subkey) {
-            #if DEBUG
+            #if DEBUGISENABLED
                 Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(true) (required)", category: String(describing: self))
             #endif
+            self.cacheEnabled[subkey.keyPath] = true
             return true
         } else if
             let viewSettings = self.subkeyViewSettings(subkey: subkey),
             let enabled = viewSettings[SettingsKey.enabled] as? Bool {
-            #if DEBUG
+            #if DEBUGISENABLED
                 Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(enabled) (user)", category: String(describing: self))
             #endif
             isEnabled = enabled
         } else if !onlyByUser, parentIsEnabled, let enabledDefault = subkey.enabledDefault {
-            #if DEBUG
+            #if DEBUGISENABLED
                 Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(enabledDefault) (default)", category: String(describing: self))
             #endif
             isEnabled = enabledDefault
         } else if !onlyByUser, parentIsEnabled, subkey.parentSubkey?.type == .dictionary, (subkey.key == ManifestKeyPlaceholder.key || subkey.key == ManifestKeyPlaceholder.value) {
-            #if DEBUG
+            #if DEBUGISENABLED
                 Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(true) (dynamic dictionary)", category: String(describing: self))
             #endif
+            self.cacheEnabled[subkey.keyPath] = true
             return true
         }
         
-        if !isEnabled {
+        if !isEnabled, subkey.type != .array {
             for childSubkey in subkey.subkeys {
                 if self.isEnabled(subkey: childSubkey, onlyByUser: true) {
+                    #if DEBUGISENABLED
+                        Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(true) (child: \(childSubkey.keyPath))", category: String(describing: self))
+                    #endif
                     isEnabled = true
                     break
                 }
             }
         }
         
+        self.cacheEnabled[subkey.keyPath] = isEnabled
         return isEnabled
     }
     
@@ -767,7 +788,7 @@ extension Profile {
     func subkeyMatch(targetCondition: PayloadSourceTargetCondition) -> Bool {
         
         // Check cached value
-        if let conditionResult = self.conditionResults[targetCondition.identifier] as? Bool {
+        if let conditionResult = self.cacheConditionals[targetCondition.identifier] as? Bool {
             #if DEBUG
                 Log.shared.debug(message: "Returning cached condition result: \(conditionResult)", category: String(describing: self))
             #endif
@@ -808,7 +829,7 @@ extension Profile {
         }
         
         // Cache the condition result
-        self.conditionResults[targetCondition.identifier] = match
+        self.cacheConditionals[targetCondition.identifier] = match
         
         return match
     }
@@ -830,8 +851,9 @@ extension Profile {
         return match
     }
     
-    func resetConditionResults() {
-        self.conditionResults = Dictionary<String, Any>()
+    func resetCache() {
+        self.cacheConditionals = Dictionary<String, Any>()
+        self.cacheEnabled = Dictionary<String, Any>()
     }
     
     func subkeyViewSettings(subkey: PayloadSourceSubkey) -> Dictionary<String, Any>? {

@@ -39,7 +39,7 @@ extension Profile {
         // ---------------------------------------------------------------------
         //  Reset any cached condition results as updated settings might change those
         // ---------------------------------------------------------------------
-        self.resetConditionResults()
+        self.resetCache()
     }
     
     // MARK: -
@@ -97,7 +97,7 @@ extension Profile {
         // ---------------------------------------------------------------------
         //  Reset any cached condition results as updated settings might change those
         // ---------------------------------------------------------------------
-        self.resetConditionResults()
+        self.resetCache()
     }
     
     // MARK: -
