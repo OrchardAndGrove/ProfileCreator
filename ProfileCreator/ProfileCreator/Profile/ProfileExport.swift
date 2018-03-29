@@ -590,7 +590,7 @@ class ProfileExport {
         
         // Check if the value should be processed
         if let valueProcessorIdentifier = subkey.valueProcessor, let valueToProcess = value {
-            let valueProcessor = ValueProcessors.shared.processor(withIdentifier: valueProcessorIdentifier, inputType: subkey.typeInput, outputType: subkey.type)
+            let valueProcessor = PayloadValueProcessors.shared.processor(withIdentifier: valueProcessorIdentifier, inputType: subkey.typeInput, outputType: subkey.type)
             if let valueProcessed = valueProcessor.process(value: valueToProcess) {
                 value = valueProcessed
             }
