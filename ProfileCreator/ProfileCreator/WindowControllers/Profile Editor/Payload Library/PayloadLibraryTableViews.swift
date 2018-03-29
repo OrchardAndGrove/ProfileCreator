@@ -28,9 +28,6 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
     private var selectedPayloadPlaceholder: PayloadPlaceholder?
     private var generalPayloadPlaceholder: PayloadPlaceholder?
     
-    private var selectedScope: Targets = []
-    private var selectedDistribution: Distribution = []
-    
     private weak var profile: Profile?
     private weak var editor: ProfileEditor?
     private weak var librarySplitView: PayloadLibrarySplitView?
@@ -61,13 +58,9 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         //  Setup Notification Observers
         // ---------------------------------------------------------------------
         NotificationCenter.default.addObserver(self, selector: #selector(changePayloadSelected(_:)), name: .changePayloadSelected, object: nil)
-        profile.addObserver(self, forKeyPath: profile.editorDistributionMethodSelector, options: .new, context: nil)
+        profile.addObserver(self, forKeyPath: profile.editorSelectedDistributionUpdatedSelector, options: .new, context: nil)
         profile.addObserver(self, forKeyPath: profile.editorSelectedPlatformsUpdatedSelector, options: .new, context: nil)
-        profile.addObserver(self, forKeyPath: profile.editorShowScopeUserSelector, options: .new, context: nil)
-        profile.addObserver(self, forKeyPath: profile.editorShowScopeSystemSelector, options: .new, context: nil)
-        
-        self.updateSelectedScope()
-        self.updateSelectedDistribution()
+        profile.addObserver(self, forKeyPath: profile.editorSelectedScopeUpdatedSelector, options: .new, context: nil)
         
         self.reloadTableviews()
         
@@ -91,44 +84,9 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         NotificationCenter.default.removeObserver(self, name: .changePayloadSelected, object: nil)
         
         if let profile = self.profile {
-            profile.removeObserver(self, forKeyPath: profile.editorDistributionMethodSelector, context: nil)
+            profile.removeObserver(self, forKeyPath: profile.editorSelectedDistributionUpdatedSelector, context: nil)
             profile.removeObserver(self, forKeyPath: profile.editorSelectedPlatformsUpdatedSelector, context: nil)
-            profile.removeObserver(self, forKeyPath: profile.editorShowScopeUserSelector, context: nil)
-            profile.removeObserver(self, forKeyPath: profile.editorShowScopeSystemSelector, context: nil)
-        }
-    }
-    
-    func updateSelectedScope() {
-        guard let profile = self.profile else { return }
-        
-        var newSelectedScope: Targets = []
-        
-        if profile.editorShowScopeUser {
-            newSelectedScope.insert(.user)
-        }
-        
-        if profile.editorShowScopeSystem {
-            newSelectedScope.insert(.system)
-        }
-        
-        if self.selectedScope != newSelectedScope {
-            self.selectedScope = newSelectedScope
-            if let selectedLibraryTag = self.selectedLibraryTag {
-                self.updateLibraryPayloads(tag: selectedLibraryTag)
-            }
-        }
-    }
-    
-    func updateSelectedDistribution() {
-        guard let profile = self.profile else { return }
-        
-        let newSelectedDistribution = Distribution(string: profile.editorDistributionMethod)
-        
-        if self.selectedDistribution != newSelectedDistribution {
-            self.selectedDistribution = newSelectedDistribution
-            if let selectedLibraryTag = self.selectedLibraryTag {
-                self.updateLibraryPayloads(tag: selectedLibraryTag)
-            }
+            profile.removeObserver(self, forKeyPath: profile.editorSelectedScopeUpdatedSelector, context: nil)
         }
     }
     
@@ -144,15 +102,12 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         guard let profile = self.profile else { return }
         switch keyPath ?? "" {
-        case profile.editorSelectedPlatformsUpdatedSelector:
+        case profile.editorSelectedDistributionUpdatedSelector,
+             profile.editorSelectedPlatformsUpdatedSelector,
+             profile.editorSelectedScopeUpdatedSelector:
             if let selectedLibraryTag = self.selectedLibraryTag {
                 self.updateLibraryPayloads(tag: selectedLibraryTag)
             }
-        case profile.editorShowScopeUserSelector,
-             profile.editorShowScopeSystemSelector:
-            self.updateSelectedScope()
-        case profile.editorDistributionMethodSelector:
-            self.updateSelectedDistribution()
         default:
             Swift.print("Class: \(self.self), Function: \(#function), observeValueforKeyPath: \(String(describing: keyPath))")
         }
@@ -219,9 +174,9 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         case .appleDomains:
             guard let profile = self.profile else { return nil }
             if var manifestPlaceholders = ProfilePayloads.shared.manifestPlaceholders() {
-                manifestPlaceholders = manifestPlaceholders.filter({ !$0.payloadSource.distribution.isDisjoint(with: self.selectedDistribution) })
+                manifestPlaceholders = manifestPlaceholders.filter({ !$0.payloadSource.distribution.isDisjoint(with: profile.selectedDistribution) })
                 manifestPlaceholders = manifestPlaceholders.filter({ !$0.payloadSource.platforms.isDisjoint(with: profile.selectedPlatforms) })
-                manifestPlaceholders = manifestPlaceholders.filter({ !$0.payloadSource.targets.isDisjoint(with: self.selectedScope) })
+                manifestPlaceholders = manifestPlaceholders.filter({ !$0.payloadSource.targets.isDisjoint(with: profile.selectedScope) })
                 return Array(Set(manifestPlaceholders).subtracting(self.profilePayloads))
             } else { return nil }
         case .appleCollections:

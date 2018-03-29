@@ -67,13 +67,14 @@ class ProfileEditor: NSObject {
         // ---------------------------------------------------------------------
         //  Setup Notification Observers
         // ---------------------------------------------------------------------
-        profile.addObserver(self, forKeyPath: profile.editorDistributionMethodSelector, options: .new, context: nil)
         profile.addObserver(self, forKeyPath: profile.editorDisableOptionalKeysSelector, options: .new, context: nil)
         profile.addObserver(self, forKeyPath: profile.editorColumnEnableSelector, options: .new, context: nil)
         profile.addObserver(self, forKeyPath: profile.editorShowDisabledSelector, options: .new, context: nil)
         profile.addObserver(self, forKeyPath: profile.editorShowHiddenSelector, options: .new, context: nil)
         profile.addObserver(self, forKeyPath: profile.editorShowSupervisedSelector, options: .new, context: nil)
         profile.addObserver(self, forKeyPath: profile.editorSelectedPlatformsUpdatedSelector, options: .new, context: nil)
+        profile.addObserver(self, forKeyPath: profile.editorSelectedScopeUpdatedSelector, options: .new, context: nil)
+        profile.addObserver(self, forKeyPath: profile.editorSelectedDistributionUpdatedSelector, options: .new, context: nil)
         
         // ---------------------------------------------------------------------
         //  Activate layout constraints
@@ -91,25 +92,27 @@ class ProfileEditor: NSObject {
         self.tableView.delegate = nil
         
         if let profile = self.profile {
-            profile.removeObserver(self, forKeyPath: profile.editorDistributionMethodSelector, context: nil)
             profile.removeObserver(self, forKeyPath: profile.editorDisableOptionalKeysSelector, context: nil)
             profile.removeObserver(self, forKeyPath: profile.editorColumnEnableSelector, context: nil)
             profile.removeObserver(self, forKeyPath: profile.editorShowDisabledSelector, context: nil)
             profile.removeObserver(self, forKeyPath: profile.editorShowHiddenSelector, context: nil)
             profile.removeObserver(self, forKeyPath: profile.editorShowSupervisedSelector, context: nil)
             profile.removeObserver(self, forKeyPath: profile.editorSelectedPlatformsUpdatedSelector, context: nil)
+            profile.removeObserver(self, forKeyPath: profile.editorSelectedScopeUpdatedSelector, context: nil)
+            profile.removeObserver(self, forKeyPath: profile.editorSelectedDistributionUpdatedSelector, context: nil)
         }
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         guard let profile = self.profile else { return }
         switch keyPath ?? "" {
-        case profile.editorDistributionMethodSelector,
-             profile.editorShowDisabledSelector,
+        case profile.editorShowDisabledSelector,
              profile.editorShowHiddenSelector,
              profile.editorShowSupervisedSelector,
              profile.editorDisableOptionalKeysSelector,
-             profile.editorSelectedPlatformsUpdatedSelector:
+             profile.editorSelectedPlatformsUpdatedSelector,
+             profile.editorSelectedScopeUpdatedSelector,
+             profile.editorSelectedDistributionUpdatedSelector:
             
             self.reloadTableView(updateCellViews: true)
         case profile.editorColumnEnableSelector:

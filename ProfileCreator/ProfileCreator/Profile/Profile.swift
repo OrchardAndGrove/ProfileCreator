@@ -29,7 +29,7 @@ public class Profile: NSDocument {
     // Cached Operations
     var cacheEnabled = Dictionary<String, Any>()
     var cacheConditionals = Dictionary<String, Any>()
-
+    
     weak var conditionSubkey: PayloadSourceSubkey?
     
     // View Settings
@@ -53,12 +53,24 @@ public class Profile: NSDocument {
     // MARK: -
     // MARK: Settings Variables
     
+    public var selectedDistribution: Distribution = []
     public var selectedPlatforms: Platforms = []
+    public var selectedScope: Targets = []
     
     // MARK: -
     // MARK: Key/Value Observing Variables
+    
+    // Selected Distribution Method
+    @objc public var selectedDistributionUpdated: Bool = false
+    public let editorSelectedDistributionUpdatedSelector: String
+    
+    // Selected Platform
     @objc public var selectedPlatformsUpdated: Bool = false
     public let editorSelectedPlatformsUpdatedSelector: String
+    
+    // Selected Scope
+    @objc public var selectedScopeUpdated: Bool = false
+    public let editorSelectedScopeUpdatedSelector: String
     
     // Disable Optional Keys
     @objc public var editorDisableOptionalKeys: Bool = false
@@ -134,6 +146,8 @@ public class Profile: NSDocument {
         self.editorShowScopeUserSelector = NSStringFromSelector(#selector(getter: self.editorShowScopeUser))
         self.editorShowScopeSystemSelector = NSStringFromSelector(#selector(getter: self.editorShowScopeSystem))
         self.editorSelectedPlatformsUpdatedSelector = NSStringFromSelector(#selector(getter: self.selectedPlatformsUpdated))
+        self.editorSelectedScopeUpdatedSelector = NSStringFromSelector(#selector(getter: self.selectedScopeUpdated))
+        self.editorSelectedDistributionUpdatedSelector = NSStringFromSelector(#selector(getter: self.selectedDistributionUpdated))
         
         // ---------------------------------------------------------------------
         //  Initialize Self
@@ -158,6 +172,8 @@ public class Profile: NSDocument {
         self.addObserver(self, forKeyPath: self.editorShowIOSSelector, options: .new, context: nil)
         self.addObserver(self, forKeyPath: self.editorShowMacOSSelector, options: .new, context: nil)
         self.addObserver(self, forKeyPath: self.editorShowTvOSSelector, options: .new, context: nil)
+        self.addObserver(self, forKeyPath: self.editorShowScopeUserSelector, options: .new, context: nil)
+        self.addObserver(self, forKeyPath: self.editorShowScopeSystemSelector, options: .new, context: nil)
     }
     
     private func initialize(viewSettings: Dictionary<String, Any>) {
@@ -217,8 +233,14 @@ public class Profile: NSDocument {
             self.editorShowScopeSystem = editorShowScopeSystem
         } else { self.editorShowScopeSystem = true }
         
+        // Selected Distribution
+        self.updatePayloadSettingsDistribution()
+        
         // Selected Platforms
-        _ = self.updatePayloadSettingsPlatforms()
+        self.updatePayloadSettingsPlatforms()
+        
+        // Selected Scope
+        self.updatePayloadSettingsScope()
     }
     
     deinit {
@@ -227,6 +249,8 @@ public class Profile: NSDocument {
         self.removeObserver(self, forKeyPath: self.editorShowIOSSelector, context: nil)
         self.removeObserver(self, forKeyPath: self.editorShowMacOSSelector, context: nil)
         self.removeObserver(self, forKeyPath: self.editorShowTvOSSelector, context: nil)
+        self.removeObserver(self, forKeyPath: self.editorShowScopeUserSelector, context: nil)
+        self.removeObserver(self, forKeyPath: self.editorShowScopeSystemSelector, context: nil)
     }
     
     // MARK: -
@@ -234,13 +258,17 @@ public class Profile: NSDocument {
     
     override public func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         switch keyPath ?? "" {
-        case self.editorDistributionMethodSelector,
-             self.editorDisableOptionalKeysSelector:
+        case self.editorDisableOptionalKeysSelector:
             self.resetCache()
         case self.editorShowIOSSelector,
              self.editorShowMacOSSelector,
              self.editorShowTvOSSelector:
-            _ = self.updatePayloadSettingsPlatforms()
+            self.updatePayloadSettingsPlatforms()
+        case self.editorShowScopeUserSelector,
+             self.editorShowScopeSystemSelector:
+            self.updatePayloadSettingsScope()
+        case self.editorDistributionMethodSelector:
+            self.updatePayloadSettingsDistribution()
         default:
             Swift.print("Class: \(self.self), Function: \(#function), observeValueforKeyPath: \(String(describing: keyPath))")
         }
@@ -724,15 +752,15 @@ extension Profile {
             #endif
             return isEnabledCache
         }
- 
+        
         var parentIsEnabled = true
         if !onlyByUser, let parentSubkeys = subkey.parentSubkeys {
             //if !(parentSubkeys.count == 1 && parentSubkeys.first?.rootSubkey == nil && parentSubkeys.first?.type == .dictionary) {
-                for parentSubkey in parentSubkeys {
-                    if !self.isEnabled(subkey: parentSubkey, onlyByUser: false) {
-                        parentIsEnabled = false
-                    }
+            for parentSubkey in parentSubkeys {
+                if !self.isEnabled(subkey: parentSubkey, onlyByUser: false) {
+                    parentIsEnabled = false
                 }
+            }
             //}
         }
         

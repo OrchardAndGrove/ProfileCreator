@@ -45,29 +45,47 @@ extension Profile {
     // MARK: -
     // MARK: Payload Settings: Update
     
-    func updatePayloadSettingsPlatforms() -> Bool {
+    func updatePayloadSettingsDistribution() {
+        let newSelectedDistribution = Distribution(string: self.editorDistributionMethod)
+        if self.selectedDistribution != newSelectedDistribution {
+            #if DEBUG
+                Log.shared.debug(message: "Updating selected distribution method to: \(newSelectedDistribution)", category: String(describing: self))
+            #endif
+            
+            self.selectedDistribution = newSelectedDistribution
+            self.resetCache()
+            self.setValue(!self.selectedDistributionUpdated, forKeyPath: self.editorSelectedDistributionUpdatedSelector)
+        }
+    }
+    
+    func updatePayloadSettingsScope() {
+        var newSelectedScope: Targets = []
+        if self.editorShowScopeUser { newSelectedScope.insert(.user) }
+        if self.editorShowScopeSystem { newSelectedScope.insert(.system) }
+        if self.selectedScope != newSelectedScope {
+            #if DEBUG
+                Log.shared.debug(message: "Updating selected scope to: \(PayloadUtility.string(fromTargets: newSelectedScope))", category: String(describing: self))
+            #endif
+            
+            self.selectedScope = newSelectedScope
+            self.resetCache()
+            self.setValue(!self.selectedScopeUpdated, forKeyPath: self.editorSelectedScopeUpdatedSelector)
+        }
+    }
+    
+    func updatePayloadSettingsPlatforms() {
         var newSelectedPlatforms: Platforms = []
-        
-        if self.editorShowIOS {
-            newSelectedPlatforms.insert(.iOS)
-        }
-        
-        if self.editorShowMacOS {
-            newSelectedPlatforms.insert(.macOS)
-        }
-        
-        if self.editorShowTvOS {
-            newSelectedPlatforms.insert(.tvOS)
-        }
-        
+        if self.editorShowIOS { newSelectedPlatforms.insert(.iOS) }
+        if self.editorShowMacOS { newSelectedPlatforms.insert(.macOS) }
+        if self.editorShowTvOS { newSelectedPlatforms.insert(.tvOS) }
         if self.selectedPlatforms != newSelectedPlatforms {
             #if DEBUG
                 Log.shared.debug(message: "Updating selected platforms to: \(PayloadUtility.string(fromPlatforms: newSelectedPlatforms))", category: String(describing: self))
             #endif
             self.selectedPlatforms = newSelectedPlatforms
+            self.resetCache()
             self.setValue(!self.selectedPlatformsUpdated, forKeyPath: self.editorSelectedPlatformsUpdatedSelector)
-            return true
-        } else { return false }
+        }
     }
     
     func updatePayloadSettings(value: Any?, subkey: PayloadSourceSubkey) {
