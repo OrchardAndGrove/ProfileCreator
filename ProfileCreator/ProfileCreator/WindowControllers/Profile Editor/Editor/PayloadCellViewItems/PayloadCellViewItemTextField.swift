@@ -11,28 +11,13 @@ import ProfilePayloads
 
 class EditorTextField {
     
-    class func title(subkey: PayloadSourceSubkey,
+    class func title(profile: Profile,
+                     subkey: PayloadSourceSubkey,
                      indent: Int,
                      constraints: inout [NSLayoutConstraint],
                      cellView: PayloadCellView) -> NSTextField? {
         
-        guard var title = subkey.title, !title.isEmpty else { return nil }
-        
-        // Add Supervised
-        if subkey.supervised {
-            title = title + " (Supervised)"
-        }
-        
-        // Add Platforms
-        if let platforms = subkey.platforms {
-            let platformsString = PayloadUtility.string(fromPlatforms: platforms)
-            title = title + " (\(platformsString) only)"
-        }
-        
-        if let notPlatforms = subkey.notPlatforms, let payloadSourcePlatforms = subkey.payloadSource?.platforms.subtracting(notPlatforms) {
-            let platformsString = PayloadUtility.string(fromPlatforms: payloadSourcePlatforms)
-            title = title + " (\(platformsString) only)"
-        }
+        guard let title = profile.getTitleString(subkey: subkey), !title.isEmpty else { return nil }
         
         // -------------------------------------------------------------------------
         //  Create and setup text field

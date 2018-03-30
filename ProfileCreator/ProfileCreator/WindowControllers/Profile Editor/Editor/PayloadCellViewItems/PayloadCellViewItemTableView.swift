@@ -24,7 +24,6 @@ class EditorTableView {
         tableView.focusRingType = .none
         tableView.rowSizeStyle = .default
         tableView.floatsGroupRows = false
-        //tableView.headerView = nil
         tableView.allowsMultipleSelection = false
         tableView.intercellSpacing = NSSize(width: 0, height: 0)
         tableView.dataSource = cellView

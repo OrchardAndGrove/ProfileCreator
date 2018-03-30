@@ -719,6 +719,15 @@ extension Profile {
     // MARK: -
     // MARK: Payload Subkey: Check
     
+    func isAvailableForSelectedPlatform(subkey: PayloadSourceSubkey) -> Bool {
+        if let platforms = subkey.platforms {
+            return !platforms.isDisjoint(with: self.selectedPlatforms)
+        } else if let notPlatforms = subkey.notPlatforms, let payloadSourcePlatforms = subkey.payloadSource?.platforms.subtracting(notPlatforms) {
+            return !self.selectedPlatforms.isDisjoint(with: payloadSourcePlatforms)
+        }
+        return true
+    }
+    
     func isExcluded(subkey: PayloadSourceSubkey) -> Bool {
         return false
     }
@@ -736,7 +745,7 @@ extension Profile {
         
         if let conditionSubkey = self.conditionSubkey, conditionSubkey == subkey { Swift.print("This is an infinite loop, returning false"); return false }
         
-        let requiredConditionals = subkey.conditionals.flatMap({ $0.require != .none ? $0 : nil })
+        let requiredConditionals = subkey.conditionals.compactMap({ $0.require != .none ? $0 : nil })
         if !requiredConditionals.isEmpty {
             return self.subkeyMatchConditionals(conditionals: requiredConditionals)
         }
@@ -831,6 +840,29 @@ extension Profile {
             return NSLocalizedString("Set On Device", comment: "")
         }
         return nil
+    }
+    
+    func getTitleString(subkey: PayloadSourceSubkey) -> String? {
+        if var titleString = subkey.title {
+            
+            // Add Supervised
+            if subkey.supervised {
+                titleString = titleString + " (Supervised)"
+            }
+            
+            // Add Platforms
+            if let platforms = subkey.platforms {
+                let platformsString = PayloadUtility.string(fromPlatforms: platforms)
+                titleString = titleString + " (\(platformsString))"
+            }
+            
+            if let notPlatforms = subkey.notPlatforms, let payloadSourcePlatforms = subkey.payloadSource?.platforms.subtracting(notPlatforms) {
+                let platformsString = PayloadUtility.string(fromPlatforms: payloadSourcePlatforms)
+                titleString = titleString + " (\(platformsString))"
+            }
+            
+            return titleString
+        } else { return nil }
     }
     
     func subkeyMatch(targetCondition: PayloadSourceTargetCondition) -> Bool {

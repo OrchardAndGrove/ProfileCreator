@@ -23,6 +23,8 @@ class PayloadCellViewTableView: PayloadCellView, ProfileCreatorCellView, TableVi
     
     var isEditing = false
     
+    weak var profile: Profile?
+    
     // MARK: -
     // MARK: Initialization
     
@@ -32,6 +34,8 @@ class PayloadCellViewTableView: PayloadCellView, ProfileCreatorCellView, TableVi
     
     required init(subkey: PayloadSourceSubkey, editor: ProfileEditor, settings: Dictionary<String, Any>) {
         super.init(subkey: subkey, editor: editor, settings: settings)
+        
+        self.profile = editor.profile
         
         // ---------------------------------------------------------------------
         //  Setup Custom View Content
@@ -162,29 +166,32 @@ class PayloadCellViewTableView: PayloadCellView, ProfileCreatorCellView, TableVi
         }
     }
     
-    private func tableColumn(forSubkey subkey: PayloadSourceSubkey) -> NSTableColumn {
+    private func tableColumn(forSubkey subkey: PayloadSourceSubkey, profile: Profile) -> NSTableColumn {
         let tableColumn = NSTableColumn(identifier: NSUserInterfaceItemIdentifier(subkey.keyPath))
         tableColumn.isEditable = true
-        tableColumn.title = subkey.title ?? subkey.key
+        tableColumn.title = profile.getTitleString(subkey: subkey) ?? subkey.key
         tableColumn.headerToolTip = subkey.description
         return tableColumn
     }
     
     private func setupTableViewContent(subkey: PayloadSourceSubkey) {
         
-        guard let tableView = self.tableView else { return }
+        guard
+            let profile = self.profile,
+            let tableView = self.tableView else { return }
         
         // FIXME: Highly temporary implementation
         if subkey.subkeys.count == 1, let tableViewSubkey = subkey.subkeys.first {
             switch tableViewSubkey.typeInput {
             case .dictionary:
                 for tableViewColumnSubkey in tableViewSubkey.subkeys {
+                    if !profile.isAvailableForSelectedPlatform(subkey: tableViewColumnSubkey) { continue }
                     self.tableViewColumns.append(tableViewColumnSubkey)
                     
                     // ---------------------------------------------------------------------
                     //  Setup TableColumn
                     // ---------------------------------------------------------------------
-                    tableView.addTableColumn(self.tableColumn(forSubkey: tableViewColumnSubkey))
+                    tableView.addTableColumn(self.tableColumn(forSubkey: tableViewColumnSubkey, profile: profile))
                 }
                 
                 if tableViewSubkey.subkeys.count < 2 {
@@ -196,12 +203,13 @@ class PayloadCellViewTableView: PayloadCellView, ProfileCreatorCellView, TableVi
                 for tableViewColumnSubkey in tableViewSubkey.subkeys {
                     if tableViewColumnSubkey.type == .array {
                         for nextSubkey in tableViewColumnSubkey.subkeys {
+                            if !profile.isAvailableForSelectedPlatform(subkey: nextSubkey) { continue }
                             self.tableViewColumns.append(nextSubkey)
                             
                             // ---------------------------------------------------------------------
                             //  Setup TableColumn
                             // ---------------------------------------------------------------------
-                            tableView.addTableColumn(self.tableColumn(forSubkey: nextSubkey))
+                            tableView.addTableColumn(self.tableColumn(forSubkey: nextSubkey, profile: profile))
                         }
                     }
                     Swift.print("tableViewColumnSubkey: \(tableViewColumnSubkey.keyPath)")
@@ -211,12 +219,13 @@ class PayloadCellViewTableView: PayloadCellView, ProfileCreatorCellView, TableVi
             }
         } else if subkey.subkeys.contains(where: { $0.key == ManifestKeyPlaceholder.key }) {
             for tableViewColumnSubkey in subkey.subkeys.filter({ $0.key == ManifestKeyPlaceholder.key || $0.key == ManifestKeyPlaceholder.value }) {
+                if !profile.isAvailableForSelectedPlatform(subkey: tableViewColumnSubkey) { continue }
                 self.tableViewColumns.append(tableViewColumnSubkey)
                 
                 // ---------------------------------------------------------------------
                 //  Setup TableColumn
                 // ---------------------------------------------------------------------
-                tableView.addTableColumn(self.tableColumn(forSubkey: tableViewColumnSubkey))
+                tableView.addTableColumn(self.tableColumn(forSubkey: tableViewColumnSubkey, profile: profile))
                 
             }
             

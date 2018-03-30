@@ -73,7 +73,7 @@ class PayloadCellView: NSTableCellView {
         // ---------------------------------------------------------------------
         //  Setup Static View Content
         // ---------------------------------------------------------------------
-        if let textFieldTitle = EditorTextField.title(subkey: subkey, indent: self.indent, constraints: &self.cellViewConstraints, cellView: self) {
+        if let profile = editor.profile, let textFieldTitle = EditorTextField.title(profile: profile, subkey: subkey, indent: self.indent, constraints: &self.cellViewConstraints, cellView: self) {
             self.textFieldTitle = textFieldTitle
         }
         

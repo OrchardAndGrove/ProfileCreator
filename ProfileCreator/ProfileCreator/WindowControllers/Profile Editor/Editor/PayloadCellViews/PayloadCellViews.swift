@@ -44,7 +44,7 @@ class PayloadCellViews {
             
             if payloadPlaceholder.domain != ManifestDomain.general {
                 // Get all SHOWN enabled cellViews. (This works because the root manifest subkeys are all required and will always be enabled, even if they aren't shown.
-                let enabledCellViewKeys = sortedCellViews.flatMap({ profile.isEnabled(subkey: $0.subkey!, onlyByUser: false) ? $0.subkey!.key : nil })
+                let enabledCellViewKeys = sortedCellViews.compactMap({ profile.isEnabled(subkey: $0.subkey!, onlyByUser: false) ? $0.subkey!.key : nil })
                 
                 if enabledCellViewKeys.count == 0 || Array(Set(enabledCellViewKeys).subtracting(manifestSubkeysIgnored)).count == 0 {
                     let cellView = PayloadCellViewNoKeys(title: "No Payload Keys Enabled", description: "", profile: profile)

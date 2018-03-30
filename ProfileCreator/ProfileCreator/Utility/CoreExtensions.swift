@@ -13,7 +13,7 @@ import Foundation
 
 extension Array where Element: Equatable {
     func indexes(ofItems items: [Element]) -> IndexSet?  {
-        return IndexSet(self.enumerated().flatMap { items.contains($0.element) ? $0.offset : nil })
+        return IndexSet(self.enumerated().compactMap { items.contains($0.element) ? $0.offset : nil })
     }
 }
 
@@ -25,7 +25,7 @@ extension Array {
                 return self[idx]
             }
             return nil
-            }.flatMap{ $0 }
+            }.compactMap{ $0 }
         return elements
     }
 }
