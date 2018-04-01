@@ -58,6 +58,7 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         //  Setup Notification Observers
         // ---------------------------------------------------------------------
         NotificationCenter.default.addObserver(self, selector: #selector(changePayloadSelected(_:)), name: .changePayloadSelected, object: nil)
+        profile.addObserver(self, forKeyPath: profile.editorSettingsRestoredSelector, options: .new, context: nil)
         profile.addObserver(self, forKeyPath: profile.editorSelectedDistributionUpdatedSelector, options: .new, context: nil)
         profile.addObserver(self, forKeyPath: profile.editorSelectedPlatformsUpdatedSelector, options: .new, context: nil)
         profile.addObserver(self, forKeyPath: profile.editorSelectedScopeUpdatedSelector, options: .new, context: nil)
@@ -84,6 +85,7 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         NotificationCenter.default.removeObserver(self, name: .changePayloadSelected, object: nil)
         
         if let profile = self.profile {
+            profile.removeObserver(self, forKeyPath: profile.editorSettingsRestoredSelector, context: nil)
             profile.removeObserver(self, forKeyPath: profile.editorSelectedDistributionUpdatedSelector, context: nil)
             profile.removeObserver(self, forKeyPath: profile.editorSelectedPlatformsUpdatedSelector, context: nil)
             profile.removeObserver(self, forKeyPath: profile.editorSelectedScopeUpdatedSelector, context: nil)
@@ -102,6 +104,11 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         guard let profile = self.profile else { return }
         switch keyPath ?? "" {
+        case profile.editorSettingsRestoredSelector:
+            self.addProfilePayloads()
+            if let selectedLibraryTag = self.selectedLibraryTag {
+                self.updateLibraryPayloads(tag: selectedLibraryTag)
+            }
         case profile.editorSelectedDistributionUpdatedSelector,
              profile.editorSelectedPlatformsUpdatedSelector,
              profile.editorSelectedScopeUpdatedSelector:
@@ -253,15 +260,49 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         if let editor = self.editor {
             editor.select(payloadPlaceholder: payloadPlaceholder)
         }
+    }
+    
+    private func addProfilePayloads() {
         
         // ---------------------------------------------------------------------
-        //  Tell window controller to update title
+        //  Add all selected placeholders to the profile placeholders array
         // ---------------------------------------------------------------------
-        // FIXME: Remove this and It's traces. The title should always be the profile name.
-        //if let window = self.profilePayloadsTableView.window,
-        //    let windowController = window.windowController as? ProfileEditorWindowController {
-        //    windowController.setTitle(string: payloadPlaceholder.title)
-        //}
+        if let profile = self.editor?.profile {
+            
+            // Reset
+            self.profilePayloads = [PayloadPlaceholder]()
+            
+            for (typeRawValue, typeSettingsDict) in profile.payloadSettings {
+                
+                // ---------------------------------------------------------------------
+                //  Verify we got a valid type and a non empty settings dict
+                // ---------------------------------------------------------------------
+                guard
+                    let typeInt = Int(typeRawValue),
+                    let type = PayloadSourceType(rawValue: typeInt) else {
+                        continue
+                }
+                
+                // ---------------------------------------------------------------------
+                //  Loop through all domains and settings for the current type, add all enabled
+                // ---------------------------------------------------------------------
+                for (domain, payloadSettings) in typeSettingsDict {
+                    if payloadSettings[SettingsKey.enabled] as? Bool == true {
+                        if
+                            let payload = ProfilePayloads.shared.payloadSource(domain: domain, type: type),
+                            let payloadPlaceholder = payload.placeholder {
+                            self.profilePayloads.append(payloadPlaceholder)
+                        }
+                    }
+                }
+            }
+            
+            if
+                !self.profilePayloads.contains(where: {$0.domain == ManifestDomain.general}),
+                let generalPayloadPlaceholder = self.generalPayloadPlaceholder {
+                self.profilePayloads.append(generalPayloadPlaceholder)
+            }
+        }
     }
     
     private func setupProfilePayloads() {
@@ -298,40 +339,9 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         self.profilePayloadsScrollView.hasVerticalScroller = false // FIXME: TRUE When added ios-style scrollers
         
         // ---------------------------------------------------------------------
-        //  Add all selected placeholders to the profile placeholders array
+        //  Add all payloads selected in the profile
         // ---------------------------------------------------------------------
-        if let profile = self.editor?.profile {
-            for (typeRawValue, typeSettingsDict) in profile.payloadSettings {
-                
-                // ---------------------------------------------------------------------
-                //  Verify we got a valid type and a non empty settings dict
-                // ---------------------------------------------------------------------
-                guard
-                    let typeInt = Int(typeRawValue),
-                    let type = PayloadSourceType(rawValue: typeInt) else {
-                        continue
-                }
-                
-                // ---------------------------------------------------------------------
-                //  Loop through all domains and settings for the current type, add all enabled
-                // ---------------------------------------------------------------------
-                for (domain, payloadSettings) in typeSettingsDict {
-                    if payloadSettings[SettingsKey.enabled] as? Bool == true {
-                        if
-                            let payload = ProfilePayloads.shared.payloadSource(domain: domain, type: type),
-                            let payloadPlaceholder = payload.placeholder {
-                            self.profilePayloads.append(payloadPlaceholder)
-                        }
-                    }
-                }
-            }
-            
-            if
-                !self.profilePayloads.contains(where: {$0.domain == ManifestDomain.general}),
-                let generalPayloadPlaceholder = self.generalPayloadPlaceholder {
-                self.profilePayloads.append(generalPayloadPlaceholder)
-            }
-        }
+        self.addProfilePayloads()
     }
     
     private func setupLibraryPayloads() {

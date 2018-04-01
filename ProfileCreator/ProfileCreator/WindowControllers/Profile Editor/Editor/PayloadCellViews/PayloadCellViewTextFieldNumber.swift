@@ -16,11 +16,11 @@ class PayloadCellViewTextFieldNumber: PayloadCellView, ProfileCreatorCellView, N
     
     var textFieldInput: PayloadTextField?
     var textFieldMinMax: NSTextField?
+    var textFieldUnit: NSTextField?
+    
     var valueDefault: String?
     @objc private var value: Any?
-    
-    var isEditing = false
-    
+
     // MARK: -
     // MARK: Initialization
     
@@ -31,11 +31,15 @@ class PayloadCellViewTextFieldNumber: PayloadCellView, ProfileCreatorCellView, N
     required init(subkey: PayloadSourceSubkey, editor: ProfileEditor, settings: Dictionary<String, Any>) {
         super.init(subkey: subkey, editor: editor, settings: settings)
         
+        var leadingTextField: NSTextField
+        
         // ---------------------------------------------------------------------
         //  Setup Custom View Content
         // ---------------------------------------------------------------------
         self.textFieldInput = EditorTextField.input(defaultString: "", placeholderString: "", cellView: self)
         self.setupTextFieldInput()
+        
+        leadingTextField = self.textFieldInput!
         
         // If a min and/or max value is set, then show that trailing the input field
         var rangeString = ""
@@ -56,8 +60,21 @@ class PayloadCellViewTextFieldNumber: PayloadCellView, ProfileCreatorCellView, N
         }
         
         if !rangeString.isEmpty {
-            self.textFieldMinMax = EditorTextField.label(string: "(\(rangeString))", fontWeight: NSFont.Weight.regular, leadingItem: self.textFieldInput, leadingConstant: 7.0, trailingItem: nil, constraints: &self.cellViewConstraints, cellView: self)
+            self.textFieldMinMax = EditorTextField.label(string: "(\(rangeString))",
+                fontWeight: .regular,
+                leadingItem: leadingTextField,
+                leadingConstant: 7.0,
+                trailingItem: nil,
+                constraints: &self.cellViewConstraints,
+                cellView: self)
             self.setupTextFieldMinMax()
+            leadingTextField = self.textFieldMinMax!
+        }
+        
+        if let valueUnit = subkey.valueUnit {
+            self.textFieldUnit = EditorTextField.label(string: valueUnit, fontWeight: .regular, leadingItem: leadingTextField, leadingConstant: 7.0, trailingItem: nil, constraints: &self.cellViewConstraints, cellView: self)
+            self.setupTextFieldUnit()
+            
         }
         
         // ---------------------------------------------------------------------
@@ -115,7 +132,10 @@ class PayloadCellViewTextFieldNumber: PayloadCellView, ProfileCreatorCellView, N
 extension PayloadCellViewTextFieldNumber {
     
     internal override func controlTextDidChange(_ obj: Notification) {
-        guard let subkey = self.subkey else { return }
+        guard
+            let subkey = self.subkey,
+            let editor = self.editor else { return }
+        
         self.isEditing = true
         if
             let userInfo = obj.userInfo,
@@ -126,19 +146,22 @@ extension PayloadCellViewTextFieldNumber {
             } else {
                 self.textFieldInput?.textColor = .black
             }
-            self.editor?.updatePayloadSettings(value: newString, subkey: subkey)
+            editor.updatePayloadSettings(value: newString, subkey: subkey)
         }
     }
     
     internal override func controlTextDidEndEditing(_ obj: Notification) {
-        guard let subkey = self.subkey else { return }
+        guard
+            let subkey = self.subkey,
+            let editor = self.editor else { return }
+        
         if self.isEditing {
             self.isEditing = false
             if
                 let userInfo = obj.userInfo,
                 let fieldEditor = userInfo["NSFieldEditor"] as? NSTextView,
                 let newString = fieldEditor.textStorage?.string {
-                self.editor?.updatePayloadSettings(value: newString, subkey: subkey)
+                editor.updatePayloadSettings(value: newString, subkey: subkey)
             }
         }
     }
@@ -202,12 +225,12 @@ extension PayloadCellViewTextFieldNumber {
         if 0 < valueMaxWidth, valueMaxWidth < (editorTableViewColumnPayloadWidth - 16.0) {
             // Width
             self.cellViewConstraints.append(NSLayoutConstraint(item: textFieldInput,
-                                              attribute: .width,
-                                              relatedBy: .equal,
-                                              toItem: nil,
-                                              attribute: .notAnAttribute,
-                                              multiplier: 1.0,
-                                              constant: valueMaxWidth))
+                                                               attribute: .width,
+                                                               relatedBy: .equal,
+                                                               toItem: nil,
+                                                               attribute: .notAnAttribute,
+                                                               multiplier: 1.0,
+                                                               constant: valueMaxWidth))
         } else {
             self.addConstraints(forViewTrailing: textFieldInput)
         }
@@ -221,5 +244,31 @@ extension PayloadCellViewTextFieldNumber {
         guard let textFieldMinMax = self.textFieldMinMax else { return }
         
         textFieldMinMax.textColor = .controlShadowColor
+    }
+    
+    private func setupTextFieldUnit() {
+        
+        // ---------------------------------------------------------------------
+        //  Add TextField to TableCellView
+        // ---------------------------------------------------------------------
+        guard let textFieldUnit = self.textFieldUnit else { return }
+        
+        textFieldUnit.textColor = .controlShadowColor
+        
+        // ---------------------------------------------------------------------
+        //  Add TextField to TableCellView
+        // ---------------------------------------------------------------------
+        if let textFieldMinMax = self.textFieldMinMax {
+            if let index = self.cellViewConstraints.index(where: {
+                if let secondItem = $0.secondItem as? NSTextField, secondItem == textFieldMinMax, $0.secondAttribute == .trailing {
+                    return true
+                }
+                return false
+            }) {
+                self.cellViewConstraints.remove(at: index)
+                textFieldMinMax.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+            }
+            
+        }
     }
 }

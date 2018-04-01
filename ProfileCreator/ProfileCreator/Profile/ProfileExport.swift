@@ -375,12 +375,11 @@ class ProfileExport {
         // Special case for dynamic dictionaries
         if subkey.key == ManifestKeyPlaceholder.key { return false }
         
+        if !profile.isAvailableForSelectedPlatform(subkey: subkey) { return false }
         // profile.subkeyIsExcluded
         
         return true
     }
-    
-    
     
     // MARK: -
     // MARK: Value: Get
@@ -598,6 +597,19 @@ class ProfileExport {
             let valueProcessor = PayloadValueProcessors.shared.processor(inputType: subkey.typeInput, outputType: subkey.type)
             if let valueProcessed = valueProcessor.process(value: valueToProcess) {
                 value = valueProcessed
+            }
+        }
+        
+        // Check if this has a rangeList
+        if let rangeList = subkey.rangeList, let valueString = value as? String {
+            
+            // If rangeListTitles is set, use that to get the actual value from rangeList
+            if
+                let rangeListTitles = subkey.rangeListTitles,
+                let index = rangeListTitles.index(of: valueString) {
+                value = rangeList[index]
+            } else {
+                value = PayloadUtility.value(string: valueString, type: subkey.type)
             }
         }
         

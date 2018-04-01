@@ -18,8 +18,6 @@ class PayloadCellViewTextView: PayloadCellView, ProfileCreatorCellView, NSTextFi
     var scrollView: NSScrollView?
     var textView: NSTextView?
     
-    var isEditing = false
-    
     // MARK: -
     // MARK: Initialization
     
@@ -102,7 +100,10 @@ class PayloadCellViewTextView: PayloadCellView, ProfileCreatorCellView, NSTextFi
 extension PayloadCellViewTextView {
     
     internal override func controlTextDidChange(_ obj: Notification) {
-        guard let subkey = self.subkey else { return }
+        guard
+            let subkey = self.subkey,
+            let editor = self.editor else { return }
+        
         self.isEditing = true
         if
             let userInfo = obj.userInfo,
@@ -113,19 +114,22 @@ extension PayloadCellViewTextView {
             } else {
                 self.textView?.textColor = .black
             }
-            self.editor?.updatePayloadSettings(value: newString, subkey: subkey)
+            editor.updatePayloadSettings(value: newString, subkey: subkey)
         }
     }
     
     internal override func controlTextDidEndEditing(_ obj: Notification) {
-        guard let subkey = self.subkey else { return }
+        guard
+            let subkey = self.subkey,
+            let editor = self.editor else { return }
+        
         if self.isEditing {
             self.isEditing = false
             if
                 let userInfo = obj.userInfo,
                 let fieldEditor = userInfo["NSFieldEditor"] as? NSTextView,
                 let newString = fieldEditor.textStorage?.string {
-                self.editor?.updatePayloadSettings(value: newString, subkey: subkey)
+                editor.updatePayloadSettings(value: newString, subkey: subkey)
             }
         }
     }

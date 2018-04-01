@@ -77,24 +77,22 @@ class PayloadCellViews {
         }
         
         // Check if subkey is only available on supervised devices
-        if !profile.editorShowSupervised, subkey.supervised {
-            return nil
+        if subkey.supervised {
+            if !profile.editorShowSupervised {
+                return nil
+            } else if ProfilePayloads.platformsSupervised.intersection(subkey.platforms).isDisjoint(with: profile.selectedPlatforms) {
+                return nil
+            }
         }
         
         // Check if subkey is available in the selected platforms
-        if let platforms = subkey.platforms, platforms.isDisjoint(with: profile.selectedPlatforms) {
-                return nil
-        } else if
-            let notPlatforms = subkey.notPlatforms, let payloadSourcePlatforms = subkey.payloadSource?.platforms.subtracting(notPlatforms),
-            profile.selectedPlatforms.isDisjoint(with: payloadSourcePlatforms) {
-                return nil
-        }
+        if !profile.isAvailableForSelectedPlatform(subkey: subkey) { return nil }
         
         // Get the current settings, should be better handled if an error getting the settings is presented
         let typeSettings = profile.getPayloadTypeSettings(type: subkey.payloadSourceType)
         
         // If both range min and max are specified, and the range isn't more that 19, then use a popUpButton instead
-        if let rangeList = subkey.rangeList, rangeList.count <= 20 {
+        if let rangeList = subkey.rangeList, rangeList.count <= ProfilePayloads.rangeListConvertMax {
             return PayloadCellViewPopUpButton(subkey: subkey, editor: profileEditor, settings: typeSettings)
         }
         

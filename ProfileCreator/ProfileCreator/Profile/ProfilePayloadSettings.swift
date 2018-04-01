@@ -42,6 +42,18 @@ extension Profile {
         self.resetCache()
     }
     
+    func setPayloadSettings(settings: Dictionary<String, Any>, domain: String, type: PayloadSourceType) {
+        Swift.print("Restorning settings for domain: \(domain)")
+        var typeSettings = self.getPayloadTypeSettings(type: type)
+        typeSettings[domain] = settings
+        self.setPayloadTypeSettings(settings: typeSettings, type: type)
+        
+        // ---------------------------------------------------------------------
+        //  Reset any cached condition results as updated settings might change those
+        // ---------------------------------------------------------------------
+        self.resetCache()
+    }
+    
     // MARK: -
     // MARK: Payload Settings: Update
     
@@ -178,8 +190,18 @@ extension Profile {
     
     // For getting the currently saved on disk value
     func getSavedPayloadSetting(key: String, domain: String, type: PayloadSourceType) -> Any? {
-        var typeSettings = self.getSavedPayloadTypeSettings(type: type)
+        let typeSettings = self.getSavedPayloadTypeSettings(type: type)
         var domainSettings = typeSettings[domain] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
         return domainSettings[key]
+    }
+    
+    // MARK: -
+    // MARK: Payload Saved Settings: Reset
+    
+    func resetSavedPayloadSettings(domain: String, type: PayloadSourceType) {
+        let typeSettings = self.getSavedPayloadTypeSettings(type: type)
+        if let domainSettings = typeSettings[domain] as? Dictionary<String, Any> {
+            self.setPayloadSettings(settings: domainSettings, domain: domain, type: type)
+        }
     }
 }

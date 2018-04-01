@@ -47,6 +47,7 @@ class PayloadCellView: NSTableCellView {
     var leadingKeyView: NSView?
     var trailingKeyView: NSView?
     var isEnabled = false
+    var isEditing = false
     
     var cellViewConstraints = [NSLayoutConstraint]()
     var indent: Int = 0

@@ -79,7 +79,7 @@ class OutlineViewParentCellView: NSTableCellView {
         self.textFieldTitle.drawsBackground = false
         self.textFieldTitle.isEditable = false
         self.textFieldTitle.isSelectable = false
-        self.textFieldTitle.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .small), weight: NSFont.Weight.medium)
+        self.textFieldTitle.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .small), weight: .medium)
         self.textFieldTitle.textColor = .secondaryLabelColor
         self.textFieldTitle.alignment = .left
         setupTextFieldTitle(constraints: &constraints, parent: parent)

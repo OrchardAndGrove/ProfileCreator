@@ -21,8 +21,6 @@ class PayloadCellViewTableView: PayloadCellView, ProfileCreatorCellView, TableVi
     var valueDefault: [Dictionary<String, Any>]?
     let buttonAddRemove = NSSegmentedControl()
     
-    var isEditing = false
-    
     weak var profile: Profile?
     
     // MARK: -

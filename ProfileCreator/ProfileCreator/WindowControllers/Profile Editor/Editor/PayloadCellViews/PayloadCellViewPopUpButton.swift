@@ -31,7 +31,9 @@ class PayloadCellViewPopUpButton: PayloadCellView, ProfileCreatorCellView, PopUp
         //  Setup Custom View Content
         // ---------------------------------------------------------------------
         var titles = [String]()
-        if let rangeList = subkey.rangeList {
+        if let rangeListTitles = subkey.rangeListTitles {
+            titles = rangeListTitles
+        } else if let rangeList = subkey.rangeList {
             for value in rangeList {
                 titles.append(String(describing: value))
             }

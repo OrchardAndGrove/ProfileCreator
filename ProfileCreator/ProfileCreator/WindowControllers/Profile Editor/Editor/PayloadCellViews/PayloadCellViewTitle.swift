@@ -162,7 +162,7 @@ extension PayloadCellViewTitle {
         textFieldDescription.preferredMaxLayoutWidth = editorTableViewColumnPayloadWidth
         textFieldDescription.stringValue = description
         textFieldDescription.alignment = .center
-        textFieldDescription.font = NSFont.systemFont(ofSize: 15, weight: NSFont.Weight.ultraLight)
+        textFieldDescription.font = NSFont.systemFont(ofSize: 15, weight: .ultraLight)
         self.textFieldDescription = textFieldDescription
         
         // ---------------------------------------------------------------------

@@ -52,13 +52,17 @@ public class Profile: NSDocument {
     
     // MARK: -
     // MARK: Settings Variables
-    
+
     public var selectedDistribution: Distribution = []
     public var selectedPlatforms: Platforms = []
     public var selectedScope: Targets = []
     
     // MARK: -
     // MARK: Key/Value Observing Variables
+    
+    // Settings Restored
+    @objc public var settingsRestored: Bool = false
+    public let editorSettingsRestoredSelector: String
     
     // Selected Distribution Method
     @objc public var selectedDistributionUpdated: Bool = false
@@ -134,6 +138,7 @@ public class Profile: NSDocument {
         // ---------------------------------------------------------------------
         //  Initialize Key/Value Observing Selector Strings
         // ---------------------------------------------------------------------
+        self.editorSettingsRestoredSelector = NSStringFromSelector(#selector(getter: self.settingsRestored))
         self.editorDistributionMethodSelector = NSStringFromSelector(#selector(getter: self.editorDistributionMethod))
         self.editorDisableOptionalKeysSelector = NSStringFromSelector(#selector(getter: self.editorDisableOptionalKeys))
         self.editorColumnEnableSelector = NSStringFromSelector(#selector(getter: self.editorColumnEnable))
@@ -324,9 +329,9 @@ public class Profile: NSDocument {
         //  DEBUG: Check that all current settings match those on disk
         // ---------------------------------------------------------------------
         #if DEBUG
-            for (key, value) in self.savedSettings {
-                self.saveCheck(key: key, value: value, newValue: saveDict[key])
-            }
+        for (key, value) in self.savedSettings {
+            self.saveCheck(key: key, value: value, newValue: saveDict[key])
+        }
         #endif
         
         // ---------------------------------------------------------------------
@@ -435,7 +440,6 @@ public class Profile: NSDocument {
     }
     
     override public func data(ofType typeName: String) throws -> Data {
-        
         guard typeName == TypeName.profile else {
             // TODO: Proper Error
             throw NSError(domain: NSOSStatusErrorDomain, code: unimpErr, userInfo: nil)
@@ -454,7 +458,6 @@ public class Profile: NSDocument {
     }
     
     override public func read(from data: Data, ofType typeName: String) throws {
-        
         guard typeName == TypeName.profile else {
             // TODO: Proper Error
             throw NSError(type: .unknown)
@@ -591,6 +594,7 @@ public class Profile: NSDocument {
     // MARK: Public Functions
     
     func restoreSavedSettings(identifier: UUID, savedSettings: Dictionary<String, Any>?) {
+        
         let settingsDict = savedSettings ?? self.savedSettings
         self.savedSettings = settingsDict
         self.identifier = identifier
@@ -605,6 +609,11 @@ public class Profile: NSDocument {
         if let title = self.getPayloadSetting(key: PayloadKey.payloadDisplayName, domain: ManifestDomain.general, type: .manifest) as? String {
             self.title = title
         } else { self.title = StringConstant.defaultProfileName }
+        
+        self.resetCache()
+        
+        // Show that settings were restored for observers
+        self.setValue(!self.settingsRestored, forKeyPath: self.editorSettingsRestoredSelector)
     }
     
     func updatePayloadSelection(selected: Bool, payloadSource: PayloadSource, updateComplete: @escaping (Bool, Error?) -> ()) {
@@ -686,8 +695,9 @@ public class Profile: NSDocument {
         // ---------------------------------------------------------------------
         super.save(to: saveURL, ofType: TypeName.profile, for: operationType) { (saveError) in
             if saveError == nil {
+                
                 // -----------------------------------------------------------------
-                //  Post notification that this profile was renamed
+                //  Post notification that this profile was saved
                 // -----------------------------------------------------------------
                 NotificationCenter.default.post(name: .didSaveProfile, object: self, userInfo: [NotificationKey.identifier : self.identifier])
                 self.savedSettings = self.saveDict()
@@ -720,12 +730,7 @@ extension Profile {
     // MARK: Payload Subkey: Check
     
     func isAvailableForSelectedPlatform(subkey: PayloadSourceSubkey) -> Bool {
-        if let platforms = subkey.platforms {
-            return !platforms.isDisjoint(with: self.selectedPlatforms)
-        } else if let notPlatforms = subkey.notPlatforms, let payloadSourcePlatforms = subkey.payloadSource?.platforms.subtracting(notPlatforms) {
-            return !self.selectedPlatforms.isDisjoint(with: payloadSourcePlatforms)
-        }
-        return true
+        return !subkey.platforms.isDisjoint(with: self.selectedPlatforms)
     }
     
     func isExcluded(subkey: PayloadSourceSubkey) -> Bool {
@@ -757,7 +762,7 @@ extension Profile {
         
         if let isEnabledCache = self.cacheEnabled[subkey.keyPath] as? Bool {
             #if DEBUGISENABLED
-                Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(isEnabledCache) (cache)", category: String(describing: self))
+            Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(isEnabledCache) (cache)", category: String(describing: self))
             #endif
             return isEnabledCache
         }
@@ -774,12 +779,12 @@ extension Profile {
         }
         
         #if DEBUGISENABLED
-            Log.shared.debug(message: "Subkey: \(subkey.keyPath) parent is enabled: \(parentIsEnabled)", category: String(describing: self))
+        Log.shared.debug(message: "Subkey: \(subkey.keyPath) parent is enabled: \(parentIsEnabled)", category: String(describing: self))
         #endif
         
         if parentIsEnabled, subkey.parentSubkey?.type == .array {
             #if DEBUGISENABLED
-                Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(true) (array)", category: String(describing: self))
+            Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(true) (array)", category: String(describing: self))
             #endif
             self.cacheEnabled[subkey.keyPath] = true
             return true
@@ -788,7 +793,7 @@ extension Profile {
         var isEnabled = !self.editorDisableOptionalKeys
         if !onlyByUser, parentIsEnabled, self.isRequired(subkey: subkey) {
             #if DEBUGISENABLED
-                Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(true) (required)", category: String(describing: self))
+            Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(true) (required)", category: String(describing: self))
             #endif
             self.cacheEnabled[subkey.keyPath] = true
             return true
@@ -796,17 +801,17 @@ extension Profile {
             let viewSettings = self.subkeyViewSettings(subkey: subkey),
             let enabled = viewSettings[SettingsKey.enabled] as? Bool {
             #if DEBUGISENABLED
-                Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(enabled) (user)", category: String(describing: self))
+            Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(enabled) (user)", category: String(describing: self))
             #endif
             isEnabled = enabled
         } else if !onlyByUser, parentIsEnabled, let enabledDefault = subkey.enabledDefault {
             #if DEBUGISENABLED
-                Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(enabledDefault) (default)", category: String(describing: self))
+            Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(enabledDefault) (default)", category: String(describing: self))
             #endif
             isEnabled = enabledDefault
         } else if !onlyByUser, parentIsEnabled, subkey.parentSubkey?.type == .dictionary, (subkey.key == ManifestKeyPlaceholder.key || subkey.key == ManifestKeyPlaceholder.value) {
             #if DEBUGISENABLED
-                Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(true) (dynamic dictionary)", category: String(describing: self))
+            Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(true) (dynamic dictionary)", category: String(describing: self))
             #endif
             self.cacheEnabled[subkey.keyPath] = true
             return true
@@ -816,7 +821,7 @@ extension Profile {
             for childSubkey in subkey.subkeys {
                 if self.isEnabled(subkey: childSubkey, onlyByUser: true) {
                     #if DEBUGISENABLED
-                        Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(true) (child: \(childSubkey.keyPath))", category: String(describing: self))
+                    Log.shared.debug(message: "Subkey: \(subkey.keyPath) is enabled: \(true) (child: \(childSubkey.keyPath))", category: String(describing: self))
                     #endif
                     isEnabled = true
                     break
@@ -843,26 +848,30 @@ extension Profile {
     }
     
     func getTitleString(subkey: PayloadSourceSubkey) -> String? {
-        if var titleString = subkey.title {
-            
-            // Add Supervised
-            if subkey.supervised {
-                titleString = titleString + " (Supervised)"
-            }
-            
-            // Add Platforms
-            if let platforms = subkey.platforms {
-                let platformsString = PayloadUtility.string(fromPlatforms: platforms)
-                titleString = titleString + " (\(platformsString))"
-            }
-            
-            if let notPlatforms = subkey.notPlatforms, let payloadSourcePlatforms = subkey.payloadSource?.platforms.subtracting(notPlatforms) {
-                let platformsString = PayloadUtility.string(fromPlatforms: payloadSourcePlatforms)
-                titleString = titleString + " (\(platformsString))"
-            }
-            
-            return titleString
-        } else { return nil }
+        var titleString: String
+        if let title = subkey.title, !title.isEmpty {
+            titleString = title
+        } else {
+            titleString = subkey.key
+        }
+        
+        // Add Supervised
+        if subkey.supervised {
+            titleString = titleString + " (Supervised)"
+        }
+        
+        // Add Platforms
+        if let platforms = subkey.platformsManifest {
+            let platformsString = PayloadUtility.string(fromPlatforms: platforms)
+            titleString = titleString + " (\(platformsString))"
+        }
+        
+        if let notPlatforms = subkey.platformsNotManifest, let payloadSourcePlatforms = subkey.payloadSource?.platforms.subtracting(notPlatforms) {
+            let platformsString = PayloadUtility.string(fromPlatforms: payloadSourcePlatforms)
+            titleString = titleString + " (\(platformsString))"
+        }
+        
+        return titleString
     }
     
     func subkeyMatch(targetCondition: PayloadSourceTargetCondition) -> Bool {
@@ -870,7 +879,7 @@ extension Profile {
         // Check cached value
         if let conditionResult = self.cacheConditionals[targetCondition.identifier] as? Bool {
             #if DEBUG
-                Log.shared.debug(message: "Returning cached condition result: \(conditionResult)", category: String(describing: self))
+            Log.shared.debug(message: "Returning cached condition result: \(conditionResult)", category: String(describing: self))
             #endif
             return conditionResult
         }

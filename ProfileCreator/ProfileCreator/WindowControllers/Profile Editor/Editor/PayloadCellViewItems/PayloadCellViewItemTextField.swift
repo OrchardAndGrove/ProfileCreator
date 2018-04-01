@@ -17,7 +17,10 @@ class EditorTextField {
                      constraints: inout [NSLayoutConstraint],
                      cellView: PayloadCellView) -> NSTextField? {
         
-        guard let title = profile.getTitleString(subkey: subkey), !title.isEmpty else { return nil }
+        guard let title = profile.getTitleString(subkey: subkey), !title.isEmpty else {
+            Log.shared.debug(message: "Subkey: \(subkey.keyPath) has no title", category: String(describing: self))
+            return nil
+        }
         
         // -------------------------------------------------------------------------
         //  Create and setup text field
@@ -281,7 +284,7 @@ class EditorTextField {
         textField.isEditable = false
         textField.isSelectable = false
         textField.textColor = .labelColor
-        textField.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .regular), weight: fontWeight ?? NSFont.Weight.bold)
+        textField.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .regular), weight: fontWeight ?? .bold)
         textField.preferredMaxLayoutWidth = editorTableViewColumnPayloadWidth
         textField.stringValue = string ?? ""
         

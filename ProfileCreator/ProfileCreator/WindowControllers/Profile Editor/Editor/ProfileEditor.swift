@@ -29,7 +29,6 @@ class ProfileEditor: NSObject {
     private var selectedCellView: NSView?
     
     fileprivate var cellViews = [NSTableCellView]()
-    fileprivate var editorWindow: NSWindow?
     
     public weak var profile: Profile?
     private var selectedPayloadPlaceholder: PayloadPlaceholder?
@@ -67,6 +66,7 @@ class ProfileEditor: NSObject {
         // ---------------------------------------------------------------------
         //  Setup Notification Observers
         // ---------------------------------------------------------------------
+        profile.addObserver(self, forKeyPath: profile.editorSettingsRestoredSelector, options: .new, context: nil)
         profile.addObserver(self, forKeyPath: profile.editorDisableOptionalKeysSelector, options: .new, context: nil)
         profile.addObserver(self, forKeyPath: profile.editorColumnEnableSelector, options: .new, context: nil)
         profile.addObserver(self, forKeyPath: profile.editorShowDisabledSelector, options: .new, context: nil)
@@ -92,6 +92,7 @@ class ProfileEditor: NSObject {
         self.tableView.delegate = nil
         
         if let profile = self.profile {
+            profile.removeObserver(self, forKeyPath: profile.editorSettingsRestoredSelector, context: nil)
             profile.removeObserver(self, forKeyPath: profile.editorDisableOptionalKeysSelector, context: nil)
             profile.removeObserver(self, forKeyPath: profile.editorColumnEnableSelector, context: nil)
             profile.removeObserver(self, forKeyPath: profile.editorShowDisabledSelector, context: nil)
@@ -103,9 +104,37 @@ class ProfileEditor: NSObject {
         }
     }
     
+    private func getSubviewsOf<T : NSView>(view:NSView) -> [T] {
+        var subviews = [T]()
+        
+        for subview in view.subviews {
+            subviews += getSubviewsOf(view: subview) as [T]
+            
+            if let subview = subview as? T {
+                subviews.append(subview)
+            }
+        }
+        
+        return subviews
+    }
+    
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         guard let profile = self.profile else { return }
         switch keyPath ?? "" {
+        case profile.editorSettingsRestoredSelector:
+            Swift.print("editorSettingsRestoredSelector")
+            
+            if let window = self.tableView.window {
+                for cellView in self.cellViews {
+                    if self.getSubviewsOf(view: cellView).contains(where: {$0 == window.firstResponder}), let payloadCellView = cellView as? PayloadCellView {
+                        payloadCellView.isEditing = false
+                        break
+                    }
+                }
+                
+            }
+            
+            self.reloadTableView(updateCellViews: true)
         case profile.editorShowDisabledSelector,
              profile.editorShowHiddenSelector,
              profile.editorShowSupervisedSelector,
