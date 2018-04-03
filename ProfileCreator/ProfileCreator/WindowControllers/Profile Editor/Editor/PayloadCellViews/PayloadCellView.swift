@@ -39,7 +39,7 @@ class PayloadCellView: NSTableCellView {
     var row = -1
     
     weak var subkey: PayloadSourceSubkey?
-    weak var editor: ProfileEditor?
+    weak var profile: Profile?
     
     var textFieldTitle: NSTextField?
     var textFieldDescription: NSTextField?
@@ -48,6 +48,7 @@ class PayloadCellView: NSTableCellView {
     var trailingKeyView: NSView?
     var isEnabled = false
     var isEditing = false
+    var payloadIndex: Int
     
     var cellViewConstraints = [NSLayoutConstraint]()
     var indent: Int = 0
@@ -59,10 +60,11 @@ class PayloadCellView: NSTableCellView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    required init(subkey: PayloadSourceSubkey, editor: ProfileEditor, settings: Dictionary<String, Any>) {
+    required init(subkey: PayloadSourceSubkey, payloadIndex: Int, settings: Dictionary<String, Any>, editor: ProfileEditor) {
         
         self.subkey = subkey
-        self.editor = editor
+        self.profile = editor.profile
+        self.payloadIndex = payloadIndex
         
         super.init(frame: NSZeroRect)
         
@@ -74,7 +76,7 @@ class PayloadCellView: NSTableCellView {
         // ---------------------------------------------------------------------
         //  Setup Static View Content
         // ---------------------------------------------------------------------
-        if let profile = editor.profile, let textFieldTitle = EditorTextField.title(profile: profile, subkey: subkey, indent: self.indent, constraints: &self.cellViewConstraints, cellView: self) {
+        if let profile = self.profile, let textFieldTitle = EditorTextField.title(profile: profile, subkey: subkey, indent: self.indent, constraints: &self.cellViewConstraints, cellView: self) {
             self.textFieldTitle = textFieldTitle
         }
         
@@ -82,7 +84,7 @@ class PayloadCellView: NSTableCellView {
             self.textFieldDescription = textFieldDescription
         }
         
-        if let profile = editor.profile, let textFieldMessage = EditorTextField.message(profile: profile, subkey: subkey, indent: self.indent, constraints: &self.cellViewConstraints, cellView: self) {
+        if let profile = self.profile, let textFieldMessage = EditorTextField.message(profile: profile, subkey: subkey, payloadIndex: payloadIndex, indent: self.indent, constraints: &self.cellViewConstraints, cellView: self) {
             self.textFieldMessage = textFieldMessage
         }
         

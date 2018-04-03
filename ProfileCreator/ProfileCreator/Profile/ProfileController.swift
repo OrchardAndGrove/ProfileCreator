@@ -251,7 +251,7 @@ class ProfileController: NSDocumentController {
             
             if let profileURL = savePanel.url {
                 do {
-                    try ProfileExport().export(profile: profile, profileURL: profileURL)
+                    try ProfileExport(profile: profile).export(profile: profile, profileURL: profileURL)
                 } catch {
                     Log.shared.error(message: "Failed to export profile with identifier: \(profile.identifier) to path: \(profileURL.path) with error: \(error.localizedDescription)")
                     self.showAlertExport(error: error, window: mainWindow)

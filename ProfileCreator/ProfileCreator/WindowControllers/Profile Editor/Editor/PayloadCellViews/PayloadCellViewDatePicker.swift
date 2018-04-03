@@ -26,8 +26,8 @@ class PayloadCellViewDatePicker: PayloadCellView, ProfileCreatorCellView, DatePi
         fatalError("init(coder:) has not been implemented")
     }
     
-    required init(subkey: PayloadSourceSubkey, editor: ProfileEditor, settings: Dictionary<String, Any>) {
-        super.init(subkey: subkey, editor: editor, settings: settings)
+    required init(subkey: PayloadSourceSubkey, payloadIndex: Int, settings: Dictionary<String, Any>, editor: ProfileEditor) {
+        super.init(subkey: subkey, payloadIndex: payloadIndex, settings: settings,  editor: editor)
         
         // ---------------------------------------------------------------------
         //  Setup Custom View Content
@@ -45,9 +45,7 @@ class PayloadCellViewDatePicker: PayloadCellView, ProfileCreatorCellView, DatePi
         // ---------------------------------------------------------------------
         //  Set Value
         // ---------------------------------------------------------------------
-        if
-            let domainSettings = settings[subkey.domain] as? Dictionary<String, Any>,
-            let value = domainSettings[subkey.keyPath] as? Date {
+        if let value = profile?.getPayloadSetting(key: subkey.keyPath, domain: subkey.domain, type: subkey.payloadSourceType, payloadIndex: payloadIndex) as? Date {
             self.datePicker?.dateValue = value
         } else if let valueDefault = self.valueDefault {
             self.datePicker?.dateValue = valueDefault
@@ -78,7 +76,7 @@ class PayloadCellViewDatePicker: PayloadCellView, ProfileCreatorCellView, DatePi
     
     internal func selectDate(_ datePicker: NSDatePicker) {
         guard let subkey = self.subkey else { return }
-        self.editor?.updatePayloadSettings(value: datePicker.dateValue , subkey: subkey)
+        self.profile?.updatePayloadSettings(value: datePicker.dateValue , subkey: subkey, payloadIndex: self.payloadIndex)
     }
 }
 

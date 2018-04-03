@@ -15,12 +15,17 @@ class ProfileEditor: NSObject {
     // MARK: Variables
     
     let headerView: ProfileEditorHeaderView
+    let tabView = NSStackView()
     let tableView = ProfileEditorTableView()
     let textView = NSTextView()
     let scrollView = NSScrollView()
     let separator = NSBox(frame: NSZeroRect)
     let settings: ProfileEditorSettings
-
+    
+    var constraintsTabView = [NSLayoutConstraint]()
+    var constraintScrollViewTopSeparator = NSLayoutConstraint()
+    var constraintScrollViewTopTab = NSLayoutConstraint()
+    
     public let editorView = NSView()
     
     private let payloadCellViews = PayloadCellViews()
@@ -32,12 +37,14 @@ class ProfileEditor: NSObject {
     
     public weak var profile: Profile?
     private var selectedPayloadPlaceholder: PayloadPlaceholder?
+    private var selectedPayloadIndex = 0
+    private var selectedPayloadView: EditorViewTag = .profileCreator
     
     // MARK: -
     // MARK: Initialization
     
     init(profile: Profile) {
-
+        
         self.settings = ProfileEditorSettings(profile: profile)
         self.headerView = ProfileEditorHeaderView(profile: profile)
         
@@ -55,6 +62,7 @@ class ProfileEditor: NSObject {
         // ---------------------------------------------------------------------
         self.setupEditorView(constraints: &constraints)
         self.setupHeaderView(constraints: &constraints)
+        self.setupTabView(constraints: &constraints)
         self.setupSeparator(constraints: &constraints)
         self.setupTableView(profile: profile, constraints: &constraints)
         
@@ -104,34 +112,17 @@ class ProfileEditor: NSObject {
         }
     }
     
-    private func getSubviewsOf<T : NSView>(view:NSView) -> [T] {
-        var subviews = [T]()
-        
-        for subview in view.subviews {
-            subviews += getSubviewsOf(view: subview) as [T]
-            
-            if let subview = subview as? T {
-                subviews.append(subview)
-            }
-        }
-        
-        return subviews
-    }
-    
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         guard let profile = self.profile else { return }
         switch keyPath ?? "" {
         case profile.editorSettingsRestoredSelector:
-            Swift.print("editorSettingsRestoredSelector")
-            
             if let window = self.tableView.window {
                 for cellView in self.cellViews {
-                    if self.getSubviewsOf(view: cellView).contains(where: {$0 == window.firstResponder}), let payloadCellView = cellView as? PayloadCellView {
+                    if cellView.allSubviews().contains(where: {$0 == window.firstResponder}), let payloadCellView = cellView as? PayloadCellView {
                         payloadCellView.isEditing = false
                         break
                     }
                 }
-                
             }
             
             self.reloadTableView(updateCellViews: true)
@@ -159,57 +150,65 @@ class ProfileEditor: NSObject {
     
     func reloadTableView(updateCellViews: Bool = false) {
         if updateCellViews, let selectedPayloadPlaceholder = self.selectedPayloadPlaceholder {
-            self.cellViews = self.payloadCellViews.cellViews(payloadPlaceholder: selectedPayloadPlaceholder, profileEditor: self)
+            self.cellViews = self.payloadCellViews.cellViews(payloadPlaceholder: selectedPayloadPlaceholder, payloadIndex: self.selectedPayloadIndex, profileEditor: self)
         }
         self.tableView.reloadData()
     }
     
     func updatePayloadSelection(selected: Bool, payloadSource: PayloadSource) {
-        self.profile?.updatePayloadSelection(selected: selected, payloadSource: payloadSource, updateComplete: { (successful, error) in
-            if successful, let payloadPlaceholder = self.selectedPayloadPlaceholder { self.updateTextView(payloadPlaceholder: payloadPlaceholder) }
-            Swift.print("Class: \(self.self), Function: \(#function), SelectionSettings Changed with status: \(successful)")
-        })
-    }
-    
-    func updateViewSettings(value: Any?, key: String, subkey: PayloadSourceSubkey) {
-        self.profile?.updateViewSettings(value: value, key: key, subkey: subkey, updateComplete: { (successful, error) in
-            if successful { self.reloadTableView(updateCellViews: true) }
-            Swift.print("Class: \(self.self), Function: \(#function), ViewSettings Changed with status: \(successful)")
-        })
-    }
-    
-    func updatePayloadSettings(value: Any?, subkey: PayloadSourceSubkey) {
         if let profile = self.profile {
-            profile.updatePayloadSettings(value: value, subkey: subkey)
+            profile.updatePayloadSelection(selected: selected, payloadSource: payloadSource)
+            if let payloadPlaceholder = self.selectedPayloadPlaceholder {
+                self.updateSourceView(payloadPlaceholder: payloadPlaceholder)
+            }
         }
     }
     
-    func updatePayloadSettings(value: Any?, key: String, subkey: PayloadSourceSubkey) {
+    func updateViewSettings(value: Any?, key: String, subkey: PayloadSourceSubkey) {
         if let profile = self.profile {
-            profile.updatePayloadSettings(value: value, key: key, subkey: subkey)
+            profile.updateViewSettings(value: value, key: key, subkey: subkey, payloadIndex: self.selectedPayloadIndex)
+            self.reloadTableView(updateCellViews: true)
         }
     }
     
     func select(view: Int) {
         switch view {
         case EditorViewTag.profileCreator.rawValue:
+            self.selectedPayloadView = .profileCreator
+            
             guard self.scrollView.documentView != self.tableView else { return }
+            
+            if let selectedPayloadPlaceholder = self.selectedPayloadPlaceholder {
+                self.showTabView(payloadPlaceholder: selectedPayloadPlaceholder)
+            }
+            self.reloadTableView(updateCellViews: true)
             self.scrollView.documentView = self.tableView
         case EditorViewTag.source.rawValue:
+            self.selectedPayloadView = .source
+            
             guard
                 self.scrollView.documentView != self.textView,
                 let selectedPayloadPlaceholder = self.selectedPayloadPlaceholder else { return }
-            self.updateTextView(payloadPlaceholder: selectedPayloadPlaceholder)
+            
+            // ---------------------------------------------------------------------
+            //  Hide tab bar if it's showing
+            // ---------------------------------------------------------------------
+            self.showTabView(false)
+            
+            // ---------------------------------------------------------------------
+            //  Update source view
+            // ---------------------------------------------------------------------
+            self.updateSourceView(payloadPlaceholder: selectedPayloadPlaceholder)
             self.scrollView.documentView = self.textView
         default:
             Swift.print("Unknown View Tag: \(view)")
         }
     }
     
-    func updateTextView(payloadPlaceholder: PayloadPlaceholder) {
+    func updateSourceView(payloadPlaceholder: PayloadPlaceholder) {
         guard let profile = self.profile else { return }
         
-        let profileExport = ProfileExport()
+        let profileExport = ProfileExport(profile: profile)
         profileExport.ignoreErrorInvalidValue = true
         profileExport.ignoreSave = true
         
@@ -218,8 +217,10 @@ class ProfileEditor: NSObject {
             try profileExport.export(profile: profile,
                                      domain: payloadPlaceholder.domain,
                                      type: payloadPlaceholder.payloadSourceType,
+                                     payloadIndex: self.selectedPayloadIndex,
                                      domainSettings: profile.getPayloadDomainSettings(domain: payloadPlaceholder.domain,
-                                                                                   type: payloadPlaceholder.payloadSourceType),
+                                                                                      type: payloadPlaceholder.payloadSourceType,
+                                                                                      payloadIndex: self.selectedPayloadIndex),
                                      typeSettings: profile.getPayloadTypeSettings(type: payloadPlaceholder.payloadSourceType),
                                      payloadContent: &payloadContent)
         } catch let error {
@@ -305,11 +306,70 @@ class ProfileEditor: NSObject {
     }
     
     func select(payloadPlaceholder: PayloadPlaceholder) {
+        
+        // ---------------------------------------------------------------------
+        //  Only update selection if it's not currently selected
+        // ---------------------------------------------------------------------
         if self.selectedPayloadPlaceholder != payloadPlaceholder {
             self.selectedPayloadPlaceholder = payloadPlaceholder
+            
+            // ---------------------------------------------------------------------
+            //  Update header view
+            // ---------------------------------------------------------------------
             self.headerView.select(payloadPlaceholder: payloadPlaceholder)
-            self.updateTextView(payloadPlaceholder: payloadPlaceholder)
-            self.reloadTableView(updateCellViews: true)
+            
+            if self.selectedPayloadView == .source {
+                
+                // ---------------------------------------------------------------------
+                //  Hide tab bar if it's showing
+                // ---------------------------------------------------------------------
+                self.showTabView(false)
+                
+                // ---------------------------------------------------------------------
+                //  Update source view with a xml representation of the payload(s)
+                // ---------------------------------------------------------------------
+                self.updateSourceView(payloadPlaceholder: payloadPlaceholder)
+            } else {
+                
+                // ---------------------------------------------------------------------
+                //  Show/Hide tab bar if more than one payload is selected
+                // ---------------------------------------------------------------------
+                self.showTabView(payloadPlaceholder: payloadPlaceholder)
+                
+                // ---------------------------------------------------------------------
+                //  Reload all payload keys with updateCellVies so the current selection keys are shown
+                // ---------------------------------------------------------------------
+                self.reloadTableView(updateCellViews: true)
+            }
+        }
+    }
+    
+    func showTabView(payloadPlaceholder: PayloadPlaceholder) {
+        if !payloadPlaceholder.payloadSource.unique {
+            if !self.editorView.subviews.contains(self.tabView) {
+                self.showTabView(true)
+            }
+        } else {
+            self.showTabView(false)
+        }
+    }
+    
+    func showTabView(_ show: Bool) {
+        if show {
+            self.editorView.addSubview(self.tabView)
+            
+            // Reconnect tableview
+            NSLayoutConstraint.deactivate([self.constraintScrollViewTopSeparator])
+            NSLayoutConstraint.activate([self.constraintScrollViewTopTab])
+            
+            // Add TabView
+            NSLayoutConstraint.activate(self.constraintsTabView)
+        } else {
+            self.tabView.removeFromSuperview()
+            
+            // Reconnect tableview to top
+            NSLayoutConstraint.deactivate([self.constraintScrollViewTopTab])
+            NSLayoutConstraint.activate([self.constraintScrollViewTopSeparator])
         }
     }
     
@@ -380,8 +440,8 @@ extension ProfileEditor: NSTableViewDelegate {
             let profile = self.profile,
             let cellView = self.cellViews[rowNumber] as? PayloadCellView,
             let subkey = cellView.subkey else { return }
-
-        let isEnabled = profile.isEnabled(subkey: subkey, onlyByUser: false)
+        
+        let isEnabled = profile.isEnabled(subkey: subkey, onlyByUser: false, payloadIndex: self.selectedPayloadIndex)
         
         if !isEnabled {
             rowView.backgroundColor = .quaternaryLabelColor
@@ -400,8 +460,8 @@ extension ProfileEditor: NSTableViewDelegate {
             }
             return self.cellViews[row]
         } else if tableColumn?.identifier == .tableColumnPayloadEnableLeading {
-            if let cellView = self.cellViews[row] as? PayloadCellView, let subkey = cellView.subkey, let viewSettings = self.profile?.getPayloadViewTypeSettings(type: subkey.payloadSourceType) {
-                return PayloadCellViewEnable(subkey: subkey, editor: self, settings: viewSettings)
+            if let cellView = self.cellViews[row] as? PayloadCellView, let subkey = cellView.subkey, let viewSettings = self.profile?.getViewTypeSettings(type: subkey.payloadSourceType) {
+                return PayloadCellViewEnable(subkey: subkey, payloadIndex: self.selectedPayloadIndex, settings: viewSettings, editor: self)
             }
         }
         return nil

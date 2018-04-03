@@ -26,7 +26,7 @@ class PayloadCellViewEnable: NSTableCellView, CheckboxCellView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    required init(subkey: PayloadSourceSubkey, editor: ProfileEditor, settings: Dictionary<String, Any>) {
+    required init(subkey: PayloadSourceSubkey, payloadIndex: Int, settings: Dictionary<String, Any>, editor: ProfileEditor) {
         
         self.subkey = subkey
         self.editor = editor
@@ -48,7 +48,7 @@ class PayloadCellViewEnable: NSTableCellView, CheckboxCellView {
         //  Set Value
         // ---------------------------------------------------------------------
         if let profile = editor.profile {
-            self.checkbox?.state = (profile.isEnabled(subkey: subkey, onlyByUser: false)) ? .on : .off
+            self.checkbox?.state = (profile.isEnabled(subkey: subkey, onlyByUser: false, payloadIndex: payloadIndex)) ? .on : .off
         }
         
         // ---------------------------------------------------------------------
@@ -66,8 +66,11 @@ class PayloadCellViewEnable: NSTableCellView, CheckboxCellView {
     // MARK: CheckboxCellView Functions
     
     func clicked(_ checkbox: NSButton) {
-        guard let subkey = self.subkey else { return }
-        self.editor?.updateViewSettings(value: checkbox.state == .on ? true : false, key: SettingsKey.enabled, subkey: subkey)
+        guard
+            let subkey = self.subkey,
+            let editor = self.editor else { return }
+        
+        editor.updateViewSettings(value: checkbox.state == .on ? true : false, key: SettingsKey.enabled, subkey: subkey)
     }
 }
 

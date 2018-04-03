@@ -23,8 +23,8 @@ class PayloadCellViewDictionary: PayloadCellView, ProfileCreatorCellView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    required init(subkey: PayloadSourceSubkey, editor: ProfileEditor, settings: Dictionary<String, Any>) {
-        super.init(subkey: subkey, editor: editor, settings: settings)
+    required init(subkey: PayloadSourceSubkey, payloadIndex: Int, settings: Dictionary<String, Any>, editor: ProfileEditor) {
+        super.init(subkey: subkey, payloadIndex: payloadIndex, settings: settings,  editor: editor)
         
         // ---------------------------------------------------------------------
         //  Create and add vertical separator bottom

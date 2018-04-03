@@ -272,7 +272,7 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
             // Reset
             self.profilePayloads = [PayloadPlaceholder]()
             
-            for (typeRawValue, typeSettingsDict) in profile.payloadSettings {
+            for (typeRawValue, typeSettings) in profile.payloadSettings {
                 
                 // ---------------------------------------------------------------------
                 //  Verify we got a valid type and a non empty settings dict
@@ -286,13 +286,13 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
                 // ---------------------------------------------------------------------
                 //  Loop through all domains and settings for the current type, add all enabled
                 // ---------------------------------------------------------------------
-                for (domain, payloadSettings) in typeSettingsDict {
-                    if payloadSettings[SettingsKey.enabled] as? Bool == true {
-                        if
-                            let payload = ProfilePayloads.shared.payloadSource(domain: domain, type: type),
-                            let payloadPlaceholder = payload.placeholder {
+                for domain in typeSettings.keys {
+                    
+                    if
+                        profile.isEnabled(domain: domain, type: type),
+                        let payload = ProfilePayloads.shared.payloadSource(domain: domain, type: type),
+                        let payloadPlaceholder = payload.placeholder {
                             self.profilePayloads.append(payloadPlaceholder)
-                        }
                     }
                 }
             }

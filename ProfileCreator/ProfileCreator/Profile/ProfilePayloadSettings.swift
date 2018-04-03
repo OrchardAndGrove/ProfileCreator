@@ -15,25 +15,31 @@ extension Profile {
     // MARK: Payload Settings: Get
     
     // For getting the currently in memory value
-    func getPayloadSetting(key: String, domain: String, type: PayloadSourceType) -> Any? {
-        var typeSettings = self.getPayloadTypeSettings(type: type)
-        var domainSettings = typeSettings[domain] ?? Dictionary<String, Any>()
+    func getPayloadSetting(key: String, domain: String, type: PayloadSourceType, payloadIndex: Int) -> Any? {
+        let domainSettings = self.getPayloadDomainSettings(domain: domain, type: type, payloadIndex: payloadIndex)
         return domainSettings[key]
     }
     
-    func getPayloadTypeSettings(type: PayloadSourceType) -> Dictionary<String, Dictionary<String, Any>> {
-        return self.payloadSettings[String(type.rawValue)] ?? Dictionary<String, Dictionary<String, Any>>()
+    func getPayloadTypeSettings(type: PayloadSourceType) -> Dictionary<String, [Dictionary<String, Any>]> {
+        return self.payloadSettings[String(type.rawValue)] ?? Dictionary<String, [Dictionary<String, Any>]>()
     }
     
-    func getPayloadDomainSettings(domain: String, type: PayloadSourceType) -> Dictionary<String, Any> {
+    func getPayloadDomainSettings(domain: String, type: PayloadSourceType) -> [Dictionary<String, Any>] {
         let payloadTypeSettings = self.getPayloadTypeSettings(type: type)
-        return payloadTypeSettings[domain] ?? Dictionary<String, Any>()
+        return payloadTypeSettings[domain] ?? [Dictionary<String, Any>]()
+    }
+    
+    func getPayloadDomainSettings(domain: String, type: PayloadSourceType, payloadIndex: Int) -> Dictionary<String, Any> {
+        let payloadDomainSettings = self.getPayloadDomainSettings(domain: domain, type: type)
+        if payloadIndex < payloadDomainSettings.count {
+            return payloadDomainSettings[payloadIndex]
+        } else { return Dictionary<String, Any>() }
     }
     
     // MARK: -
     // MARK: Payload Settings: Set
     
-    func setPayloadTypeSettings(settings: Dictionary<String, Dictionary<String, Any>>, type: PayloadSourceType) {
+    func setPayloadTypeSettings(settings: Dictionary<String, [Dictionary<String, Any>]>, type: PayloadSourceType) {
         self.payloadSettings[String(type.rawValue)] = settings
         
         // ---------------------------------------------------------------------
@@ -42,16 +48,23 @@ extension Profile {
         self.resetCache()
     }
     
-    func setPayloadSettings(settings: Dictionary<String, Any>, domain: String, type: PayloadSourceType) {
-        Swift.print("Restorning settings for domain: \(domain)")
-        var typeSettings = self.getPayloadTypeSettings(type: type)
-        typeSettings[domain] = settings
-        self.setPayloadTypeSettings(settings: typeSettings, type: type)
-        
-        // ---------------------------------------------------------------------
-        //  Reset any cached condition results as updated settings might change those
-        // ---------------------------------------------------------------------
-        self.resetCache()
+    private func setPayloadDomainSettings(settings: [Dictionary<String, Any>], domain: String, type: PayloadSourceType) {
+        var payloadTypeSettings = self.getPayloadTypeSettings(type: type)
+        payloadTypeSettings[domain] = settings
+        self.setPayloadTypeSettings(settings: payloadTypeSettings, type: type)
+    }
+    
+    func setPayloadDomainSettings(settings: Dictionary<String, Any>, domain: String, type: PayloadSourceType, payloadIndex: Int) {
+        var payloadDomainSettings = self.getPayloadDomainSettings(domain: domain, type: type)
+        if payloadDomainSettings.count == 0 {
+            payloadDomainSettings.append(settings)
+        } else if payloadIndex < payloadDomainSettings.count {
+            payloadDomainSettings[payloadIndex] = settings
+        } else {
+            Log.shared.error(message: "Payload index: \(payloadIndex) doesn't exist in domain settings. Will not update", category: String(describing: self))
+            return
+        }
+        self.setPayloadDomainSettings(settings: payloadDomainSettings, domain: domain, type: type)
     }
     
     // MARK: -
@@ -61,7 +74,7 @@ extension Profile {
         let newSelectedDistribution = Distribution(string: self.editorDistributionMethod)
         if self.selectedDistribution != newSelectedDistribution {
             #if DEBUG
-                Log.shared.debug(message: "Updating selected distribution method to: \(newSelectedDistribution)", category: String(describing: self))
+            Log.shared.debug(message: "Updating selected distribution method to: \(newSelectedDistribution)", category: String(describing: self))
             #endif
             
             self.selectedDistribution = newSelectedDistribution
@@ -76,7 +89,7 @@ extension Profile {
         if self.editorShowScopeSystem { newSelectedScope.insert(.system) }
         if self.selectedScope != newSelectedScope {
             #if DEBUG
-                Log.shared.debug(message: "Updating selected scope to: \(PayloadUtility.string(fromTargets: newSelectedScope))", category: String(describing: self))
+            Log.shared.debug(message: "Updating selected scope to: \(PayloadUtility.string(fromTargets: newSelectedScope))", category: String(describing: self))
             #endif
             
             self.selectedScope = newSelectedScope
@@ -92,7 +105,7 @@ extension Profile {
         if self.editorShowTvOS { newSelectedPlatforms.insert(.tvOS) }
         if self.selectedPlatforms != newSelectedPlatforms {
             #if DEBUG
-                Log.shared.debug(message: "Updating selected platforms to: \(PayloadUtility.string(fromPlatforms: newSelectedPlatforms))", category: String(describing: self))
+            Log.shared.debug(message: "Updating selected platforms to: \(PayloadUtility.string(fromPlatforms: newSelectedPlatforms))", category: String(describing: self))
             #endif
             self.selectedPlatforms = newSelectedPlatforms
             self.resetCache()
@@ -100,27 +113,26 @@ extension Profile {
         }
     }
     
-    func updatePayloadSettings(value: Any?, subkey: PayloadSourceSubkey) {
-        self.updatePayloadSettings(value: value, key: subkey.keyPath, domain: subkey.domain, type: subkey.payloadSourceType)
+    func updatePayloadSettings(value: Any?, subkey: PayloadSourceSubkey, payloadIndex: Int) {
+        self.updatePayloadSettings(value: value, key: subkey.keyPath, domain: subkey.domain, type: subkey.payloadSourceType, payloadIndex: payloadIndex)
     }
     
-    func updatePayloadSettings(value: Any?, key: String, subkey: PayloadSourceSubkey) {
+    func updatePayloadSettings(value: Any?, key: String, subkey: PayloadSourceSubkey, payloadIndex: Int) {
         var keyPath = key
         var subkeyPathArray = subkey.keyPath.components(separatedBy: ".")
         if 1 < subkeyPathArray.count {
             subkeyPathArray.removeLast()
             keyPath = "\(subkeyPathArray.joined(separator: ".")).\(key)"
         }
-        self.updatePayloadSettings(value: value, key: keyPath, domain: subkey.domain, type: subkey.payloadSourceType)
+        self.updatePayloadSettings(value: value, key: keyPath, domain: subkey.domain, type: subkey.payloadSourceType, payloadIndex: payloadIndex)
     }
     
-    func updatePayloadSettings(value: Any?, key: String, domain: String, type: PayloadSourceType) {
+    func updatePayloadSettings(value: Any?, key: String, domain: String, type: PayloadSourceType, payloadIndex: Int) {
         
         // ---------------------------------------------------------------------
         //  Get the current domain settings or create an empty set if they doesn't exist
         // ---------------------------------------------------------------------
-        var typeSettings = self.getPayloadTypeSettings(type: type)
-        var domainSettings = typeSettings[domain] ?? Dictionary<String, Any>()
+        var domainSettings = self.getPayloadDomainSettings(domain: domain, type: type, payloadIndex: payloadIndex)
         
         // ---------------------------------------------------------------------
         //  Set the new value
@@ -133,14 +145,9 @@ extension Profile {
         self.updateDomainSettings(&domainSettings)
         
         // ---------------------------------------------------------------------
-        //
+        // Save the the changes to the current settings
         // ---------------------------------------------------------------------
-        typeSettings[domain] = domainSettings
-        
-        // ---------------------------------------------------------------------
-        //  Save the the changes to the current settings
-        // ---------------------------------------------------------------------
-        self.setPayloadTypeSettings(settings: typeSettings, type: type)
+        self.setPayloadDomainSettings(settings: domainSettings, domain: domain, type: type, payloadIndex: payloadIndex)
         
         // ---------------------------------------------------------------------
         //  If this is the payload name setting, then update the profile title
@@ -158,7 +165,7 @@ extension Profile {
     // MARK: -
     // MARK: Payload Settings: Default
     
-    class func defaultPayloadSettings(uuid: UUID) -> Dictionary<String, Dictionary<String, Dictionary<String, Any>>> {
+    class func defaultPayloadSettings(uuid: UUID) -> Dictionary<String, Dictionary<String, [Dictionary<String, Any>]>> {
         
         let defaultOrganizationName = UserDefaults.standard.string(forKey: PreferenceKey.defaultOrganization) ?? "ProfileCreator"
         
@@ -173,8 +180,8 @@ extension Profile {
             PayloadKey.payloadDisplayName : StringConstant.defaultProfileName
         ]
         
-        let payloadTypeSettings: Dictionary<String, Dictionary<String, Any>> = [
-            ManifestDomain.general : payloadDomainSettings
+        let payloadTypeSettings: Dictionary<String, [Dictionary<String, Any>]> = [
+             ManifestDomain.general : [ payloadDomainSettings ]
         ]
         
         return [String(PayloadSourceType.manifest.rawValue) : payloadTypeSettings]
@@ -183,25 +190,35 @@ extension Profile {
     // MARK: -
     // MARK: Payload Saved Settings: Get
     
-    func getSavedPayloadTypeSettings(type: PayloadSourceType) -> Dictionary<String, Any> {
-        let savedPayloadSettings = self.savedSettings[SettingsKey.payloadSettings] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
-        return savedPayloadSettings[String(type.rawValue)] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
+    func getSavedPayloadSetting(key: String, domain: String, type: PayloadSourceType, payloadIndex: Int) -> Any? {
+        let savedDomainSettings = self.getSavedPayloadDomainSettings(domain: domain, type: type, payloadIndex: payloadIndex)
+        return savedDomainSettings[key]
+    }
+
+    func getSavedPayloadTypeSettings(type: PayloadSourceType) -> Dictionary<String, [Dictionary<String, Any>]> {
+        let savedPayloadSettings = self.savedSettings[SettingsKey.payloadSettings] as? Dictionary<String, Dictionary<String, [Dictionary<String, Any>]>> ?? Dictionary<String, Dictionary<String, [Dictionary<String, Any>]>>()
+        return savedPayloadSettings[String(type.rawValue)] ?? Dictionary<String, [Dictionary<String, Any>]>()
     }
     
-    // For getting the currently saved on disk value
-    func getSavedPayloadSetting(key: String, domain: String, type: PayloadSourceType) -> Any? {
-        let typeSettings = self.getSavedPayloadTypeSettings(type: type)
-        var domainSettings = typeSettings[domain] as? Dictionary<String, Any> ?? Dictionary<String, Any>()
-        return domainSettings[key]
+    func getSavedPayloadDomainSettings(domain: String, type: PayloadSourceType) -> [Dictionary<String, Any>] {
+        let savedPayloadTypeSettings = self.getSavedPayloadTypeSettings(type: type)
+        return savedPayloadTypeSettings[domain] ?? [Dictionary<String, Any>]()
     }
+    
+    func getSavedPayloadDomainSettings(domain: String, type: PayloadSourceType, payloadIndex: Int) -> Dictionary<String, Any> {
+        let savedPayloadDomainSettings = self.getSavedPayloadDomainSettings(domain: domain, type: type)
+        if payloadIndex < savedPayloadDomainSettings.count {
+            return savedPayloadDomainSettings[payloadIndex]
+        } else { return Dictionary<String, Any>() }
+    }
+
+    
     
     // MARK: -
     // MARK: Payload Saved Settings: Reset
     
     func resetSavedPayloadSettings(domain: String, type: PayloadSourceType) {
-        let typeSettings = self.getSavedPayloadTypeSettings(type: type)
-        if let domainSettings = typeSettings[domain] as? Dictionary<String, Any> {
-            self.setPayloadSettings(settings: domainSettings, domain: domain, type: type)
-        }
+        let savedPayloadDomainSettings = self.getSavedPayloadDomainSettings(domain: domain, type: type)
+        self.setPayloadDomainSettings(settings: savedPayloadDomainSettings, domain: domain, type: type)
     }
 }

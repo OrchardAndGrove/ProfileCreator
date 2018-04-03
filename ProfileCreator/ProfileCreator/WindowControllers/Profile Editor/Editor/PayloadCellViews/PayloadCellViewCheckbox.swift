@@ -25,8 +25,8 @@ class PayloadCellViewCheckbox: PayloadCellView, ProfileCreatorCellView, Checkbox
         fatalError("init(coder:) has not been implemented")
     }
     
-    required init(subkey: PayloadSourceSubkey, editor: ProfileEditor, settings: Dictionary<String, Any>) {
-        super.init(subkey: subkey, editor: editor, settings: settings)
+    required init(subkey: PayloadSourceSubkey, payloadIndex: Int, settings: Dictionary<String, Any>, editor: ProfileEditor) {
+        super.init(subkey: subkey, payloadIndex: payloadIndex, settings: settings,  editor: editor)
         
         // ---------------------------------------------------------------------
         //  Setup Custom View Content
@@ -49,9 +49,7 @@ class PayloadCellViewCheckbox: PayloadCellView, ProfileCreatorCellView, Checkbox
         // ---------------------------------------------------------------------
         //  Set Value
         // ---------------------------------------------------------------------
-        if
-            let domainSettings = settings[subkey.domain] as? Dictionary<String, Any>,
-            let value = domainSettings[subkey.keyPath] as? Bool {
+        if let value = profile?.getPayloadSetting(key: subkey.keyPath, domain: subkey.domain, type: subkey.payloadSourceType, payloadIndex: payloadIndex) as? Bool {
             self.checkbox?.state = self.state(forValue: value)
         } else {
             self.checkbox?.state = self.state(forValue: self.valueDefault)
@@ -100,8 +98,11 @@ class PayloadCellViewCheckbox: PayloadCellView, ProfileCreatorCellView, Checkbox
     // MARK: CheckboxCellView Functions
     
     func clicked(_ checkbox: NSButton) {
-        guard let subkey = self.subkey else { return }
-        self.editor?.updatePayloadSettings(value: self.value(forState: checkbox.state), subkey: subkey)
+        guard
+            let subkey = self.subkey,
+            let profile = self.profile else { return }
+        
+        profile.updatePayloadSettings(value: self.value(forState: checkbox.state), subkey: subkey, payloadIndex: self.payloadIndex)
     }
 }
 

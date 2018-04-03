@@ -109,7 +109,7 @@ extension ProfileEditor {
         self.textView.font = NSFont(name: "Menlo Regular", size: NSFont.systemFontSize(for: .regular))
         self.textView.textColor = .controlTextColor
         self.textView.string = "This is a test string"
-    
+        
         self.textView.textContainerInset = NSSize(width: 50, height: 30)
         
         // Use old resizing masks until I know how to replicate with AutoLayout.
@@ -202,13 +202,22 @@ extension ProfileEditor {
         //  Add constraints
         // ---------------------------------------------------------------------
         // Top
-        constraints.append(NSLayoutConstraint(item: self.scrollView,
-                                              attribute: .top,
-                                              relatedBy: .equal,
-                                              toItem: self.separator,
-                                              attribute: .bottom,
-                                              multiplier: 1.0,
-                                              constant: 0.0))
+        self.constraintScrollViewTopSeparator = NSLayoutConstraint(item: self.scrollView,
+                                                                   attribute: .top,
+                                                                   relatedBy: .equal,
+                                                                   toItem: self.separator,
+                                                                   attribute: .bottom,
+                                                                   multiplier: 1.0,
+                                                                   constant: 0.0)
+        constraints.append(self.constraintScrollViewTopSeparator)
+        
+        self.constraintScrollViewTopTab = NSLayoutConstraint(item: self.scrollView,
+                                                             attribute: .top,
+                                                             relatedBy: .equal,
+                                                             toItem: self.tabView,
+                                                             attribute: .bottom,
+                                                             multiplier: 1.0,
+                                                             constant: 0.0)
         
         // Leading
         constraints.append(NSLayoutConstraint(item: self.scrollView,
@@ -238,4 +247,54 @@ extension ProfileEditor {
                                               constant: 0.0))
     }
     
+    internal func setupTabView(constraints: inout [NSLayoutConstraint]) {
+        self.tabView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let testTab = ProfileEditorTab()
+        self.tabView.addView(testTab, in: .trailing)
+        
+        // ---------------------------------------------------------------------
+        //  Add and setup ScrollView
+        // ---------------------------------------------------------------------
+        // self.editorView.addSubview(self.tabView)
+        
+        // ---------------------------------------------------------------------
+        //  Add constraints
+        // ---------------------------------------------------------------------
+        // Top
+        self.constraintsTabView.append(NSLayoutConstraint(item: self.tabView,
+                                                          attribute: .top,
+                                                          relatedBy: .equal,
+                                                          toItem: self.separator,
+                                                          attribute: .top,
+                                                          multiplier: 1.0,
+                                                          constant: 0.0))
+        
+        // Height
+        self.constraintsTabView.append(NSLayoutConstraint(item: self.tabView,
+                                                          attribute: .height,
+                                                          relatedBy: .equal,
+                                                          toItem: nil,
+                                                          attribute: .notAnAttribute,
+                                                          multiplier: 1.0,
+                                                          constant: 24.0))
+        
+        // Leading
+        self.constraintsTabView.append(NSLayoutConstraint(item: self.tabView,
+                                                          attribute: .leading,
+                                                          relatedBy: .equal,
+                                                          toItem: self.editorView,
+                                                          attribute: .leading,
+                                                          multiplier: 1.0,
+                                                          constant: 0.0))
+        
+        // Trailing
+        self.constraintsTabView.append(NSLayoutConstraint(item: self.editorView,
+                                                          attribute: .trailing,
+                                                          relatedBy: .equal,
+                                                          toItem: self.tabView,
+                                                          attribute: .trailing,
+                                                          multiplier: 1.0,
+                                                          constant: 0.0))
+    }
 }

@@ -187,4 +187,5 @@ public struct SettingsKey {
     static let title = "Title"
     static let viewSettings = "ViewSettings"
     static let value = "Value"
+    static let settings = "Settings"
 }

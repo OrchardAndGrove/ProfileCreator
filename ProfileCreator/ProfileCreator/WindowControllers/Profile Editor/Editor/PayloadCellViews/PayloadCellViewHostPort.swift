@@ -31,8 +31,8 @@ class PayloadCellViewHostPort: PayloadCellView, ProfileCreatorCellView, NSTextFi
         fatalError("init(coder:) has not been implemented")
     }
     
-    required init(subkey: PayloadSourceSubkey, editor: ProfileEditor, settings: Dictionary<String, Any>) {
-        super.init(subkey: subkey, editor: editor, settings: settings)
+    required init(subkey: PayloadSourceSubkey, payloadIndex: Int, settings: Dictionary<String, Any>, editor: ProfileEditor) {
+        super.init(subkey: subkey, payloadIndex: payloadIndex, settings: settings,  editor: editor)
         
         // ---------------------------------------------------------------------
         //  Setup Custom View Content
@@ -110,10 +110,10 @@ extension PayloadCellViewHostPort {
         }
         
         if textField == self.textFieldHost, newString != self.valueBeginEditingHost {
-            self.editor?.updatePayloadSettings(value: newString, subkey: subkey)
+            self.profile?.updatePayloadSettings(value: newString, subkey: subkey, payloadIndex: self.payloadIndex)
             self.isEditingHost = false
         } else if textField == self.textFieldPort, newString != self.valueBeginEditingPort {
-            self.editor?.updatePayloadSettings(value: newString, subkey: subkey)
+            self.profile?.updatePayloadSettings(value: newString, subkey: subkey, payloadIndex: self.payloadIndex)
             self.isEditingPort = false
         }
     }

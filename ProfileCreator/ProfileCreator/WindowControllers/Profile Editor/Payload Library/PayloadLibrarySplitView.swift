@@ -144,7 +144,6 @@ class PayloadLibrarySplitView: NSSplitView {
     }
     
     func noProfilePayloads(show: Bool) {
-        Swift.print("noProfilePayloads: \(show)")
         guard
             let noPayloadsView = self.noProfilePayloads?.view else {
                 // TODO: Proper Logging

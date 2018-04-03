@@ -21,8 +21,6 @@ class PayloadCellViewTableView: PayloadCellView, ProfileCreatorCellView, TableVi
     var valueDefault: [Dictionary<String, Any>]?
     let buttonAddRemove = NSSegmentedControl()
     
-    weak var profile: Profile?
-    
     // MARK: -
     // MARK: Initialization
     
@@ -30,10 +28,8 @@ class PayloadCellViewTableView: PayloadCellView, ProfileCreatorCellView, TableVi
         fatalError("init(coder:) has not been implemented")
     }
     
-    required init(subkey: PayloadSourceSubkey, editor: ProfileEditor, settings: Dictionary<String, Any>) {
-        super.init(subkey: subkey, editor: editor, settings: settings)
-        
-        self.profile = editor.profile
+    required init(subkey: PayloadSourceSubkey, payloadIndex: Int, settings: Dictionary<String, Any>, editor: ProfileEditor) {
+        super.init(subkey: subkey, payloadIndex: payloadIndex, settings: settings,  editor: editor)
         
         // ---------------------------------------------------------------------
         //  Setup Custom View Content
@@ -73,9 +69,7 @@ class PayloadCellViewTableView: PayloadCellView, ProfileCreatorCellView, TableVi
         // ---------------------------------------------------------------------
         //  Set Value
         // ---------------------------------------------------------------------
-        if
-            let domainSettings = settings[subkey.domain] as? Dictionary<String, Any>,
-            let value = domainSettings[subkey.keyPath] as? [Dictionary<String, Any>] {
+        if let value = profile?.getPayloadSetting(key: subkey.keyPath, domain: subkey.domain, type: subkey.payloadSourceType, payloadIndex: payloadIndex) as? [Dictionary<String, Any>] {
             Swift.print("This is the value: \(value)")
             self.tableViewContent = value
         } else if let valueDefault = self.valueDefault {
@@ -142,7 +136,7 @@ class PayloadCellViewTableView: PayloadCellView, ProfileCreatorCellView, TableVi
             self.tableView?.selectRowIndexes(IndexSet(integer: index), byExtendingSelection: false)
         } else {
             self.tableViewContent.append(newRow)
-            self.editor?.updatePayloadSettings(value: self.tableViewContent, subkey: subkey)
+            self.profile?.updatePayloadSettings(value: self.tableViewContent, subkey: subkey, payloadIndex: self.payloadIndex)
             self.tableView?.reloadData()
         }
     }
@@ -152,7 +146,7 @@ class PayloadCellViewTableView: PayloadCellView, ProfileCreatorCellView, TableVi
         
         self.tableViewContent.remove(at: index)
         self.tableView?.removeRows(at: IndexSet(integer: index), withAnimation: .slideDown)
-        self.editor?.updatePayloadSettings(value: self.tableViewContent, subkey: subkey)
+        self.profile?.updatePayloadSettings(value: self.tableViewContent, subkey: subkey, payloadIndex: self.payloadIndex)
         
         let rowCount = self.tableViewContent.count
         if 0 < rowCount {
@@ -251,6 +245,7 @@ class PayloadCellViewTableView: PayloadCellView, ProfileCreatorCellView, TableVi
         //  Get all required objects
         // ---------------------------------------------------------------------
         guard
+            let profile = self.profile,
             let subkey = self.subkey,
             let textField = notification.object as? NSTextField,
             let keyPath = textField.identifier?.rawValue else { return }
@@ -282,7 +277,7 @@ class PayloadCellViewTableView: PayloadCellView, ProfileCreatorCellView, TableVi
         //  Save the changes internally and to the payloadSettings
         // ---------------------------------------------------------------------
         self.tableViewContent = tableViewContent
-        self.editor?.updatePayloadSettings(value: tableViewContent, subkey: subkey)
+        profile.updatePayloadSettings(value: tableViewContent, subkey: subkey, payloadIndex: self.payloadIndex)
     }
 }
 

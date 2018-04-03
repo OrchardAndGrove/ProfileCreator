@@ -132,7 +132,6 @@ class ProfileEditorWindowToolbarItemViewSegmentedControl: NSSegmentedControl {
     // MARK: Button/Menu Actions
     
     @objc func clicked(segmentedControl: NSSegmentedControl) {
-        Swift.print("clicked: \(segmentedControl)")
         if let profileEditor = self.profileEditor {
             if #available(OSX 10.13, *) {
                 let selectedTag = segmentedControl.tag(forSegment: segmentedControl.selectedSegment)

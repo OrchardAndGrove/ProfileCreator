@@ -6,7 +6,7 @@
 //  Copyright © 2018 Erik Berglund. All rights reserved.
 //
 
-import Foundation
+import Cocoa
 
 // MARK: -
 // MARK: Array
@@ -73,5 +73,22 @@ public func !=(lhs: [String: Any], rhs: [String: Any] ) -> Bool {
 extension String {
     func matches(_ regex: String) -> Bool {
         return self.range(of: regex, options: .regularExpression, range: nil, locale: nil) != nil
+    }
+}
+
+// MARK: -
+// MARK: NSView
+
+// Get all nested subviews
+extension NSView {
+    func allSubviews() -> [NSView] {
+        var subviews = [NSView]()
+        
+        for subview in self.subviews {
+            subviews += subview.allSubviews() as [NSView]
+            subviews.append(subview)
+        }
+        
+        return subviews
     }
 }

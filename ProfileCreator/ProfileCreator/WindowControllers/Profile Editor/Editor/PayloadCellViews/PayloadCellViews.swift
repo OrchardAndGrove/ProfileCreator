@@ -15,7 +15,7 @@ class PayloadCellViews {
     // FIXME: This variable is supposed to do caching, where if nothung has change in the settings or view settings, then use the same array again.
     var allCellViews = Dictionary<String, Array<NSTableCellView>>()
     
-    func cellViews(payloadPlaceholder: PayloadPlaceholder, profileEditor: ProfileEditor) -> [NSTableCellView] {
+    func cellViews(payloadPlaceholder: PayloadPlaceholder, payloadIndex: Int, profileEditor: ProfileEditor) -> [NSTableCellView] {
         // var cellViews = allCellViews[payloadPlaceholder.domain] ?? [NSTableCellView]()
         var cellViews = [NSTableCellView]()
         
@@ -25,6 +25,8 @@ class PayloadCellViews {
         // Add CellViews
         self.addCellViews(profile: profile,
                           subkeys: payloadPlaceholder.payloadSource.subkeys,
+                          payloadIndex: payloadIndex,
+                          typeSettings: profile.getPayloadTypeSettings(type: payloadPlaceholder.payloadSourceType),
                           profileEditor: profileEditor,
                           cellViews: &cellViews)
         
@@ -32,10 +34,10 @@ class PayloadCellViews {
         if let payloadCellViews = cellViews as? [PayloadCellView] {
             
             // Sort cellViews with enabled subkeys at the top
-            let sortedCellViews = payloadCellViews.sorted(by: { profile.isEnabled(subkey: $0.subkey!, onlyByUser: false) && !profile.isEnabled(subkey: $1.subkey!, onlyByUser: false) })
+            let sortedCellViews = payloadCellViews.sorted(by: { profile.isEnabled(subkey: $0.subkey!, onlyByUser: false, payloadIndex: payloadIndex) && !profile.isEnabled(subkey: $1.subkey!, onlyByUser: false, payloadIndex: payloadIndex) })
             
             // Get the index of the first disabled subkey
-            if let indexDisabled = sortedCellViews.index(where: { !profile.isEnabled(subkey: $0.subkey!, onlyByUser: false) } ) {
+            if let indexDisabled = sortedCellViews.index(where: { !profile.isEnabled(subkey: $0.subkey!, onlyByUser: false, payloadIndex: payloadIndex) } ) {
                 cellViews = sortedCellViews
                 
                 let cellView = PayloadCellViewTitle(title: "Disabled Keys", description: "The payload keys below will not be included in the exported profile")
@@ -44,7 +46,7 @@ class PayloadCellViews {
             
             if payloadPlaceholder.domain != ManifestDomain.general {
                 // Get all SHOWN enabled cellViews. (This works because the root manifest subkeys are all required and will always be enabled, even if they aren't shown.
-                let enabledCellViewKeys = sortedCellViews.compactMap({ profile.isEnabled(subkey: $0.subkey!, onlyByUser: false) ? $0.subkey!.key : nil })
+                let enabledCellViewKeys = sortedCellViews.compactMap({ profile.isEnabled(subkey: $0.subkey!, onlyByUser: false, payloadIndex: payloadIndex) ? $0.subkey!.key : nil })
                 
                 if enabledCellViewKeys.count == 0 || Array(Set(enabledCellViewKeys).subtracting(manifestSubkeysIgnored)).count == 0 {
                     let cellView = PayloadCellViewNoKeys(title: "No Payload Keys Enabled", description: "", profile: profile)
@@ -63,6 +65,8 @@ class PayloadCellViews {
     
     func cellView(profile: Profile,
                   subkey: PayloadSourceSubkey,
+                  payloadIndex: Int,
+                  typeSettings: Dictionary<String, Any>,
                   profileEditor: ProfileEditor) -> NSTableCellView? {
         
         // Check if subkey is hidden
@@ -72,7 +76,7 @@ class PayloadCellViews {
         }
         
         // Check if subkey is enabled
-        if !profile.editorShowDisabled, !profile.isEnabled(subkey: subkey, onlyByUser: false) {
+        if !profile.editorShowDisabled, !profile.isEnabled(subkey: subkey, onlyByUser: false, payloadIndex: payloadIndex) {
             return nil
         }
         
@@ -88,32 +92,29 @@ class PayloadCellViews {
         // Check if subkey is available in the selected platforms
         if !profile.isAvailableForSelectedPlatform(subkey: subkey) { return nil }
         
-        // Get the current settings, should be better handled if an error getting the settings is presented
-        let typeSettings = profile.getPayloadTypeSettings(type: subkey.payloadSourceType)
-        
         // If both range min and max are specified, and the range isn't more that 19, then use a popUpButton instead
         if let rangeList = subkey.rangeList, rangeList.count <= ProfilePayloads.rangeListConvertMax {
-            return PayloadCellViewPopUpButton(subkey: subkey, editor: profileEditor, settings: typeSettings)
+            return PayloadCellViewPopUpButton(subkey: subkey, payloadIndex: payloadIndex, settings: typeSettings, editor: profileEditor)
         }
         
         switch subkey.typeInput {
         case .array:
-            return PayloadCellViewTableView(subkey: subkey, editor: profileEditor, settings: typeSettings)
+            return PayloadCellViewTableView(subkey: subkey, payloadIndex: payloadIndex, settings: typeSettings, editor: profileEditor)
         case .string:
-            return PayloadCellViewTextField(subkey: subkey, editor: profileEditor, settings: typeSettings)
+            return PayloadCellViewTextField(subkey: subkey, payloadIndex: payloadIndex, settings: typeSettings, editor: profileEditor)
         case .bool:
-            return PayloadCellViewCheckbox(subkey: subkey, editor: profileEditor, settings: typeSettings)
+            return PayloadCellViewCheckbox(subkey: subkey, payloadIndex: payloadIndex, settings: typeSettings, editor: profileEditor)
         case .integer, .float:
-            return PayloadCellViewTextFieldNumber(subkey: subkey, editor: profileEditor, settings: typeSettings)
+            return PayloadCellViewTextFieldNumber(subkey: subkey, payloadIndex: payloadIndex, settings: typeSettings, editor: profileEditor)
         case .date:
-            return PayloadCellViewDatePicker(subkey: subkey, editor: profileEditor, settings: typeSettings)
+            return PayloadCellViewDatePicker(subkey: subkey, payloadIndex: payloadIndex, settings: typeSettings, editor: profileEditor)
         case .data:
-            return PayloadCellViewFile(subkey: subkey, editor: profileEditor, settings: typeSettings)
+            return PayloadCellViewFile(subkey: subkey, payloadIndex: payloadIndex, settings: typeSettings, editor: profileEditor)
         case .dictionary:
             if subkey.subkeys.contains(where: { $0.key == ManifestKeyPlaceholder.key }) {
-                return PayloadCellViewTableView(subkey: subkey, editor: profileEditor, settings: typeSettings)
+                return PayloadCellViewTableView(subkey: subkey, payloadIndex: payloadIndex, settings: typeSettings, editor: profileEditor)
             } else {
-                return PayloadCellViewDictionary(subkey: subkey, editor: profileEditor, settings: typeSettings)
+                return PayloadCellViewDictionary(subkey: subkey, payloadIndex: payloadIndex, settings: typeSettings, editor: profileEditor)
             }
         default:
             Swift.print("Class: \(self.self), Function: \(#function), Unknown Manifest Type: \(subkey.typeInput)")
@@ -128,6 +129,8 @@ class PayloadCellViews {
     
     func addCellViews(profile: Profile,
                       subkeys: [PayloadSourceSubkey],
+                      payloadIndex: Int,
+                      typeSettings: Dictionary<String, Any>,
                       profileEditor: ProfileEditor,
                       cellViews: inout [NSTableCellView] ) {
         
@@ -141,6 +144,8 @@ class PayloadCellViews {
             if !(subkey.rootSubkey == nil && subkey.type == .dictionary && Array(Set(subkeys.map({$0.key})).subtracting(manifestSubkeysIgnored)).count == 1) {
                 if let cellView = self.cellView(profile: profile,
                                                 subkey: subkey,
+                                                payloadIndex: payloadIndex,
+                                                typeSettings: typeSettings,
                                                 profileEditor: profileEditor) {
                     cellViews.append(cellView)
                 }
@@ -149,6 +154,8 @@ class PayloadCellViews {
             if !subkey.subkeys.contains(where: {$0.key == ManifestKeyPlaceholder.key}) {
                 self.addCellViews(profile: profile,
                                   subkeys: subkey.subkeys,
+                                  payloadIndex: payloadIndex,
+                                  typeSettings: typeSettings,
                                   profileEditor: profileEditor,
                                   cellViews: &cellViews)
             }

@@ -170,6 +170,7 @@ class EditorTextField {
     
     class func message(profile: Profile,
                        subkey: PayloadSourceSubkey,
+                       payloadIndex: Int,
                        indent: Int,
                        constraints: inout [NSLayoutConstraint],
                        cellView: PayloadCellView) -> NSTextField? {
@@ -179,7 +180,7 @@ class EditorTextField {
             message = subkeyMessage
         } else if
             let sensitiveMessage = subkey.sensitiveMessage,
-            profile.isEnabled(subkey: subkey, onlyByUser: false) {
+            profile.isEnabled(subkey: subkey, onlyByUser: false, payloadIndex: payloadIndex) {
             message = sensitiveMessage
         } else {
             return nil

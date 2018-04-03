@@ -24,8 +24,8 @@ class PayloadCellViewPopUpButton: PayloadCellView, ProfileCreatorCellView, PopUp
         fatalError("init(coder:) has not been implemented")
     }
     
-    required init(subkey: PayloadSourceSubkey, editor: ProfileEditor, settings: Dictionary<String, Any>) {
-        super.init(subkey: subkey, editor: editor, settings: settings)
+    required init(subkey: PayloadSourceSubkey, payloadIndex: Int, settings: Dictionary<String, Any>, editor: ProfileEditor) {
+        super.init(subkey: subkey, payloadIndex: payloadIndex, settings: settings,  editor: editor)
         
         // ---------------------------------------------------------------------
         //  Setup Custom View Content
@@ -58,9 +58,7 @@ class PayloadCellViewPopUpButton: PayloadCellView, ProfileCreatorCellView, PopUp
         // ---------------------------------------------------------------------
         //  Set Value
         // ---------------------------------------------------------------------
-        if
-            let domainSettings = settings[subkey.domain] as? Dictionary<String, Any>,
-            let value = domainSettings[subkey.keyPath] as? String {
+        if let value = profile?.getPayloadSetting(key: subkey.keyPath, domain: subkey.domain, type: subkey.payloadSourceType, payloadIndex: payloadIndex) as? String {
             if self.popUpButton!.itemTitles.contains(value) {
                 self.popUpButton!.selectItem(withTitle: value)
             }
@@ -97,10 +95,11 @@ class PayloadCellViewPopUpButton: PayloadCellView, ProfileCreatorCellView, PopUp
     func selected(_ popUpButton: NSPopUpButton) {
         
         guard
+            let profile = self.profile,
             let subkey = self.subkey,
             let selectedTitle = popUpButton.titleOfSelectedItem  else { return }
         
-        self.editor?.updatePayloadSettings(value: selectedTitle, subkey: subkey)
+        profile.updatePayloadSettings(value: selectedTitle, subkey: subkey, payloadIndex: self.payloadIndex)
     }
 }
     

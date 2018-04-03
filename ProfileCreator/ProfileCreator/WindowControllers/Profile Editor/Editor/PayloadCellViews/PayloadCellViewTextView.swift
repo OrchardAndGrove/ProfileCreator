@@ -25,8 +25,8 @@ class PayloadCellViewTextView: PayloadCellView, ProfileCreatorCellView, NSTextFi
         fatalError("init(coder:) has not been implemented")
     }
     
-    required init(subkey: PayloadSourceSubkey, editor: ProfileEditor, settings: Dictionary<String, Any>) {
-        super.init(subkey: subkey, editor: editor, settings: settings)
+    required init(subkey: PayloadSourceSubkey, payloadIndex: Int, settings: Dictionary<String, Any>, editor: ProfileEditor) {
+        super.init(subkey: subkey, payloadIndex: payloadIndex, settings: settings,  editor: editor)
         
         // ---------------------------------------------------------------------
         //  Setup Custom View Content
@@ -55,9 +55,7 @@ class PayloadCellViewTextView: PayloadCellView, ProfileCreatorCellView, NSTextFi
         //  Set Value
         // ---------------------------------------------------------------------
         var valueString = ""
-        if
-            let domainSettings = settings[subkey.domain] as? Dictionary<String, Any>,
-            let value = domainSettings[subkey.keyPath] as? String {
+        if let value = profile?.getPayloadSetting(key: subkey.keyPath, domain: subkey.domain, type: subkey.payloadSourceType, payloadIndex: payloadIndex) as? String {
             valueString = value
         } else if let valueDefault = self.valueDefault {
             valueString = valueDefault
@@ -102,7 +100,7 @@ extension PayloadCellViewTextView {
     internal override func controlTextDidChange(_ obj: Notification) {
         guard
             let subkey = self.subkey,
-            let editor = self.editor else { return }
+            let profile = self.profile else { return }
         
         self.isEditing = true
         if
@@ -114,14 +112,14 @@ extension PayloadCellViewTextView {
             } else {
                 self.textView?.textColor = .black
             }
-            editor.updatePayloadSettings(value: newString, subkey: subkey)
+            profile.updatePayloadSettings(value: newString, subkey: subkey, payloadIndex: self.payloadIndex)
         }
     }
     
     internal override func controlTextDidEndEditing(_ obj: Notification) {
         guard
             let subkey = self.subkey,
-            let editor = self.editor else { return }
+            let profile = self.profile else { return }
         
         if self.isEditing {
             self.isEditing = false
@@ -129,7 +127,7 @@ extension PayloadCellViewTextView {
                 let userInfo = obj.userInfo,
                 let fieldEditor = userInfo["NSFieldEditor"] as? NSTextView,
                 let newString = fieldEditor.textStorage?.string {
-                editor.updatePayloadSettings(value: newString, subkey: subkey)
+                profile.updatePayloadSettings(value: newString, subkey: subkey, payloadIndex: self.payloadIndex)
             }
         }
     }

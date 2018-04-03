@@ -24,8 +24,8 @@ class PayloadCellViewFile: PayloadCellView, ProfileCreatorCellView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    required init(subkey: PayloadSourceSubkey, editor: ProfileEditor, settings: Dictionary<String, Any>) {
-        super.init(subkey: subkey, editor: editor, settings: settings)
+    required init(subkey: PayloadSourceSubkey, payloadIndex: Int, settings: Dictionary<String, Any>, editor: ProfileEditor) {
+        super.init(subkey: subkey, payloadIndex: payloadIndex, settings: settings,  editor: editor)
         
         // ---------------------------------------------------------------------
         //  Read accepted file UTIs from subkey
@@ -43,10 +43,8 @@ class PayloadCellViewFile: PayloadCellView, ProfileCreatorCellView {
         // ---------------------------------------------------------------------
         //  Set Value
         // ---------------------------------------------------------------------
-        if
-            let domainSettings = settings[subkey.domain] as? Dictionary<String, Any>,
-            let valueData = domainSettings[subkey.keyPath] as? Data,
-            let valueFileInfo = domainSettings[SettingsKey.fileInfo] as? Dictionary<String, Any>,
+        if let valueData = profile?.getPayloadSetting(key: subkey.keyPath, domain: subkey.domain, type: subkey.payloadSourceType, payloadIndex: payloadIndex) as? Data,
+            let valueFileInfo = profile?.getPayloadSetting(key: SettingsKey.fileInfo, domain: subkey.domain, type: subkey.payloadSourceType, payloadIndex: payloadIndex) as? Dictionary<String, Any>,
             self.processFile(data: valueData, fileInfo: valueFileInfo) {
             self.showPrompt(false)
         } else {
@@ -197,8 +195,8 @@ class PayloadCellViewFile: PayloadCellView, ProfileCreatorCellView {
                             returnValue: { (response) in
                                 if response == .alertFirstButtonReturn {
                                     if self.updateView(fileInfo: fileInfo) {
-                                        self.editor?.updatePayloadSettings(value: fileInfoDict, key: SettingsKey.fileInfo, subkey: subkey)
-                                        self.editor?.updatePayloadSettings(value: fileData, subkey: subkey)
+                                        self.profile?.updatePayloadSettings(value: fileInfoDict, key: SettingsKey.fileInfo, subkey: subkey, payloadIndex: self.payloadIndex)
+                                        self.profile?.updatePayloadSettings(value: fileData, subkey: subkey, payloadIndex: self.payloadIndex)
                                     }
                                     completionHandler(true); return
                                 } else {
@@ -207,8 +205,8 @@ class PayloadCellViewFile: PayloadCellView, ProfileCreatorCellView {
             })
         } else {
             if self.updateView(fileInfo: fileInfo) {
-                self.editor?.updatePayloadSettings(value: fileInfoDict, key: SettingsKey.fileInfo, subkey: subkey)
-                self.editor?.updatePayloadSettings(value: fileData, subkey: subkey)
+                self.profile?.updatePayloadSettings(value: fileInfoDict, key: SettingsKey.fileInfo, subkey: subkey, payloadIndex: self.payloadIndex)
+                self.profile?.updatePayloadSettings(value: fileData, subkey: subkey, payloadIndex: self.payloadIndex)
             }
             completionHandler(true); return
         }
