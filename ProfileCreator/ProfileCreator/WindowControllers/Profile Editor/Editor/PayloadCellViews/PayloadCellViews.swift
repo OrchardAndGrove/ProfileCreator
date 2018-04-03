@@ -136,7 +136,10 @@ class PayloadCellViews {
         
         for subkey in subkeys {
             
+            Swift.print("subkey: \(subkey.keyPath), parentSubkeys: \(subkey.parentSubkeys)")
+            Swift.print("subkey: \(subkey.keyPath), parentSubkey: \(subkey.parentSubkey)")
             if let parentSubkeys = subkey.parentSubkeys, parentSubkeys.contains(where: {$0.type == .array }) {
+                Swift.print("Subkey: \(subkey.keyPath) has an array parent")
                 continue
             }
   

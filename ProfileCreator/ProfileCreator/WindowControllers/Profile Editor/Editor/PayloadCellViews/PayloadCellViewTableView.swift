@@ -206,6 +206,14 @@ class PayloadCellViewTableView: PayloadCellView, ProfileCreatorCellView, TableVi
                     }
                     Swift.print("tableViewColumnSubkey: \(tableViewColumnSubkey.keyPath)")
                 }
+            case .string:
+                if !profile.isAvailableForSelectedPlatform(subkey: tableViewSubkey) { return }
+                self.tableViewColumns.append(tableViewSubkey)
+                
+                // ---------------------------------------------------------------------
+                //  Setup TableColumn
+                // ---------------------------------------------------------------------
+                tableView.addTableColumn(self.tableColumn(forSubkey: tableViewSubkey, profile: profile))
             default:
                 Swift.print("Class: \(self.self), Function: \(#function), Type is: \(tableViewSubkey.typeInput), need to implement this!")
             }
