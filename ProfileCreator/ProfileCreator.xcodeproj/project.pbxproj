@@ -73,6 +73,14 @@
 		E3204F152066359D002DEACC /* PayloadLibraryNoProfilePayloadsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3204F142066359D002DEACC /* PayloadLibraryNoProfilePayloadsView.swift */; };
 		E32767E61F3F71B700B4670C /* PayloadCellViewFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32767E51F3F71B700B4670C /* PayloadCellViewFile.swift */; };
 		E32767E81F3F736B00B4670C /* PayloadCellViewItemFileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E32767E71F3F736B00B4670C /* PayloadCellViewItemFileView.swift */; };
+		E32B15C22073BE990069CE20 /* developerDomainsFilled.png in Resources */ = {isa = PBXBuildFile; fileRef = E32B15C02073BE980069CE20 /* developerDomainsFilled.png */; };
+		E32B15C32073BE990069CE20 /* developerDomains.png in Resources */ = {isa = PBXBuildFile; fileRef = E32B15C12073BE990069CE20 /* developerDomains.png */; };
+		E32B15C62073BEF30069CE20 /* localDomains.png in Resources */ = {isa = PBXBuildFile; fileRef = E32B15C42073BEF20069CE20 /* localDomains.png */; };
+		E32B15C72073BEF30069CE20 /* localDomainsFilled.png in Resources */ = {isa = PBXBuildFile; fileRef = E32B15C52073BEF20069CE20 /* localDomainsFilled.png */; };
+		E32B15CA2073BF460069CE20 /* appleDomains.png in Resources */ = {isa = PBXBuildFile; fileRef = E32B15C82073BF460069CE20 /* appleDomains.png */; };
+		E32B15CB2073BF460069CE20 /* appleDomainsFilled.png in Resources */ = {isa = PBXBuildFile; fileRef = E32B15C92073BF460069CE20 /* appleDomainsFilled.png */; };
+		E32B15CE2073BFC00069CE20 /* applicationDomains.png in Resources */ = {isa = PBXBuildFile; fileRef = E32B15CC2073BFC00069CE20 /* applicationDomains.png */; };
+		E32B15CF2073BFC00069CE20 /* applicationDomainsFilled.png in Resources */ = {isa = PBXBuildFile; fileRef = E32B15CD2073BFC00069CE20 /* applicationDomainsFilled.png */; };
 		E331A46C1FB2EAB800F98477 /* ProfileExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = E331A46B1FB2EAB800F98477 /* ProfileExport.swift */; };
 		E347E4BF2057C51A008F5137 /* ProfileEditorWindowToolbarItemEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E347E4BE2057C51A008F5137 /* ProfileEditorWindowToolbarItemEditorView.swift */; };
 		E347E4C22057C9F3008F5137 /* xml.png in Resources */ = {isa = PBXBuildFile; fileRef = E347E4C12057C9F3008F5137 /* xml.png */; };
@@ -189,6 +197,14 @@
 		E3204F142066359D002DEACC /* PayloadLibraryNoProfilePayloadsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PayloadLibraryNoProfilePayloadsView.swift; path = "WindowControllers/Profile Editor/Payload Library/PayloadLibraryNoProfilePayloadsView.swift"; sourceTree = "<group>"; };
 		E32767E51F3F71B700B4670C /* PayloadCellViewFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewFile.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViews/PayloadCellViewFile.swift"; sourceTree = "<group>"; };
 		E32767E71F3F736B00B4670C /* PayloadCellViewItemFileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PayloadCellViewItemFileView.swift; path = "WindowControllers/Profile Editor/Editor/PayloadCellViewItems/PayloadCellViewItemFileView.swift"; sourceTree = "<group>"; };
+		E32B15C02073BE980069CE20 /* developerDomainsFilled.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = developerDomainsFilled.png; sourceTree = "<group>"; };
+		E32B15C12073BE990069CE20 /* developerDomains.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = developerDomains.png; sourceTree = "<group>"; };
+		E32B15C42073BEF20069CE20 /* localDomains.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = localDomains.png; sourceTree = "<group>"; };
+		E32B15C52073BEF20069CE20 /* localDomainsFilled.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = localDomainsFilled.png; sourceTree = "<group>"; };
+		E32B15C82073BF460069CE20 /* appleDomains.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = appleDomains.png; sourceTree = "<group>"; };
+		E32B15C92073BF460069CE20 /* appleDomainsFilled.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = appleDomainsFilled.png; sourceTree = "<group>"; };
+		E32B15CC2073BFC00069CE20 /* applicationDomains.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = applicationDomains.png; sourceTree = "<group>"; };
+		E32B15CD2073BFC00069CE20 /* applicationDomainsFilled.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = applicationDomainsFilled.png; sourceTree = "<group>"; };
 		E331A46B1FB2EAB800F98477 /* ProfileExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ProfileExport.swift; path = Profile/ProfileExport.swift; sourceTree = "<group>"; };
 		E347E4BE2057C51A008F5137 /* ProfileEditorWindowToolbarItemEditorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileEditorWindowToolbarItemEditorView.swift; sourceTree = "<group>"; };
 		E347E4C12057C9F3008F5137 /* xml.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = xml.png; sourceTree = "<group>"; };
@@ -346,6 +362,14 @@
 		5365F48A1F0F87380064C02A /* Icons */ = {
 			isa = PBXGroup;
 			children = (
+				E32B15CC2073BFC00069CE20 /* applicationDomains.png */,
+				E32B15CD2073BFC00069CE20 /* applicationDomainsFilled.png */,
+				E32B15C82073BF460069CE20 /* appleDomains.png */,
+				E32B15C92073BF460069CE20 /* appleDomainsFilled.png */,
+				E32B15C42073BEF20069CE20 /* localDomains.png */,
+				E32B15C52073BEF20069CE20 /* localDomainsFilled.png */,
+				E32B15C12073BE990069CE20 /* developerDomains.png */,
+				E32B15C02073BE980069CE20 /* developerDomainsFilled.png */,
 				535CB45E1F2BC26B00A746F6 /* Approval Filled-18.png */,
 				535CB45F1F2BC26B00A746F6 /* Approval-18.png */,
 				535CB4601F2BC26B00A746F6 /* Settings Filled-16.png */,
@@ -615,17 +639,25 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E32B15CA2073BF460069CE20 /* appleDomains.png in Resources */,
 				539592621F102DEE005090B3 /* Defaults.plist in Resources */,
 				E347E4C22057C9F3008F5137 /* xml.png in Resources */,
 				E303F0BA2059603E000F1D01 /* edit.png in Resources */,
+				E32B15CE2073BFC00069CE20 /* applicationDomains.png in Resources */,
+				E32B15C62073BEF30069CE20 /* localDomains.png in Resources */,
 				539832161F0EE15400C4792D /* Assets.xcassets in Resources */,
 				535CB4631F2BC26B00A746F6 /* Approval-18.png in Resources */,
 				539832191F0EE15400C4792D /* Main.storyboard in Resources */,
+				E32B15C22073BE990069CE20 /* developerDomainsFilled.png in Resources */,
 				53DADB4E1F1382B40045CB3F /* SidebarFolder.icns in Resources */,
+				E32B15CF2073BFC00069CE20 /* applicationDomainsFilled.png in Resources */,
+				E32B15C32073BE990069CE20 /* developerDomains.png in Resources */,
 				535CB4621F2BC26B00A746F6 /* Approval Filled-18.png in Resources */,
 				535CB4641F2BC26B00A746F6 /* Settings Filled-16.png in Resources */,
 				535CB4651F2BC26B00A746F6 /* Settings-16.png in Resources */,
 				5365F48C1F0F87440064C02A /* downarrow.png in Resources */,
+				E32B15C72073BEF30069CE20 /* localDomainsFilled.png in Resources */,
+				E32B15CB2073BF460069CE20 /* appleDomainsFilled.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -71,17 +71,6 @@ class PreferencesLibraryView: NSView {
                                 height: &frameHeight,
                                 constraints: &constraints)
         
-        lastSubview = addCheckbox(label: "Payload Library",
-                                  title: "Show Apple Collections",
-                                  bindTo: UserDefaults.standard,
-                                  bindKeyPath: PreferenceKey.showPayloadLibraryAppleCollections,
-                                  toView: self,
-                                  lastSubview: lastSubview,
-                                  lastTextField: nil,
-                                  height: &frameHeight,
-                                  indent: preferencesIndent,
-                                  constraints: &constraints)
-        
         lastSubview = addCheckbox(label: nil,
                                   title: "Show Apple Domains",
                                   bindTo: UserDefaults.standard,
@@ -94,9 +83,20 @@ class PreferencesLibraryView: NSView {
                                   constraints: &constraints)
         
         lastSubview = addCheckbox(label: nil,
-                                  title: "Show Applications",
+                                  title: "Show Application Domains",
                                   bindTo: UserDefaults.standard,
-                                  bindKeyPath: PreferenceKey.showPayloadLibraryApplications,
+                                  bindKeyPath: PreferenceKey.showPayloadLibraryApplicationDomains,
+                                  toView: self,
+                                  lastSubview: lastSubview,
+                                  lastTextField: nil,
+                                  height: &frameHeight,
+                                  indent: preferencesIndent,
+                                  constraints: &constraints)
+        
+        lastSubview = addCheckbox(label: nil,
+                                  title: "Show Local Application Domains",
+                                  bindTo: UserDefaults.standard,
+                                  bindKeyPath: PreferenceKey.showPayloadLibraryLocalApplicationDomains,
                                   toView: self,
                                   lastSubview: lastSubview,
                                   lastTextField: nil,

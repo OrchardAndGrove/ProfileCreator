@@ -186,9 +186,9 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
                 manifestPlaceholders = manifestPlaceholders.filter({ !$0.payloadSource.targets.isDisjoint(with: profile.selectedScope) })
                 return Array(Set(manifestPlaceholders).subtracting(self.profilePayloads))
             } else { return nil }
-        case .appleCollections:
-            return ProfilePayloads.shared.collectionPlaceholders()
-        case .applications:
+        case .localApplicationDomains:
+            return nil
+        case .applicationDomains:
             return ProfilePayloads.shared.applicationPlaceholders()
         case .developer:
             return ProfilePayloads.shared.developerPlaceholders()

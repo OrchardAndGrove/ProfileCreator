@@ -94,12 +94,6 @@ class PayloadCellViewFile: PayloadCellView, ProfileCreatorCellView {
     @objc private func selectFile(_ button: NSButton) {
         
         // ---------------------------------------------------------------------
-        //  Get open dialog allowed file types
-        // ---------------------------------------------------------------------
-        // FIXME: Read these from the collection manifest
-        
-        
-        // ---------------------------------------------------------------------
         //  Setup open dialog
         // ---------------------------------------------------------------------
         let openPanel = NSOpenPanel()
@@ -109,6 +103,9 @@ class PayloadCellViewFile: PayloadCellView, ProfileCreatorCellView {
         openPanel.canCreateDirectories = false
         openPanel.allowsMultipleSelection = false
         
+        // ---------------------------------------------------------------------
+        //  Get open dialog allowed file types
+        // ---------------------------------------------------------------------
         if let allowedFileTypes = self.subkey?.allowedFileTypes {
             openPanel.allowedFileTypes = allowedFileTypes
         }

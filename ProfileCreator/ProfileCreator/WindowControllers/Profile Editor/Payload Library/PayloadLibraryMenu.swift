@@ -21,9 +21,9 @@ class PayloadLibraryMenu: NSObject {
     let view = NSStackView()
     var buttons = [NSButton]()
     
-    var buttonAppleCollections: NSButton?
     var buttonAppleDomains: NSButton?
-    var buttonApplications: NSButton?
+    var buttonApplicationDomains: NSButton?
+    var buttonLocalApplicationDomains: NSButton?
     var buttonDeveloper: NSButton?
     
     weak var selectionDelegate: PayloadLibrarySelectionDelegate?
@@ -49,16 +49,16 @@ class PayloadLibraryMenu: NSObject {
         // ---------------------------------------------------------------------
         //  Setup Notification Observers
         // ---------------------------------------------------------------------
-        UserDefaults.standard.addObserver(self, forKeyPath: PreferenceKey.showPayloadLibraryAppleCollections, options: .new, context: nil)
         UserDefaults.standard.addObserver(self, forKeyPath: PreferenceKey.showPayloadLibraryAppleDomains, options: .new, context: nil)
-        UserDefaults.standard.addObserver(self, forKeyPath: PreferenceKey.showPayloadLibraryApplications, options: .new, context: nil)
+        UserDefaults.standard.addObserver(self, forKeyPath: PreferenceKey.showPayloadLibraryApplicationDomains, options: .new, context: nil)
+        UserDefaults.standard.addObserver(self, forKeyPath: PreferenceKey.showPayloadLibraryLocalApplicationDomains, options: .new, context: nil)
         UserDefaults.standard.addObserver(self, forKeyPath: PreferenceKey.showPayloadLibraryDeveloper, options: .new, context: nil)
     }
     
     deinit {
-        UserDefaults.standard.removeObserver(self, forKeyPath: PreferenceKey.showPayloadLibraryAppleCollections, context: nil)
         UserDefaults.standard.removeObserver(self, forKeyPath: PreferenceKey.showPayloadLibraryAppleDomains, context: nil)
-        UserDefaults.standard.removeObserver(self, forKeyPath: PreferenceKey.showPayloadLibraryApplications, context: nil)
+        UserDefaults.standard.removeObserver(self, forKeyPath: PreferenceKey.showPayloadLibraryApplicationDomains, context: nil)
+        UserDefaults.standard.removeObserver(self, forKeyPath: PreferenceKey.showPayloadLibraryLocalApplicationDomains, context: nil)
         UserDefaults.standard.removeObserver(self, forKeyPath: PreferenceKey.showPayloadLibraryDeveloper, context: nil)
     }
     
@@ -113,14 +113,6 @@ class PayloadLibraryMenu: NSObject {
         // ---------------------------------------------------------------------
         let userDefaults = UserDefaults.standard
         
-        // Apple Collections
-        if userDefaults.bool(forKey: PreferenceKey.showPayloadLibraryAppleCollections) || keyPath == PreferenceKey.showPayloadLibraryAppleCollections {
-            if let buttonAppleCollections = self.buttonFor(keyPath: PreferenceKey.showPayloadLibraryAppleCollections) {
-                self.buttons.append(buttonAppleCollections)
-                self.view.addView(buttonAppleCollections, in: .center)
-            }
-        }
-        
         // Apple Domains
         if userDefaults.bool(forKey: PreferenceKey.showPayloadLibraryAppleDomains) || keyPath == PreferenceKey.showPayloadLibraryAppleDomains {
             if let buttonAppleDomains = self.buttonFor(keyPath: PreferenceKey.showPayloadLibraryAppleDomains) {
@@ -129,11 +121,19 @@ class PayloadLibraryMenu: NSObject {
             }
         }
         
-        // Applications
-        if userDefaults.bool(forKey: PreferenceKey.showPayloadLibraryApplications) || keyPath == PreferenceKey.showPayloadLibraryApplications {
-            if let buttonApplications = self.buttonFor(keyPath: PreferenceKey.showPayloadLibraryApplications) {
-                self.buttons.append(buttonApplications)
-                self.view.addView(buttonApplications, in: .center)
+        // Application Domains
+        if userDefaults.bool(forKey: PreferenceKey.showPayloadLibraryApplicationDomains) || keyPath == PreferenceKey.showPayloadLibraryApplicationDomains {
+            if let buttonApplicationDomains = self.buttonFor(keyPath: PreferenceKey.showPayloadLibraryApplicationDomains) {
+                self.buttons.append(buttonApplicationDomains)
+                self.view.addView(buttonApplicationDomains, in: .center)
+            }
+        }
+        
+        // Local Application Domains
+        if userDefaults.bool(forKey: PreferenceKey.showPayloadLibraryLocalApplicationDomains) || keyPath == PreferenceKey.showPayloadLibraryLocalApplicationDomains {
+            if let buttonLocalApplicationDomains = self.buttonFor(keyPath: PreferenceKey.showPayloadLibraryLocalApplicationDomains) {
+                self.buttons.append(buttonLocalApplicationDomains)
+                self.view.addView(buttonLocalApplicationDomains, in: .center)
             }
         }
         
@@ -147,12 +147,12 @@ class PayloadLibraryMenu: NSObject {
     }
     
     private func libraryTagFor(keyPath: String?) -> LibraryTag {
-        if keyPath == PreferenceKey.showPayloadLibraryAppleCollections {
-            return LibraryTag.appleCollections
-        } else if keyPath == PreferenceKey.showPayloadLibraryAppleDomains {
+        if keyPath == PreferenceKey.showPayloadLibraryAppleDomains {
             return LibraryTag.appleDomains
-        } else if keyPath == PreferenceKey.showPayloadLibraryApplications {
-            return LibraryTag.applications
+        } else if keyPath == PreferenceKey.showPayloadLibraryApplicationDomains {
+            return LibraryTag.applicationDomains
+        } else if keyPath == PreferenceKey.showPayloadLibraryLocalApplicationDomains {
+            return LibraryTag.localApplicationDomains
         } else if keyPath == PreferenceKey.showPayloadLibraryDeveloper {
             return LibraryTag.developer
         }
@@ -161,31 +161,31 @@ class PayloadLibraryMenu: NSObject {
     
     private func buttonFor(keyPath: String?) -> NSButton? {
         
-        if keyPath == PreferenceKey.showPayloadLibraryAppleCollections {
-            if self.buttonAppleCollections == nil {
-                if let image = NSImage(named: NSImage.Name(rawValue: "Approval-18")), let alternateImage = NSImage(named: NSImage.Name(rawValue: "Approval Filled-18")) {
-                    self.buttonAppleCollections = self.button(image: image, alternateImage: alternateImage, tag: self.libraryTagFor(keyPath: keyPath).rawValue)
-                }
-            }
-            return self.buttonAppleCollections
-        } else if keyPath == PreferenceKey.showPayloadLibraryAppleDomains {
+        if keyPath == PreferenceKey.showPayloadLibraryAppleDomains {
             if self.buttonAppleDomains == nil {
-                if let image = NSImage(named: NSImage.Name(rawValue: "Approval-18")), let alternateImage = NSImage(named: NSImage.Name(rawValue: "Approval Filled-18")) {
-                    self.buttonAppleDomains = self.button(image: image, alternateImage: alternateImage, tag: self.libraryTagFor(keyPath: keyPath).rawValue)
+                if let image = NSImage(named: NSImage.Name(rawValue: "appleDomains")), let alternateImage = NSImage(named: NSImage.Name(rawValue: "appleDomainsFilled")) {
+                    self.buttonAppleDomains = self.button(image: image, alternateImage: alternateImage, tag: self.libraryTagFor(keyPath: keyPath).rawValue, tooltip: "Apple Domains")
                 }
             }
             return self.buttonAppleDomains
-        } else if keyPath == PreferenceKey.showPayloadLibraryApplications {
-                if self.buttonApplications == nil {
-                    if let image = NSImage(named: NSImage.Name(rawValue: "Approval-18")), let alternateImage = NSImage(named: NSImage.Name(rawValue: "Approval Filled-18")) {
-                        self.buttonApplications = self.button(image: image, alternateImage: alternateImage, tag: self.libraryTagFor(keyPath: keyPath).rawValue)
+        } else if keyPath == PreferenceKey.showPayloadLibraryApplicationDomains {
+                if self.buttonApplicationDomains == nil {
+                    if let image = NSImage(named: NSImage.Name(rawValue: "applicationDomains")), let alternateImage = NSImage(named: NSImage.Name(rawValue: "applicationDomainsFilled")) {
+                        self.buttonApplicationDomains = self.button(image: image, alternateImage: alternateImage, tag: self.libraryTagFor(keyPath: keyPath).rawValue, tooltip: "Application Domains")
                     }
                 }
-                return self.buttonApplications
+                return self.buttonApplicationDomains
+        } else if keyPath == PreferenceKey.showPayloadLibraryLocalApplicationDomains {
+            if self.buttonLocalApplicationDomains == nil {
+                if let image = NSImage(named: NSImage.Name(rawValue: "localDomains")), let alternateImage = NSImage(named: NSImage.Name(rawValue: "localDomainsFilled")) {
+                    self.buttonLocalApplicationDomains = self.button(image: image, alternateImage: alternateImage, tag: self.libraryTagFor(keyPath: keyPath).rawValue, tooltip: "Local Application Domains")
+                }
+            }
+            return self.buttonLocalApplicationDomains
         } else if keyPath == PreferenceKey.showPayloadLibraryDeveloper {
             if self.buttonDeveloper == nil {
-                if let image = NSImage(named: NSImage.Name(rawValue: "Settings-16")), let alternateImage = NSImage(named: NSImage.Name(rawValue: "Settings Filled-16")) {
-                    self.buttonDeveloper = self.button(image: image, alternateImage: alternateImage, tag: self.libraryTagFor(keyPath: keyPath).rawValue)
+                if let image = NSImage(named: NSImage.Name(rawValue: "developerDomains")), let alternateImage = NSImage(named: NSImage.Name(rawValue: "developerDomainsFilled")) {
+                    self.buttonDeveloper = self.button(image: image, alternateImage: alternateImage, tag: self.libraryTagFor(keyPath: keyPath).rawValue, tooltip: "Developer Domains")
                 }
             }
             return self.buttonDeveloper
@@ -193,7 +193,7 @@ class PayloadLibraryMenu: NSObject {
         return nil
     }
     
-    private func button(image: NSImage, alternateImage: NSImage, tag: Int) -> NSButton? {
+    private func button(image: NSImage, alternateImage: NSImage, tag: Int, tooltip: String) -> NSButton? {
         
         guard let buttonImageTiffRep = image.tiffRepresentation else {
             // TODO: Proper Logging
@@ -217,6 +217,7 @@ class PayloadLibraryMenu: NSObject {
         button.imageScaling = .scaleProportionallyUpOrDown
         button.image = image
         button.alternateImage = alternateImage
+        button.toolTip = tooltip
         
         // ---------------------------------------------------------------------
         //  Calculate Image Size

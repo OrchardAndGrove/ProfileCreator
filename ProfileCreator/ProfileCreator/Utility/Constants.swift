@@ -35,9 +35,9 @@ enum TableViewTag: Int {
 }
 
 enum LibraryTag: Int {
-    case appleCollections
     case appleDomains
-    case applications
+    case applicationDomains
+    case localApplicationDomains
     case developer
 }
 
@@ -144,9 +144,9 @@ struct PreferenceKey {
     static let defaultOrganizationIdentifier = "DefaultOrganizationIdentifier"
     static let showProfileCount = "ShowProfileCount"
     static let showGroupIcons = "ShowGroupIcons"
-    static let showPayloadLibraryAppleCollections = "ShowPayloadLibraryAppleCollections"
     static let showPayloadLibraryAppleDomains = "ShowPayloadLibraryAppleDomains"
-    static let showPayloadLibraryApplications = "ShowPayloadLibraryApplications"
+    static let showPayloadLibraryApplicationDomains = "ShowPayloadLibraryApplicationDomains"
+    static let showPayloadLibraryLocalApplicationDomains = "ShowPayloadLibraryLocalApplicationDomains"
     static let showPayloadLibraryDeveloper = "ShowPayloadLibraryDeveloper"
     static let editorDisableOptionalKeys = "EditorDisableOptionalKeys"
     static let editorDistributionMethod = "EditorDistributionMethod"
