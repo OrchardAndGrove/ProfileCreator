@@ -16,6 +16,7 @@ class ProfileEditor: NSObject {
     
     let headerView: ProfileEditorHeaderView
     let tabView = NSStackView()
+    let buttonAddTab = NSButton()
     let tableView = ProfileEditorTableView()
     let textView = NSTextView()
     let scrollView = NSScrollView()
@@ -62,6 +63,7 @@ class ProfileEditor: NSObject {
         // ---------------------------------------------------------------------
         self.setupEditorView(constraints: &constraints)
         self.setupHeaderView(constraints: &constraints)
+        self.setupButtonAddTab(constraints: &constraints)
         self.setupTabView(constraints: &constraints)
         self.setupSeparator(constraints: &constraints)
         self.setupTableView(profile: profile, constraints: &constraints)
@@ -152,7 +154,9 @@ class ProfileEditor: NSObject {
         if updateCellViews, let selectedPayloadPlaceholder = self.selectedPayloadPlaceholder {
             self.cellViews = self.payloadCellViews.cellViews(payloadPlaceholder: selectedPayloadPlaceholder, payloadIndex: self.selectedPayloadIndex, profileEditor: self)
         }
+        self.tableView.beginUpdates()
         self.tableView.reloadData()
+        self.tableView.endUpdates()
     }
     
     func updatePayloadSelection(selected: Bool, payloadSource: PayloadSource) {
@@ -305,6 +309,24 @@ class ProfileEditor: NSObject {
         completionHandler(plistString, plistError)
     }
     
+    @objc func addTab(_ button: NSButton) {
+        self.addTab()
+    }
+    
+    func select(tab payloadIndex: Int) {
+        for (tabIndex, view) in self.tabView.views.enumerated() {
+            guard let tabView = view as? ProfileEditorTab else { continue }
+            tabView.setValue(tabIndex == payloadIndex, forKeyPath: tabView.isSelectedSelector)
+        }
+        
+        // Don't do anything if tab is already selected
+        if payloadIndex == self.selectedPayloadIndex {
+            return
+        } else { self.selectedPayloadIndex = payloadIndex }
+        
+        self.reloadTableView(updateCellViews: true)
+    }
+    
     func select(payloadPlaceholder: PayloadPlaceholder) {
         
         // ---------------------------------------------------------------------
@@ -344,8 +366,64 @@ class ProfileEditor: NSObject {
         }
     }
     
+    // MARK: -
+    // MARK: Tabs
+    
+    func addTab() {
+        let newTab = ProfileEditorTab(editor: self)
+        self.tabView.addView(newTab, in: .trailing)
+    }
+    
+    func close(tab payloadIndex: Int) {
+        guard
+            let profile = self.profile,
+            let payloadPlaceholder = self.selectedPayloadPlaceholder else { return }
+        
+        if self.tabView.views.count <= payloadIndex {
+            Log.shared.error(message: "Cannot remove tab at index: \(payloadIndex). Out of range", category: String(describing: self))
+            return
+        }
+        
+        self.tabView.removeView(self.tabView.views[payloadIndex])
+        
+        profile.removePayloadSettings(domain: payloadPlaceholder.domain, type: payloadPlaceholder.payloadSourceType, payloadIndex: payloadIndex)
+    }
+    
+    func updateTabViewCount(payloadPlaceholder: PayloadPlaceholder) {
+        guard let profile = self.profile else { return }
+        
+        // Update tab count to matching settings
+        var payloadPlaceholderSettingsCount = profile.getPayloadDomainSettingsCount(domain: payloadPlaceholder.domain, type: payloadPlaceholder.payloadSourceType)
+        
+        // If 0 is returned, make it 1 as it can't be 0
+        if payloadPlaceholderSettingsCount == 0 { payloadPlaceholderSettingsCount = 1 }
+        
+        // Get current tabs in tab view
+        var tabCount = self.tabView.views.count
+        
+        if tabCount != payloadPlaceholderSettingsCount {
+            if payloadPlaceholderSettingsCount < tabCount {
+                while payloadPlaceholderSettingsCount < tabCount {
+                    if let lastView = self.tabView.views.last {
+                        self.tabView.removeView(lastView)
+                    } else {
+                        Log.shared.error(message: "Failed to get last view in stackview, should not happen.", category: String(describing: self))
+                        tabCount = 99 // Setting 99 to exit the loop
+                    }
+                    tabCount = self.tabView.views.count
+                }
+            } else if tabCount < payloadPlaceholderSettingsCount {
+                while tabCount < payloadPlaceholderSettingsCount {
+                    self.addTab()
+                    tabCount = self.tabView.views.count
+                }
+            }
+        }
+    }
+    
     func showTabView(payloadPlaceholder: PayloadPlaceholder) {
         if !payloadPlaceholder.payloadSource.unique {
+            self.updateTabViewCount(payloadPlaceholder: payloadPlaceholder)
             if !self.editorView.subviews.contains(self.tabView) {
                 self.showTabView(true)
             }
@@ -357,6 +435,7 @@ class ProfileEditor: NSObject {
     func showTabView(_ show: Bool) {
         if show {
             self.editorView.addSubview(self.tabView)
+            self.editorView.addSubview(self.buttonAddTab)
             
             // Reconnect tableview
             NSLayoutConstraint.deactivate([self.constraintScrollViewTopSeparator])
@@ -366,6 +445,7 @@ class ProfileEditor: NSObject {
             NSLayoutConstraint.activate(self.constraintsTabView)
         } else {
             self.tabView.removeFromSuperview()
+            self.buttonAddTab.removeFromSuperview()
             
             // Reconnect tableview to top
             NSLayoutConstraint.deactivate([self.constraintScrollViewTopTab])

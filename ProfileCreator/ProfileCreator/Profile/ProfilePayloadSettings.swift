@@ -29,6 +29,10 @@ extension Profile {
         return payloadTypeSettings[domain] ?? [Dictionary<String, Any>]()
     }
     
+    func getPayloadDomainSettingsCount(domain: String, type: PayloadSourceType) -> Int {
+        return self.getPayloadDomainSettings(domain: domain, type: type).count
+    }
+    
     func getPayloadDomainSettings(domain: String, type: PayloadSourceType, payloadIndex: Int) -> Dictionary<String, Any> {
         let payloadDomainSettings = self.getPayloadDomainSettings(domain: domain, type: type)
         if payloadIndex < payloadDomainSettings.count {
@@ -56,12 +60,12 @@ extension Profile {
     
     func setPayloadDomainSettings(settings: Dictionary<String, Any>, domain: String, type: PayloadSourceType, payloadIndex: Int) {
         var payloadDomainSettings = self.getPayloadDomainSettings(domain: domain, type: type)
-        if payloadDomainSettings.count == 0 {
-            payloadDomainSettings.append(settings)
-        } else if payloadIndex < payloadDomainSettings.count {
+        if payloadIndex < payloadDomainSettings.count {
             payloadDomainSettings[payloadIndex] = settings
+        } else if payloadIndex == payloadDomainSettings.count {
+            payloadDomainSettings.append(settings)
         } else {
-            Log.shared.error(message: "Payload index: \(payloadIndex) doesn't exist in domain settings. Will not update", category: String(describing: self))
+            Log.shared.error(message: "Payload index: \(payloadIndex) is too high, \(payloadDomainSettings.count) is the last index. Will not add settings", category: String(describing: self))
             return
         }
         self.setPayloadDomainSettings(settings: payloadDomainSettings, domain: domain, type: type)
@@ -160,6 +164,17 @@ extension Profile {
         //  Reset any cached condition results as updated settings might change those
         // ---------------------------------------------------------------------
         self.resetCache()
+    }
+    
+    // MARK: -
+    // MARK: Payload Settings: Remove
+    
+    func removePayloadSettings(domain: String, type: PayloadSourceType, payloadIndex: Int) {
+        var domainSettings = self.getPayloadDomainSettings(domain: domain, type: type)
+        if payloadIndex < domainSettings.count {
+            domainSettings.remove(at: payloadIndex)
+        }
+        self.setPayloadDomainSettings(settings: domainSettings, domain: domain, type: type)
     }
     
     // MARK: -

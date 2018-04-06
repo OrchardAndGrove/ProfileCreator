@@ -92,12 +92,12 @@ extension Profile {
     
     func setViewDomainSettings(settings: Dictionary<String, Any>, domain: String, type: PayloadSourceType, payloadIndex: Int) {
         var viewDomainSettingsArray = self.getViewDomainSettingsArray(domain: domain, type: type)
-        if viewDomainSettingsArray.count == 0 {
-            viewDomainSettingsArray.append(settings)
-        } else if payloadIndex < viewDomainSettingsArray.count {
+        if payloadIndex < viewDomainSettingsArray.count {
             viewDomainSettingsArray[payloadIndex] = settings
+        } else if payloadIndex == viewDomainSettingsArray.count {
+            viewDomainSettingsArray.append(settings)
         } else {
-            Log.shared.error(message: "Payload index: \(payloadIndex) doesn't exist in domain settings. Will not update", category: String(describing: self))
+            Log.shared.error(message: "Payload index: \(payloadIndex) is too high, \(viewDomainSettingsArray.count) is the last index. Will not add settings", category: String(describing: self))
             return
         }
         self.setViewDomainSettingsArray(settings: viewDomainSettingsArray, domain: domain, type: type)

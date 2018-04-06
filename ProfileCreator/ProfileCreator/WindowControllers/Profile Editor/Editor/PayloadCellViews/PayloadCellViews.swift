@@ -136,12 +136,8 @@ class PayloadCellViews {
         
         for subkey in subkeys {
             
-            Swift.print("subkey: \(subkey.keyPath), parentSubkeys: \(subkey.parentSubkeys)")
-            Swift.print("subkey: \(subkey.keyPath), parentSubkey: \(subkey.parentSubkey)")
-            if let parentSubkeys = subkey.parentSubkeys, parentSubkeys.contains(where: {$0.type == .array }) {
-                Swift.print("Subkey: \(subkey.keyPath) has an array parent")
-                continue
-            }
+            // If any parent is an array, this should not be added by itself, but from the array subkey cellview
+            if let parentSubkeys = subkey.parentSubkeys, parentSubkeys.contains(where: {$0.type == .array }) { continue }
   
             // If root dictionary is a single dictionary, ignore that in the UI
             if !(subkey.rootSubkey == nil && subkey.type == .dictionary && Array(Set(subkeys.map({$0.key})).subtracting(manifestSubkeysIgnored)).count == 1) {

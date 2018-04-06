@@ -47,6 +47,7 @@ enum EditorViewTag: Int {
 }
 
 extension NSToolbarItem.Identifier {
+    static let editorAdd = NSToolbarItem.Identifier("editorAdd")
     static let editorTitle = NSToolbarItem.Identifier("editorTitle")
     static let editorSettings = NSToolbarItem.Identifier("editorSettings")
     static let editorView = NSToolbarItem.Identifier("editorView")

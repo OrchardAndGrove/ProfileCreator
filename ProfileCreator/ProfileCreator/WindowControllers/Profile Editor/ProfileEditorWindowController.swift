@@ -16,15 +16,17 @@ public class ProfileEditorWindowController: NSWindowController {
     let profile: Profile
     let splitView: ProfileEditorSplitView
     let toolbar = NSToolbar(identifier: NSToolbar.Identifier(rawValue: "MainWindowToolbar"))
-    let toolbarItemIdentifiers: [NSToolbarItem.Identifier] = [.editorSettings,
+    let toolbarItemIdentifiers: [NSToolbarItem.Identifier] = [.editorAdd,
                                                               NSToolbarItem.Identifier.flexibleSpace,
                                                               .editorTitle,
                                                               NSToolbarItem.Identifier.flexibleSpace,
+                                                              .editorSettings,
                                                               .editorView]
     
     // MARK: -
     // MARK: Variables
     
+    var toolbarItemAdd: ProfileEditorWindowToolbarItemAdd?
     var toolbarItemTitle: ProfileEditorWindowToolbarItemTitle?
     var toolbarItemSettings: ProfileEditorWindowToolbarItemSettings?
     var toolbarItemView: ProfileEditorWindowToolbarItemView?
@@ -177,6 +179,14 @@ extension ProfileEditorWindowController: NSToolbarDelegate {
     
     func toolbarItem(identifier: NSToolbarItem.Identifier) -> NSToolbarItem? {
         switch identifier {
+        case .editorAdd:
+            if self.toolbarItemAdd == nil {
+                self.toolbarItemAdd = ProfileEditorWindowToolbarItemAdd(profile: self.profile)
+            }
+            
+            if let toolbarView = self.toolbarItemAdd {
+                return toolbarView.toolbarItem
+            }
         case .editorTitle:
             if self.toolbarItemTitle == nil {
                 self.toolbarItemTitle = ProfileEditorWindowToolbarItemTitle(profile: self.profile)

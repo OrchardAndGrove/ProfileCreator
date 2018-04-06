@@ -84,7 +84,7 @@ extension ProfileEditor {
                                               toItem: self.editorView,
                                               attribute: .leading,
                                               multiplier: 1,
-                                              constant: 20.0))
+                                              constant: 0.0)) // 20.0
         
         // Trailing
         constraints.append(NSLayoutConstraint(item: self.editorView,
@@ -93,7 +93,7 @@ extension ProfileEditor {
                                               toItem: self.separator,
                                               attribute: .trailing,
                                               multiplier: 1,
-                                              constant: 20.0))
+                                              constant: 0.0)) // 20.0
         
     }
     
@@ -189,7 +189,7 @@ extension ProfileEditor {
         //  Setup ScrollView and add TableView as Document View
         // ---------------------------------------------------------------------
         self.scrollView.translatesAutoresizingMaskIntoConstraints = false
-        //self.scrollView.hasVerticalScroller = true
+        // self.scrollView.hasVerticalScroller = true
         self.scrollView.documentView = self.tableView
         // self.scrollView.autoresizesSubviews = true
         
@@ -247,10 +247,68 @@ extension ProfileEditor {
                                               constant: 0.0))
     }
     
+    internal func setupButtonAddTab(constraints: inout [NSLayoutConstraint]) {
+        self.buttonAddTab.translatesAutoresizingMaskIntoConstraints = false
+        self.buttonAddTab.bezelStyle = .roundRect
+        self.buttonAddTab.setButtonType(.momentaryPushIn)
+        self.buttonAddTab.isBordered = false
+        self.buttonAddTab.isTransparent = false
+        self.buttonAddTab.image = NSImage(named: .addTemplate)
+        self.buttonAddTab.action = #selector(self.addTab(_:))
+        self.buttonAddTab.target = self
+        
+        // ---------------------------------------------------------------------
+        //  Add and to superview
+        // ---------------------------------------------------------------------
+        self.editorView.addSubview(self.buttonAddTab)
+        
+        // ---------------------------------------------------------------------
+        //  Add constraints
+        // ---------------------------------------------------------------------
+        // Center Y
+        self.constraintsTabView.append(NSLayoutConstraint(item: self.buttonAddTab,
+                                                          attribute: .centerY,
+                                                          relatedBy: .equal,
+                                                          toItem: self.tabView,
+                                                          attribute: .centerY,
+                                                          multiplier: 1.0,
+                                                          constant: 0.0))
+        // Trailing
+        self.constraintsTabView.append(NSLayoutConstraint(item: self.editorView,
+                                                          attribute: .trailing,
+                                                          relatedBy: .equal,
+                                                          toItem: self.buttonAddTab,
+                                                          attribute: .trailing,
+                                                          multiplier: 1.0,
+                                                          constant: 0.0))
+        
+        // Width
+        self.constraintsTabView.append(NSLayoutConstraint(item: self.buttonAddTab,
+                                              attribute: .width,
+                                              relatedBy: .equal,
+                                              toItem: nil,
+                                              attribute: .notAnAttribute,
+                                              multiplier: 1.0,
+                                              constant: 18.0))
+        
+        // Width == Height
+        self.constraintsTabView.append(NSLayoutConstraint(item: self.buttonAddTab,
+                                              attribute: .width,
+                                              relatedBy: .equal,
+                                              toItem: self.buttonAddTab,
+                                              attribute: .height,
+                                              multiplier: 1.0,
+                                              constant: 0.0))
+    }
+    
     internal func setupTabView(constraints: inout [NSLayoutConstraint]) {
         self.tabView.translatesAutoresizingMaskIntoConstraints = false
+        self.tabView.spacing = 1.0
+        self.tabView.distribution = .fillEqually
+        self.tabView.alignment = .centerY
+        self.tabView.detachesHiddenViews = true
         
-        let testTab = ProfileEditorTab()
+        let testTab = ProfileEditorTab(editor: self)
         self.tabView.addView(testTab, in: .trailing)
         
         // ---------------------------------------------------------------------
@@ -266,7 +324,7 @@ extension ProfileEditor {
                                                           attribute: .top,
                                                           relatedBy: .equal,
                                                           toItem: self.separator,
-                                                          attribute: .top,
+                                                          attribute: .bottom,
                                                           multiplier: 1.0,
                                                           constant: 0.0))
         
@@ -289,11 +347,11 @@ extension ProfileEditor {
                                                           constant: 0.0))
         
         // Trailing
-        self.constraintsTabView.append(NSLayoutConstraint(item: self.editorView,
+        self.constraintsTabView.append(NSLayoutConstraint(item: self.tabView,
                                                           attribute: .trailing,
                                                           relatedBy: .equal,
-                                                          toItem: self.tabView,
-                                                          attribute: .trailing,
+                                                          toItem: self.buttonAddTab,
+                                                          attribute: .leading,
                                                           multiplier: 1.0,
                                                           constant: 0.0))
     }

@@ -507,7 +507,6 @@ extension PayloadLibraryTableViews: NSDraggingDestination {
     }
     
     func prepareForDragOperation(_ sender: NSDraggingInfo) -> Bool {
-        Swift.print("Class: \(self.self), Function: \(#function), prepareForDragOperation")
         return true
     }
     
@@ -522,10 +521,8 @@ extension PayloadLibraryTableViews: NSDraggingDestination {
                 } else if sourceTableView.tag == TableViewTag.libraryPayloads.rawValue {
                     self.move(payloadPlaceholders: payloadPlaceholders, from: .libraryPayloads, to: .profilePayloads)
                 }
-            } catch {
-                // TODO: Proper Logging
-                Swift.print("Class: \(self.self), Function: \(#function), Could not decode dropped items")
-            }
+                return true
+            } catch { Log.shared.error(message: "Failed to decode dropped payload placeholder items", category: String(describing: self)) }
         }
         return false
     }
