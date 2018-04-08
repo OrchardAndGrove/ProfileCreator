@@ -254,7 +254,7 @@ extension ProfileEditor {
         self.buttonAddTab.isBordered = false
         self.buttonAddTab.isTransparent = false
         self.buttonAddTab.image = NSImage(named: .addTemplate)
-        self.buttonAddTab.action = #selector(self.addTab(_:))
+        self.buttonAddTab.action = #selector(self.buttonClickedAddTab(_:))
         self.buttonAddTab.target = self
         
         // ---------------------------------------------------------------------
@@ -265,6 +265,15 @@ extension ProfileEditor {
         // ---------------------------------------------------------------------
         //  Add constraints
         // ---------------------------------------------------------------------
+        // Top
+        self.constraintTabViewButtonAdd.append(NSLayoutConstraint(item: self.self.buttonAddTab,
+                                                          attribute: .top,
+                                                          relatedBy: .equal,
+                                                          toItem: self.separator,
+                                                          attribute: .bottom,
+                                                          multiplier: 1.0,
+                                                          constant: 2.0))
+        /*
         // Center Y
         self.constraintsTabView.append(NSLayoutConstraint(item: self.buttonAddTab,
                                                           attribute: .centerY,
@@ -273,8 +282,9 @@ extension ProfileEditor {
                                                           attribute: .centerY,
                                                           multiplier: 1.0,
                                                           constant: 0.0))
+ */
         // Trailing
-        self.constraintsTabView.append(NSLayoutConstraint(item: self.editorView,
+        self.constraintTabViewButtonAdd.append(NSLayoutConstraint(item: self.editorView,
                                                           attribute: .trailing,
                                                           relatedBy: .equal,
                                                           toItem: self.buttonAddTab,
@@ -283,7 +293,7 @@ extension ProfileEditor {
                                                           constant: 0.0))
         
         // Width
-        self.constraintsTabView.append(NSLayoutConstraint(item: self.buttonAddTab,
+        self.constraintTabViewButtonAdd.append(NSLayoutConstraint(item: self.buttonAddTab,
                                               attribute: .width,
                                               relatedBy: .equal,
                                               toItem: nil,
@@ -292,7 +302,7 @@ extension ProfileEditor {
                                               constant: 18.0))
         
         // Width == Height
-        self.constraintsTabView.append(NSLayoutConstraint(item: self.buttonAddTab,
+        self.constraintTabViewButtonAdd.append(NSLayoutConstraint(item: self.buttonAddTab,
                                               attribute: .width,
                                               relatedBy: .equal,
                                               toItem: self.buttonAddTab,

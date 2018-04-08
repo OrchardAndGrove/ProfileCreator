@@ -97,7 +97,6 @@ class ProfileEditorTab: NSView {
     // MARK: Key/Value Observing Functions
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        Swift.print("keyPath: \(String(describing: keyPath))")
         if keyPath == self.isSelectedSelector {
             self.borderBottom.isHidden = self.isSelected
             if self.isSelected {

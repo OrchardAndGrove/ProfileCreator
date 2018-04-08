@@ -183,6 +183,7 @@ public struct SettingsKey {
     static let jssUsername = "JSSUsername"
     static let jssURL = "JSSURL"
     static let payloadSettings = "PayloadSettings"
+    static let payloadIndex = "PayloadIndex"
     static let selected = "Selected"
     static let sign = "Sign"
     static let title = "Title"

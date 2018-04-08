@@ -663,16 +663,7 @@ public class Profile: NSDocument {
             if domainSettingsArray[index][PayloadKey.payloadVersion] == nil { domainSettingsArray[index][PayloadKey.payloadVersion] = 1 }
         }
     }
-    
-    func updateDomainSettings(_ domainSettings: inout Dictionary<String, Any>) {
         
-        // Verify PayloadUUID
-        if domainSettings[PayloadKey.payloadUUID] == nil { domainSettings[PayloadKey.payloadUUID] = UUID().uuidString }
-        
-        // Verify PayloadVersion
-        if domainSettings[PayloadKey.payloadVersion] == nil { domainSettings[PayloadKey.payloadVersion] = 1 }
-    }
-    
     public func edit() {
         let windowController: NSWindowController
         if 0 < self.windowControllers.count {

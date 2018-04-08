@@ -32,7 +32,8 @@ extension Profile {
         
         var viewDomainSettings = self.getViewDomainSettings(domain: domain, type: type)
         if !enabled {
-            
+            // FIXME: Check if we can remove the setting here if it's not enabled
+            viewDomainSettings[SettingsKey.enabled] = enabled
         } else {
             viewDomainSettings[SettingsKey.enabled] = enabled
         }
@@ -41,6 +42,26 @@ extension Profile {
     
     func setEnabled(subkey: PayloadSourceSubkey, enabled: Bool) {
         
+    }
+    
+    // MARK: -
+    // MARK: Payload View Settings: Domain Selected Index
+    
+    func getPayloadIndex(domain: String, type: PayloadSourceType) -> Int {
+        let viewDomainSettings = self.getViewDomainSettings(domain: domain, type: type)
+        if let payloadIndex = viewDomainSettings[SettingsKey.payloadIndex] as? Int {
+            return payloadIndex
+        } else { return 0 }
+    }
+    
+    func setPayloadIndex(index: Int, domain: String, type: PayloadSourceType) {
+        #if DEBUGSETTINGS
+        Log.shared.debug(message: "Setting payload index: \(index) for domain: \(domain) of type: \(type)", category: String(describing: self))
+        #endif
+        
+        var viewDomainSettings = self.getViewDomainSettings(domain: domain, type: type)
+        viewDomainSettings[SettingsKey.payloadIndex] = index
+        self.setViewDomainSettings(settings: viewDomainSettings, domain: domain, type: type)
     }
     
     // MARK: -

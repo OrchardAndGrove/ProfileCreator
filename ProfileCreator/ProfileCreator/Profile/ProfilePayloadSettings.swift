@@ -33,6 +33,16 @@ extension Profile {
         return self.getPayloadDomainSettings(domain: domain, type: type).count
     }
     
+    func getPayloadDomainSettingsEmptyCount(domain: String, type: PayloadSourceType) -> Int {
+        var emptyCount = 0
+        for domainSettings in self.getPayloadDomainSettings(domain: domain, type: type) {
+            if Array(Set(domainSettings.keys).subtracting([PayloadKey.payloadVersion, PayloadKey.payloadUUID])).count == 0 {
+                emptyCount += 1
+            }
+        }
+        return emptyCount
+    }
+    
     func getPayloadDomainSettings(domain: String, type: PayloadSourceType, payloadIndex: Int) -> Dictionary<String, Any> {
         let payloadDomainSettings = self.getPayloadDomainSettings(domain: domain, type: type)
         if payloadIndex < payloadDomainSettings.count {
@@ -111,6 +121,7 @@ extension Profile {
             #if DEBUG
             Log.shared.debug(message: "Updating selected platforms to: \(PayloadUtility.string(fromPlatforms: newSelectedPlatforms))", category: String(describing: self))
             #endif
+            
             self.selectedPlatforms = newSelectedPlatforms
             self.resetCache()
             self.setValue(!self.selectedPlatformsUpdated, forKeyPath: self.editorSelectedPlatformsUpdatedSelector)
@@ -146,7 +157,7 @@ extension Profile {
         // ---------------------------------------------------------------------
         //  Verify the domain has the required settings
         // ---------------------------------------------------------------------
-        self.updateDomainSettings(&domainSettings)
+        self.updatePayloadDomainSettings(&domainSettings)
         
         // ---------------------------------------------------------------------
         // Save the the changes to the current settings
@@ -166,6 +177,15 @@ extension Profile {
         self.resetCache()
     }
     
+    func updatePayloadDomainSettings(_ domainSettings: inout Dictionary<String, Any>) {
+        
+        // Verify PayloadUUID
+        if domainSettings[PayloadKey.payloadUUID] == nil { domainSettings[PayloadKey.payloadUUID] = UUID().uuidString }
+        
+        // Verify PayloadVersion
+        if domainSettings[PayloadKey.payloadVersion] == nil { domainSettings[PayloadKey.payloadVersion] = 1 }
+    }
+    
     // MARK: -
     // MARK: Payload Settings: Remove
     
@@ -180,6 +200,12 @@ extension Profile {
     // MARK: -
     // MARK: Payload Settings: Default
     
+    func addDefaultPayloadDomainSettings(domain: String, type: PayloadSourceType) {
+        var domainSettings = Dictionary<String, Any>()
+        self.updatePayloadDomainSettings(&domainSettings)
+        self.setPayloadDomainSettings(settings: domainSettings, domain: domain, type: type, payloadIndex: self.getPayloadDomainSettingsCount(domain: domain, type: type))
+    }
+        
     class func defaultPayloadSettings(uuid: UUID) -> Dictionary<String, Dictionary<String, [Dictionary<String, Any>]>> {
         
         let defaultOrganizationName = UserDefaults.standard.string(forKey: PreferenceKey.defaultOrganization) ?? "ProfileCreator"

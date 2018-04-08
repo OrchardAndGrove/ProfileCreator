@@ -24,6 +24,8 @@ class ProfileEditor: NSObject {
     let settings: ProfileEditorSettings
     
     var constraintsTabView = [NSLayoutConstraint]()
+    var constraintTabViewButtonAdd = [NSLayoutConstraint]()
+    
     var constraintScrollViewTopSeparator = NSLayoutConstraint()
     var constraintScrollViewTopTab = NSLayoutConstraint()
     
@@ -309,30 +311,16 @@ class ProfileEditor: NSObject {
         completionHandler(plistString, plistError)
     }
     
-    @objc func addTab(_ button: NSButton) {
-        self.addTab()
-    }
-    
-    func select(tab payloadIndex: Int) {
-        for (tabIndex, view) in self.tabView.views.enumerated() {
-            guard let tabView = view as? ProfileEditorTab else { continue }
-            tabView.setValue(tabIndex == payloadIndex, forKeyPath: tabView.isSelectedSelector)
-        }
-        
-        // Don't do anything if tab is already selected
-        if payloadIndex == self.selectedPayloadIndex {
-            return
-        } else { self.selectedPayloadIndex = payloadIndex }
-        
-        self.reloadTableView(updateCellViews: true)
-    }
-    
     func select(payloadPlaceholder: PayloadPlaceholder) {
         
         // ---------------------------------------------------------------------
         //  Only update selection if it's not currently selected
         // ---------------------------------------------------------------------
         if self.selectedPayloadPlaceholder != payloadPlaceholder {
+            
+            // ---------------------------------------------------------------------
+            //  Update the selected placeholder
+            // ---------------------------------------------------------------------
             self.selectedPayloadPlaceholder = payloadPlaceholder
             
             // ---------------------------------------------------------------------
@@ -369,12 +357,68 @@ class ProfileEditor: NSObject {
     // MARK: -
     // MARK: Tabs
     
-    func addTab() {
+    @objc func buttonClickedAddTab(_ button: NSButton) {
+        Log.shared.debug(message: "Button clicked: Add Tab", category: String(describing: self))
+        self.addTab(addSettings: true)
+    }
+    
+    func addTab(addSettings: Bool) {
+        
+        Log.shared.debug(message: "Add tab (with settings: \(addSettings))", category: String(describing: self))
+        
+        guard
+            let profile = self.profile,
+            let payloadPlaceholder = self.selectedPayloadPlaceholder else { return }
+        
+        // Add default settings
+        if addSettings {
+            if profile.getPayloadDomainSettingsEmptyCount(domain: payloadPlaceholder.domain, type: payloadPlaceholder.payloadSourceType) != 0 {
+                if let lastTab = self.tabView.views.last, let lastTabIndex = self.tabView.views.index(of: lastTab) {
+                    self.select(tab: lastTabIndex)
+                }
+                return
+            }
+            profile.addDefaultPayloadDomainSettings(domain: payloadPlaceholder.domain, type: payloadPlaceholder.payloadSourceType)
+        }
+        
+        // Add tab
         let newTab = ProfileEditorTab(editor: self)
         self.tabView.addView(newTab, in: .trailing)
+        if addSettings, let newTabIndex = self.tabView.views.index(of: newTab) {
+            self.select(tab: newTabIndex)
+        }
+        self.showTabView(true)
+    }
+    
+    func select(tab payloadIndex: Int) {
+        
+        Log.shared.debug(message: "Select tab: \(payloadIndex)", category: String(describing: self))
+        
+        for (tabIndex, view) in self.tabView.views.enumerated() {
+            guard let tabView = view as? ProfileEditorTab else { continue }
+            tabView.setValue(tabIndex == payloadIndex, forKeyPath: tabView.isSelectedSelector)
+        }
+        
+        // Don't do anything if tab is already selected
+        if payloadIndex == self.selectedPayloadIndex {
+            Log.shared.debug(message: "Selected tab is already selected, will not update contents.", category: String(describing: self))
+            return
+        } else { self.selectedPayloadIndex = payloadIndex }
+        
+        // ---------------------------------------------------------------------
+        //  Save currently selected payload index if the payload source can have multiple
+        // ---------------------------------------------------------------------
+        if let currentPlaceholder = self.selectedPayloadPlaceholder, !currentPlaceholder.payloadSource.unique, let profile = self.profile {
+            profile.setPayloadIndex(index: self.selectedPayloadIndex, domain: currentPlaceholder.domain, type: currentPlaceholder.payloadSourceType)
+        }
+        
+        self.reloadTableView(updateCellViews: true)
     }
     
     func close(tab payloadIndex: Int) {
+        
+        Log.shared.debug(message: "Close tab: \(payloadIndex)", category: String(describing: self))
+        
         guard
             let profile = self.profile,
             let payloadPlaceholder = self.selectedPayloadPlaceholder else { return }
@@ -386,10 +430,42 @@ class ProfileEditor: NSObject {
         
         self.tabView.removeView(self.tabView.views[payloadIndex])
         
+        // Assert not 0 in views
+        
         profile.removePayloadSettings(domain: payloadPlaceholder.domain, type: payloadPlaceholder.payloadSourceType, payloadIndex: payloadIndex)
+        
+        // ----------------------------------------------------------------------------------------------------------------------
+        //  If the currently selected tab sent the close notification, calculate and send what tab to select after it has closed
+        // ----------------------------------------------------------------------------------------------------------------------
+        if payloadIndex == self.selectedPayloadIndex {
+            if self.tabView.views.count <= payloadIndex {
+                self.select(tab: self.tabView.views.count - 1)
+            } else {
+                self.select(tab: payloadIndex)
+                self.reloadTableView(updateCellViews: true)
+            }
+        } else if payloadIndex < self.selectedPayloadIndex, self.selectedPayloadIndex - 1 < self.tabView.views.count {
+            self.select(tab: self.selectedPayloadIndex - 1)
+        } else {
+            Log.shared.error(message: "Unhandled tab index, this has to be fixed", category: String(describing: self))
+            Log.shared.error(message: "payloadIndex: \(payloadIndex)", category: String(describing: self))
+            Log.shared.error(message: "self.selectedPayloadIndex: \(self.selectedPayloadIndex)", category: String(describing: self))
+            Log.shared.error(message: "self.tabView.views.count: \(self.tabView.views.count)", category: String(describing: self))
+        }
+        
+        
+        
+        // Hide
+        if self.tabView.views.count == 1 {
+            self.select(tab: 0)
+            self.showTabView(false)
+        }
     }
     
     func updateTabViewCount(payloadPlaceholder: PayloadPlaceholder) {
+        
+        Log.shared.debug(message: "Update tab count for payload: \(payloadPlaceholder.domain) type: \(payloadPlaceholder.payloadSourceType)", category: String(describing: self))
+        
         guard let profile = self.profile else { return }
         
         // Update tab count to matching settings
@@ -397,9 +473,11 @@ class ProfileEditor: NSObject {
         
         // If 0 is returned, make it 1 as it can't be 0
         if payloadPlaceholderSettingsCount == 0 { payloadPlaceholderSettingsCount = 1 }
+        Log.shared.debug(message: "Settings count: \(payloadPlaceholderSettingsCount)", category: String(describing: self))
         
         // Get current tabs in tab view
         var tabCount = self.tabView.views.count
+        Log.shared.debug(message: "Tab count: \(payloadPlaceholderSettingsCount)", category: String(describing: self))
         
         if tabCount != payloadPlaceholderSettingsCount {
             if payloadPlaceholderSettingsCount < tabCount {
@@ -414,28 +492,16 @@ class ProfileEditor: NSObject {
                 }
             } else if tabCount < payloadPlaceholderSettingsCount {
                 while tabCount < payloadPlaceholderSettingsCount {
-                    self.addTab()
+                    self.addTab(addSettings: false)
                     tabCount = self.tabView.views.count
                 }
             }
         }
     }
     
-    func showTabView(payloadPlaceholder: PayloadPlaceholder) {
-        if !payloadPlaceholder.payloadSource.unique {
-            self.updateTabViewCount(payloadPlaceholder: payloadPlaceholder)
-            if !self.editorView.subviews.contains(self.tabView) {
-                self.showTabView(true)
-            }
-        } else {
-            self.showTabView(false)
-        }
-    }
-    
     func showTabView(_ show: Bool) {
         if show {
             self.editorView.addSubview(self.tabView)
-            self.editorView.addSubview(self.buttonAddTab)
             
             // Reconnect tableview
             NSLayoutConstraint.deactivate([self.constraintScrollViewTopSeparator])
@@ -445,13 +511,52 @@ class ProfileEditor: NSObject {
             NSLayoutConstraint.activate(self.constraintsTabView)
         } else {
             self.tabView.removeFromSuperview()
-            self.buttonAddTab.removeFromSuperview()
             
             // Reconnect tableview to top
             NSLayoutConstraint.deactivate([self.constraintScrollViewTopTab])
             NSLayoutConstraint.activate([self.constraintScrollViewTopSeparator])
         }
     }
+    
+    func showTabView(payloadPlaceholder: PayloadPlaceholder) {
+        
+        Log.shared.debug(message: "Show tab view for payload: \(payloadPlaceholder.domain) type: \(payloadPlaceholder.payloadSourceType)", category: String(describing: self))
+        
+        guard let profile = self.profile else { return }
+        
+        if !payloadPlaceholder.payloadSource.unique {
+            self.selectedPayloadIndex = profile.getPayloadIndex(domain: payloadPlaceholder.domain, type: payloadPlaceholder.payloadSourceType)
+            
+            Log.shared.debug(message: "Saved payload index for payload: \(payloadPlaceholder.domain) type: \(payloadPlaceholder.payloadSourceType) is: \(self.selectedPayloadIndex)", category: String(describing: self))
+            
+            self.showTabViewButtonAdd(true)
+            self.updateTabViewCount(payloadPlaceholder: payloadPlaceholder)
+            if profile.getPayloadDomainSettingsCount(domain: payloadPlaceholder.domain, type: payloadPlaceholder.payloadSourceType) < 2 {
+                self.showTabView(false)
+            } else if !self.editorView.subviews.contains(self.tabView) {
+                self.showTabView(true)
+            }
+            self.select(tab: self.selectedPayloadIndex)
+        } else {
+            self.selectedPayloadIndex = 0
+            self.showTabViewButtonAdd(false)
+            self.showTabView(false)
+        }
+    }
+    
+    func showTabViewButtonAdd(_ show: Bool) {
+        if show {
+            if !self.editorView.subviews.contains(self.buttonAddTab) {
+                self.editorView.addSubview(self.buttonAddTab)
+                NSLayoutConstraint.activate(self.constraintTabViewButtonAdd)
+            }
+        } else {
+            self.buttonAddTab.removeFromSuperview()
+        }
+    }
+    
+    // MARK: -
+    // MARK: KeyView
     
     func updateKeyViewLoop(window: NSWindow) {
         var previousCellView: PayloadCellView? = nil
