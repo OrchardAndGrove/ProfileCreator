@@ -86,11 +86,12 @@ class ProfileEditorWindowToolbarItemTitle: NSView {
         // ---------------------------------------------------------------------
         //  Setup key/value observer for the profile title
         // ---------------------------------------------------------------------
-        self.profile?.addObserver(self, forKeyPath: self.profileTitleSelector, options: .new, context: nil)
+        profile.addObserver(self, forKeyPath: self.profileTitleSelector, options: .new, context: nil)
     }
     
     deinit {
-        self.profile?.removeObserver(self, forKeyPath: self.profileTitleSelector, context: nil)
+        guard let profile = self.profile else { return }
+        profile.removeObserver(self, forKeyPath: self.profileTitleSelector, context: nil)
     }
     
     // MARK: -

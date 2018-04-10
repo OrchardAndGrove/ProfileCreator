@@ -153,7 +153,6 @@ extension ProfileEditorWindowController: NSWindowDelegate {
     @objc func windowClose() {
         self.window?.close()
     }
-    
 }
 
 
@@ -180,8 +179,8 @@ extension ProfileEditorWindowController: NSToolbarDelegate {
     func toolbarItem(identifier: NSToolbarItem.Identifier) -> NSToolbarItem? {
         switch identifier {
         case .editorAdd:
-            if self.toolbarItemAdd == nil {
-                self.toolbarItemAdd = ProfileEditorWindowToolbarItemAdd(profile: self.profile)
+            if self.toolbarItemAdd == nil, let profileEditor = self.splitView.editor {
+                self.toolbarItemAdd = ProfileEditorWindowToolbarItemAdd(profile: self.profile, editor: profileEditor)
             }
             
             if let toolbarView = self.toolbarItemAdd {

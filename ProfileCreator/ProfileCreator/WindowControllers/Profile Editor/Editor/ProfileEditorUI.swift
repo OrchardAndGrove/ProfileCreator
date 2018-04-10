@@ -290,7 +290,7 @@ extension ProfileEditor {
                                                           toItem: self.buttonAddTab,
                                                           attribute: .trailing,
                                                           multiplier: 1.0,
-                                                          constant: 0.0))
+                                                          constant: 2.0))
         
         // Width
         self.constraintTabViewButtonAdd.append(NSLayoutConstraint(item: self.buttonAddTab,
@@ -313,18 +313,10 @@ extension ProfileEditor {
     
     internal func setupTabView(constraints: inout [NSLayoutConstraint]) {
         self.tabView.translatesAutoresizingMaskIntoConstraints = false
-        self.tabView.spacing = 1.0
+        self.tabView.spacing = 0.1
         self.tabView.distribution = .fillEqually
         self.tabView.alignment = .centerY
         self.tabView.detachesHiddenViews = true
-        
-        let testTab = ProfileEditorTab(editor: self)
-        self.tabView.addView(testTab, in: .trailing)
-        
-        // ---------------------------------------------------------------------
-        //  Add and setup ScrollView
-        // ---------------------------------------------------------------------
-        // self.editorView.addSubview(self.tabView)
         
         // ---------------------------------------------------------------------
         //  Add constraints
@@ -345,7 +337,7 @@ extension ProfileEditor {
                                                           toItem: nil,
                                                           attribute: .notAnAttribute,
                                                           multiplier: 1.0,
-                                                          constant: 24.0))
+                                                          constant: 22.0))
         
         // Leading
         self.constraintsTabView.append(NSLayoutConstraint(item: self.tabView,
@@ -357,12 +349,12 @@ extension ProfileEditor {
                                                           constant: 0.0))
         
         // Trailing
-        self.constraintsTabView.append(NSLayoutConstraint(item: self.tabView,
-                                                          attribute: .trailing,
-                                                          relatedBy: .equal,
-                                                          toItem: self.buttonAddTab,
+        self.constraintsTabView.append(NSLayoutConstraint(item: self.buttonAddTab,
                                                           attribute: .leading,
+                                                          relatedBy: .equal,
+                                                          toItem: self.tabView,
+                                                          attribute: .trailing,
                                                           multiplier: 1.0,
-                                                          constant: 0.0))
+                                                          constant: 2.0))
     }
 }

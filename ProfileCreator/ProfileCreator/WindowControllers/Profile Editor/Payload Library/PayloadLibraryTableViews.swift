@@ -24,7 +24,7 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
     
     private let sortDescriptorTitle = NSSortDescriptor(key: "title", ascending: true)
     
-    private var selectedLibraryTag: LibraryTag?
+    private var selectedLibraryTag: PayloadSourceType?
     private var selectedPayloadPlaceholder: PayloadPlaceholder?
     private var generalPayloadPlaceholder: PayloadPlaceholder?
     
@@ -92,8 +92,8 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         }
     }
     
-    func updateLibraryPayloads(tag: LibraryTag) {
-        self.libraryPayloads = self.placeholders(tag: tag) ?? [PayloadPlaceholder]()
+    func updateLibraryPayloads(type: PayloadSourceType) {
+        self.libraryPayloads = self.placeholders(type: type) ?? [PayloadPlaceholder]()
         if let librarySplitView = self.librarySplitView {
             librarySplitView.noPayloads(show: self.libraryPayloads.isEmpty)
             librarySplitView.noProfilePayloads(show: self.profilePayloads.count == 1)
@@ -107,13 +107,13 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         case profile.editorSettingsRestoredSelector:
             self.addProfilePayloads()
             if let selectedLibraryTag = self.selectedLibraryTag {
-                self.updateLibraryPayloads(tag: selectedLibraryTag)
+                self.updateLibraryPayloads(type: selectedLibraryTag)
             }
         case profile.editorSelectedDistributionUpdatedSelector,
              profile.editorSelectedPlatformsUpdatedSelector,
              profile.editorSelectedScopeUpdatedSelector:
             if let selectedLibraryTag = self.selectedLibraryTag {
-                self.updateLibraryPayloads(tag: selectedLibraryTag)
+                self.updateLibraryPayloads(type: selectedLibraryTag)
             }
         default:
             Swift.print("Class: \(self.self), Function: \(#function), observeValueforKeyPath: \(String(describing: keyPath))")
@@ -169,16 +169,16 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         }
     }
     
-    func selectLibrary(tag: LibraryTag, sender: Any?) {
-        if self.selectedLibraryTag != tag {
-            self.selectedLibraryTag = tag
-            self.updateLibraryPayloads(tag: tag)
+    func selectLibrary(type: PayloadSourceType, sender: Any?) {
+        if self.selectedLibraryTag != type {
+            self.selectedLibraryTag = type
+            self.updateLibraryPayloads(type: type)
         }
     }
     
-    private func placeholders(tag: LibraryTag) -> [PayloadPlaceholder]? {
-        switch tag {
-        case .appleDomains:
+    private func placeholders(type: PayloadSourceType) -> [PayloadPlaceholder]? {
+        switch type {
+        case .manifest:
             guard let profile = self.profile else { return nil }
             if var manifestPlaceholders = ProfilePayloads.shared.manifestPlaceholders() {
                 manifestPlaceholders = manifestPlaceholders.filter({ !$0.payloadSource.distribution.isDisjoint(with: profile.selectedDistribution) })
@@ -189,7 +189,9 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
         case .localApplicationDomains:
             return nil
         case .applicationDomains:
-            return ProfilePayloads.shared.applicationPlaceholders()
+            if let applicationPlaceholders = ProfilePayloads.shared.applicationPlaceholders() {
+                return Array(Set(applicationPlaceholders).subtracting(self.profilePayloads))
+            } else { return nil }
         case .developer:
             return ProfilePayloads.shared.developerPlaceholders()
         }
@@ -216,7 +218,9 @@ class PayloadLibraryTableViews: NSObject, PayloadLibrarySelectionDelegate {
                 self.profilePayloads.append(payloadPlaceholder)
             } else if from == TableViewTag.profilePayloads {
                 self.profilePayloads = self.profilePayloads.filter { $0 != payloadPlaceholder }
-                self.libraryPayloads.append(payloadPlaceholder)
+                if let tag = self.selectedLibraryTag, payloadPlaceholder.payloadSourceType == tag {
+                    self.libraryPayloads.append(payloadPlaceholder)
+                }
             }
             
             // ---------------------------------------------------------------------

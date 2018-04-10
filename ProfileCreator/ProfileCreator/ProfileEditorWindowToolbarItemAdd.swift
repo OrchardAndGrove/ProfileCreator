@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import ProfilePayloads
 
 class ProfileEditorWindowToolbarItemAdd: NSView {
     
@@ -14,7 +15,8 @@ class ProfileEditorWindowToolbarItemAdd: NSView {
     // MARK: Variables
     
     public weak var profile: Profile?
-    let toolbarItemHeight: CGFloat = 38.0
+    
+    let toolbarItemHeight: CGFloat = 32.0
     let textFieldTitle = NSTextField()
     
     let toolbarItem: NSToolbarItem
@@ -27,7 +29,7 @@ class ProfileEditorWindowToolbarItemAdd: NSView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    init(profile: Profile) {
+    init(profile: Profile, editor: ProfileEditor) {
         
         // ---------------------------------------------------------------------
         //  Setup Variables
@@ -64,7 +66,7 @@ class ProfileEditorWindowToolbarItemAdd: NSView {
         // ---------------------------------------------------------------------
         //  Add the button to the toolbar item view
         // ---------------------------------------------------------------------
-        self.addSubview(MainWindowToolbarItemAddButton(frame: rect))
+        self.addSubview(ProfileEditorWindowToolbarItemAddButton(frame: rect, editor: editor))
         
         // ---------------------------------------------------------------------
         //  Add disclosure triangle to the toolbar item view
@@ -90,44 +92,40 @@ class ProfileEditorWindowToolbarItemAdd: NSView {
         var constraints = [NSLayoutConstraint]()
         
         // Width
-        constraints.append(NSLayoutConstraint(
-            item: self.disclosureTriangle,
-            attribute: .width,
-            relatedBy: .equal,
-            toItem: nil,
-            attribute: .notAnAttribute,
-            multiplier: 1,
-            constant: 6))
+        constraints.append(NSLayoutConstraint(item: self.disclosureTriangle,
+                                              attribute: .width,
+                                              relatedBy: .equal,
+                                              toItem: nil,
+                                              attribute: .notAnAttribute,
+                                              multiplier: 1,
+                                              constant: 6))
         
         // Height == Width
-        constraints.append(NSLayoutConstraint(
-            item: self.disclosureTriangle,
-            attribute: .height,
-            relatedBy: .equal,
-            toItem: self.disclosureTriangle,
-            attribute: .width,
-            multiplier: 1,
-            constant: 0))
+        constraints.append(NSLayoutConstraint(item: self.disclosureTriangle,
+                                              attribute: .height,
+                                              relatedBy: .equal,
+                                              toItem: self.disclosureTriangle,
+                                              attribute: .width,
+                                              multiplier: 1,
+                                              constant: 0))
         
         // Bottom
-        constraints.append(NSLayoutConstraint(
-            item: self,
-            attribute: .bottom,
-            relatedBy: .equal,
-            toItem: self.disclosureTriangle,
-            attribute: .bottom,
-            multiplier: 1,
-            constant: 5))
+        constraints.append(NSLayoutConstraint(item: self,
+                                              attribute: .bottom,
+                                              relatedBy: .equal,
+                                              toItem: self.disclosureTriangle,
+                                              attribute: .bottom,
+                                              multiplier: 1,
+                                              constant: 5))
         
         // Trailing
-        constraints.append(NSLayoutConstraint(
-            item: self,
-            attribute: .trailing,
-            relatedBy: .equal,
-            toItem: self.disclosureTriangle,
-            attribute: .trailing,
-            multiplier: 1,
-            constant: 3))
+        constraints.append(NSLayoutConstraint(item: self,
+                                              attribute: .trailing,
+                                              relatedBy: .equal,
+                                              toItem: self.disclosureTriangle,
+                                              attribute: .trailing,
+                                              multiplier: 1,
+                                              constant: 3))
         
         NSLayoutConstraint.activate(constraints)
     }
@@ -146,6 +144,9 @@ class ProfileEditorWindowToolbarItemAddButton: NSButton {
     var menuWasShownForLastMouseDown = false
     var mouseDownUniquenessCounter = 0
     
+    weak var profileEditor: ProfileEditor?
+    var selectedPayloadPlaceholder: PayloadPlaceholder?
+    
     // MARK: -
     // MARK: Initialization
     
@@ -153,8 +154,17 @@ class ProfileEditorWindowToolbarItemAddButton: NSButton {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override init(frame frameRect: NSRect) {
+    init(frame frameRect: NSRect, editor: ProfileEditor) {
+        
+        self.profileEditor = editor
+        self.selectedPayloadPlaceholder = editor.selectedPayloadPlaceholder
+        
         super.init(frame: frameRect)
+        
+        // ---------------------------------------------------------------------
+        //  Setup Notification Observers
+        // ---------------------------------------------------------------------
+        editor.addObserver(self, forKeyPath: editor.selectedPayloadPlaceholderUpdatedSelector, options: .new, context: nil)
         
         // ---------------------------------------------------------------------
         //  Setup Self (Toolbar Item)
@@ -172,75 +182,92 @@ class ProfileEditorWindowToolbarItemAddButton: NSButton {
         setupButtonMenu()
     }
     
+    deinit {
+        if let editor = self.profileEditor {
+            editor.removeObserver(self, forKeyPath: editor.selectedPayloadPlaceholderUpdatedSelector, context: nil)
+        }
+    }
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        guard let editor = self.profileEditor else { return }
+        if keyPath == editor.selectedPayloadPlaceholderUpdatedSelector {
+            self.selectedPayloadPlaceholder = editor.selectedPayloadPlaceholder
+        } else {
+            Log.shared.error(message: "ERROR", category: String(describing: self))
+        }
+    }
+    
+    override func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
+        if let selectedPayloadPlaceholder = self.selectedPayloadPlaceholder {
+            switch menuItem.identifier {
+            case NSUserInterfaceItemIdentifier.editorMenuItemAddPayload:
+                return !selectedPayloadPlaceholder.payloadSource.unique
+            case NSUserInterfaceItemIdentifier.editorMenuItemAddPayloadKey:
+                return selectedPayloadPlaceholder.payloadSourceType != .manifest
+            default:
+                return true
+            }
+        }
+        return true
+    }
+    
     func setupButtonMenu() {
         self.buttonMenu.delegate = self
         
         // ---------------------------------------------------------------------
-        //  Add item: "New Profile"
+        //  Add item: "Add Payload"
         // ---------------------------------------------------------------------
-        let menuItemNewProfile = NSMenuItem()
-        menuItemNewProfile.title = NSLocalizedString("New Profile", comment: "")
-        menuItemNewProfile.isEnabled = true
-        menuItemNewProfile.target = self
-        menuItemNewProfile.action = #selector(newProfile(menuItem:))
-        self.buttonMenu.addItem(menuItemNewProfile)
+        let menuItemAddPayload = NSMenuItem()
+        menuItemAddPayload.title = NSLocalizedString("Add Payload", comment: "")
+        menuItemAddPayload.identifier = .editorMenuItemAddPayload
+        menuItemAddPayload.isEnabled = true
+        menuItemAddPayload.target = self
+        menuItemAddPayload.action = #selector(self.addPayload(menuItem:))
+        self.buttonMenu.addItem(menuItemAddPayload)
         
         // ---------------------------------------------------------------------
-        //  Add item: "New Group"
+        //  Add item: "Add Payload Key"
         // ---------------------------------------------------------------------
-        let menuItemNewGroup = NSMenuItem()
-        menuItemNewGroup.title = NSLocalizedString("New Group", comment: "")
-        menuItemNewGroup.isEnabled = true
-        menuItemNewGroup.target = self
-        menuItemNewGroup.action = #selector(newGroup(menuItem:))
-        self.buttonMenu.addItem(menuItemNewGroup)
-        
-        // ---------------------------------------------------------------------
-        //  Add item: "New Group JSS"
-        // ---------------------------------------------------------------------
-        let menuItemNewGroupJSS = NSMenuItem()
-        menuItemNewGroupJSS.title = NSLocalizedString("New Group JSS", comment: "")
-        menuItemNewGroupJSS.isEnabled = true
-        menuItemNewGroupJSS.target = self
-        menuItemNewGroupJSS.action = #selector(newGroupJSS(menuItem:))
-        self.buttonMenu.addItem(menuItemNewGroupJSS)
+        let menuItemAddPayloadKey = NSMenuItem()
+        menuItemAddPayloadKey.title = NSLocalizedString("Add Payload Key", comment: "")
+        menuItemAddPayloadKey.identifier = .editorMenuItemAddPayloadKey
+        menuItemAddPayloadKey.isEnabled = true
+        menuItemAddPayloadKey.target = self
+        menuItemAddPayloadKey.action = #selector(self.addPayloadKey(menuItem:))
+        self.buttonMenu.addItem(menuItemAddPayloadKey)
     }
     
     // MARK: -
     // MARK: Button/Menu Actions
     
     @objc func clicked(button: NSButton) {
-        
+        Swift.print("Just clicked, what to do now?")
         // ---------------------------------------------------------------------
         //  If only button was clicked, call 'newProfile'
         // ---------------------------------------------------------------------
-        self.newProfile(menuItem: nil)
+        // self.newProfile(menuItem: nil)
     }
     
-    @objc func newProfile(menuItem: NSMenuItem?) {
-        NotificationCenter.default.post(name: .newProfile, object: self, userInfo: [NotificationKey.parentTitle : SidebarGroupTitle.library])
+    @objc func addPayload(menuItem: NSMenuItem?) {
+        Swift.print("Add to profile")
     }
     
-    @objc func newGroup(menuItem: NSMenuItem?) {
-        NotificationCenter.default.post(name: .addGroup, object: self, userInfo: [NotificationKey.parentTitle : SidebarGroupTitle.library])
-    }
-    
-    @objc func newGroupJSS(menuItem: NSMenuItem?) {
-        NotificationCenter.default.post(name: .addGroup, object: self, userInfo: [NotificationKey.parentTitle : SidebarGroupTitle.jss])
+    @objc func addPayloadKey(menuItem: NSMenuItem?) {
+        Swift.print("add payload key")
     }
     
     // MARK: -
     // MARK: NSControl/NSResponder Methods
     
     override func mouseEntered(with event: NSEvent) {
-        if let parent = self.superview, let toolbarItemAdd = parent as? MainWindowToolbarItemAdd {
+        if let parent = self.superview, let toolbarItemAdd = parent as? ProfileEditorWindowToolbarItemAdd {
             toolbarItemAdd.disclosureTriangle(show: true)
         }
     }
     
     override func mouseExited(with event: NSEvent) {
         if !self.mouseIsDown {
-            if let parent = self.superview, let toolbarItemAdd = parent as? MainWindowToolbarItemAdd {
+            if let parent = self.superview, let toolbarItemAdd = parent as? ProfileEditorWindowToolbarItemAdd {
                 toolbarItemAdd.disclosureTriangle(show: false)
             }
         }
@@ -354,7 +381,7 @@ extension ProfileEditorWindowToolbarItemAddButton: NSMenuDelegate {
         //  Turn of highlighting and disclosure triangle when the menu closes
         // ---------------------------------------------------------------------
         self.highlight(false)
-        if let parent = self.superview, let toolbarItemAdd = parent as? MainWindowToolbarItemAdd {
+        if let parent = self.superview, let toolbarItemAdd = parent as? ProfileEditorWindowToolbarItemAdd {
             toolbarItemAdd.disclosureTriangle(show: false)
         }
     }

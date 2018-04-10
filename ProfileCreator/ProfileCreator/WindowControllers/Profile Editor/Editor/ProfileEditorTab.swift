@@ -68,7 +68,7 @@ class ProfileEditorTab: NSView {
         // ---------------------------------------------------------------------
         self.setupButtonClose(constraints: &constraints)
         self.setupTextFieldTitle(constraints: &constraints)
-        self.setupTextFieldErrorCount(constraints: &constraints)
+        self.setupTextFieldErrorCount(constraints: &constraints) // Currently unused
         self.setupBorderBottom(constraints: &constraints)
         self.setupBorderRight(constraints: &constraints)
         
@@ -112,7 +112,6 @@ class ProfileEditorTab: NSView {
     // MARK: Button Functions
     
     @objc func clicked(button: NSButton) {
-        Swift.print("clicked: \(button)")
         if let editor = self.editor {
             editor.close(tab: self.index)
         }
@@ -185,8 +184,10 @@ extension ProfileEditorTab {
         self.buttonClose.isBordered = false
         self.buttonClose.isTransparent = false
         self.buttonClose.image = NSImage(named: .stopProgressTemplate)
+        self.buttonClose.imageScaling = .scaleProportionallyUpOrDown
         self.buttonClose.action = #selector(self.clicked(button:))
         self.buttonClose.target = self
+        self.buttonClose.isHidden = true
         
         // ---------------------------------------------------------------------
         //  Add and to superview
@@ -221,7 +222,7 @@ extension ProfileEditorTab {
                                               toItem: nil,
                                               attribute: .notAnAttribute,
                                               multiplier: 1.0,
-                                              constant: 18.0))
+                                              constant: 8.0))
         
         // Width == Height
         constraints.append(NSLayoutConstraint(item: self.buttonClose,
@@ -297,7 +298,7 @@ extension ProfileEditorTab {
                                               toItem: nil,
                                               attribute: .notAnAttribute,
                                               multiplier: 1,
-                                              constant: 24.0))
+                                              constant: 22.0))
         
         // Right
         constraints.append(NSLayoutConstraint(item: self,
@@ -340,7 +341,7 @@ extension ProfileEditorTab {
         self.textFieldTitle.textColor = .labelColor
         self.textFieldTitle.alignment = .center
         self.textFieldTitle.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .small), weight: .regular)
-        self.textFieldTitle.stringValue = "Title of the TAB"
+        self.textFieldTitle.stringValue = "Payload"
         
         // ---------------------------------------------------------------------
         //  Add and to superview
@@ -383,6 +384,7 @@ extension ProfileEditorTab {
         self.textFieldErrorCount.font = NSFont.systemFont(ofSize: NSFont.systemFontSize(for: .small), weight: .regular)
         self.textFieldErrorCount.textColor = .red
         self.textFieldErrorCount.stringValue = "0"
+        self.textFieldErrorCount.isHidden = true
         
         // ---------------------------------------------------------------------
         //  Add and to superview

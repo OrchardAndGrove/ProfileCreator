@@ -39,7 +39,12 @@ class ProfileEditor: NSObject {
     fileprivate var cellViews = [NSTableCellView]()
     
     public weak var profile: Profile?
-    private var selectedPayloadPlaceholder: PayloadPlaceholder?
+    
+    // Since PayloadPlaceholder doesn't inherit NSObject, it can't be made @objc compatible
+    @objc public var selectedPayloadPlaceholderUpdated: Bool = false
+    public let selectedPayloadPlaceholderUpdatedSelector: String
+    
+    var selectedPayloadPlaceholder: PayloadPlaceholder?
     private var selectedPayloadIndex = 0
     private var selectedPayloadView: EditorViewTag = .profileCreator
     
@@ -50,6 +55,11 @@ class ProfileEditor: NSObject {
         
         self.settings = ProfileEditorSettings(profile: profile)
         self.headerView = ProfileEditorHeaderView(profile: profile)
+        
+        // ---------------------------------------------------------------------
+        //  Initialize Key/Value Observing Selector Strings
+        // ---------------------------------------------------------------------
+        self.selectedPayloadPlaceholderUpdatedSelector = NSStringFromSelector(#selector(getter: self.selectedPayloadPlaceholderUpdated))
         
         super.init()
         
@@ -96,7 +106,7 @@ class ProfileEditor: NSObject {
         // ---------------------------------------------------------------------
         //  Reload the TableView
         // ---------------------------------------------------------------------
-        self.reloadTableView(updateCellViews: true)
+        //self.reloadTableView(updateCellViews: true)
     }
     
     deinit {
@@ -312,7 +322,7 @@ class ProfileEditor: NSObject {
     }
     
     func select(payloadPlaceholder: PayloadPlaceholder) {
-        
+
         // ---------------------------------------------------------------------
         //  Only update selection if it's not currently selected
         // ---------------------------------------------------------------------
@@ -322,6 +332,7 @@ class ProfileEditor: NSObject {
             //  Update the selected placeholder
             // ---------------------------------------------------------------------
             self.selectedPayloadPlaceholder = payloadPlaceholder
+            self.setValue(!self.selectedPayloadPlaceholderUpdated, forKeyPath: self.selectedPayloadPlaceholderUpdatedSelector)
             
             // ---------------------------------------------------------------------
             //  Update header view

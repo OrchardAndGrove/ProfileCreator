@@ -34,13 +34,6 @@ enum TableViewTag: Int {
     case libraryPayloads
 }
 
-enum LibraryTag: Int {
-    case appleDomains
-    case applicationDomains
-    case localApplicationDomains
-    case developer
-}
-
 enum EditorViewTag: Int {
     case profileCreator
     case source
@@ -69,6 +62,8 @@ extension NSUserInterfaceItemIdentifier {
     static let tableColumnPayload = NSUserInterfaceItemIdentifier("tableColumnPayload")
     static let tableColumnPayloadEnableLeading = NSUserInterfaceItemIdentifier("tableColumnPayloadEnableLeading")
     static let tableColumnPayloadEnableTrailing = NSUserInterfaceItemIdentifier("tableColumnPayloadEnableTrailing")
+    static let editorMenuItemAddPayload = NSUserInterfaceItemIdentifier("editorMenuItemAddPayload")
+    static let editorMenuItemAddPayloadKey = NSUserInterfaceItemIdentifier("editorMenuItemAddPayloadKey")
 }
 
 extension Notification.Name {

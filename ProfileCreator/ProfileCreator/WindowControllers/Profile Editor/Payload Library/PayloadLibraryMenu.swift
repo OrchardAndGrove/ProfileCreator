@@ -10,7 +10,7 @@ import Cocoa
 import ProfilePayloads
 
 protocol PayloadLibrarySelectionDelegate: class {
-    func selectLibrary(tag: LibraryTag, sender: Any?)
+    func selectLibrary(type: PayloadSourceType, sender: Any?)
 }
 
 class PayloadLibraryMenu: NSObject {
@@ -86,7 +86,7 @@ class PayloadLibraryMenu: NSObject {
     // MARK: Button Action Functions
     
     @objc func selectLibrary(_ sender: NSButton) {
-        if let selectLibrary = self.selectionDelegate?.selectLibrary, let libraryTag = LibraryTag(rawValue: sender.tag) {
+        if let selectLibrary = self.selectionDelegate?.selectLibrary, let libraryTag = PayloadSourceType(rawValue: sender.tag) {
             selectLibrary(libraryTag, self)
             sender.state = .on
             for button in self.buttons {
@@ -146,17 +146,17 @@ class PayloadLibraryMenu: NSObject {
         }
     }
     
-    private func libraryTagFor(keyPath: String?) -> LibraryTag {
+    private func libraryTagFor(keyPath: String?) -> PayloadSourceType {
         if keyPath == PreferenceKey.showPayloadLibraryAppleDomains {
-            return LibraryTag.appleDomains
+            return PayloadSourceType.manifest
         } else if keyPath == PreferenceKey.showPayloadLibraryApplicationDomains {
-            return LibraryTag.applicationDomains
+            return PayloadSourceType.applicationDomains
         } else if keyPath == PreferenceKey.showPayloadLibraryLocalApplicationDomains {
-            return LibraryTag.localApplicationDomains
+            return PayloadSourceType.localApplicationDomains
         } else if keyPath == PreferenceKey.showPayloadLibraryDeveloper {
-            return LibraryTag.developer
+            return PayloadSourceType.developer
         }
-        return LibraryTag(rawValue: -1)!
+        return PayloadSourceType(rawValue: -1)!
     }
     
     private func buttonFor(keyPath: String?) -> NSButton? {
